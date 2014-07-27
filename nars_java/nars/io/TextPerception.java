@@ -13,6 +13,7 @@ import nars.entity.Task;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Output.ERR;
+import nars.io.Output.IN;
 import static nars.io.Symbols.*;
 import nars.language.*;
 import nars.storage.Memory;
@@ -22,18 +23,17 @@ import nars.storage.Memory;
  * @author me
  */
 public class TextPerception {
-    
+
     private final NAR nar;
 
     public static final List<TextInputParser> defaultParsers = new ArrayList();
-    
+
     static {
         initDefaultParsers(); //shared by all ExperienceReaders
     }
-    
+
     public final List<TextInputParser> parsers;
-    
-    
+
     /**
      * All kinds of invalid addInput lines
      */
@@ -47,67 +47,77 @@ public class TextPerception {
         InvalidInputException(String s) {
             super(s);
         }
-    }    
+    }
 
     public TextPerception(NAR n, List<TextInputParser> parsers) {
         this.nar = n;
-        this.parsers = parsers;        
+        this.parsers = parsers;
     }
 
     public TextPerception(NAR n) {
         this(n, defaultParsers);
     }
-    
+
     public void perceive(final Input i, final String lines) {
-        perceive(i, lines.split("\n"));        
+        perceive(i, lines.split("\n"));
     }
-        
+
     protected void perceive(final Input i, final String[] lines) {
-        
+
         for (String line : lines) {
             line = line.trim();
-            if (line.isEmpty()) continue;
+            if (line.isEmpty()) {
+                continue;
+            }
 
             TextInputParser lastHandled = null;
-            for (TextInputParser p : parsers) {            
+            for (TextInputParser p : parsers) {
 
                 boolean result = p.parse(nar, line, lastHandled);
 
                 //System.out.println(line + " parser " + p + " " + result);
-
-                if (result)
+                if (result) {
                     lastHandled = p;
-            }        
+                }
+            }
 
             //not handled, so respond with some signal
             if (lastHandled == null) {
                 nar.output(Output.ERR.class, "Invalid input from " + i + ": " + line);
             }
         }
-        
+
     }
-    
-    
+
     private static void initDefaultParsers() {
         //integer, # of cycles to stepLater
         defaultParsers.add(new TextInputParser() {
+            final static String inputPrefix = Symbols.INPUT_LINE + ':';
+
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 try {
+                    input = input.trim();
+
+                    if (input.startsWith(inputPrefix)) {
+                        input = input.substring(inputPrefix.length());
+                    }
+                    input = input.trim();
+                    
                     int cycles = Integer.parseInt(input);
+                    nar.output(IN.class, cycles);
                     nar.step(cycles);
                     return true;
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     return false;
-                }                
+                }
             }
         });
-        
+
         //reset
         defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 if (input.equals(Symbols.RESET_COMMAND)) {
                     nar.reset();
                     return true;
@@ -115,26 +125,26 @@ public class TextPerception {
                 return false;
             }
         });
-        
+
         //stop
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
-                if (!nar.isWorking())  {
+                if (!nar.isWorking()) {
                     if (input.equals(Symbols.STOP_COMMAND)) {
                         nar.output(Output.OUT.class, "stopping.");
                         nar.setWorking(false);
                         return true;
                     }
                 }
-                return false;                
+                return false;
             }
-        });    
-        
+        });
+
         //start
         defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 if (nar.isWorking()) {
                     if (input.equals(Symbols.START_COMMAND)) {
                         nar.setWorking(true);
@@ -142,36 +152,36 @@ public class TextPerception {
                         return true;
                     }
                 }
-                return false;                
+                return false;
             }
         });
-        
+
         //silence
         defaultParsers.add(new TextInputParser() {
             @Override
-            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {                
+            public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
 
-                if (input.indexOf(Symbols.SILENCE_COMMAND)==0) {
+                if (input.indexOf(Symbols.SILENCE_COMMAND) == 0) {
                     String[] p = input.split("=");
                     if (p.length == 2) {
                         int silenceLevel = Integer.parseInt(p[1]);
                         nar.param.setSilenceLevel(silenceLevel);
                         nar.output(Output.OUT.class, "Silence level: " + silenceLevel);
                     }
-                    
+
                     return true;
                 }
 
-                return false;                
+                return false;
             }
         });
-        
+
         //URL include
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 char c = input.charAt(0);
-                if (c == Symbols.URL_INCLUDE_MARK) {            
+                if (c == Symbols.URL_INCLUDE_MARK) {
                     try {
                         new TextInput(nar, new URL(input.substring(1)));
                     } catch (IOException ex) {
@@ -179,30 +189,31 @@ public class TextPerception {
                     }
                     return true;
                 }
-                return false;                
+                return false;
             }
-        });        
+        });
 
         //echo
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
                 char c = input.charAt(0);
-                if (c == Symbols.ECHO_MARK) {            
+                if (c == Symbols.ECHO_MARK) {
                     String echoString = input.substring(1);
                     nar.output(Output.ECHO.class, '\"' + echoString + '\"');
                     return true;
                 }
-                return false;                
+                return false;
             }
         });
-        
+
         //narsese
         defaultParsers.add(new TextInputParser() {
             @Override
             public boolean parse(NAR nar, String input, TextInputParser lastHandler) {
-                if (lastHandler != null)
+                if (lastHandler != null) {
                     return false;
+                }
 
                 char c = input.charAt(0);
                 if (c != Symbols.COMMENT_MARK) {
@@ -215,18 +226,15 @@ public class TextPerception {
                         }
                     } catch (InvalidInputException ex) {
                         /*System.err.println(ex.toString());
-                        ex.printStackTrace();*/
+                         ex.printStackTrace();*/
                         return false;
                     }
                 }
-                return false;                
+                return false;
             }
-        });             
+        });
 
-                   
     }
-
-    
 
     /**
      * Parse a line of addInput experience
@@ -258,12 +266,11 @@ public class TextPerception {
         return parseTask(buffer.toString().trim(), memory, time);
     }
 
-
     public static Sentence parseOutput(String s) {
         Term content = null;
         char punc = 0;
         TruthValue truth = null;
-        
+
         try {
             StringBuffer buffer = new StringBuffer(s);
             //String budgetString = getBudgetString(buffer);
@@ -276,14 +283,13 @@ public class TextPerception {
 
 
             /*Term content = parseTerm(str.substring(0, last), memory);
-            if (content == null) throw new InvalidInputException("Content term missing");*/
-        }
-        catch (InvalidInputException e) {
+             if (content == null) throw new InvalidInputException("Content term missing");*/
+        } catch (InvalidInputException e) {
             System.err.println("TextInput.parseOutput: " + s + " : " + e.toString());
         }
-        return new Sentence(content, punc, truth, null);        
+        return new Sentence(content, punc, truth, null);
     }
-    
+
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
      * locally.
@@ -292,7 +298,7 @@ public class TextPerception {
      * @param memory Reference to the memory
      * @param time The current time
      * @return An experienced task
-     */    
+     */
     public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
         StringBuffer buffer = new StringBuffer(s);
         try {
@@ -306,7 +312,9 @@ public class TextPerception {
             Stamp stamp = new Stamp(time, tense);
             TruthValue truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last), memory);
-            if (content == null) throw new InvalidInputException("Content term missing");
+            if (content == null) {
+                throw new InvalidInputException("Content term missing");
+            }
             Sentence sentence = new Sentence(content, punc, truth, stamp);
             //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
             //    sentence.setRevisible(false);
@@ -314,9 +322,8 @@ public class TextPerception {
             BudgetValue budget = parseBudget(budgetString, punc, truth);
             task = new Task(sentence, budget);
             return task;
-        }
-        catch (InvalidInputException e) {
-            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());         
+        } catch (InvalidInputException e) {
+            throw new InvalidInputException(" !!! INVALID INPUT: parseTask: " + buffer + " --- " + e.getMessage());
         }
 
     }
@@ -327,8 +334,8 @@ public class TextPerception {
      *
      * @param s the addInput in a StringBuffer
      * @return a String containing a BudgetValue
-     * @throws nars.io.StringParser.InvalidInputException if the addInput cannot be
- parsed into a BudgetValue
+     * @throws nars.io.StringParser.InvalidInputException if the addInput cannot
+     * be parsed into a BudgetValue
      */
     private static String getBudgetString(StringBuffer s) throws InvalidInputException {
         if (s.charAt(0) != BUDGET_VALUE_MARK) {
@@ -351,8 +358,8 @@ public class TextPerception {
      *
      * @return a String containing a TruthValue
      * @param s the addInput in a StringBuffer
-     * @throws nars.io.StringParser.InvalidInputException if the addInput cannot be
- parsed into a TruthValue
+     * @throws nars.io.StringParser.InvalidInputException if the addInput cannot
+     * be parsed into a TruthValue
      */
     private static String getTruthString(final StringBuffer s) throws InvalidInputException {
         final int last = s.length() - 1;
@@ -436,6 +443,7 @@ public class TextPerception {
 
     /**
      * Recognize the tense of an addInput sentence
+     *
      * @param s the addInput in a StringBuffer
      * @return a tense value
      */
@@ -504,7 +512,7 @@ public class TextPerception {
                 default:
                     return parseAtomicTerm(s);
             }
-            
+
         } catch (InvalidInputException e) {
             throw new InvalidInputException(" !!! INVALID INPUT: parseTerm: " + s + " --- " + e.getMessage());
         }
@@ -711,5 +719,5 @@ public class TextPerception {
         }
         return true;
     }
-    
+
 }
