@@ -332,13 +332,33 @@ public final class SyllogisticRules {
             newCondition = CompoundTerm.setComponent(oldCondition, index, newComponent, memory);
         }
         Term content;
+        long delta = 0;
         if (newCondition != null) {
-            content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
+            if (newCondition instanceof Interval) {
+                content = premise1.getPredicate();
+                delta = ((Interval) newCondition).getTime();
+            } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).componentAt(0) instanceof Interval)) {
+                Interval interval = (Interval) ((CompoundTerm) newCondition).componentAt(0);
+                delta = interval.getTime();
+                newCondition = CompoundTerm.setComponent((CompoundTerm) newCondition, 0, null, memory);
+                content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
+            } else {
+                content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder(), memory);
+            }
         } else {
             content = premise1.getPredicate();
         }
         if (content == null) {
             return;
+        }
+        if (delta != 0) {
+            long baseTime = (belief.getContent() instanceof Implication) ?
+                    taskSentence.getOccurenceTime() : belief.getOccurenceTime();
+            if (baseTime == Stamp.ETERNAL) {
+                baseTime = memory.getTime();
+            } 
+            baseTime += delta;
+            memory.newStamp.setOccurrenceTime(baseTime);
         }
         TruthValue truth1 = taskSentence.getTruth();
         TruthValue truth2 = belief.getTruth();
@@ -361,7 +381,8 @@ public final class SyllogisticRules {
 
     /**
      * {<(&&, S1, S2, S3) <=> P>, S1} |- <(&&, S2, S3) <=> P> {<(&&, S2, S3) <=>
-     * P>, <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
+     * P>,
+     * <S1 ==> S2>} |- <(&&, S1, S3) <=> P> {<(&&, S1, S3) <=> P>, <S1 ==>
      * S2>} |- <(&&, S2, S3) <=> P>
      *
      * @param premise1 The equivalence premise

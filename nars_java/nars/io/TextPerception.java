@@ -14,12 +14,7 @@ import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
 import nars.io.Output.ERR;
 import static nars.io.Symbols.*;
-import nars.language.CompoundTerm;
-import nars.language.SetExt;
-import nars.language.SetInt;
-import nars.language.Statement;
-import nars.language.Term;
-import nars.language.Variable;
+import nars.language.*;
 import nars.storage.Memory;
 
 /**
@@ -538,6 +533,10 @@ public class TextPerception {
         if (s.contains(" ")) // invalid characters in a name
         {
             throw new InvalidInputException("invalid term");
+        }
+        char c = s.charAt(0);
+        if (c == Symbols.INTERVAL_PREFIX) {
+            return new Interval(s);
         }
         if (Variable.containVar(s)) {
             return new Variable(s);

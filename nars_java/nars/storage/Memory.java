@@ -125,6 +125,7 @@ public class Memory {
         concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new ArrayDeque<>();
+        lastEvent = null;
     }
 
     public void init() {
@@ -135,6 +136,7 @@ public class Memory {
         if (getRecorder().isActive()) {
             getRecorder().append("--reset--");
         }
+        lastEvent = null;
     }
 
     public InferenceRecorder getRecorder() {

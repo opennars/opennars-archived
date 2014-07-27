@@ -60,10 +60,12 @@ public class Symbols {
     public static final char SET_INT_OPENER = '[';
     public static final char SET_INT_CLOSER = ']';
     
-    /* special characors in argument list */
+    /* special characters in argument list */
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final char IMAGE_PLACE_HOLDER = '_';
 
+    /* interval indecator */
+    public static final char INTERVAL_PREFIX = '+';
 
 
     
