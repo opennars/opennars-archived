@@ -20,8 +20,6 @@
  */
 package nars.entity;
 
-import nars.core.Parameters;
-import static nars.entity.Stamp.ETERNAL;
 import nars.io.Symbols;
 import nars.language.*;
 import nars.inference.TruthFunctions;
@@ -40,11 +38,11 @@ public class Sentence implements Cloneable {
     private Term content;
     /**
      * The punctuation also indicates the type of the Sentence: Judgment,
-     * Question, or Goal
+     * Question, Goal, or Quest
      */
     final public char punctuation;
     /**
-     * The truth value of Judgment
+     * The truth value of Judgment, or desire value of Goal
      */
     final public TruthValue truth;
     /**
@@ -134,6 +132,13 @@ public class Sentence implements Cloneable {
         return new Sentence((Term) content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
     }
 
+    /**
+     * project a judgment to a difference occurrence time
+     *
+     * @param targetTime The time to be projected into
+     * @param currentTime The current time as a reference
+     * @return The projected belief
+     */
     public Sentence projection(long targetTime, long currentTime) {
         TruthValue newTruth = new TruthValue(truth);
         Stamp newStamp = (Stamp) stamp.clone();
@@ -175,7 +180,7 @@ public class Sentence implements Cloneable {
     /**
      * Get the punctuation of the sentence
      *
-     * @return The character '.' or '?'
+     * @return The character '.', '?', '!', or '@'
      */
     public char getPunctuation() {
         return punctuation;
@@ -191,7 +196,7 @@ public class Sentence implements Cloneable {
     }
 
     /**
-     * Get the truth value of the sentence
+     * Get the truth value (or desire value) of the sentence
      *
      * @return Truth value, null for question
      */

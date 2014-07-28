@@ -387,7 +387,7 @@ public class TextPerception {
      * @return the addInput TruthValue
      */
     private static TruthValue parseTruth(String s, char type) {
-        if (type == QUESTION_MARK) {
+        if ((type == QUESTION_MARK) || (type == QUEST_MARK)) {
             return null;
         }
         float frequency = 1.0f;
@@ -424,6 +424,14 @@ public class TextPerception {
             case QUESTION_MARK:
                 priority = Parameters.DEFAULT_QUESTION_PRIORITY;
                 durability = Parameters.DEFAULT_QUESTION_DURABILITY;
+                break;
+            case GOAL_MARK:
+                priority = Parameters.DEFAULT_GOAL_PRIORITY;
+                durability = Parameters.DEFAULT_GOAL_DURABILITY;
+                break;
+            case QUEST_MARK:
+                priority = Parameters.DEFAULT_QUEST_PRIORITY;
+                durability = Parameters.DEFAULT_QUEST_DURABILITY;
                 break;
             default:
                 throw new InvalidInputException("unknown punctuation: '" + punctuation + "'");
@@ -589,7 +597,7 @@ public class TextPerception {
         String s = s0.trim();
         int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
         String op = s.substring(0, firstSeparator).trim();
-        if (!CompoundTerm.isOperator(op)) {
+        if (!CompoundTerm.isOperator(op) && !memory.isRegisteredOperator(op)) {
             throw new InvalidInputException("unknown operator: " + op);
         }
         ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
