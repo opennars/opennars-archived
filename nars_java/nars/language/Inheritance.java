@@ -20,12 +20,12 @@
  */
 package nars.language;
 
+import nars.operators.Operator;
 import java.util.ArrayList;
 import nars.io.Symbols;
 
 import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
-import nars.operation.*;
 
 /**
  * A Statement about an Inheritance relation.
@@ -82,11 +82,11 @@ public class Inheritance extends Statement {
         if (t != null) {
             return (Inheritance) t;
         }
-        ArrayList<Term> argument = argumentsToList(subject, predicate);
+        ArrayList<Term> arguments = argumentsToList(subject, predicate);
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
-            return new Operation(argument);
+            return new Operation(name, arguments);
         } else {
-            return new Inheritance(argument);
+            return new Inheritance(arguments);
         }
         
     }

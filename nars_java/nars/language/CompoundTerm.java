@@ -24,7 +24,6 @@ import java.util.*;
 
 import nars.entity.*;
 import nars.storage.*;
-import nars.operation.*;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.inference.TemporalRules;

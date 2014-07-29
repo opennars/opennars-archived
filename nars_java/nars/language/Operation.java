@@ -18,28 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.operation;
+package nars.language;
 
-import nars.language.*;
 import java.util.ArrayList;
 import nars.io.Symbols;
 
-import nars.io.Symbols.NativeOperator;
+import nars.operators.Operator;
 import nars.storage.Memory;
 
 /**
- * An operation is interpreted as an Inheritance relation.
+ * An operation consists of an operator and an (non-empty) argument list. It is
+ * interpreted as an Inheritance relation <(*, arguments) --> operator> in
+ * inference, while named and displayed as (operator, arguments) in the
+ * interface.
  */
 public class Operation extends Inheritance {
 
     /**
      * Constructor with partial values, called by make
      *
-     * @param n The name of the term
+     * @param name
      * @param arg The component list of the term
      */
-    public Operation(ArrayList<Term> arg) {
+    protected Operation(String name, ArrayList<Term> arg) {
         super(arg);
+        this.name = name;
     }
 
     /**
@@ -50,7 +53,7 @@ public class Operation extends Inheritance {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    public Operation(String n, ArrayList<Term> cs, boolean con, short i) {
+    protected Operation(String n, ArrayList<Term> cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -71,16 +74,21 @@ public class Operation extends Inheritance {
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
-    public static Inheritance make(String op, ArrayList<Term> arg, Memory memory) {
+    public static Operation make(String op, ArrayList<Term> arg, Memory memory) {
+        Operator oper = memory.getOperator(op);
+        if (oper == null) {
+            return null;
+        }
         String name = makeName(op, arg, memory);
         Term t = memory.nameToTerm(name);
         if (t != null) {
-            return (Inheritance) t;
+            return (Operation) t;
         }
-        Term sub = Product.make(arg, memory);
-        Term pre = memory.operators.get(op);
-        Inheritance inh = Operation.make(sub, pre, memory);
-        return inh;
+        ArrayList<Term> opArg = new ArrayList<>();
+        Term list = Product.make(arg, memory);
+        opArg.add(list);
+        opArg.add(oper);
+        return new Operation(name, opArg);
     }
 
     public static String makeName(final String op, ArrayList<Term> arg, Memory memory) {

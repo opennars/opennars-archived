@@ -31,7 +31,7 @@ import nars.inference.*;
 import nars.language.Term;
 import nars.core.*;
 import nars.io.Output.OUT;
-import nars.operation.Operator;
+import nars.operators.Operator;
 
 /**
  * The memory of the system.

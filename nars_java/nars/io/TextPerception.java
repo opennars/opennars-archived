@@ -17,7 +17,7 @@ import nars.io.Output.IN;
 import static nars.io.Symbols.*;
 import nars.language.*;
 import nars.storage.Memory;
-import nars.operation.Operator;
+import nars.operators.Operator;
 
 /**
  *

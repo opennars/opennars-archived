@@ -32,7 +32,7 @@ import nars.storage.Memory;
  * relation symbol in between. It can be of either first-order or higher-order.
  */
 public abstract class Statement extends CompoundTerm {
-    private StringBuilder nameBuilder;
+    protected StringBuilder nameBuilder;
 
     
     /**
