@@ -50,7 +50,7 @@ public class Operation extends Inheritance {
      *
      * @param n The name of the term
      * @param cs Component list
-     * @param open Open variable list
+     * @param con Whether the term is a constant
      * @param i Syntactic complexity of the compound
      */
     protected Operation(String n, ArrayList<Term> cs, boolean con, short i) {
@@ -93,7 +93,7 @@ public class Operation extends Inheritance {
 
     public static String makeName(final String op, ArrayList<Term> arg, Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
-                .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
+                .append(Symbols.COMPOUND_TERM_OPENER).append(op);
         for (final Term t : arg) {
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
             nameBuilder.append(t.getName());
