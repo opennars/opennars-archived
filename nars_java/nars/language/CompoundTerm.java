@@ -26,7 +26,7 @@ import nars.entity.*;
 import nars.storage.*;
 import nars.operation.*;
 import nars.io.Symbols;
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.inference.TemporalRules;
 import static nars.language.CompoundTerm.make;
 import static nars.language.CompoundTerm.makeCompoundName;
@@ -63,7 +63,7 @@ public abstract class CompoundTerm extends Term {
     /**
      * Abstract method to get the operator of the compound
      */
-    public abstract InnateOperator operator();
+    public abstract NativeOperator operator();
 
     /**
      * Abstract clone method
@@ -292,7 +292,7 @@ public abstract class CompoundTerm extends Term {
         throw new RuntimeException("Unknown Term operator: " + op);
     }
     
-    public static Term make(final InnateOperator op, final ArrayList<Term> arg, final Memory memory) {
+    public static Term make(final NativeOperator op, final ArrayList<Term> arg, final Memory memory) {
         switch (op) {
             case SET_EXT_OPENER: 
                 return SetExt.make(arg, memory);
@@ -401,7 +401,7 @@ public abstract class CompoundTerm extends Term {
      * @param arg the list of components
      * @return the oldName of the term
      */
-    protected static String makeCompoundName(final InnateOperator op, final ArrayList<Term> arg) {
+    protected static String makeCompoundName(final NativeOperator op, final ArrayList<Term> arg) {
         final StringBuilder nameBuilder = new StringBuilder(16  /* estimate */)
             .append(Symbols.COMPOUND_TERM_OPENER).append(op.toString());
         for (final Term t : arg) {
@@ -450,7 +450,7 @@ public abstract class CompoundTerm extends Term {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static String makeImageName(final InnateOperator op, final ArrayList<Term> arg, final int relationIndex) {
+    protected static String makeImageName(final NativeOperator op, final ArrayList<Term> arg, final int relationIndex) {
         StringBuilder name = new StringBuilder(16 /* estimate */)
         .append(Symbols.COMPOUND_TERM_OPENER)
         .append(op)

@@ -23,7 +23,7 @@ package nars.language;
 import java.util.ArrayList;
 import nars.io.Symbols;
 
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 import nars.operation.*;
 
@@ -76,7 +76,7 @@ public class Inheritance extends Statement {
         if ((subject instanceof Product) && (predicate instanceof Operator)) {
             name = Operation.makeName(predicate.getName(), ((CompoundTerm) subject).getComponents(), memory);
         } else {
-            name = makeStatementName(subject, InnateOperator.INHERITANCE, predicate);
+            name = makeStatementName(subject, NativeOperator.INHERITANCE, predicate);
         }
         Term t = memory.nameToTerm(name);
         if (t != null) {
@@ -95,8 +95,8 @@ public class Inheritance extends Statement {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public InnateOperator operator() {
-        return InnateOperator.INHERITANCE;
+    public NativeOperator operator() {
+        return NativeOperator.INHERITANCE;
     }
 }
 

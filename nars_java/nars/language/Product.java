@@ -23,7 +23,7 @@ package nars.language;
 
 import java.util.*;
 
-import nars.io.Symbols.InnateOperator;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
@@ -63,10 +63,10 @@ public class Product extends CompoundTerm {
      * Try to make a new compound. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argument The list of components
-     * @param memory Reference to the memeory
+     * @param memory Reference to the memory
      */
     public static Term make(final ArrayList<Term> argument, final Memory memory) {
-        final String name = makeCompoundName(InnateOperator.PRODUCT, argument);
+        final String name = makeCompoundName(NativeOperator.PRODUCT, argument);
         final Term t = memory.nameToTerm(name);
         return (t != null) ? t : new Product(argument);
     }
@@ -76,7 +76,7 @@ public class Product extends CompoundTerm {
      * @param image The existing Image
      * @param component The component to be added into the component list
      * @param index The index of the place-holder in the new Image -- optional parameter
-     * @param memory Reference to the memeory
+     * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final CompoundTerm image, final Term component, final int index, final Memory memory) {
@@ -90,7 +90,7 @@ public class Product extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public InnateOperator operator() {
-        return InnateOperator.PRODUCT;
+    public NativeOperator operator() {
+        return NativeOperator.PRODUCT;
     }
 }

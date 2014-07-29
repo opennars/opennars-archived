@@ -69,7 +69,7 @@ public class Symbols {
     public static final char OPERATOR_PREFIX = '^';
 
     
-    public static enum InnateOperator {
+    public static enum NativeOperator {
         /* CompountTerm operators, length = 1 */
         INTERSECTION_EXT { @Override public String toString() { return "&"; } },
         INTERSECTION_INT { @Override public String toString() { return "|"; } },
@@ -143,16 +143,16 @@ public class Symbols {
 
     
 
-    protected static final Map<String,InnateOperator> stringToOperator = new TreeMap();    
+    protected static final Map<String,NativeOperator> stringToOperator = new TreeMap();    
     static {
-        for (final InnateOperator r : InnateOperator.values())
+        for (final NativeOperator r : NativeOperator.values())
             stringToOperator.put(r.toString(), r);
     }
     
-    public static InnateOperator operator(final String s) {
+    public static NativeOperator operator(final String s) {
         return stringToOperator.get(s.trim());
     }
-    static InnateOperator relation(String r) {
+    static NativeOperator relation(String r) {
         r = r.trim();
         if (r.length()!=3) return null;
         return stringToOperator.get(r);
