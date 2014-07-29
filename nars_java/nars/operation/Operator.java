@@ -61,9 +61,6 @@ public abstract class Operator extends Term {
         }
     }
     
-    private static void register(Operator op, HashMap<String, Operator> table) {
-        table.put(op.getName(), op);
-    }
 
     /**
      * Register all built-in operators in the Memory
@@ -72,9 +69,8 @@ public abstract class Operator extends Term {
      * An operator name should contain at least two characters after '^'.
      * @return A Map between Operator name and object
      */
-    public static HashMap<String, Operator> loadDefaultOperators() {
-        HashMap<String, Operator> table = new HashMap<>();
-        register(new Wait("^wait"), table);
+    public static void loadDefaultOperators(Memory memory) {
+        memory.registerOperator(new Wait("^wait"));
         
         /* operators for tasks */
 //        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value
@@ -120,7 +116,6 @@ public abstract class Operator extends Term {
 //        table.put("^throw", new Throw("^throw"));
 //        table.put("^strike", new Strike("^strike"));
 
-        return table;
     }
     
     /**

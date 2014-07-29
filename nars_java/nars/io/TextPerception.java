@@ -17,6 +17,7 @@ import nars.io.Output.IN;
 import static nars.io.Symbols.*;
 import nars.language.*;
 import nars.storage.Memory;
+import nars.operation.Operator;
 
 /**
  *
@@ -597,7 +598,7 @@ public class TextPerception {
         String s = s0.trim();
         int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
         String op = s.substring(0, firstSeparator).trim();
-        if (!CompoundTerm.isOperator(op) && !memory.isRegisteredOperator(op)) {
+        if (!memory.isRegisteredOperator(op) && !CompoundTerm.isInnateOperator(op)) {
             throw new InvalidInputException("unknown operator: " + op);
         }
         ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
