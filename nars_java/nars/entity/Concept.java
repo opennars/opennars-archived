@@ -75,6 +75,7 @@ public final class Concept extends Item {
      * avoid iterator allocation, use .get(n) in a for-loop
      *
      * [Pei] Agree. The same for the other three ArrayLists
+     * to be changed to private
      */
     public final ArrayList<Task> questions;
 
@@ -96,7 +97,7 @@ public final class Concept extends Item {
     /**
      * Reference to the memory
      */
-    final Memory memory;
+    public final Memory memory;
     /**
      * The display window
      */
@@ -216,34 +217,31 @@ public final class Concept extends Item {
     private void processGoal(final Task task) {
         final Sentence goal = task.getSentence();
         final Sentence oldGoal = evaluation(goal, desires);
+        boolean noRevision = true;
         if (oldGoal != null) {
             final Stamp newStamp = goal.getStamp();
             final Stamp oldStamp = oldGoal.getStamp();
             if (newStamp.equals(oldStamp)) {
-                if (task.getParentTask().getSentence().isJudgment()) {
-                    task.getBudget().decPriority(0);    // duplicated task
-                }   // else: activated belief
-                return;
+                return; // duplicates --- increasing priority?
             } else if (LocalRules.revisible(goal, oldGoal)) {
                 memory.newStamp = Stamp.make(newStamp, oldStamp, memory.getTime());
                 if (memory.newStamp != null) {
                     LocalRules.revision(goal, oldGoal, false, memory);
+                    noRevision = false;
                 }
             }
         }
         if (task.getBudget().aboveThreshold()) {
-            for (final Task ques : quests) {
+            for (final Sentence belief : beliefs) { // check if the Goal is already satisfied
 //                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
-                LocalRules.trySolution(goal, ques, memory);
+                LocalRules.trySolution(belief, task, memory);
             }
-            Operator oper = goal.getOperator();
-            if (oper == null) {
-                addToTable(goal, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
-            } else if (LocalRules.decisionMaking(goal)) {
-                oper.call(task, memory);
-                task.setPriority(0);
+        }
+        if (task.getBudget().aboveThreshold()) {    // still worth pursuing
+            addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
+            if (noRevision) {
+                LocalRules.decisionMaking(task, this);
             }
-
         }
     }
 
@@ -523,10 +521,20 @@ public final class Concept extends Item {
             if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
                 memory.singlePremiseTask(projectedBelief, task.getBudget());
             }
-            return projectedBelief;
+            return projectedBelief;     // return the first satisfying belief
 //            }
         }
         return null;
+    }
+    
+    // get the current overall desire value
+    // to be refined
+    public TruthValue getDesire() {
+        if (desires.isEmpty()) {
+            return null;
+        }
+        TruthValue topValue = desires.get(0).getTruth();
+        return topValue;
     }
 
     /* ---------- main loop ---------- */

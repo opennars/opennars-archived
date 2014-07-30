@@ -26,6 +26,7 @@ import nars.io.Output.OUT;
 import nars.language.*;
 import nars.io.Symbols;
 import nars.core.Parameters;
+import nars.operators.Operator;
 
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
@@ -290,9 +291,19 @@ public class LocalRules {
         }
         memory.singlePremiseTask(content, Symbols.JUDGMENT_MARK, newTruth, newBudget);
     }
-    
+
     // add plausibility estimation
-    public static boolean decisionMaking(Sentence goal) {
-        return goal.getTruth().getExpectation() > Parameters.DECISION_THRESHOLD;
+    public static void decisionMaking(Task task, Concept concept) {
+        Term content = concept.getTerm();
+        TruthValue desireValue = concept.getDesire();
+        if (desireValue.getExpectation() < Parameters.DECISION_THRESHOLD) {
+            return;
+        }
+        if (!(content instanceof Operation)) {
+            return;
+        }
+        Operator oper = ((Operation) content).getOperator();
+        oper.call(task, concept.memory);
+        task.setPriority(0);
     }
 }
