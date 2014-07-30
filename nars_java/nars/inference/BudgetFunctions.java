@@ -76,7 +76,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             feedbackToLinks = true;
         }
         boolean judgmentTask = task.getSentence().isJudgment();
-        final float quality = LocalRules.solutionQuality(problem, solution);
+        final float quality = LocalRules.solutionQuality(problem, solution, memory);
         if (judgmentTask) {
             task.incPriority(quality);
         } else {

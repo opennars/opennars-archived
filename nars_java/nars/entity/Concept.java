@@ -20,8 +20,7 @@
  */
 package nars.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import nars.core.NAR;
 
 import nars.inference.BudgetFunctions;
@@ -63,39 +62,39 @@ public final class Concept extends Item {
      */
     public final TermLinkBag termLinks;
     /**
-     * Link templates of TermLink, only in concepts with CompoundTerm jmv TODO
-     * explain more
+     * Link templates of TermLink, only in concepts with CompoundTerm Templates
+     * are used to improve the efficiency of TermLink building
      */
     private List<TermLink> termLinkTemplates;
 
     /**
-     * Question directly asked about the term
+     * Pending Question directly asked about the term
      *
      * Note: since this is iterated frequently, an array should be used. To
      * avoid iterator allocation, use .get(n) in a for-loop
      *
-     * [Pei] Agree. The same for the other three ArrayLists
-     * to be changed to private
+     * [Pei] Changed to LinkedLists to support FIFO
      */
-    public final ArrayList<Task> questions;
+    public final LinkedList<Task> questions;
 
     /**
-     * pending Quests to be merged into Questions?
+     * pending Quests to be answered by new desire values
      */
-    public final ArrayList<Task> quests;
+    public final LinkedList<Task> quests;
 
     /**
-     * Sentences directly made about the term, with non-future tense
+     * Judgments directly made about the term
+     * Use ArrayList because of access and insertion in the middle
      */
     public final ArrayList<Sentence> beliefs;
 
     /**
-     * Pending goals to be achieved
+     * Desire values on the term, similar to the above one
      */
     public final ArrayList<Sentence> desires;
 
     /**
-     * Reference to the memory
+     * Reference to the memory to which the Concept belongs
      */
     public final Memory memory;
     /**
@@ -117,9 +116,9 @@ public final class Concept extends Item {
         super(tm.getName());
         term = tm;
         this.memory = memory;
-        questions = new ArrayList<>();
+        questions = new LinkedList<>();
+        quests = new LinkedList<>();
         beliefs = new ArrayList<>();
-        quests = new ArrayList<>();
         desires = new ArrayList<>();
 
         final NAR nar = memory.nar;
@@ -159,7 +158,7 @@ public final class Concept extends Item {
             default:
                 return;
         }
-        if (task.getBudget().aboveThreshold()) {    // still need to be processed
+        if (task.aboveThreshold()) {    // still need to be processed
             linkToTask(task);
         }
         if (entityObserver.isActive()) {
@@ -176,7 +175,7 @@ public final class Concept extends Item {
      */
     private void processJudgment(final Task task) {
         final Sentence judg = task.getSentence();
-        final Sentence oldBelief = evaluation(judg, beliefs);
+        final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
         if (oldBelief != null) {
             final Stamp newStamp = judg.getStamp();
             final Stamp oldStamp = oldBelief.getStamp();
@@ -197,9 +196,8 @@ public final class Concept extends Item {
                 }
             }
         }
-        if (task.getBudget().aboveThreshold()) {
+        if (task.aboveThreshold()) {
             for (final Task ques : questions) {
-//                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
                 LocalRules.trySolution(judg, ques, memory);
             }
             addToTable(judg, beliefs, Parameters.MAXIMUM_BELIEF_LENGTH);
@@ -216,14 +214,15 @@ public final class Concept extends Item {
      */
     private void processGoal(final Task task) {
         final Sentence goal = task.getSentence();
-        final Sentence oldGoal = evaluation(goal, desires);
+        final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         boolean noRevision = true;
         if (oldGoal != null) {
             final Stamp newStamp = goal.getStamp();
             final Stamp oldStamp = oldGoal.getStamp();
             if (newStamp.equals(oldStamp)) {
-                return; // duplicates --- increasing priority?
-            } else if (LocalRules.revisible(goal, oldGoal)) {
+                return;
+            }
+            if (LocalRules.revisible(goal, oldGoal)) {
                 memory.newStamp = Stamp.make(newStamp, oldStamp, memory.getTime());
                 if (memory.newStamp != null) {
                     LocalRules.revision(goal, oldGoal, false, memory);
@@ -231,13 +230,11 @@ public final class Concept extends Item {
                 }
             }
         }
-        if (task.getBudget().aboveThreshold()) {
-            for (final Sentence belief : beliefs) { // check if the Goal is already satisfied
-//                LocalRules.trySolution(ques.getSentence(), judg, ques, memory);
-                LocalRules.trySolution(belief, task, memory);
-            }
+        if (task.aboveThreshold()) {
+            final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            LocalRules.trySolution(belief, task, memory);
         }
-        if (task.getBudget().aboveThreshold()) {    // still worth pursuing
+        if (task.aboveThreshold()) {    // still worth pursuing
             addToTable(goal, desires, Parameters.MAXIMUM_BELIEF_LENGTH);
             if (noRevision) {
                 LocalRules.decisionMaking(task, this);
@@ -251,8 +248,7 @@ public final class Concept extends Item {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public float processQuestion(final Task task) {
-
+    public void processQuestion(final Task task) {
         Sentence ques = task.getSentence();
         boolean newQuestion = true;
         for (final Task t : questions) {
@@ -263,23 +259,16 @@ public final class Concept extends Item {
                 break;
             }
         }
-
         if (newQuestion) {
             questions.add(task);
         }
-
         if (questions.size() > Parameters.MAXIMUM_QUESTIONS_LENGTH) {
-            questions.remove(0);    // FIFO
+            questions.removeFirst();    // FIFO
         }
-
-        final Sentence newAnswer = (ques.isQuestion()) ? evaluation(ques, beliefs)
-                : evaluation(ques, desires);
+        final Sentence newAnswer = (ques.isQuestion()) ? selectCandidate(ques, beliefs)
+                : selectCandidate(ques, desires);
         if (newAnswer != null) {
-//            LocalRules.trySolution(ques, newAnswer, task, memory);
             LocalRules.trySolution(newAnswer, task, memory);
-            return newAnswer.getTruth().getExpectation();
-        } else {
-            return 0.5f;
         }
     }
 
@@ -323,6 +312,7 @@ public final class Concept extends Item {
      * @param table The table to be revised
      * @param capacity The capacity of the table
      */
+    // change List to array
     private void addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
         final float rank1 = BudgetFunctions.rankBelief(newSentence);    // for the new isBelief
         float rank2;
@@ -348,21 +338,21 @@ public final class Concept extends Item {
     }
 
     /**
-     * Evaluate a query against beliefs or desires
+     * Select a belief value or desire value for a given query
      *
-     * @param query The question to be processed
-     * @param list The list of beliefs to be used
-     * @return The best candidate belief selected
+     * @param query The query to be processed
+     * @param list The list of beliefs or desires to be used
+     * @return The best candidate selected
      */
-    private Sentence evaluation(final Sentence query, final List<Sentence> list) {
-        if (list == null) {
-            return null;
-        }
+    private Sentence selectCandidate(final Sentence query, final List<Sentence> list) {
+//        if (list == null) {
+//            return null;
+//        }
         float currentBest = 0;
         float beliefQuality;
         Sentence candidate = null;
         for (final Sentence judg : list) {
-            beliefQuality = LocalRules.solutionQuality(query, judg);
+            beliefQuality = LocalRules.solutionQuality(query, judg, memory);
             if (beliefQuality > currentBest) {
                 currentBest = beliefQuality;
                 candidate = judg;
@@ -526,7 +516,7 @@ public final class Concept extends Item {
         }
         return null;
     }
-    
+
     // get the current overall desire value
     // to be refined
     public TruthValue getDesire() {
