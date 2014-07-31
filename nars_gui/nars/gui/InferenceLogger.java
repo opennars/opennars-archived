@@ -30,7 +30,7 @@ import nars.entity.Task;
  * Inference log, which record input/output of each inference step interface
  * with 1 implementation: GUI ( batch not implemented )
  */
-public class InferenceLogger implements nars.inference.InferenceRecorder {
+public class InferenceLogger implements nars.io.InferenceRecorder {
 
     /**
      * the display window

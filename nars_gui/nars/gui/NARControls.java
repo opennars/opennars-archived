@@ -56,7 +56,7 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.gui.input.InputPanel;
 import nars.gui.output.SentenceTablePanel;
-import nars.inference.InferenceRecorder;
+import nars.io.InferenceRecorder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.storage.Memory;

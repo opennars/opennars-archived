@@ -26,7 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import nars.gui.InferenceLogger;
 import nars.gui.Window;
-import nars.inference.InferenceRecorder;
+import nars.io.InferenceRecorder;
 import nars.storage.Memory.NullInferenceRecorder;
 
 //import nars.term.Term;
