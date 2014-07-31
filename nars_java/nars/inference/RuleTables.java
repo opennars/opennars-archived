@@ -262,10 +262,10 @@ public class RuleTables {
                     }
                     t1 = beliefStatement.getPredicate();
                     t2 = taskStatement.getPredicate();
-                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, memory);
                     SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
+                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, memory);
+                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, memory);//            introVarImage(taskContent, beliefContent, index, memory);
                 }
-
                 break;
             case 12:    // deduction
                 if (Variable.unify(Symbols.VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
@@ -303,8 +303,9 @@ public class RuleTables {
                     t1 = taskStatement.getSubject();
                     t2 = beliefStatement.getSubject();
                     if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, memory)) {         // if conditional abduction, skip the following
-                        CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, memory);
                         SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
+                        CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, memory);
+                        CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, memory);//            introVarImage(taskContent, beliefContent, index, memory);
                     }
                 }
                 break;

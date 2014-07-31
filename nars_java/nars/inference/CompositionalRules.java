@@ -36,97 +36,103 @@ public final class CompositionalRules {
 
     /* -------------------- questions which contain answers which are of no value for NARS but need to be answered -------------------- */
     /**
-     * {(&&,A,B,...)?, A,B} |- {(&&,A,B)}
-     * {(&&,A,_components_1_)?, (&&,_part_of_components_1_),A} |- {(&&,A,_part_of_components_1_,B)}
-     * and also the case where both are conjunctions, all components need to be subterm of the question-conjunction
-     * in order for the subterms of both conjunctions to be collected together.
+     * {(&&,A,B,...)?, A,B} |- {(&&,A,B)} {(&&,A,_components_1_)?,
+     * (&&,_part_of_components_1_),A} |- {(&&,A,_part_of_components_1_,B)} and
+     * also the case where both are conjunctions, all components need to be
+     * subterm of the question-conjunction in order for the subterms of both
+     * conjunctions to be collected together.
      *
      * @param sentence The first premise
      * @param belief The second premise
      * @param memory Reference to the memory
      */
     static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final Memory memory) {
-        if(sentence==null || belief==null || sentence.isQuestion() || belief.isQuestion()) {
+        if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
-        
+
         Term term1 = sentence.getContent();
         Term term2 = belief.getContent();
         Deque<Concept>[] bag = memory.concepts.itemTable;
-        
+
         for (final Deque<Concept> baglevel : bag) {
-            
-            if (baglevel == null)
+
+            if (baglevel == null) {
                 continue;
-            
+            }
+
             for (final Concept concept : baglevel) {
-                
-                final List<Task> questions = concept.getQuestions();                
+
+                final List<Task> questions = concept.getQuestions();
                 for (int i = 0; i < questions.size(); i++) {
-                    final Task question = questions.get(i);                                    
-                    
-                    if(question==null) {
+                    final Task question = questions.get(i);
+
+                    if (question == null) {
                         continue;
                     }
-                    
-                    Sentence qu=question.getSentence();
-                    
-                    if(qu==null) {
+
+                    Sentence qu = question.getSentence();
+
+                    if (qu == null) {
                         continue;
                     }
-                    
+
                     Term pcontent = qu.getContent();
-                    final CompoundTerm ctpcontent = (CompoundTerm)pcontent;
-                    if(pcontent==null || !(pcontent instanceof Conjunction) || (ctpcontent).containVar()) {
+                    final CompoundTerm ctpcontent = (CompoundTerm) pcontent;
+                    if (pcontent == null || !(pcontent instanceof Conjunction) || (ctpcontent).containVar()) {
                         continue;
                     }
-                    if(!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
-                        if(!(ctpcontent).containComponent(term1) || !(ctpcontent).containComponent(term2)) {
+                    if (!(term1 instanceof Conjunction) && !(term2 instanceof Conjunction)) {
+                        if (!(ctpcontent).containComponent(term1) || !(ctpcontent).containComponent(term2)) {
                             continue;
                         }
                     }
-                    if(term1 instanceof Conjunction) {
-                        if(!(term2 instanceof Conjunction) && !(ctpcontent).containComponent(term2)) {
+                    if (term1 instanceof Conjunction) {
+                        if (!(term2 instanceof Conjunction) && !(ctpcontent).containComponent(term2)) {
                             continue;
                         }
-                        if(((CompoundTerm)term1).containVar()) {
+                        if (((CompoundTerm) term1).containVar()) {
                             continue;
                         }
-                        
-                        boolean contin=false;
-                        for(Term t : ((CompoundTerm)term1).getComponents()) {
-                            if(!(ctpcontent).containComponent(t)) {
+
+                        boolean contin = false;
+                        for (Term t : ((CompoundTerm) term1).getComponents()) {
+                            if (!(ctpcontent).containComponent(t)) {
                                 contin = true;
                                 break;
                             }
                         }
-                        if (contin) continue;
+                        if (contin) {
+                            continue;
+                        }
                     }
-                    if(term2 instanceof Conjunction) {
-                        if(!(term1 instanceof Conjunction) && !(ctpcontent).containComponent(term1)) {
+                    if (term2 instanceof Conjunction) {
+                        if (!(term1 instanceof Conjunction) && !(ctpcontent).containComponent(term1)) {
                             continue;
                         }
-                        if(((CompoundTerm)term2).containVar()) {
+                        if (((CompoundTerm) term2).containVar()) {
                             continue;
                         }
-                        boolean contin=false;
-                        for(Term t : ((CompoundTerm)term2).getComponents()) {
-                            if(!(ctpcontent).containComponent(t)) {
+                        boolean contin = false;
+                        for (Term t : ((CompoundTerm) term2).getComponents()) {
+                            if (!(ctpcontent).containComponent(t)) {
                                 contin = true;
                                 break;
                             }
                         }
-                        if (contin) continue;
+                        if (contin) {
+                            continue;
+                        }
                     }
                     Term conj = Conjunction.make(term1, term2, memory);
-                    
-                    if(conj.toString().contains("#") || conj.toString().contains("$")) {
+
+                    if (conj.toString().contains("#") || conj.toString().contains("$")) {
                         continue;
                     }
-                    
+
                     TruthValue truthT = memory.currentTask.getSentence().getTruth();
                     TruthValue truthB = memory.currentBelief.getTruth();
-                    if(truthT==null || truthB==null) {
+                    if (truthT == null || truthB == null) {
                         return;
                     }
                     TruthValue truthAnd = TruthFunctions.intersection(truthT, truthB);
@@ -138,7 +144,7 @@ public final class CompositionalRules {
         }
 
     }
-    
+
     /* -------------------- intersections and differences -------------------- */
     /**
      * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==> M>,
@@ -218,9 +224,6 @@ public final class CompositionalRules {
             processComposed(taskContent, termAnd, (Term) componentCommon.clone(), order, truthAnd, memory);
             processComposed(taskContent, termDif, (Term) componentCommon.clone(), order, truthDif, memory);
         }
-        if (taskContent instanceof Inheritance) {
-            introVarOuter(taskContent, beliefContent, index, memory);//            introVarImage(taskContent, beliefContent, index, memory);
-        }
     }
 
     /**
@@ -256,7 +259,7 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, Memory memory) {
-        
+
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
             return;
         }
@@ -352,8 +355,7 @@ public final class CompositionalRules {
      */
     static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
         Task task = memory.currentTask;
-        Sentence sentence = task.getSentence();
-
+        Sentence taskSentence = task.getSentence();
         Sentence belief = memory.currentBelief;
         Term content = CompoundTerm.reduceComponents(compound, component, memory);
         if (content == null) {
@@ -361,11 +363,11 @@ public final class CompositionalRules {
         }
         TruthValue truth = null;
         BudgetValue budget;
-        if (sentence.isQuestion()) {
+        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, memory);
             memory.doublePremiseTask(content, truth, budget);
             // special inference to answer conjunctive questions with query variables
-            if (Variable.containVarQuery(sentence.getContent().getName())) {
+            if (Variable.containVarQuery(taskSentence.getContent().getName())) {
                 Concept contentConcept = memory.termToConcept(content);
                 if (contentConcept == null) {
                     return;
@@ -380,36 +382,51 @@ public final class CompositionalRules {
                 truth = TruthFunctions.intersection(contentBelief.getTruth(), belief.getTruth());
                 budget = BudgetFunctions.compoundForward(truth, conj, memory);
                 memory.doublePremiseTask(conj, truth, budget);
-            }        
+            }
         } else {
             TruthValue v1, v2;
             if (compoundTask) {
-                v1 = sentence.getTruth();
+                v1 = taskSentence.getTruth();
                 v2 = belief.getTruth();
             } else {
                 v1 = belief.getTruth();
-                v2 = sentence.getTruth();
+                v2 = taskSentence.getTruth();
             }
             if (compound instanceof Conjunction) {
-                if (sentence instanceof Sentence) {
+                if (taskSentence.isGoal()) {
+                    if (compoundTask) {
+                        truth = TruthFunctions.intersection(v1, v2);
+                    } else {
+                        return;
+                    }
+                } else { // isJudgment
                     truth = TruthFunctions.reduceConjunction(v1, v2);
                 }
-                } else if (compound instanceof Disjunction) {
-                    if (sentence instanceof Sentence) {
-                        truth = TruthFunctions.reduceDisjunction(v1, v2);
+            } else if (compound instanceof Disjunction) {
+                if (taskSentence.isGoal()) {
+                    if (compoundTask) {
+                        truth = TruthFunctions.reduceConjunction(v2, v1);
+                    } else {
+                        return;
                     }
-                } else {
+                } else {  // isJudgment
+                    truth = TruthFunctions.reduceDisjunction(v1, v2);
+                }
+            } else {
                 return;
             }
             budget = BudgetFunctions.compoundForward(truth, content, memory);
-            memory.doublePremiseTask(content, truth, budget);
         }
-
+        memory.doublePremiseTask(content, truth, budget);
     }
 
     /* --------------- rules used for variable introduction --------------- */
+    
+    // forward inference only?
+    
     /**
-     * Introduce a dependent variable in an outer-layer conjunction
+     * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
+     * <S --> P2>} |- (&&, <#x --> P1>, <#x --> P2>)
      *
      * @param taskContent The first premise <M --> S>
      * @param beliefContent The second premise <M --> P>
@@ -417,7 +434,10 @@ public final class CompositionalRules {
      * predicate
      * @param memory Reference to the memory
      */
-    private static void introVarOuter(Statement taskContent, Statement beliefContent, int index, Memory memory) {
+    static void introVarOuter(Statement taskContent, Statement beliefContent, int index, Memory memory) {
+        if (!(taskContent instanceof Inheritance)) {
+            return;
+        }
         TruthValue truthT = memory.currentTask.getSentence().getTruth();
         TruthValue truthB = memory.currentBelief.getTruth();
         Variable varInd = new Variable("$varInd1");
@@ -469,7 +489,6 @@ public final class CompositionalRules {
         if (content == null) {
             return;
         }
-        
         TruthValue truth = TruthFunctions.induction(truthT, truthB);
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, memory);
         memory.doublePremiseTask(content, truth, budget);
@@ -541,8 +560,9 @@ public final class CompositionalRules {
             substitute.put(commonTerm2, new Variable("$varInd2"));
         }
         content = Implication.make(premise1, oldCompound, memory);
-        if (content == null)
+        if (content == null) {
             return;
+        }
         content.applySubstitute(substitute);
         if (premise1.equals(taskSentence.getContent())) {
             truth = TruthFunctions.induction(belief.getTruth(), taskSentence.getTruth());
