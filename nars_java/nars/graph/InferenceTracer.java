@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import nars.entity.Concept;
 import nars.entity.Task;
-import nars.inference.InferenceRecorder;
+import nars.io.InferenceRecorder;
 
 /**
  *

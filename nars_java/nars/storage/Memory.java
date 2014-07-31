@@ -20,6 +20,7 @@
  */
 package nars.storage;
 
+import nars.io.InferenceRecorder;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;

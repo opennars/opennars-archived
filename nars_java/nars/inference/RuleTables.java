@@ -56,9 +56,10 @@ public class RuleTables {
         if (!memory.noResult() && task.getSentence().isJudgment()) {
             return;
         }
-        
+
+        // to be invoked by the corresponding links 
         CompositionalRules.dedConjunctionByQuestion(task.getSentence(), belief, memory);
-        
+
         short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
         switch (tLink.getType()) {          // dispatch first by TaskLink type
@@ -110,8 +111,8 @@ public class RuleTables {
                                     detachmentWithVar(belief, taskSentence, bIndex, memory);
                                 } else {
                                     SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, memory);
-                                }                                
-                                
+                                }
+
                             } else if (beliefTerm instanceof Equivalence) {
                                 SyllogisticRules.conditionalAna((Equivalence) beliefTerm, bIndex, taskTerm, -1, memory);
                             }
@@ -144,12 +145,12 @@ public class RuleTables {
                 break;
             case TermLink.COMPOUND_CONDITION:
                 switch (bLink.getType()) {
-                      case TermLink.COMPOUND:
+                    case TermLink.COMPOUND:
                         if (belief != null) {
                             detachmentWithVar(taskSentence, belief, tIndex, memory);
                         }
                         break;
-                    
+
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
                             if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
@@ -157,16 +158,16 @@ public class RuleTables {
                                 Term subj = ((Implication) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
                                     if (task.getSentence().isJudgment()) {
-                                    componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, memory);
+                                        componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, memory);
                                     } else {
-                                    componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, memory);
+                                        componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, memory);
                                     }
-                                    } else {
+                                } else {
                                     conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, memory);
-                                    }
                                 }
-                                break;
-                            
+                            }
+                            break;
+
                         }
                         break;
                 }
@@ -428,7 +429,8 @@ public class RuleTables {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, memory);
             } else if (Variable.unify(Symbols.VAR_INDEPENDENT, component, content, statement, content)) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, memory);
-            } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (memory.currentTask.getSentence().isJudgment())) {
+            } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement)
+                    && (memory.currentTask.getSentence().isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
                 if (s2.getSubject().equals(((Statement) content).getSubject())) {
                     CompositionalRules.introVarInner((Statement) content, s2, statement, memory);
@@ -532,7 +534,7 @@ public class RuleTables {
                 } else if (task.getSentence().isJudgment()) { // && !compound.containComponent(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, memory);
                 } else if (Variable.unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
-                    CompositionalRules.decomposeStatement(compound, component, true, memory);                    
+                    CompositionalRules.decomposeStatement(compound, component, true, memory);
                 }
             }
         } else {
@@ -580,7 +582,7 @@ public class RuleTables {
             } else {
                 StructuralRules.contraposition(statement, memory.currentBelief, memory);
             }
-        
+
         }
 //        }
     }

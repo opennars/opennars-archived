@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nars.operators;
 
 import java.util.*;
@@ -28,25 +27,31 @@ import nars.entity.Task;
 import nars.storage.Memory;
 
 /**
- * An individual operator that can be execute by the system, though implemented
- * outside NARS.
+ * An individual operator that can be execute by the system, which can be either
+ * inside NARS or outside it, in another system or device.
  * <p>
- * This is the only file to modify when adding a new operator into NARS.
+ * This is the only file to modify when registering a new operator into NARS.
  */
 public abstract class Operator extends Term {
+
     public Operator(String name) {
         super(name);
     }
-    
+
     /**
-     * Required method for every operation, specifying the operation
+     * Required method for every operator, specifying the corresponding
+     * operation
+     *
      * @param task The task with the arguments to be passed to the operator
-     * @return The direct collectable results and feedback of the reportExecution
+     * @return The direct collectable results and feedback of the
+     * reportExecution
      */
     abstract ArrayList<Task> execute(Task task);
 
     /**
-     * Execute an operation, then handle feedback
+     * The standard way to carry out an operation, which invokes the execute
+     * method defined for the operator, and handles feedback tasks as input
+     *
      * @param task The task to be executed
      * @param memory
      */
@@ -60,18 +65,30 @@ public abstract class Operator extends Term {
             }
         }
     }
-    
 
     /**
-     * Register all built-in operators in the Memory
+     * Display a message in the output stream to indicate the reportExecution of
+     * an operation
      * <p>
-     * The only method to modify when adding a new operator into NARS.
-     * An operator name should contain at least two characters after '^'.
-     * @return A Map between Operator name and object
+     * @param operation The content of the operation to be executed
+     */
+    private void reportExecution(Statement operation) {
+        Term operator = operation.getPredicate();
+        Term arguments = operation.getSubject();
+        String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
+        System.out.println("EXECUTE: " + operator + "(" + argList);
+    }
+
+    /**
+     * Register all known operators in the memory
+     * <p>
+     * The only method to modify when adding a new registered operator into
+     * NARS. An operator name should contain at least two characters after '^'.
+     *
      */
     public static void loadDefaultOperators(Memory memory) {
         memory.registerOperator(new Sample("^sample"));
-        
+
         /* operators for tasks */
 //        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value
 //        table.put("^want", new Want("^want"));              // accept a statement with a default desire-value
@@ -106,7 +123,6 @@ public abstract class Operator extends Term {
          * name             // turn a compount term into an atomic term ???
          * ???              // rememberAction the history of the system? excutions of operatons?
          */
-        
         /* operators for testing examples */
 //        table.put("^go-to", new GoTo("^go-to"));
 //        table.put("^pick", new Pick("^pick"));
@@ -115,19 +131,5 @@ public abstract class Operator extends Term {
 //        table.put("^drop", new Drop("^drop"));
 //        table.put("^throw", new Throw("^throw"));
 //        table.put("^strike", new Strike("^strike"));
-
-    }
-    
-    /**
-     * Display a message in the output stream to indicate the reportExecution of an operation
-     * <p>
-     * @param operation The content of the operation to be executed
-     */
-    protected void reportExecution(Statement operation) {
-        Term operator = operation.getPredicate();
-        Term arguments = operation.getSubject();
-        String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
-        System.out.println("EXECUTE: " + operator + "(" + argList);
     }
 }
-
