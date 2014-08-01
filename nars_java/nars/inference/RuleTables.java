@@ -52,10 +52,13 @@ public class RuleTables {
         memory.currentBelief = belief;  // may be null
         if (belief != null) {
             LocalRules.match(task, belief, memory);
+            if (!memory.noResult()) {
+                return;
+            }
         }
-        if (!memory.noResult() && task.getSentence().isJudgment()) {
-            return;
-        }
+//        if (!memory.noResult() && taskSentence.isJudgment()) {
+//            return;
+//        }
 
         // to be invoked by the corresponding links 
         CompositionalRules.dedConjunctionByQuestion(task.getSentence(), belief, memory);
@@ -539,11 +542,9 @@ public class RuleTables {
                 }
             }
         } else {
-//            if (!task.isStructural() && task.getSentence().isJudgment()) {
             if (task.getSentence().isJudgment()) {
                 if (statement instanceof Inheritance) {
                     StructuralRules.structuralCompose1(compound, index, statement, memory);
-//                    if (!(compound instanceof SetExt) && !(compound instanceof SetInt)) {
                     if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation)) {
                         StructuralRules.structuralCompose2(compound, index, statement, side, memory);
                     }    // {A --> B, A @ (A&C)} |- (A&C) --> (B&C)
@@ -564,7 +565,6 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void componentAndStatement(CompoundTerm compound, short index, Statement statement, short side, Memory memory) {
-//        if (!memory.currentTask.isStructural()) {
         if (statement instanceof Inheritance) {
             StructuralRules.structuralDecompose1(compound, index, statement, memory);
             if (!(compound instanceof SetExt) && !(compound instanceof SetInt)) {
@@ -583,9 +583,7 @@ public class RuleTables {
             } else {
                 StructuralRules.contraposition(statement, memory.currentBelief, memory);
             }
-
         }
-//        }
     }
 
     /* ----- inference with one TaskLink only ----- */

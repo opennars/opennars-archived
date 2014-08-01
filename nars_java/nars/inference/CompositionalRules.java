@@ -29,12 +29,12 @@ import nars.storage.Memory;
 /**
  * Compound term composition and decomposition rules, with two premises.
  * <p>
- * Forward inference only, except the last group (dependent variable
- * introduction) can also be used backward.
+ * New compound terms are introduced only in forward inference, while
+ * decompositional rules are also used in backward inference
  */
 public final class CompositionalRules {
 
-    /* -------------------- questions which contain answers which are of no value for NARS but need to be answered -------------------- */
+    /* --------------- questions which contain answers which are of no value for NARS but need to be answered --------------- */
     /**
      * {(&&,A,B,...)?, A,B} |- {(&&,A,B)} {(&&,A,_components_1_)?,
      * (&&,_part_of_components_1_),A} |- {(&&,A,_part_of_components_1_,B)} and
@@ -421,9 +421,7 @@ public final class CompositionalRules {
     }
 
     /* --------------- rules used for variable introduction --------------- */
-    
     // forward inference only?
-    
     /**
      * Introduce a dependent variable in an outer-layer conjunction {<S --> P1>,
      * <S --> P2>} |- (&&, <#x --> P1>, <#x --> P2>)
