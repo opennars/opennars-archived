@@ -231,7 +231,7 @@ public class Sentence implements Cloneable {
     public boolean isQuestion() {
         return (punctuation == Symbols.QUESTION_MARK);
     }
-    
+
     public boolean isGoal() {
         return (punctuation == Symbols.GOAL_MARK);
     }
@@ -255,11 +255,11 @@ public class Sentence implements Cloneable {
     public int getTemporalOrder() {
         return content.getTemporalOrder();
     }
-    
+
     public long getOccurenceTime() {
         return stamp.getOccurrenceTime();
     }
-    
+
     public Operator getOperator() {
         if (content instanceof Operation) {
             return (Operator) ((Inheritance) content).getPredicate();
@@ -300,7 +300,8 @@ public class Sentence implements Cloneable {
         //key must be invalidated if content or truth change
         if (key == null) {
             final String contentToString = content.toString();
-            final String occurrenceTimeString = stamp.getOccurrenceTimeString();
+            final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK))
+                    ? stamp.getOccurrenceTimeString() : "";
             final String truthString = truth != null ? truth.toStringBrief() : null;
             //final String stampString = stamp.toString();
 
@@ -335,8 +336,9 @@ public class Sentence implements Cloneable {
      */
     public String display(long currentTime) {
         final String contentToString = content.toString();
-        String tenseString = stamp.getTense(currentTime);
-        final String truthString = truth != null ? truth.toStringBrief() : null;
+        String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK))
+                ? stamp.getTense(currentTime) : "";
+        final String truthString = (truth != null) ? truth.toStringBrief() : null;
         //final String stampString = stamp.toString();
 
         int stringLength = contentToString.length() + tenseString.length() + 1 + 1/* + stampString.length()*/;
