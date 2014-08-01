@@ -259,7 +259,6 @@ public final class CompositionalRules {
      * @param memory Reference to the memory
      */
     private static void decomposeCompound(CompoundTerm compound, Term component, Term term1, int index, boolean compoundTask, int order, Memory memory) {
-
         if ((compound instanceof Statement) || (compound instanceof ImageExt) || (compound instanceof ImageInt)) {
             return;
         }
@@ -353,7 +352,10 @@ public final class CompositionalRules {
      * @param compoundTask Whether the implication comes from the task
      * @param memory Reference to the memory
      */
-    static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
+    static void decomposeStatement(CompoundTerm compound, Term component, boolean compoundTask, int index, Memory memory) {
+        if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
+            return;
+        }
         Task task = memory.currentTask;
         Sentence taskSentence = task.getSentence();
         Sentence belief = memory.currentBelief;

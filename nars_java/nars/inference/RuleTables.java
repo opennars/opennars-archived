@@ -69,10 +69,10 @@ public class RuleTables {
             case TermLink.SELF:
                 switch (bLink.getType()) {
                     case TermLink.COMPONENT:
-                        compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, memory);
+                        compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex, memory);
                         break;
                     case TermLink.COMPOUND:
-                        compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, memory);
+                        compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, memory);
                         break;
                     case TermLink.COMPONENT_STATEMENT:
                         if (belief != null) {
@@ -101,7 +101,7 @@ public class RuleTables {
             case TermLink.COMPOUND:
                 switch (bLink.getType()) {
                     case TermLink.COMPOUND:
-                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, memory);
+                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, tIndex, memory);
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, memory);
@@ -484,12 +484,12 @@ public class RuleTables {
      * @param compoundTask Whether the compound comes from the task
      * @param memory Reference to the memory
      */
-    private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
+    private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, Memory memory) {
         if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
             if (memory.currentBelief != null) {
-                CompositionalRules.decomposeStatement(compound, component, compoundTask, memory);
+                CompositionalRules.decomposeStatement(compound, component, compoundTask, index, memory);
             } else if (compound.containComponent(component)) {
-                StructuralRules.structuralCompound(compound, component, compoundTask, memory);
+                StructuralRules.structuralCompound(compound, component, compoundTask, index, memory);
             }
 //        } else if ((compound instanceof Negation) && !memory.currentTask.isStructural()) {
         } else if (compound instanceof Negation) {
@@ -508,12 +508,12 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param memory Reference to the memory
      */
-    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, Memory memory) {
+    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, Memory memory) {
         if (taskTerm.getClass() == beliefTerm.getClass()) {
             if (taskTerm.size() > beliefTerm.size()) {
-                compoundAndSelf(taskTerm, beliefTerm, true, memory);
+                compoundAndSelf(taskTerm, beliefTerm, true, index, memory);
             } else if (taskTerm.size() < beliefTerm.size()) {
-                compoundAndSelf(beliefTerm, taskTerm, false, memory);
+                compoundAndSelf(beliefTerm, taskTerm, false, index, memory);
             }
         }
     }
@@ -538,7 +538,7 @@ public class RuleTables {
                 } else if (task.getSentence().isJudgment()) { // && !compound.containComponent(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, memory);
                 } else if (Variable.unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
-                    CompositionalRules.decomposeStatement(compound, component, true, memory);
+                    CompositionalRules.decomposeStatement(compound, component, true, index, memory);
                 }
             }
         } else {

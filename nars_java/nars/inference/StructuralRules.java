@@ -525,8 +525,11 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param memory Reference to the memory
      */
-    static void structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
+    static void structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, Memory memory) {
         if (!component.isConstant()) {
+            return;
+        }
+        if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return;
         }
         Term content = (compoundTask ? component : compound);
@@ -537,7 +540,7 @@ public final class StructuralRules {
         BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, memory);
-        } else {
+        } else {        // need to redefine the cases
             if ((sentence.isJudgment()) == (compoundTask == (compound instanceof Conjunction))) {
                 truth = TruthFunctions.deduction(truth, RELIANCE);
             } else if (sentence.isGoal()) {
