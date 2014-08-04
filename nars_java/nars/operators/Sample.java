@@ -23,25 +23,22 @@ package nars.operators;
 import java.util.ArrayList;
 
 import nars.entity.Task;
-import nars.language.*;
-
+import nars.storage.Memory;
 
 /**
  * A class used as a template for Operator definition.
  */
 public class Sample extends Operator {
 
-    public Sample(String name) {
-        super(name);
+    public Sample() {
+        super("^sample");
     }
 
     // called from Operator
-    ArrayList<Task> execute(Task task) {
-        Operation content = (Operation) task.getContent();
-        Operator op = content.getOperator();
-        ArrayList<Term> arg = content.getArguments();
-        System.out.println("Executed: " + op);
-        for (Term t : arg) {
+    @Override
+    ArrayList<Task> execute(ArrayList args, Memory memory) {
+        System.out.println("Executed: " + this);
+        for (Object t : args) {
             System.out.println(" --- " + t);;
         }
         return null;

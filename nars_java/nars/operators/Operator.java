@@ -34,7 +34,7 @@ import nars.storage.Memory;
  */
 public abstract class Operator extends Term {
 
-    public Operator(String name) {
+    protected Operator(String name) {
         super(name);
     }
 
@@ -46,7 +46,7 @@ public abstract class Operator extends Term {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    abstract ArrayList<Task> execute(Task task);
+    abstract ArrayList<Task> execute(ArrayList args, Memory memory);
 
     /**
      * The standard way to carry out an operation, which invokes the execute
@@ -55,10 +55,9 @@ public abstract class Operator extends Term {
      * @param task The task to be executed
      * @param memory
      */
-    public void call(Task task, Memory memory) {
-        ArrayList<Task> feedback = execute(task);
-        reportExecution((Statement) task.getContent());
-//        Memory.executedTask(task);
+    public void call(Operator op, ArrayList args, Memory memory) {
+        ArrayList<Task> feedback = op.execute(args, memory);
+        reportExecution(op, args);
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);
@@ -72,11 +71,12 @@ public abstract class Operator extends Term {
      * <p>
      * @param operation The content of the operation to be executed
      */
-    private void reportExecution(Statement operation) {
-        Term operator = operation.getPredicate();
-        Term arguments = operation.getSubject();
-        String argList = arguments.toString().substring(3);         // skip the product prefix "(*,"
-        System.out.println("EXECUTE: " + operator + "(" + argList);
+    private void reportExecution(Operator op, ArrayList args) {
+        StringBuilder buffer = new StringBuilder();
+        for (Object obj : args) {
+            buffer.append(obj).append(",");
+        }
+        System.out.println("EXECUTE: " + op + "(" + buffer.toString() + ")");
     }
 
     /**
@@ -87,7 +87,8 @@ public abstract class Operator extends Term {
      *
      */
     public static void loadDefaultOperators(Memory memory) {
-        memory.registerOperator(new Sample("^sample"));
+        memory.registerOperator(new Sample());
+        memory.registerOperator(new Believe());
 
         /* operators for tasks */
 //        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value

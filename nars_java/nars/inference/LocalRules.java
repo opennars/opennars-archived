@@ -305,8 +305,9 @@ public class LocalRules {
         if (!(content instanceof Operation)) {
             return;
         }
-        Operator oper = ((Operation) content).getOperator();
-        oper.call(task, concept.memory);
+        Operation op = (Operation) content;
+        Operator oper = op.getOperator();
+        oper.call(oper, op.getArguments(), concept.memory);
         task.setPriority(0);
     }
 }
