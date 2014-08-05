@@ -20,6 +20,7 @@
  */
 package nars.operators;
 
+import nars.operators.mental.*;
 import java.util.*;
 
 import nars.language.*;
@@ -46,7 +47,7 @@ public abstract class Operator extends Term {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    abstract ArrayList<Task> execute(ArrayList args, Memory memory);
+    protected abstract ArrayList<Task> execute(ArrayList<Term> args, Memory memory);
 
     /**
      * The standard way to carry out an operation, which invokes the execute
@@ -55,9 +56,9 @@ public abstract class Operator extends Term {
      * @param task The task to be executed
      * @param memory
      */
-    public void call(Operator op, ArrayList args, Memory memory) {
+    public void call(Operator op, ArrayList<Term> args, Memory memory) {
         ArrayList<Task> feedback = op.execute(args, memory);
-        reportExecution(op, args);
+        reportExecution(op, args, memory);
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);
@@ -71,11 +72,12 @@ public abstract class Operator extends Term {
      * <p>
      * @param operation The content of the operation to be executed
      */
-    private void reportExecution(Operator op, ArrayList args) {
-        StringBuilder buffer = new StringBuilder();
-        for (Object obj : args) {
-            buffer.append(obj).append(",");
+    private void reportExecution(Operator op, ArrayList<Term> args, Memory memory) {
+        StringBuilder buffer = new StringBuilder(args.size());
+        for (Term t : args) {
+            buffer.append(t).append(",");
         }
+        // to be redirected to an output channel
         System.out.println("EXECUTE: " + op + "(" + buffer.toString() + ")");
     }
 
@@ -85,6 +87,7 @@ public abstract class Operator extends Term {
      * The only method to modify when adding a new registered operator into
      * NARS. An operator name should contain at least two characters after '^'.
      *
+     * @param memory The memory space in which the operators are registered
      */
     public static void loadDefaultOperators(Memory memory) {
         memory.registerOperator(new Sample());

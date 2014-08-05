@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.operators;
+package nars.operators.mental;
 
 import java.util.ArrayList;
 import nars.core.Parameters;
@@ -26,6 +26,7 @@ import nars.entity.*;
 import nars.inference.BudgetFunctions;
 import nars.language.*;
 import nars.io.Symbols;
+import nars.operators.Operator;
 import nars.storage.Memory;
 
 /**
@@ -40,12 +41,13 @@ public class Believe extends Operator {
     /**
      * To create a judgment with a given statement
      * @param args Arguments, a Statement followed by an optional tense
+     * @param memory The memory in which the operation is executed
+     * @return Immediate results as Tasks
      */
     @Override
-    ArrayList<Task> execute(ArrayList args, Memory memory) {
-        Term content = (Term) args.get(0);
-        String tense = (args.size() == 2) ? (String) args.get(1) : "";
-        Stamp stamp = new Stamp(memory.getTime(), tense);
+    protected ArrayList<Task> execute(ArrayList<Term> args, Memory memory) {
+        Term content = args.get(0);
+        Stamp stamp = new Stamp(memory.getTime(), "");  // how to specify tense? as a term or a seperate operator?
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);

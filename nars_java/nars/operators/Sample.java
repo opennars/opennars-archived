@@ -30,13 +30,13 @@ import nars.storage.Memory;
  */
 public class Sample extends Operator {
 
-    public Sample() {
+    protected Sample() {
         super("^sample");
     }
 
     // called from Operator
     @Override
-    ArrayList<Task> execute(ArrayList args, Memory memory) {
+    protected ArrayList<Task> execute(ArrayList args, Memory memory) {
         System.out.println("Executed: " + this);
         for (Object t : args) {
             System.out.println(" --- " + t);;
