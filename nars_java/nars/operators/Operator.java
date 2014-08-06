@@ -53,8 +53,9 @@ public abstract class Operator extends Term {
      * The standard way to carry out an operation, which invokes the execute
      * method defined for the operator, and handles feedback tasks as input
      *
-     * @param task The task to be executed
-     * @param memory
+     * @param op The operator to be executed
+     * @param args The arguments to be taken by the operator
+     * @param memory The memory on which the operation is executed
      */
     public void call(Operator op, ArrayList<Term> args, Memory memory) {
         ArrayList<Task> feedback = op.execute(args, memory);
@@ -90,22 +91,19 @@ public abstract class Operator extends Term {
      * @param memory The memory space in which the operators are registered
      */
     public static void loadDefaultOperators(Memory memory) {
-        memory.registerOperator(new Sample());
+        // template to be removed later
+        memory.registerOperator(new Sample());  
+        // task creation
         memory.registerOperator(new Believe());
-
-        /* operators for tasks */
-//        table.put("^believe", new Believe("^believe"));     // accept a statement with a default truth-value
-//        table.put("^want", new Want("^want"));              // accept a statement with a default desire-value
-//        table.put("^wonder", new Wonder("^wonder"));        // find the truth-value of a statement
-//        table.put("^assess", new Assess("^assess"));        // find the desire-value of a statement
-//        /* operators for internal perceptions */
-//        table.put("^consider", new Consider("^consider"));  // find the most active concept
-//        table.put("^remind", new Remind("^remind"));        // create/activate a concept
-//        table.put("^wait", neSampleit("^wait"));              // wait for a certain number of clock cycle
+        memory.registerOperator(new Want());
+        memory.registerOperator(new Wonder());
+        memory.registerOperator(new Evaluate());
+        // concept operations
+        memory.registerOperator(new Remind());
+        memory.registerOperator(new Consider());
+        
         /*
          * observe          // process a new task (Channel ID: optional?)
-         * think            // carry out a working cycle
-         * do               // turn a statement into a goal
          *
          * possibility      // return the possibility of a term
          * doubt            // decrease the confidence of a belief
@@ -123,17 +121,7 @@ public abstract class Operator extends Term {
          * comparisons      // < = >
          * inference        // binary inference
          *
-         * assume           // local assumption ???
          * name             // turn a compount term into an atomic term ???
-         * ???              // rememberAction the history of the system? excutions of operatons?
          */
-        /* operators for testing examples */
-//        table.put("^go-to", new GoTo("^go-to"));
-//        table.put("^pick", new Pick("^pick"));
-//        table.put("^open", new Open("^open"));
-//        table.put("^break", new Break("^break"));
-//        table.put("^drop", new Drop("^drop"));
-//        table.put("^throw", new Throw("^throw"));
-//        table.put("^strike", new Strike("^strike"));
-    }
+     }
 }
