@@ -37,6 +37,11 @@ public class Term implements Cloneable, Comparable<Term> {
      * given alphabet (ASCII or Unicode)
      */
     protected String name;
+    
+    /**
+     * Integer added into the name of internally created terms
+     */
+    private static long serial = 1;
 
     /**
      * Default constructor that build an internal Term
@@ -51,6 +56,16 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     public Term(final String name) {
         setName(name);
+    }
+    
+    /**
+     * Constructor with a given name
+     *
+     * @param prefix The prefix of all internal term names
+     */
+    public Term(char prefix) {
+        this("" + prefix + serial);
+        serial++;
     }
 
     /**

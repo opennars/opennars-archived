@@ -104,12 +104,12 @@ public abstract class Operator extends Term {
         // concept operations
         memory.registerOperator(new Remind());
         memory.registerOperator(new Consider());
+        memory.registerOperator(new Name());
         // truth-value operations
         memory.registerOperator(new Doubt());
         memory.registerOperator(new Hesitate());
+        
         /*
-         *
-         *
          * feel             // the overall happyness, average solution quality, and predictions
          * busy             // the overall business
          * name             // turn a compount term into an atomic term ???
