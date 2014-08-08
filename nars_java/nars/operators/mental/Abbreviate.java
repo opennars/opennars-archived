@@ -27,12 +27,12 @@ import nars.operators.Operator;
 import nars.storage.Memory;
 
 /**
- * Operator that give a CompoundTerm a new name
+ * Operator that give a CompoundTerm an atomic name
  */
-public class Name extends Operator {
+public class Abbreviate extends Operator {
 
-    public Name() {
-        super("^name");
+    public Abbreviate() {
+        super("^abbreviate");
     }
 
     /**
@@ -44,7 +44,7 @@ public class Name extends Operator {
     @Override
     protected ArrayList<Task> execute(ArrayList<Term> args, Memory memory) {
         Term compound = args.get(0);
-        Term atomic = args.get(1);
+        Term atomic = new Term(Symbols.TERM_PREFIX);
         Equivalence content = Equivalence.make(compound, atomic, memory);
         Stamp stamp = new Stamp(memory.getTime(), "");  
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
@@ -56,4 +56,5 @@ public class Name extends Operator {
         feedback.add(task);
         return feedback;
     }
+    
 }
