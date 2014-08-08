@@ -124,6 +124,12 @@ public class Parameters {
      * set to zero to disable this feature.
      */
     public static int INTERNED_TERM_NAME_MAXLEN = 6;
-    
+
+    /**
+     * The rate of confidence decrease in mental operations Doubt and Hesitate
+     * set to zero to disable this feature.
+     */
+    public static float DISCOUNT_RATE = 0.5f;
+
 }
 

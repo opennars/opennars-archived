@@ -27,10 +27,10 @@ import nars.storage.Memory;
 /**
  * Operator that activates a concept
  */
-public class Consider extends Operator {
+public class Hesitate extends Operator {
 
-    public Consider() {
-        super("^consider");
+    public Hesitate() {
+        super("^hesitate");
     }
 
     /**
@@ -44,8 +44,8 @@ public class Consider extends Operator {
     protected ArrayList<Task> execute(ArrayList<Term> args, Memory memory) {
         Term term = args.get(0);
         Concept concept = memory.getConcept(term);
-        concept.fire();
+        concept.discountConfidence(true);
         return null;
     }
-
+    
 }

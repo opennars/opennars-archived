@@ -104,27 +104,27 @@ public abstract class Operator extends Term {
         // concept operations
         memory.registerOperator(new Remind());
         memory.registerOperator(new Consider());
-        
+        // truth-value operations
+        memory.registerOperator(new Doubt());
+        memory.registerOperator(new Hesitate());
         /*
-         * observe          // process a new task (Channel ID: optional?)
          *
-         * possibility      // return the possibility of a term
-         * doubt            // decrease the confidence of a belief
-         * hesitate         // decrease the confidence of a goal
          *
          * feel             // the overall happyness, average solution quality, and predictions
          * busy             // the overall business
-         *
-         * tell             // output a judgment (Channel ID: optional?)
-         * ask              // output a question/quest (Channel ID: optional?)
-         * demand           // output a goal (Channel ID: optional?)
+         * name             // turn a compount term into an atomic term ???
+         * do               // to turn a judgment into a goal (production rule)
          *
          * count            // count the number of elements in a set
          * arithmatic       // + - * /
          * comparisons      // < = >
          * inference        // binary inference
-         *
-         * name             // turn a compount term into an atomic term ???
+         * 
+         * observe          // get the most active input (Channel ID: optional?)
+         * anticipate       // get input of a certain pattern (Channel ID: optional?)
+         * tell             // output a judgment (Channel ID: optional?)
+         * ask              // output a question/quest (Channel ID: optional?)
+         * demand           // output a goal (Channel ID: optional?)
          */
      }
 }

@@ -20,9 +20,10 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
+import nars.inference.TruthFunctions;
 import nars.io.Symbols;
 import nars.language.*;
-import nars.inference.TruthFunctions;
 import nars.operators.Operator;
 
 /**
@@ -45,7 +46,7 @@ public class Sentence implements Cloneable {
     /**
      * The truth value of Judgment, or desire value of Goal
      */
-    final public TruthValue truth;
+    public TruthValue truth;    // to be change to protected
     /**
      * Partial record of the derivation path
      */
@@ -203,6 +204,15 @@ public class Sentence implements Cloneable {
      */
     public TruthValue getTruth() {
         return truth;
+    }
+    
+    /**
+     * Get the truth value (or desire value) of the sentence
+     *
+     * @return Truth value, null for question
+     */
+    public void discountConfidence() {
+        truth = new TruthValue(truth.getFrequency(), truth.getConfidence() * Parameters.DISCOUNT_RATE);
     }
 
     /**
