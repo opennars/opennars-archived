@@ -44,7 +44,7 @@ public class Hesitate extends Operator {
     protected ArrayList<Task> execute(ArrayList<Term> args, Memory memory) {
         Term term = args.get(0);
         Concept concept = memory.getConcept(term);
-        concept.discountConfidence(true);
+        concept.discountConfidence(false);
         return null;
     }
     
