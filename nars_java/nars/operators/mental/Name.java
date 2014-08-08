@@ -45,7 +45,7 @@ public class Name extends Operator {
     protected ArrayList<Task> execute(ArrayList<Term> args, Memory memory) {
         Term compound = args.get(0);
         Term atomic = args.get(1);
-        Equivalence content = Equivalence.make(compound, atomic, memory);
+        Similarity content = Similarity.make(compound, atomic, memory);
         Stamp stamp = new Stamp(memory.getTime(), "");  
         TruthValue truth = new TruthValue(1, 0.9999f);  // a naming convension
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT_MARK, truth, stamp);
