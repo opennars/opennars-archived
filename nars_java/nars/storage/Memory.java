@@ -63,6 +63,11 @@ public class Memory {
      * Inference record text to be written into a log file
      */
     private InferenceRecorder recorder;
+    /* ---------- global variables used to record emotional values ---------- */
+    /** average desire-value */
+    private static float happy;
+    /** average priority */
+    private static float busy;
 
     public final AtomicInteger beliefForgettingRate = new AtomicInteger(Parameters.TERM_LINK_FORGETTING_CYCLE);
     public final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
@@ -134,6 +139,8 @@ public class Memory {
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new ArrayDeque<>();
         lastEvent = null;
+        happy = 0.5f;
+        busy = 0.5f;
     }
 
     public void init() {
@@ -145,6 +152,8 @@ public class Memory {
             getRecorder().append("--reset--");
         }
         lastEvent = null;
+        happy = 0.5f;
+        busy = 0.5f;
     }
 
     public InferenceRecorder getRecorder() {
@@ -540,6 +549,7 @@ public class Memory {
         Task newEvent = null;
         while (counter-- > 0) {
             final Task task = newTasks.removeFirst();
+            adjustBusy(task.getPriority(), task.getDurability());
             if (task.isInput() || (termToConcept(task.getContent()) != null)) {
                 // new addInput or existing concept
                 immediateProcess(task);
@@ -643,7 +653,33 @@ public class Memory {
         operators.put(op.getName(), op);
     }
     
-    
+    /* ---------- status evaluation ---------- */
+
+    public static float happyValue() {
+        return happy;
+    }
+
+    public static float busyValue() {
+        return busy;
+    }
+
+    public static void adjustHappy(float newValue, float weight) {
+//        float oldV = happy;
+        happy += newValue * weight;
+        happy /= 1.0f + weight;
+//        if (Math.abs(oldV - happy) > 0.1) {
+//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happy*10.0) + "\n");
+//        }
+    }
+    public static void adjustBusy(float newValue, float weight) {
+//        float oldV = busy;
+        busy += newValue * weight;
+        busy /= (1.0f + weight);
+//        if (Math.abs(oldV - busy) > 0.1) {
+//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busy*10.0) + "\n");
+//        }
+    }
+
     /* ---------- display ---------- */
     /**
      * Start display active concepts on given bagObserver, called from

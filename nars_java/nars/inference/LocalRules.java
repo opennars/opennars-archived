@@ -108,6 +108,9 @@ public class LocalRules {
             if (oldBest != null) {
                 float oldQ = solutionQuality(problem, oldBest, memory);
                 if (oldQ >= newQ) {
+                    if (problem.isGoal()) {
+                        Memory.adjustHappy(oldQ, task.getPriority());
+                    }
                     return;
                 }
             }
@@ -120,6 +123,9 @@ public class LocalRules {
                 st.addToChain(belief.getContent(), belief);
             }
             task.setBestSolution(belief);
+            if (problem.isGoal()) {
+                Memory.adjustHappy(newQ, task.getPriority());
+            }
             if (task.isInput()) {    // moved from Sentence
                 memory.nar.output(OUT.class, belief);
             }

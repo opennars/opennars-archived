@@ -105,6 +105,8 @@ public abstract class Operator extends Term {
         memory.registerOperator(new Remind());
         memory.registerOperator(new Consider());
         memory.registerOperator(new Name());
+        memory.registerOperator(new Abbreviate());
+        memory.registerOperator(new Register());
         // truth-value operations
         memory.registerOperator(new Doubt());
         memory.registerOperator(new Hesitate());
@@ -112,8 +114,8 @@ public abstract class Operator extends Term {
         /*
          * feel             // the overall happyness, average solution quality, and predictions
          * busy             // the overall business
-         * name             // turn a compount term into an atomic term ???
-         * do               // to turn a judgment into a goal (production rule)
+        
+         * do               // to turn a judgment into a goal (production rule) ??
          *
          * count            // count the number of elements in a set
          * arithmatic       // + - * /
