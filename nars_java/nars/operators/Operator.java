@@ -25,6 +25,7 @@ import java.util.*;
 
 import nars.language.*;
 import nars.entity.Task;
+import nars.io.Symbols;
 import nars.storage.Memory;
 
 /**
@@ -91,6 +92,8 @@ public abstract class Operator extends Term {
      * @param memory The memory space in which the operators are registered
      */
     public static void loadDefaultOperators(Memory memory) {
+        // create self
+        memory.getConcept(new Term(Symbols.SELF));
         // template to be removed later
         memory.registerOperator(new Sample());  
         // task creation

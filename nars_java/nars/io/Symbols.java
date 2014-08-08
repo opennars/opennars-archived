@@ -199,4 +199,7 @@ public class Symbols {
     public static final String TO_COMPONENT_2 = ")_ ";
     public static final String TO_COMPOUND_1 = " _@(";
     public static final String TO_COMPOUND_2 = ") ";
+    
+    /* Special term for self */
+    public static final String SELF = "SELF";
 }

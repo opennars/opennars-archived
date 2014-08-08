@@ -85,6 +85,8 @@ public class Operation extends Inheritance {
             return (Operation) t;
         }
         ArrayList<Term> opArg = new ArrayList<>();
+        Term self = memory.nameToTerm(Symbols.SELF);
+        arg.add(self);
         Term list = Product.make(arg, memory);
         opArg.add(list);
         opArg.add(oper);
@@ -94,9 +96,9 @@ public class Operation extends Inheritance {
     public static String makeName(final String op, ArrayList<Term> arg, Memory memory) {
         final StringBuilder nameBuilder = new StringBuilder(16 /* estimate */)
                 .append(Symbols.COMPOUND_TERM_OPENER).append(op);
-        for (final Term t : arg) {
+        for (int i = 0; i < arg.size()-1; i++) { 
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-            nameBuilder.append(t.getName());
+            nameBuilder.append(arg.get(i).getName());
         }
         nameBuilder.append(Symbols.COMPOUND_TERM_CLOSER);
         return nameBuilder.toString();
