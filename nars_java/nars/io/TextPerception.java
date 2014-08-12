@@ -104,7 +104,7 @@ public class TextPerception {
                         input = input.substring(inputPrefix.length());
                     }
                     input = input.trim();
-                    
+
                     int cycles = Integer.parseInt(input);
                     nar.output(IN.class, cycles);
                     nar.step(cycles);
@@ -597,11 +597,12 @@ public class TextPerception {
     private static Term parseCompoundTerm(String s0, Memory memory) throws InvalidInputException {
         String s = s0.trim();
         int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
-        String op = s.substring(0, firstSeparator).trim();
+        String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
         if (!memory.isRegisteredOperator(op) && !CompoundTerm.isInnateOperator(op)) {
             throw new InvalidInputException("unknown operator: " + op);
         }
-        ArrayList<Term> arg = parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
+        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<Term>(0)
+                : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR, memory);
         Term t = CompoundTerm.make(op, arg, memory);
         if (t == null) {
             throw new InvalidInputException("invalid compound term");

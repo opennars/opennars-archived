@@ -66,9 +66,9 @@ public class Memory {
     private InferenceRecorder recorder;
     /* ---------- global variables used to record emotional values ---------- */
     /** average desire-value */
-    private static float happy;
+    private static float happyValue;
     /** average priority */
-    private static float busy;
+    private static float busyValue;
 
     public final AtomicInteger beliefForgettingRate = new AtomicInteger(Parameters.TERM_LINK_FORGETTING_CYCLE);
     public final AtomicInteger taskForgettingRate = new AtomicInteger(Parameters.TASK_LINK_FORGETTING_CYCLE);
@@ -122,6 +122,13 @@ public class Memory {
         return lastEvent.getBudget();
     }
 
+    public float getHappy() {
+        return happyValue;
+    }
+
+    public float getBusy() {
+        return busyValue;
+    }
 
     /* ---------- Constructor ---------- */
     /**
@@ -136,12 +143,13 @@ public class Memory {
         recorder = NullInferenceRecorder.global;
         concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
         operators = new HashMap<>();
-        Operator.loadDefaultOperators(this);
+        Operator.loadMentalOperators(this);
+        Operator.loadOptionalOperators(this);
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new ArrayDeque<>();
         lastEvent = null;
-        happy = 0.5f;
-        busy = 0.5f;
+        happyValue = 0.5f;
+        busyValue = 0.5f;
     }
 
     public void init() {
@@ -153,8 +161,8 @@ public class Memory {
             getRecorder().append("--reset--");
         }
         lastEvent = null;
-        happy = 0.5f;
-        busy = 0.5f;
+        happyValue = 0.5f;
+        busyValue = 0.5f;
     }
 
     public InferenceRecorder getRecorder() {
@@ -670,27 +678,27 @@ public class Memory {
     /* ---------- status evaluation ---------- */
 
     public static float happyValue() {
-        return happy;
+        return happyValue;
     }
 
     public static float busyValue() {
-        return busy;
+        return busyValue;
     }
 
     public static void adjustHappy(float newValue, float weight) {
-//        float oldV = happy;
-        happy += newValue * weight;
-        happy /= 1.0f + weight;
-//        if (Math.abs(oldV - happy) > 0.1) {
-//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happy*10.0) + "\n");
+//        float oldV = happyValue;
+        happyValue += newValue * weight;
+        happyValue /= 1.0f + weight;
+//        if (Math.abs(oldV - happyValue) > 0.1) {
+//            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
 //        }
     }
     public static void adjustBusy(float newValue, float weight) {
-//        float oldV = busy;
-        busy += newValue * weight;
-        busy /= (1.0f + weight);
-//        if (Math.abs(oldV - busy) > 0.1) {
-//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busy*10.0) + "\n");
+//        float oldV = busyValue;
+        busyValue += newValue * weight;
+        busyValue /= (1.0f + weight);
+//        if (Math.abs(oldV - busyValue) > 0.1) {
+//            Record.append("BUSY: " + (int) (oldV*10.0) + " to " + (int) (busyValue*10.0) + "\n");
 //        }
     }
 

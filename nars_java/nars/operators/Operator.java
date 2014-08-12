@@ -45,7 +45,8 @@ public abstract class Operator extends Term {
      * Required method for every operator, specifying the corresponding
      * operation
      *
-     * @param task The task with the arguments to be passed to the operator
+     * @param args Arguments of the operation
+     * @param memory The memory to work on
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
@@ -90,18 +91,18 @@ public abstract class Operator extends Term {
 //  }
 
     /**
-     * Register all known operators in the memory
+     * Register the mental operators in the memory
      * <p>
      * The only method to modify when adding a new registered operator into
      * NARS. An operator name should contain at least two characters after '^'.
      *
      * @param memory The memory space in which the operators are registered
      */
-    public static void loadDefaultOperators(Memory memory) {
-        // create self
+    public static void loadMentalOperators(Memory memory) {
+        // create self --- may be moved to a separate method 
+        // that create all innate terms, including "Happy" and "Busy"
         memory.getConcept(new Term(Symbols.SELF));
-        // template to be removed later
-        memory.registerOperator(new Sample());  
+        
         // task creation
         memory.registerOperator(new Believe());
         memory.registerOperator(new Want());
@@ -116,26 +117,32 @@ public abstract class Operator extends Term {
         // truth-value operations
         memory.registerOperator(new Doubt());
         memory.registerOperator(new Hesitate());
-        // math operations
-        memory.registerOperator(new Count());
-        memory.registerOperator(new Add());
+        // feeling operations
+        memory.registerOperator(new FeelHappy());
+        memory.registerOperator(new FeelBusy());
         
-        /*
-         * feel             // the overall happyness, average solution quality, and predictions
-         * busy             // the overall business
-        
-         * do               // to turn a judgment into a goal (production rule) ??
-         *
-         * count            // count the number of elements in a set
-         * arithmatic       // + - * /
-         * comparisons      // < = >
-         * inference        // binary inference
-         * 
+        /* 
+         *          I/O operations under consideration
          * observe          // get the most active input (Channel ID: optional?)
-         * anticipate       // get input of a certain pattern (Channel ID: optional?)
+         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
          * tell             // output a judgment (Channel ID: optional?)
          * ask              // output a question/quest (Channel ID: optional?)
          * demand           // output a goal (Channel ID: optional?)
          */
      }
+    
+    /**
+     * Register the mental operators in the memory
+     * <p>
+     * The only method to modify when adding a new registered operator into
+     * NARS. An operator name should contain at least two characters after '^'.
+     *
+     * @param memory The memory space in which the operators are registered
+     */
+    public static void loadOptionalOperators(Memory memory) {
+        // math operations
+        memory.registerOperator(new Count());
+        memory.registerOperator(new Add());
+     }
+
 }
