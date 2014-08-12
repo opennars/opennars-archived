@@ -29,9 +29,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import nars.entity.*;
 import nars.inference.*;
-import nars.language.Term;
+import nars.language.*;
 import nars.core.*;
 import nars.io.Output.OUT;
+import nars.io.Symbols;
 import nars.operators.Operator;
 
 /**
@@ -323,6 +324,19 @@ public class Memory {
         }
 
         addNewTask(task, "Activated");
+    }
+    
+    /**
+     * ExecutedTask called in Operator.reportExecution
+     *
+     * @param operation The operation just executed
+     */
+    public void executedTask(Operation operation) {
+        TruthValue truth = new TruthValue(1f,0.9999f);
+        Stamp stamp = new Stamp(getTime(), Symbols.TENSE_PRESENT); 
+        Sentence sentence = new Sentence(operation, Symbols.JUDGMENT_MARK, truth, stamp);
+        Task task = new Task(sentence, currentTask.getBudget());
+        addNewTask(task, "Exercuted");
     }
 
     /**

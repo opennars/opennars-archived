@@ -40,7 +40,7 @@ public class Operation extends Inheritance {
      * @param name
      * @param arg The component list of the term
      */
-    protected Operation(String name, ArrayList<Term> arg) {
+    public Operation(String name, ArrayList<Term> arg) {
         super(arg);
         this.name = name;
     }
@@ -66,7 +66,27 @@ public class Operation extends Inheritance {
     public Object clone() {
         return new Operation(name, cloneList(components), isConstant, complexity);
     }
-
+    
+    /**
+     * Try to make a new compound from two components. Called by the inference
+     * rules.
+     *
+     * @param memory Reference to the memory
+     * @return A compound generated or null
+     */
+    public static Operation make(Operator oper, ArrayList<Term> args, Memory memory) {
+        String name = makeName(oper.getName(), args, memory);
+        Term t = memory.nameToTerm(name);
+        if (t != null) {
+            return (Operation) t;
+        }
+        ArrayList<Term> opArg = new ArrayList<>(2);
+        Term list = Product.make(args, memory);
+        opArg.add(list);
+        opArg.add(oper);
+        return new Operation(name, opArg);
+    }
+    
     /**
      * Try to make a new compound from two components. Called by the inference
      * rules.

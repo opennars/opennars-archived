@@ -60,7 +60,9 @@ public abstract class Operator extends Term {
      */
     public void call(Operator op, ArrayList<Term> args, Memory memory) {
         ArrayList<Task> feedback = op.execute(args, memory);
-        reportExecution(op, args, memory);
+        Operation operation = Operation.make(op, args, memory);
+        memory.executedTask(operation);
+//        reportExecution(op, args, memory);
         if (feedback != null) {
             for (Task t : feedback) {
                 memory.inputTask(t);
@@ -74,14 +76,17 @@ public abstract class Operator extends Term {
      * <p>
      * @param operation The content of the operation to be executed
      */
-    private void reportExecution(Operator op, ArrayList<Term> args, Memory memory) {
-        StringBuilder buffer = new StringBuilder(args.size());
-        for (Term t : args) {
-            buffer.append(t).append(",");
-        }
-        // to be redirected to an output channel
-        System.out.println("EXECUTE: " + op + "(" + buffer.toString() + ")");
-    }
+//    private void reportExecution(Operator op, ArrayList<Term> args, Memory memory) {
+//        Operation operation = Operation.make(op.getName(), args, memory);
+//        memory.executedTask(operation);
+//        StringBuilder buffer = new StringBuilder(args.size());
+//        for (Term t : args) {
+//            buffer.append(t).append(",");
+//        }
+//        // to be redirected to an output channel
+//        System.out.println("EXECUTE: " + op + "(" + buffer.toString() + ")");
+//
+//  }
 
     /**
      * Register all known operators in the memory
