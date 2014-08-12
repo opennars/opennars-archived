@@ -21,6 +21,7 @@
 package nars.operators;
 
 import nars.operators.mental.*;
+import nars.operators.math.*;
 import java.util.*;
 
 import nars.language.*;
@@ -59,7 +60,7 @@ public abstract class Operator extends Term {
      * @param memory The memory on which the operation is executed
      */
     public void call(Operator op, ArrayList<Term> args, Memory memory) {
-        ArrayList<Task> feedback = op.execute(args, memory);
+        ArrayList<Task> feedback = op.execute(args, memory); // to identify failed operation?
         Operation operation = Operation.make(op, args, memory);
         memory.executedTask(operation);
 //        reportExecution(op, args, memory);
@@ -115,6 +116,9 @@ public abstract class Operator extends Term {
         // truth-value operations
         memory.registerOperator(new Doubt());
         memory.registerOperator(new Hesitate());
+        // math operations
+        memory.registerOperator(new Count());
+        memory.registerOperator(new Add());
         
         /*
          * feel             // the overall happyness, average solution quality, and predictions
