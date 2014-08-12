@@ -26,7 +26,6 @@ import java.util.*;
 
 import nars.language.*;
 import nars.entity.Task;
-import nars.io.Symbols;
 import nars.storage.Memory;
 
 /**
@@ -45,12 +44,65 @@ public abstract class Operator extends Term {
      * Required method for every operator, specifying the corresponding
      * operation
      *
-     * @param args Arguments of the operation
+     * @param args Arguments of the operation, both input (constant) and output (variable)
      * @param memory The memory to work on
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
     protected abstract ArrayList<Task> execute(ArrayList<Term> args, Memory memory);
+
+    /**
+     * Register the mental operators in the memory
+     * <p>
+     * @return The operator table with preloaded content
+     */
+    public static HashMap<String, Operator> loadOperators() {
+        HashMap<String, Operator> table = new HashMap<>(20);
+        // task creation
+        registerOperator(table, new Believe());
+        registerOperator(table, new Want());
+        registerOperator(table, new Wonder());
+        registerOperator(table, new Evaluate());
+        // concept operations
+        registerOperator(table, new Remind());
+        registerOperator(table, new Consider());
+        registerOperator(table, new Name());
+        registerOperator(table, new Abbreviate());
+        registerOperator(table, new Register());
+        // truth-value operations
+        registerOperator(table, new Doubt());
+        registerOperator(table, new Hesitate());
+        // feeling operations
+        registerOperator(table, new FeelHappy());
+        registerOperator(table, new FeelBusy());   
+        /* 
+         *          I/O operations under consideration
+         * observe          // get the most active input (Channel ID: optional?)
+         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
+         * tell             // output a judgment (Channel ID: optional?)
+         * ask              // output a question/quest (Channel ID: optional?)
+         * demand           // output a goal (Channel ID: optional?)
+         */
+        loadOptionalOperators(table);
+        return table;
+     }
+    
+    /**
+     * Register optional operators in the memory
+     * <p>
+     * The only method to modify when adding a new registered operator into NARS.
+     *
+     * @param table The operator table
+     */
+    public static void loadOptionalOperators(HashMap<String, Operator> table) {
+        // math operations
+        registerOperator(table, new Count());
+        registerOperator(table, new Add());
+     }
+    
+    private static void registerOperator(HashMap<String, Operator> table, Operator op) {
+        table.put(op.getName(), op);
+    }
 
     /**
      * The standard way to carry out an operation, which invokes the execute
@@ -89,60 +141,4 @@ public abstract class Operator extends Term {
 //        System.out.println("EXECUTE: " + op + "(" + buffer.toString() + ")");
 //
 //  }
-
-    /**
-     * Register the mental operators in the memory
-     * <p>
-     * The only method to modify when adding a new registered operator into
-     * NARS. An operator name should contain at least two characters after '^'.
-     *
-     * @param memory The memory space in which the operators are registered
-     */
-    public static void loadMentalOperators(Memory memory) {
-        // create self --- may be moved to a separate method 
-        // that create all innate terms, including "Happy" and "Busy"
-        memory.getConcept(new Term(Symbols.SELF));
-        
-        // task creation
-        memory.registerOperator(new Believe());
-        memory.registerOperator(new Want());
-        memory.registerOperator(new Wonder());
-        memory.registerOperator(new Evaluate());
-        // concept operations
-        memory.registerOperator(new Remind());
-        memory.registerOperator(new Consider());
-        memory.registerOperator(new Name());
-        memory.registerOperator(new Abbreviate());
-        memory.registerOperator(new Register());
-        // truth-value operations
-        memory.registerOperator(new Doubt());
-        memory.registerOperator(new Hesitate());
-        // feeling operations
-        memory.registerOperator(new FeelHappy());
-        memory.registerOperator(new FeelBusy());
-        
-        /* 
-         *          I/O operations under consideration
-         * observe          // get the most active input (Channel ID: optional?)
-         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
-         * tell             // output a judgment (Channel ID: optional?)
-         * ask              // output a question/quest (Channel ID: optional?)
-         * demand           // output a goal (Channel ID: optional?)
-         */
-     }
-    
-    /**
-     * Register the mental operators in the memory
-     * <p>
-     * The only method to modify when adding a new registered operator into
-     * NARS. An operator name should contain at least two characters after '^'.
-     *
-     * @param memory The memory space in which the operators are registered
-     */
-    public static void loadOptionalOperators(Memory memory) {
-        // math operations
-        memory.registerOperator(new Count());
-        memory.registerOperator(new Add());
-     }
-
 }

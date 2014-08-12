@@ -105,7 +105,7 @@ public class Operation extends Inheritance {
             return (Operation) t;
         }
         ArrayList<Term> opArg = new ArrayList<>();
-        Term self = memory.nameToTerm(Symbols.SELF);
+        Term self = new Term(Symbols.SELF);
         arg.add(self);
         Term list = Product.make(arg, memory);
         opArg.add(list);

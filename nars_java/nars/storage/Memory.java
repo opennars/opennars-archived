@@ -142,9 +142,7 @@ public class Memory {
         this.nar = nar;
         recorder = NullInferenceRecorder.global;
         concepts = new ConceptBag(nar.config.getConceptBagLevels(), nar.config.getConceptBagSize(), conceptForgettingRate);
-        operators = new HashMap<>();
-        Operator.loadMentalOperators(this);
-        Operator.loadOptionalOperators(this);
+        operators = Operator.loadOperators();
         novelTasks = new NovelTaskBag(nar.config.getConceptBagLevels(), Parameters.TASK_BUFFER_SIZE);
         newTasks = new ArrayDeque<>();
         lastEvent = null;
@@ -671,6 +669,7 @@ public class Memory {
        return operators.get(op);
     }
     
+    /* ---------- dynamically load an operator ---------- */
     public void registerOperator(Operator op) {
         operators.put(op.getName(), op);
     }

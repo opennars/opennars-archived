@@ -44,7 +44,7 @@ public abstract class Feel extends Operator {
     protected ArrayList<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory.getTime(), Symbols.TENSE_PRESENT);
         TruthValue truth = new TruthValue(value, 0.999f);
-        Term self = memory.nameToTerm(Symbols.SELF);
+        Term self = new Term(Symbols.SELF);
         Term subject = SetExt.make(self, memory);
         Term predicate = SetInt.make(new Term(name.substring(5)), memory); // remove the "^feel" prefix from name
         Term content = Inheritance.make(subject, predicate, memory);
