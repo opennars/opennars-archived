@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -28,6 +29,7 @@ import nars.language.Term;
 import nars.storage.Memory;
 import nars.util.NARGraph;
 import nars.util.NARGraph.ExcludeBelowPriority;
+import nars.util.NARGraph.NAREdge;
 import processing.core.PApplet;
 
 
@@ -496,13 +498,13 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         
             
         
-        
-        for (final Object edge : graph.edgeSet()) {
-
+        Iterator<NARGraph.NAREdge> ie = graph.iterateEdges();
+        while (ie.hasNext()) {
+            NAREdge edge = ie.next();
             
 
-            final VertexDisplay elem1 = vertices.get(graph.getEdgeSource(edge));
-            final VertexDisplay elem2 = vertices.get(graph.getEdgeTarget(edge));                
+            final VertexDisplay elem1 = vertices.get(edge.getSourceNode());
+            final VertexDisplay elem2 = vertices.get(edge.getDestinationNode());
             if ((elem1 == null) || (elem2 == null))
                 continue;
 

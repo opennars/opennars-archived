@@ -1,17 +1,16 @@
 package nars.util;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import com.syncleus.dann.graph.AbstractDirectedEdge;
+import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.xml.transform.TransformerConfigurationException;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -19,27 +18,16 @@ import nars.entity.Task;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.AbstractBag;
-import org.jgrapht.ext.GmlExporter;
-import org.jgrapht.ext.GraphMLExporter;
-import org.jgrapht.ext.IntegerEdgeNameProvider;
-import org.jgrapht.ext.IntegerNameProvider;
-import org.jgrapht.ext.StringEdgeNameProvider;
-import org.jgrapht.ext.StringNameProvider;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DirectedMultigraph;
-import org.xml.sax.SAXException;
+import nars.util.NARGraph.NAREdge;
+
 
 /**
  * Stores the contents of some, all, or of multiple NAR memory snapshots.
  *
  * @author me
  */
-public class NARGraph extends DirectedMultigraph {
+public class NARGraph extends MutableDirectedAdjacencyGraph<Object, NAREdge> {
 
-    @Override
-    public Object clone() {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
-    }
 
     /**
      * determines which NARS term can result in added graph features
@@ -92,73 +80,76 @@ public class NARGraph extends DirectedMultigraph {
         void onFinish(NARGraph g);
     }
     
-    public static class NAREdge extends DefaultEdge {
+    public abstract static class NAREdge extends AbstractDirectedEdge<Object>    {
 
-        @Override
-        public Object getSource() { return super.getSource();         }
-        @Override
-        public Object getTarget() { return super.getTarget();         }
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        public NAREdge(Object source, Object target) {
+            super(source, target);
         }
+        
         
     }
             
 
     public static class TermBelief extends NAREdge  {
+
+        public TermBelief(Object source, Object target) { super(source, target); }
         @Override public String toString() { return "belief"; }        
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
-        }
     }
     public static class TermQuestion extends NAREdge  {
+
+        public TermQuestion(Object source, Object target) {
+            super(source, target);
+        }
+        
         @Override public String toString() { return "question"; }        
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
-        }
     }
     public static class TermDerivation extends NAREdge  {
+
+        public TermDerivation(Object source, Object target) {
+            super(source, target);
+        }
         @Override public String toString() { return "derives"; }
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
-        }
     }
     public static class TermContent extends NAREdge  {
+
+        public TermContent(Object source, Object target) {
+            super(source, target);
+        }
         @Override public String toString() { return "has"; }        
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
-        }
     }
     public static class TermType extends NAREdge  {
+
+        public TermType(Object source, Object target) {
+            super(source, target);
+        }
         @Override public String toString() { return "type"; }        
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
-        }
     }
     public static class SentenceContent extends NAREdge  {
+
+        public SentenceContent(Object source, Object target) {
+            super(source, target);
+        }
         @Override public String toString() { return "sentence"; }
 
-        @Override
-        public Object clone() {
-            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+    public static class TaskInherit extends NAREdge  {
+
+        public TaskInherit(Object child, Object parent) {
+            super(child, parent);
         }
+        @Override public String toString() { return "task"; }
+
     }
         
     
     public NARGraph() {
-        super(DefaultEdge.class);
+        super();
     }
 
     public List<Concept> currentLevel = new ArrayList();
@@ -192,22 +183,14 @@ public class NARGraph extends DirectedMultigraph {
 
     }
 
-    public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e) {
-        return addEdge(sourceVertex,targetVertex,e,false);
-    }
-
-    public boolean addEdge(Object sourceVertex, Object targetVertex, NAREdge e, boolean allowMultiple) {
-        if (!allowMultiple) {
-            Set existing = getAllEdges(sourceVertex, targetVertex);       
-            if (existing != null)                
-                for (Object o : existing) {
-                    if (o.getClass() == e.getClass()) {
-                        return false;
-                    }
-                }
+    public boolean addEdge(NAREdge e, boolean allowMultiple) {
+        if (!allowMultiple) {            
+            Iterator<NAREdge> existing = iterateAdjacentEdges(e.getSourceNode(), e.getDestinationNode());
+            if (existing.hasNext())
+                return false;            
         }
-        
-        return super.addEdge(sourceVertex, targetVertex, e);
+                
+        return add(e);
     }
     
     
@@ -244,7 +227,7 @@ public class NARGraph extends DirectedMultigraph {
 
         protected void addTerm(NARGraph g, Term t) {
             if (terms.add(t)) {
-                g.addVertex(t);
+                g.add(t);
                 onTerm(t);
             }
         }
@@ -272,8 +255,9 @@ public class NARGraph extends DirectedMultigraph {
                     onBelief(belief);
 
                     sentenceTerms.put(belief, term);
-                    g.addVertex(belief);
-                    g.addEdge(belief, term, new SentenceContent());
+                    
+                    g.add(belief);
+                    g.addEdge(new SentenceContent(belief,term), false);
                     
                     //TODO extract to onBelief                    
 
@@ -283,7 +267,7 @@ public class NARGraph extends DirectedMultigraph {
                         continue;
                     
                     addTerm(g, belief.content);                    
-                    g.addEdge(term, belief.content, new TermBelief());                    
+                    g.addEdge(new TermBelief(term, belief.content), false);                    
                 }
             }
             
@@ -300,7 +284,7 @@ public class NARGraph extends DirectedMultigraph {
                     //TODO q.getParentBelief()
                     //TODO q.getParentTask()                    
                             
-                    g.addEdge(term, q.getContent(), new TermQuestion());
+                    g.addEdge(new TermQuestion(term, q.getContent()), false);
                     
                     onQuestion(q);
                 }
@@ -311,11 +295,12 @@ public class NARGraph extends DirectedMultigraph {
         void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
 
             for (Term b : c.term) {
-                if (!g.containsVertex(b))
-                    g.addVertex(b);
+                if (!g.contains(b))
+                    g.add(b);
+                
                 
                 if (!includeTermContent)
-                    g.addEdge(c, b, new TermContent());
+                    g.addEdge(new TermContent(c, b), false);
 
                 if ((level > 1) && (b instanceof CompoundTerm)) {                
                     recurseTermComponents(g, (CompoundTerm)b, level-1);
@@ -329,8 +314,8 @@ public class NARGraph extends DirectedMultigraph {
                 for (final Term a : terms) {
                     if (a instanceof CompoundTerm) {
                         CompoundTerm c = (CompoundTerm)a;
-                        g.addVertex(c.operator());
-                        g.addEdge(c.operator(), c, new TermType());            
+                        g.add(c.operator());
+                        g.addEdge(new TermType(c.operator(), c), false);
 
                         if (includeSyntax-1 > 0)
                             recurseTermComponents(g, c, includeSyntax-1);
@@ -346,10 +331,10 @@ public class NARGraph extends DirectedMultigraph {
                           if (a == b) continue;
 
                           if (a.containsTerm(b)) {
-                              g.addEdge(a, b, new TermContent());
+                              g.addEdge(new TermContent(a, b), false);
                           }
                           if (b.containsTerm(a)) {
-                              g.addEdge(b, a, new TermContent());
+                              g.addEdge(new TermContent(b, a), false);
                           }
                       }
                   }            
@@ -373,10 +358,10 @@ public class NARGraph extends DirectedMultigraph {
                         final Sentence deriverSentence = t.getKey();
                         
                         if (schain.contains(deriverSentence.content)) {
-                            g.addEdge(deriver, derived, new TermDerivation());
+                            g.addEdge(new TermDerivation(deriver, derived), false);
                         }
                         if (tchain.contains(derived)) {
-                            g.addEdge(derived, deriver, new TermDerivation());
+                            g.addEdge(new TermDerivation(derived, deriver), false);
                         }
                     }
                 }                
@@ -390,23 +375,5 @@ public class NARGraph extends DirectedMultigraph {
         
     }
     
-    public void toGraphML(Writer writer) throws SAXException, TransformerConfigurationException {
-        GraphMLExporter gme = new GraphMLExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
-        gme.export(writer, this);
-    }
-    
-    public void toGraphML(String outputFile) throws SAXException, TransformerConfigurationException, IOException {
-        toGraphML(new FileWriter(outputFile, false));
-    }
-
-    public void toGML(Writer writer)  {
-        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider(), new IntegerEdgeNameProvider(), new StringEdgeNameProvider());
-        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
-        gme.export(writer, this);
-    }
-    
-    public void toGML(String outputFile) throws IOException  {
-        toGML(new FileWriter(outputFile, false));
-    }    
     
 }

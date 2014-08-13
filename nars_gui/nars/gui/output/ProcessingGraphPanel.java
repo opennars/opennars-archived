@@ -1,8 +1,9 @@
 package nars.gui.output;
 
-import com.mxgraph.layout.mxCompactTreeLayout;
-import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.model.mxGeometry;
+
+import com.syncleus.dann.graph.drawing.GraphDrawer;
+import com.syncleus.dann.graph.drawing.hyperassociativemap.HyperassociativeMap;
+import com.syncleus.dann.math.Vector;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -35,7 +36,9 @@ import nars.language.Term;
 import nars.storage.Memory;
 import nars.util.NARGraph;
 import nars.util.NARGraph.DefaultGraphizer;
-import org.jgrapht.ext.JGraphXAdapter;
+import nars.util.NARGraph.NAREdge;
+import nars.util.NARGraph.SentenceContent;
+import nars.util.NARGraph.TermContent;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
@@ -63,7 +66,7 @@ class papplet extends PApplet implements ActionListener
 
     Hamlib hamlib = new Hamlib();
 
-
+    public float scale = 200f;
     
     public Button getBack;
     public Button conceptsView;
@@ -84,7 +87,8 @@ class papplet extends PApplet implements ActionListener
     float nodeSize = 90;
     
     NARGraph graph;
-    JGraphXAdapter layout;
+    GraphDrawer<NARGraph, Object> layout;
+    
     public boolean updating;
     boolean drawn = false;
 
@@ -183,11 +187,11 @@ class papplet extends PApplet implements ActionListener
         if (updating)
             return;
         
+        
 
-
-        try {
-            //  line(elem1.x, elem1.y, elem2.x, elem2.y);
-            for (Object edge : graph.edgeSet()) {
+        try {            
+            //TODO use iterator
+            for (NAREdge edge : graph.getEdges()) {
 
                 int rgb = getColor(edge.getClass().getSimpleName());
                 stroke(rgb, 230f);            
@@ -195,19 +199,19 @@ class papplet extends PApplet implements ActionListener
 
 
 
-                Object sourceVertex = graph.getEdgeSource(edge);
-                mxGeometry sourcePoint = layout.getCellGeometry(layout.getVertexToCellMap().get(sourceVertex));
+                Object sourceVertex = edge.getSourceNode();
+                Vector sourcePoint = layout.getCoordinates().get(sourceVertex);
 
-                Object targetVertex = graph.getEdgeTarget(edge);                          
-                mxGeometry targetPoint = layout.getCellGeometry(layout.getVertexToCellMap().get(targetVertex));
+                Object targetVertex = edge.getDestinationNode();
+                Vector targetPoint = layout.getCoordinates().get(targetVertex);
 
                 if ((sourcePoint == null) || (targetPoint == null))
                     continue;
 
-                float x1 = (float)sourcePoint.getCenterY();
-                float y1 = (float)sourcePoint.getCenterX();
-                float x2 = (float)targetPoint.getCenterY();
-                float y2 = (float)targetPoint.getCenterX();
+                float x1 = (float)sourcePoint.getCoordinate(2) * scale;
+                float y1 = (float)sourcePoint.getCoordinate(1) * scale;
+                float x2 = (float)targetPoint.getCoordinate(2) * scale;
+                float y2 = (float)targetPoint.getCoordinate(1) * scale;
                 float cx = (x1 + x2) / 2.0f;
                 float cy = (y1 + y2) / 2.0f;
                 drawArrow(x1, y1, x2, y2);
@@ -215,19 +219,18 @@ class papplet extends PApplet implements ActionListener
             }
 
             strokeWeight(0);        
-            for (Object vertex : graph.vertexSet()) {            
-                Object cell = layout.getVertexToCellMap().get(vertex);
-                mxGeometry b = layout.getCellGeometry(cell);            
+            for (Object vertex : graph.getNodes()) {            
+                
+                Vector b = layout.getCoordinates().get(vertex);
+                
                 if (b == null) continue;
 
                 int rgb = getColor(vertex.getClass().getSimpleName());
                 float vertexAlpha = getVertexAlpha(vertex);
                 fill(rgb, vertexAlpha*255/2);
 
-                float x = (float)b.getCenterY();
-                float y = (float)b.getCenterX();
-                double w = b.getWidth();
-                double h = b.getHeight();
+                float x = (float)b.getCoordinate(2) * scale;
+                float y = (float)b.getCoordinate(1) * scale;
 
                 float size = getVertexSize(vertex, nodeSize);
                 ellipse(x, y, size, size);            
@@ -515,7 +518,12 @@ class papplet extends PApplet implements ActionListener
                 hrend_DrawEnd();
                 //popMatrix();
                 
-                drawn = true;
+                
+                if ((layout!=null) && (layout.isAlignable())) {                    
+                    layout.align();                
+                }
+                else
+                    drawn = true;
             }
         }
     }
@@ -526,7 +534,7 @@ public class ProcessingGraphPanel extends JFrame {
 
     papplet app = null;
     private final NAR nar;
-    float edgeDistance = 10;
+    float edgeDistance = 30;
     private boolean showSyntax;
     private DefaultGraphizer graphizer;
     private final List<Sentence> sentences;
@@ -592,7 +600,6 @@ public class ProcessingGraphPanel extends JFrame {
             @Override
             public void onChange(double v) {
                 edgeDistance = (float)v;
-                ProcessingGraphPanel.this.update();
             }          
         };
         edgeDist.setPrefix("Separation: ");
@@ -702,11 +709,11 @@ public class ProcessingGraphPanel extends JFrame {
                
                     
                 for (Sentence s : getSentences()) {
-                    g.addVertex(s);
+                    g.add(s);
                     
                     Term t = s.content;
                     addTerm(g, t);
-                    g.addEdge(s, s.content, new NARGraph.SentenceContent());
+                    g.addEdge(new SentenceContent(s, s.content), false );
                     
                     if (t instanceof CompoundTerm) {
                         CompoundTerm ct = ((CompoundTerm)t);
@@ -715,7 +722,7 @@ public class ProcessingGraphPanel extends JFrame {
                         for (Term x : contained) {                            
                             addTerm(g, x);
                             if (ct.containsTerm(x))
-                                g.addEdge(x, t, new NARGraph.TermContent());
+                                g.addEdge(new TermContent(x, t), false);
                             
                             
                             for (Term y : contained) {
@@ -723,7 +730,7 @@ public class ProcessingGraphPanel extends JFrame {
                                 
                                 if (x != y)
                                     if (x.containsTerm(y))
-                                        g.addEdge(y, x, new NARGraph.TermContent());
+                                        g.addEdge(new TermContent(y, x), false);
                             }
                             
                                 
@@ -749,12 +756,22 @@ public class ProcessingGraphPanel extends JFrame {
         
 
         // create a visualization using JGraph, via an adapter
-        JGraphXAdapter layout = new JGraphXAdapter(g);
-        app.layout = layout;
+        /*JGraphXAdapter layout = new JGraphXAdapter(g);
+        app.layout = layout;*/
+        app.layout = new HyperassociativeMap<NARGraph,Object>(app.graph, 2) {
+
+            @Override
+            public void align() {
+                this.setEquilibriumDistance(edgeDistance/200f);
+                super.align();
+            }
+        };
+        app.layout.reset();
         
        
         /*
          */
+        /*
         switch (layoutMode) {
             case "Graph":
                 mxFastOrganicLayout l = new mxFastOrganicLayout(layout);
@@ -773,7 +790,7 @@ public class ProcessingGraphPanel extends JFrame {
                 layout2.execute(layout.getDefaultParent());
                 break;
         }
-        
+        */
         
         
         
