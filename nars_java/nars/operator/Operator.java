@@ -21,6 +21,7 @@
 
 package nars.operator;
 
+import java.util.ArrayList;
 import java.util.List;
 import nars.entity.Task;
 import nars.language.Statement;
@@ -60,8 +61,8 @@ public abstract class Operator extends Term {
     * @param args The arguments to be taken by the operator
     * @param memory The memory on which the operation is executed
     */
-    public void call(final Operation operation, final Term[] args, final Memory memory) {
-        List<Task> feedback = execute(operation, args, memory); // to identify failed operation?
+    public void call(final Task task, final Operation operation, final Memory memory) {
+        List<Task> feedback = execute(operation, operation.getArguments(), memory); // to identify failed operation?
         memory.executedTask(operation);
         //        reportExecution(op, args, memory);
         
@@ -109,6 +110,11 @@ public abstract class Operator extends Term {
 //        memory.output(EXE.class, operator + " " + Arrays.toString(args));
 //    }
     
+    public static ArrayList<Task> theTask(final Task t) {
+        ArrayList<Task> a = new ArrayList(1);
+        a.add(t);
+        return a;
+    }
 
 }
 

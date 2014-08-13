@@ -3,12 +3,14 @@ package nars.operator.software;
 import java.util.ArrayList;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import nars.core.Parameters;
 import nars.entity.Task;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import static nars.operator.Operator.theTask;
 import nars.storage.Memory;
 
 /**
@@ -29,6 +31,7 @@ public class Javascript extends Operator {
         js.put("memory", memory);
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
+        //TODO allow without variable term, for just invoking something
 
         if (args.length != 2)
             return null;
@@ -59,20 +62,13 @@ public class Javascript extends Operator {
             resultName = Texts.escape('"' + result.toString() + '"').toString();
         }
         
-        args[1] = new Term(resultName);
-        /*
-        Term r = new Term(Texts.escape('"' + result.toString() + '"').toString());
-        Inheritance t = Inheritance.make(
-                Product.make(new Term[] { operation, r }, memory),
-                new Term("js_evaluation"), memory);
-        
-        memory.output(Task.class, t);
-        
-        ArrayList<Task> results = new ArrayList<>(1);
-        results.add(memory.newTask(t, Symbols.JUDGMENT_MARK, 1f, 0.99f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY));
-                */
-        return null;
-        
+        Operation oresult = operation.clone();
+        oresult.getArguments()[1] = new Term(resultName);
+        oresult.rename();
+
+        return theTask( 
+                memory.newTask(oresult, '.', 1f, 0.9f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY) 
+        );
 
     }
     

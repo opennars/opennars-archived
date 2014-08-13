@@ -18,10 +18,12 @@
 package nars.operators.math;
 
 import java.util.ArrayList;
+import nars.core.Parameters;
 import nars.entity.*;
 import nars.language.*;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import static nars.operator.Operator.theTask;
 import nars.storage.Memory;
 
 /**
@@ -56,9 +58,16 @@ public class Count extends Operator {
             return null;
         }
         int n = ((CompoundTerm) content).size();
+        
         Term numberTerm = new Term("" + n);
-        args[1] = numberTerm;
-        return null;
+        Operation result = operation.clone();
+        result.getArguments()[1] = numberTerm;
+        result.rename();
+            
+        return theTask( 
+                memory.newTask(result, '.', 1f, 0.9f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY) 
+        );        
+
     }
     
     

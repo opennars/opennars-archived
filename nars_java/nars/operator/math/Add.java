@@ -17,6 +17,7 @@
 package nars.operator.math;
 
 import java.util.ArrayList;
+import nars.core.Parameters;
 import nars.entity.*;
 import nars.language.*;
 import nars.operator.Operation;
@@ -51,10 +52,18 @@ public class Add extends Operator {
         try {
             int n1 = Integer.parseInt(String.valueOf(args[0].name()));
             int n2 = Integer.parseInt(String.valueOf(args[1].name()));
-            Term numberTerm = new Term(String.valueOf(n1 + n2));
-            args[2] = numberTerm;
+            Term numberTerm = new Term(String.valueOf(n1 + n2));            
+            
+            Operation result = operation.clone();
+            result.getArguments()[2] = numberTerm;
+            result.rename();
+            
+            return theTask( 
+                    memory.newTask(result, '.', 1f, 0.9f, Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY) 
+            );
+            
         } catch (NumberFormatException e) {
-            return null;
+
         }
         return null;
     }

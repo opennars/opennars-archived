@@ -129,7 +129,7 @@ public abstract class CompoundTerm extends Term {
     @Deprecated protected CompoundTerm(final Term[] components) {
         this.term = components; //ensureValidComponents(term);
         this.complexity = calcComplexity();
-        setName(makeName());        
+        rename();  
         this.isConstant = !hasVar;
     }
         
@@ -445,6 +445,8 @@ public abstract class CompoundTerm extends Term {
     }
     
 
+
+    //TODO rename: cloneTerms
     public static Term[] cloneTermsAppend(final Term[] original, Term... additional) {
         return cloneTermsAppend(true, original, additional);
     }
@@ -465,7 +467,9 @@ public abstract class CompoundTerm extends Term {
         int i;
         for (i = 0; i < original.length; i++) {            
             final Term t = original[i];      
-            
+            if (t==null)
+                continue;
+                
             //experiental optimization
             //if (allowNonDeepCopy && t.isConstant() && !t.containVar())
             if (preventUnnecessaryDeepCopy && t.getClass() == Term.class)
@@ -639,6 +643,11 @@ public abstract class CompoundTerm extends Term {
         return hasVar;
     }
 
+    /** call after changing terms or subterm */
+    public void rename() {
+        setName(makeName());
+    }
+    
     /**
      * Rename the variables in the compound, called from Sentence constructors
      */
@@ -648,7 +657,7 @@ public abstract class CompoundTerm extends Term {
             //int existingComponents = term.length;
             boolean b = renameVariables(new HashMap<Variable, Variable>());
             if (b) {
-                setName(makeName());                
+                rename();
             }
         }
         isConstant = true;        
@@ -684,7 +693,7 @@ public abstract class CompoundTerm extends Term {
                     CompoundTerm ct = (CompoundTerm)term;
                     boolean r = ct.renameVariables(map);
                     if (r) {
-                        ct.setName(ct.makeName());
+                        ct.rename();
                         renamed = true;
                     }
                 }                
@@ -717,7 +726,7 @@ public abstract class CompoundTerm extends Term {
         if (this.isCommutative()) {         
             Arrays.sort(term);
         }
-        setName( makeName() );
+        rename();
     }
 
     /* ----- link CompoundTerm and its term ----- */
