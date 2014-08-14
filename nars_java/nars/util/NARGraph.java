@@ -247,6 +247,8 @@ public class NARGraph extends MutableDirectedAdjacencyGraph<Object, NAREdge> {
         @Override
         public void onConcept(NARGraph g, Concept c) {
 
+            g.add(c);
+            
             final Term term = c.term;
             addTerm(g, term);
 

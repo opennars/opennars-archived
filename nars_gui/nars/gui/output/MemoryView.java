@@ -110,6 +110,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         private final Object object;
         private float boost;
         float stroke;
+        private boolean visible;
 
         public VertexDisplay(Object o) {
             this.object = o;
@@ -119,6 +120,7 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
             ty = y;
             stroke = 0;
             radius = nodeSize;
+            visible = true;
             
             if (o instanceof Concept) {
                 label = ((Concept)o).term.toString();
@@ -167,7 +169,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         public void draw() {
             update();
             
-             
+            if (!visible) return;
+            
             if (stroke > 0) {
               stroke(Color.WHITE.getRGB());
                 strokeWeight(stroke);
@@ -204,6 +207,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
         }
 
         private void update(Object o) {
+            visible = true;
+            
             if (o instanceof Sentence) {
                  Sentence kb = (Sentence)o;
                  TruthValue tr = kb.truth;
@@ -335,7 +340,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                     float index = 0;
                     int levelContents = 0;
                     private float priority;
-                    Concept lastConcept = null;
+                    Term lastTerm = null;
+                    VertexDisplay lastTermVertex = null;
                     
                     public void preLevel(NARGraph g, int l) {
                         if (!compressLevels)
@@ -359,10 +365,18 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                     public void onConcept(NARGraph g, Concept c) {
                         super.onConcept(g, c);
 
-                        lastConcept = c;
                         priority = c.getPriority();
                         level = (float)(priority*100.0);
-                        index++;
+                        
+                        if ((lastTerm!=null) && (c.term.equals(lastTerm))) {
+                            //terms equal to concept, ordinarily displayed as subsequent nodes
+                            //should just appear at the same position as the concept
+                            //lastTermVertex.visible = false;
+                            lastTermVertex.position(level, index, priority);
+                            lastTermVertex.visible = false;
+                        }
+                        else
+                            index++;                           
                         
                         VertexDisplay d = displayVertex(c);
                         d.position(level, index, priority);
@@ -375,17 +389,22 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                         
                         levelContents++;
                                  
+                        lastTerm = null;
+                        lastTermVertex = null;
                     }
 
                     @Override
                     public void onTerm(Term t) {
-                                
-                        index++;                                               
+                                                   
+                        index++;
 
                         VertexDisplay d = displayVertex(t);
                         d.position(level, index, priority);
                         deadVertices.remove(d);
 
+                        lastTerm = t;
+                        lastTermVertex = d;
+                        
                         levelContents++;
                        
                     }
@@ -403,6 +422,9 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
                                 d.boost = 1.0f;                        
                     
                         levelContents++;
+                        
+                        lastTerm = null;
+                        lastTermVertex = null;
                     
                     }
 
@@ -420,6 +442,8 @@ class mvo_applet extends PApplet  //(^break,0_0)! //<0_0 --> deleted>>! (--,<0_0
 
                         levelContents++;
                     
+                        lastTerm = null;
+                        lastTermVertex = null;
                     }
                 
                 
