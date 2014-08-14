@@ -22,12 +22,17 @@ package nars.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import nars.core.CommandLineNARBuilder;
 import nars.core.NAR;
 import nars.gui.input.InputPanel;
 import nars.gui.output.LogPanel;
+import nars.gui.output.ProcessingGraphPanel;
 import nars.io.TextInput;
+import nars.util.NARGraph;
+import nars.util.graph.TermLinkGraph;
 
 /**
  * The main Swing GUI class of the open-nars project.  
@@ -75,6 +80,66 @@ public class NARSwing  {
         inputWindow.setSize(800, 200);
         inputWindow.setVisible(true);
 
+        
+        
+        
+        
+        new ProcessingGraphPanel(nar) {
+
+            TermLinkGraph t;
+            
+            long lastClock = -1;
+            
+            public TermLinkGraph newGraph() {
+                TermLinkGraph s = new TermLinkGraph();
+                s.add(nar.memory.concepts, false, false, true);
+                return s;
+            }
+            
+            @Override
+            public NARGraph getGraph(ProcessingGraphPanel p) {
+                
+                if (t == null) {
+                    t = newGraph();
+                    
+                    //if (autoupdate) ..
+                    new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            while (true) {            
+                                try {
+                                    
+                                    long now = nar.getTime();
+                                    
+                                    if (now != lastClock) {
+
+
+                                        TermLinkGraph s = newGraph();
+                                                
+                                        t = s;                                    
+                                        p.update();
+
+                                        Thread.sleep(2500);
+
+                                        lastClock = nar.getTime();
+                                    }
+                                    
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }
+                        
+                    }).start();
+                
+                }
+                
+                
+                return t;
+            }
+                        
+        };
                 
         
     }

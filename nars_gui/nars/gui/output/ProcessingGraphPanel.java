@@ -16,29 +16,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.gui.NSlider;
-import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.Memory;
 import nars.util.NARGraph;
-import nars.util.NARGraph.DefaultGraphizer;
 import nars.util.NARGraph.NAREdge;
-import nars.util.NARGraph.SentenceContent;
-import nars.util.NARGraph.TermContent;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
@@ -184,7 +173,7 @@ class papplet extends PApplet implements ActionListener
     
     public void drawit() {
         
-        if (updating)
+        if ((updating) || (graph == null))
             return;
         
         
@@ -530,24 +519,22 @@ class papplet extends PApplet implements ActionListener
 
 }
 
-public class ProcessingGraphPanel extends JFrame {
+abstract public class ProcessingGraphPanel extends JFrame {
 
     papplet app = null;
     private final NAR nar;
     float edgeDistance = 30;
     private boolean showSyntax;
-    private DefaultGraphizer graphizer;
-    private final List<Sentence> sentences;
+    
     private int sentenceIndex = -1;
     String layoutMode;
     
 
     
-    public ProcessingGraphPanel(NAR n, List<Sentence> sentences) {
+    public ProcessingGraphPanel(NAR n) {
         super("NARS Graph");
         
         this.nar = n;
-        this.sentences = sentences;
 
         app = new papplet();
         
@@ -607,31 +594,6 @@ public class ProcessingGraphPanel extends JFrame {
         menu.add(edgeDist);        
         
         
-        if (sentences.size() > 1) {
-            final JTextField ssl = new JTextField();
-            final JSlider indexSlider = new JSlider(-1, sentences.size()-1, -1);        
-            indexSlider.setSnapToTicks(true);
-            indexSlider.setMajorTickSpacing(1);
-            indexSlider.setMinorTickSpacing(1);
-            indexSlider.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    int i = indexSlider.getValue();
-                    sentenceIndex = i;
-                    if (i == -1) {
-                        update();
-                        ssl.setText("All Sentences");
-                    }
-                    else {
-                        update();
-                        ssl.setText(ProcessingGraphPanel.this.sentences.get(i).toString());
-                    }
-                }            
-            });
-            menu.add(indexSlider);
-            menu.add(ssl);        
-        }
-
         content.add(menu, BorderLayout.NORTH);
         content.add(app, BorderLayout.CENTER);
 
@@ -653,106 +615,16 @@ public class ProcessingGraphPanel extends JFrame {
     }
     
     
-    public NARGraph.Filter newSelectedGraphFilter() {
-        
-        final List<Sentence> selected = getSentences();
 
-        final Set<Term> include = new HashSet();
-        for (final Sentence s : selected) {
-            Term t = s.content;
-            include.add(t);
-            if (t instanceof CompoundTerm) {
-                CompoundTerm ct = (CompoundTerm)t;
-                include.addAll(ct.getContainedTerms());
-            }                        
-        }
-        
-        return new NARGraph.Filter() {
-
-            @Override
-            public boolean includePriority(float l) {  return true; }
-
-            @Override
-            public boolean includeConcept(final Concept c) {
-                
-                final Term t = c.term;
-
-                
-                return include.contains(t);
-            }
-            
-        };
-    }
     
-
-    public List<Sentence> getSentences() {
-        List<Sentence> displayed;
-        if (sentenceIndex == -1) {
-            displayed = sentences;
-        }
-        else {
-            displayed = new ArrayList(1);
-            displayed.add(sentences.get(sentenceIndex));
-        }
-        return displayed;
-    }
+    abstract public NARGraph getGraph(ProcessingGraphPanel p);
 
     public void update() {
         app.drawn = false;
         
-        graphizer = new DefaultGraphizer(true,true,true,true,false) {
-
-            @Override
-            public void onTime(NARGraph g, long time) {
-                super.onTime(g, time);
-
-               
-                    
-                for (Sentence s : getSentences()) {
-                    g.add(s);
-                    
-                    Term t = s.content;
-                    addTerm(g, t);
-                    g.addEdge(new SentenceContent(s, s.content), false );
-                    
-                    if (t instanceof CompoundTerm) {
-                        CompoundTerm ct = ((CompoundTerm)t);
-                        Set<Term> contained = ct.getContainedTerms();
-                        
-                        for (Term x : contained) {                            
-                            addTerm(g, x);
-                            if (ct.containsTerm(x))
-                                g.addEdge(new TermContent(x, t), false);
-                            
-                            
-                            for (Term y : contained) {
-                                addTerm(g, y);
-                                
-                                if (x != y)
-                                    if (x.containsTerm(y))
-                                        g.addEdge(new TermContent(y, x), false);
-                            }
-                            
-                                
-                            
-                        }
-                    }
-                    
-                    
-                }
-                //add sentences
-            }
-            
-        };
-        
-        
-        app.updating = true;
-        
-        graphizer.setShowSyntax(showSyntax);
-        
-        NARGraph g = new NARGraph();
-        g.add(nar, newSelectedGraphFilter(), graphizer);                
-        app.graph = g;
+        app.graph = getGraph(this);
+        if (app.graph.getNodes().size() == 0)
+            return;
         
 
         // create a visualization using JGraph, via an adapter
@@ -828,4 +700,5 @@ public class ProcessingGraphPanel extends JFrame {
 //        
 //        new ProcessingGraphPanel(n);
 //    }
+
 }

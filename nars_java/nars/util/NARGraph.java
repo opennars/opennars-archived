@@ -141,11 +141,26 @@ public class NARGraph extends MutableDirectedAdjacencyGraph<Object, NAREdge> {
     public static class TaskInherit extends NAREdge  {
 
         public TaskInherit(Object child, Object parent) {
-            super(child, parent);
+            super(parent, child);
         }
-        @Override public String toString() { return "task"; }
+        @Override public String toString() { return "taskInherit"; }
 
     }
+    
+    public static class TermLinkEdge extends NAREdge {
+        public TermLinkEdge(Object source, Object target) {
+            super(source, target);
+        }
+        @Override public String toString() { return "termLink"; }           
+    }    
+    public static class TermTask extends NAREdge  {
+
+        public TermTask(Term term, Task task) {
+            super(term, task);
+        }
+        @Override public String toString() { return "taskLink"; }
+
+    }    
         
     
     public NARGraph() {
