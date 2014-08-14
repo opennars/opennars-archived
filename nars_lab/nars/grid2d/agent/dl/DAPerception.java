@@ -10,7 +10,7 @@ import nars.grid2d.agent.ql.Perception;
  */
 abstract public class DAPerception extends Perception {
 
-    private final dA da;
+    private final DenoisingAutoencoderLayer da;
 
     double pretrain_lr = 0.25;
     double corruption_level = 0;
@@ -33,7 +33,7 @@ abstract public class DAPerception extends Perception {
         encoded = new double[ reducedInputs];
                 
         
-        this.da = new dA(n_ins, reducedInputs);
+        this.da = new DenoisingAutoencoderLayer(n_ins, reducedInputs);
     }
 
     @Override
