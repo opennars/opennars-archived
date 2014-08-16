@@ -38,6 +38,7 @@ public class Product extends CompoundTerm {
         super(name, arg);
     }
     
+    
     /**
      * Constructor with full values, called by clone
      * @param n The name of the term

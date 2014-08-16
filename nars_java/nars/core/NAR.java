@@ -416,5 +416,14 @@ public class NAR implements Runnable, Output {
         }
         return null;
     }
+//    /** parses and returns a Task from a string; or null if parsing error */
+//    public Task task(final String s) {        
+//        try {
+//            return perception.text.parseTask(s);
+//        } catch (TextPerception.InvalidInputException ex) {
+//            Logger.getLogger(NAR.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return null;
+//    }
     
 }
