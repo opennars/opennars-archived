@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import nars.core.Param;
 import nars.core.Parameters;
 import nars.core.task.PauseInput;
@@ -219,9 +221,10 @@ public class Memory implements Output, Serializable {
      */
     public final AbstractBag<Task> novelTasks;
     /**
-     * Inference record text to be written into a log file
+     * Inference record text to be written into a log file with lock
      */
     private InferenceRecorder recorder;
+    private Lock recorderMutex = new ReentrantLock();
     
  
     
@@ -473,7 +476,9 @@ public class Memory implements Output, Serializable {
                 return null;
             } else {
                 if (recorder.isActive()) {
+                    recorderMutex.lock();
                     recorder.onConceptNew(concept);
+                    recorderMutex.unlock();
                 }
                 return newConcept;
             }
@@ -512,7 +517,9 @@ public class Memory implements Output, Serializable {
     protected void addNewTask(final Task t, final String reason) {
         newTasks.add(t);
         if (recorder.isActive()) {
+            recorderMutex.lock();
             recorder.onTaskAdd(t, reason);
+            recorderMutex.unlock();
         }
     }
     
@@ -542,7 +549,9 @@ public class Memory implements Output, Serializable {
                 addNewTask(task, "Perceived");
             } else {
                 if (recorder.isActive()) {
+                    recorderMutex.lock();
                     recorder.onTaskRemove(task, "Neglected");
+                    recorderMutex.unlock();
                 }
             }
 
@@ -610,7 +619,9 @@ public class Memory implements Output, Serializable {
                 if (conf == 0) { 
                     //no confidence - we can delete the wrongs out that way.
                     if (recorder.isActive()) {
+                        recorderMutex.lock();
                         recorder.onTaskRemove(task, "Ignored");
+                        recorderMutex.unlock();
                     }
                     return;
                 }
@@ -664,7 +675,9 @@ public class Memory implements Output, Serializable {
                            (!(task.getParentTask().getContent().equals(Negation.make(task.getContent(), this))) &&
                            !(task.getContent().equals(Negation.make(task.getParentTask().getContent(), this))))) {
                         if (recorder.isActive()) {
+                            recorderMutex.lock();
                             recorder.onTaskRemove(task, "Cyclic Reasoning (index " + i + ")");
+                            recorderMutex.unlock();
                         }
                         return;
                         }
@@ -678,8 +691,10 @@ public class Memory implements Output, Serializable {
                     
                     for (int j = 0; j < stampLength; j++) {
                         if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation==Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
-                            if (recorder.isActive()) {                                
+                            if (recorder.isActive()) {
+                                recorderMutex.lock();
                                 recorder.onTaskRemove(task, "Overlapping Evidence on Revision");
+                                recorderMutex.unlock();
                             }
                             return;
                         }
@@ -749,8 +764,10 @@ public class Memory implements Output, Serializable {
             
         } else {            
             if (recorder.isActive()) {
+                recorderMutex.lock();
                 recorder.onTaskRemove(task, "Ignored");
-            }            
+                recorderMutex.unlock();
+            }
         }
     }
 
@@ -864,6 +881,7 @@ public class Memory implements Output, Serializable {
     public void cycle() {
         if (working) {
             if (recorder.isActive()) {            
+                // NOTE< no lock because it is not recurrent >
                 recorder.onCycleStart(clock);
             }
 
@@ -872,6 +890,7 @@ public class Memory implements Output, Serializable {
             //novelTasks.refresh();
 
             if (recorder.isActive()) {            
+                // NOTE< no lock because it is not recurrent >
                 recorder.onCycleEnd(clock);
             }       
             
@@ -927,7 +946,9 @@ public class Memory implements Output, Serializable {
                     } else {
                         
                         if (recorder.isActive()) {
+                            recorderMutex.lock();
                             recorder.onTaskRemove(task, "Neglected");
+                            recorderMutex.unlock();
                         }
                         
                     }
@@ -977,7 +998,9 @@ public class Memory implements Output, Serializable {
         setCurrentTask(task); // one of the two places where this variable is set
         
         if (recorder.isActive()) {
+            recorderMutex.lock();
             recorder.append("Task Immediately Processed: " + task);
+            recorderMutex.unlock();
         }
         
         setCurrentTerm(task.getContent());
@@ -1263,7 +1286,9 @@ public class Memory implements Output, Serializable {
                 task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
         Task newTask = new Task(j, (BudgetValue) newbudget,task,null);
         if (getRecorder().isActive()) {
+            recorderMutex.lock();
             recorder.append("Remembered: " + j.toString());
+            recorderMutex.unlock();
         }
         newTasks.add(newTask);
     }
