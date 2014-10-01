@@ -313,13 +313,10 @@ public class ImplicationGraph extends SentenceItemGraph {
         conceptPriority = (dormantConceptInfluence + (1.0 - dormantConceptInfluence) * conceptPriority);
         
         if (getEdgeTarget(e) instanceof PostCondition) {
-            return 1.0 / conceptPriority;
+            return 1.0 / (e.truth.getExpectation() * conceptPriority);
         }
-        
-        float freq = e.truth.getFrequency();
-        float conf = e.truth.getConfidence();        
-        
-        double strength = (freq * conf * conceptPriority);
+             
+        double strength = (e.truth.getExpectation() * conceptPriority);
         if (strength > minEdgeStrength)
             return 1.0 / strength;
         else
