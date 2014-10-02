@@ -11,6 +11,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -50,7 +51,7 @@ public class RememberActions implements Plugin {
                 BudgetValue newbudget=new BudgetValue(
                         task.budget.getPriority()*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                         task.budget.getDurability()*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                        task.budget.getQuality()*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
+                        BudgetFunctions.truthToQuality(truth)*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL);
                 
                 Task newTask = new Task(j, (BudgetValue) newbudget, 
                         Parameters.INTERNAL_EXPERIENCE_FULL ? null : task);
