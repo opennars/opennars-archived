@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Memory;
-import nars.core.Param.AtomicDurations;
 import nars.entity.Item;
 import nars.util.SortedItemList;
 
@@ -88,11 +88,11 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
 
     
 
-//    public ContinuousBag(int capacity, double forgetRate, boolean randomRemoval) {
-//        this(capacity, new AtomicDurations(forgetRate), randomRemoval);
-//    }
+    public ContinuousBag(int capacity, int forgetRate, boolean randomRemoval) {
+        this(capacity, new AtomicInteger(forgetRate), randomRemoval);
+    }
     
-    public ContinuousBag(int capacity, AtomicDurations forgetRate, boolean randomRemoval) {
+    public ContinuousBag(int capacity, AtomicInteger forgetRate, boolean randomRemoval) {
         super();
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;        
@@ -179,7 +179,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
     public boolean putIn(final E newItem, boolean nameTableInsert) {
         //TODO this is identical with Bag, should merge?
         if (nameTableInsert) {
-            final CharSequence newKey = newItem.name();                        
+            final CharSequence newKey = newItem.getKey();                        
             final E oldItem = nameTable.put(newKey, newItem);
             if (oldItem != null) {                  // merge duplications
                 outOfBase(oldItem);
@@ -189,7 +189,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
-            final CharSequence overflowKey = overflowItem.name();
+            final CharSequence overflowKey = overflowItem.getKey();
             nameTable.remove(overflowKey);
             return (overflowItem != newItem);
         } else {
@@ -315,7 +315,7 @@ public class ContinuousBag<E extends Item> extends AbstractBag<E> {
         addToMass(-(selected.budget.getPriority()));
                 
         if (removeFromNameTable) {
-            nameTable.remove(selected.name());
+            nameTable.remove(selected.getKey());
         }
         
         return selected;

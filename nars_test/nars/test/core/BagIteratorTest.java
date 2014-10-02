@@ -1,8 +1,7 @@
 package nars.test.core;
 
 import java.util.Iterator;
-import nars.core.Param.AtomicDurations;
-import nars.core.build.DefaultNARBuilder;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.storage.AbstractBag;
 import nars.storage.Bag;
 import nars.perf.BagPerf.NullItem;
@@ -69,12 +68,10 @@ public class BagIteratorTest {
     
     @Test
     public void testBags() {
-        AtomicDurations forgetRate = new DefaultNARBuilder().build().param().conceptForgetDurations;
-        
-        Bag<NullItem> b = new Bag(L, L*2, forgetRate);
+        Bag<NullItem> b = new Bag(L, L*2, new AtomicInteger(10));
         testBagIterator(b);
         
-        ContinuousBag<NullItem> c = new ContinuousBag(L*2, forgetRate, false);
+        ContinuousBag<NullItem> c = new ContinuousBag(L*2, new AtomicInteger(10), false);
         testBagIterator(c);
         
     }

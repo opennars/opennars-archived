@@ -160,7 +160,7 @@ public class ParameterSearch {
         for (int i = 2; i < 100; i+=4) {
             NAR a = new DefaultNARBuilder().build();
             
-            a.param().beliefForgetDurations.set(i);
+            a.param().beliefCyclesToForget.set(i);
             score("beliefCyclesToForget_" + String.format("%03d", i), a);
         }
         report();
@@ -170,7 +170,7 @@ public class ParameterSearch {
         for (int i = 2; i < 20; i++) {
             NAR a = new DefaultNARBuilder().build();
             
-            a.param().conceptForgetDurations.set(i);
+            a.param().conceptCyclesToForget.set(i);
             score("conceptCyclesToForget_" + String.format("%03d", i), a);
         }
         report();
@@ -180,7 +180,7 @@ public class ParameterSearch {
         for (int i = 2; i < 40; i+=2) {
             NAR a = new DefaultNARBuilder().build();
             
-            a.param().taskCycleForgetDurations.set(i);
+            a.param().taskCyclesToForget.set(i);
             score("taskCyclesToForget_" + String.format("%03d", i), a);
         }
         report();

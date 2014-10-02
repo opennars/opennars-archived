@@ -18,8 +18,6 @@
 package nars.perf;
 
 import java.util.Iterator;
-import nars.core.Param.AtomicDurations;
-import nars.core.build.DefaultNARBuilder;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
 import nars.storage.AbstractBag;
@@ -35,7 +33,7 @@ public class BagPerf {
     
     int repeats = 8;
     int warmups = 1;
-    final static AtomicDurations forgetRate = new DefaultNARBuilder().build().param().conceptForgetDurations;
+    final static int forgetRate = 10;
     int randomAccesses;
     double insertRatio = 0.9;
     
@@ -43,7 +41,7 @@ public class BagPerf {
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
 
-    public void testBag(final boolean arraylist, final int levels, final int capacity, final AtomicDurations forgetRate) {
+    public void testBag(final boolean arraylist, final int levels, final int capacity, final int forgetRate) {
         
         totalPriority = 0;
         totalMass = 0;
@@ -108,7 +106,7 @@ public class BagPerf {
 
         
         @Override
-        public CharSequence name() {
+        public CharSequence getKey() {
             return key;
         }
         

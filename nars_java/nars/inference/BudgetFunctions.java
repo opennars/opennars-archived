@@ -176,16 +176,16 @@ public final class BudgetFunctions extends UtilityFunctions {
      * adjustable in run time.
      *
      * @param budget The previous budget value
-     * @param forgetCycles The budget for the new item
+     * @param forgetRate The budget for the new item
      * @param relativeThreshold The relative threshold of the bag
      */
-    public static void forget(final BudgetValue budget, final float forgetCycles, final float relativeThreshold) {
-        float quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
-        final float p = budget.getPriority() - quality;                     // priority above quality
+    public static void forget(final BudgetValue budget, final float forgetRate, final float relativeThreshold) {
+        double quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
+        final double p = budget.getPriority() - quality;                     // priority above quality
         if (p > 0) {
-            quality += p * pow(budget.getDurability(), 1.0 / (forgetCycles * p));
+            quality += p * pow(budget.getDurability(), 1.0 / (forgetRate * p));
         }    // priority Durability
-        budget.setPriority(quality);
+        budget.setPriority((float) quality);
     }
 
     /**

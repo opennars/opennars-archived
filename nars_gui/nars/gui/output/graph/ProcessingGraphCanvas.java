@@ -232,8 +232,7 @@ abstract public class ProcessingGraphCanvas<V, E> extends PApplet {
         public float getY() { return ty; }
 
         public float getRadius() {
-            final float radScale = 4.0f;
-            return radius * radScale;
+            return radius;
         }
 
     }

@@ -56,7 +56,7 @@ public abstract class Item implements Comparable {
      * Get the current key
      * @return Current key value
      */
-    abstract public CharSequence name();
+    abstract public CharSequence getKey();
 
 
     /**
@@ -125,14 +125,14 @@ public abstract class Item implements Comparable {
 
     @Override
     public int hashCode() {
-        return name().hashCode();
+        return getKey().hashCode();
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj instanceof Item) {
-            return ((Item)obj).name().equals(name());
+            return ((Item)obj).getKey().equals(getKey());
         }
         return false;
     }
@@ -172,7 +172,7 @@ public abstract class Item implements Comparable {
         //return budget + " " + key ;
         
         String budgetStr = budget!=null ? budget.toString() : "";
-        return new StringBuilder(budgetStr.length()+name().length()+1).append(budgetStr).append(' ').append(name()).toString();
+        return new StringBuilder(budgetStr.length()+getKey().length()+1).append(budgetStr).append(' ').append(getKey()).toString();
     }
 
     /**
@@ -182,7 +182,7 @@ public abstract class Item implements Comparable {
     public String toStringExternal() {        
         //return budget.toStringBrief() + " " + key ;
         final String briefBudget = budget.toStringExternal();
-        return new StringBuilder(briefBudget.length()+name().length()+1).append(briefBudget).append(' ').append(name()).toString();
+        return new StringBuilder(briefBudget.length()+getKey().length()+1).append(briefBudget).append(' ').append(getKey()).toString();
     }
     
     public String toStringLong() {

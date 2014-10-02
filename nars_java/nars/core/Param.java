@@ -15,35 +15,19 @@ public class Param implements Serializable {
      */
     public final AtomicInteger noiseLevel = new AtomicInteger();
     
-    /** 
-       Past/future tense usage convention, how far away "past" and "future" is from "now", in cycles.  
-       (Cycles per duration)
-       The range of "now" is [-DURATION, DURATION];      */
-    public final AtomicDuration duration = new AtomicDuration();
-
-    
-    /** can return result multiplied by duration */
-    public final class AtomicDurations extends AtomicDouble {
-        
-        /** gets # of cycles, which is # durations * cycles/duration */
-        public float getCycles() {
-            return super.floatValue() * duration.floatValue();
-        }
-    }
-    
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.
      */
-    public final AtomicDurations conceptForgetDurations = new AtomicDurations();
+    public final AtomicInteger conceptCyclesToForget = new AtomicInteger();
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
-    public final AtomicDurations beliefForgetDurations = new AtomicDurations();
+    public final AtomicInteger beliefCyclesToForget = new AtomicInteger();
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    public final AtomicDurations taskCycleForgetDurations = new AtomicDurations();
+    public final AtomicInteger taskCyclesToForget = new AtomicInteger();
     
-    public final AtomicDurations newTaskForgetDurations = new AtomicDurations();
+    public final AtomicInteger newTaskCyclesToForget = new AtomicInteger();
 
     
     /** Minimum expectation for a desire value. 
@@ -90,10 +74,13 @@ public class Param implements Serializable {
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptQuestionsMax = new AtomicInteger();
     
+    /** Tense usage convention, how far away "past" and "future" is from "now", in cycles. 
+        The range of "now" is [-DURATION, DURATION];      */
+    public final AtomicDuration duration = new AtomicDuration();
         
     
     /** # of events, can be dynamically adjusted */
-    @Deprecated public final AtomicInteger shortTermMemorySize = new AtomicInteger();
+    public final AtomicInteger shortTermMemorySize = new AtomicInteger();
     
     
 }

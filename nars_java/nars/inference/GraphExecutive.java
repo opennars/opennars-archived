@@ -462,6 +462,9 @@ public class GraphExecutive {
     }
     
     protected void particlePredict(final Term source, final double distance, final int particles) {
+        if(true) {
+            return;
+        }
         ParticleActivation act = new ParticleActivation(implication);
         SortedSet<ParticlePath> paths = act.activate(source, true, particles, distance);
         if (!paths.isEmpty())
@@ -470,6 +473,10 @@ public class GraphExecutive {
     }
     
     public TreeSet<ParticlePlan> particlePlan(final Term target, final double distance, final int particles) {
+        if(true) {
+            return null;
+        }
+        
         PostCondition targetPost = new PostCondition(target);
         
         if (!implication.containsVertex(targetPost)) {
@@ -586,7 +593,9 @@ public class GraphExecutive {
     } 
     
     protected void planTask(ParticlePlan plan, Task task, Term target, char punctuation) {        
-        
+        if(true) {
+            return;
+        }
         TruthValue truth = plan.truth;
         BudgetValue budget = plan.budget;
         
@@ -640,7 +649,9 @@ public class GraphExecutive {
     }
 
    protected void plan(Concept c, Task task, Term target, int particles, double searchDistance, char punctuation, int maxTasks) {
-
+        if(true) {
+            return;
+        }
         if (!implication.containsVertex(target))
             return;
 
