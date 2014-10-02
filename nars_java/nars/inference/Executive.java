@@ -127,7 +127,7 @@ public class Executive {
             
             
             //Check if task is 
-            Term term = t.getContent();
+           /* Term term = t.getContent();
             if (term instanceof Implication) {
                 Implication it = (Implication)term;
                 if ((it.getTemporalOrder() == TemporalRules.ORDER_FORWARD) || (it.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
@@ -138,7 +138,7 @@ public class Executive {
             }
             else if (term instanceof Conjunction) {
                 t = inlineConjunction(t, (Conjunction)term);
-            }
+            }*/
             
             this.t = t;
 
