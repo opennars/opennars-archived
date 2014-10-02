@@ -799,11 +799,23 @@ public class Memory implements Output, Serializable {
      */
     public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (newContent != null) {
-            final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
-            final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-            boolean added=derivedTask(newTask, false, false, null, null);
-            if(added && temporalAdd) {
-                temporalRuleOutputToGraph(newSentence,newTask);
+            {
+                final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
+                final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                boolean added=derivedTask(newTask, false, false, null, null);
+                if(added && temporalAdd) {
+                    temporalRuleOutputToGraph(newSentence,newTask);
+                }
+            }
+            if(temporalAdd) {
+                TruthValue truthEt=newTruth.clone();
+                truthEt.setConfidence(newTruth.getConfidence()*Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
+                final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp())).clone(true);
+                final Task newTask = new Task(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
+                boolean added=derivedTask(newTask, false, false, null, null);
+                if(added && temporalAdd) {
+                    temporalRuleOutputToGraph(newSentence,newTask);
+                }
             }
         }
     }
