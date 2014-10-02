@@ -18,6 +18,7 @@ package nars.inference;
 
 
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -249,8 +250,14 @@ public class TemporalRules {
         TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, memory);
-        BudgetValue budget2 = BudgetFunctions.forward(truth2, memory);
+        //BudgetValue budget2 = BudgetFunctions.forward(truth2, memory);
         BudgetValue budget3 = BudgetFunctions.forward(truth3, memory);
+        //since this function is only called on input now, this allocates more attention to this direct after each other happening events:
+        //BudgetValue budget1 = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth1));
+        BudgetValue budget2 = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth2));
+        //BudgetValue budget3 = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth3));
+        //budget2=new BudgetValue()
+        
         Statement statement1 = Implication.make(t1, t2, order, memory);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order), memory);
         Statement statement3 = Equivalence.make(t1, t2, order, memory);
