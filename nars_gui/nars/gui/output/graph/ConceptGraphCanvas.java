@@ -25,13 +25,6 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     public ConceptGraphCanvas(NAR nar) {
         this.nar = nar;
     }
-
-    @Override
-    public float getNodeSize(Object v) {
-        return 4f * super.getNodeSize(v);
-    }
-    
-    
     //TODO genrealize to DirectedMultigraph
 
     public void position(ProcessingGraphCanvas.VertexDisplay v, float level, float index, float priority) {
@@ -55,7 +48,7 @@ public class ConceptGraphCanvas extends ProcessingGraphCanvas {
     final IndexedTreeSet<Concept> sortedConcepts = new IndexedTreeSet(new Comparator<Concept>() {
         @Override
         public int compare(Concept o1, Concept o2) {
-            return o1.name().toString().compareTo(o2.name().toString());
+            return o1.getKey().toString().compareTo(o2.getKey().toString());
         }
     });
 

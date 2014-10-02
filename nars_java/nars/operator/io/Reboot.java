@@ -9,7 +9,7 @@ import nars.entity.AbstractTask;
 public class Reboot extends AbstractTask {
 
     @Override
-    public CharSequence name() {
+    public CharSequence getKey() {
         return "Reboot";
     }
     

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import nars.core.Param.AtomicDurations;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
 import nars.entity.Item;
 
@@ -95,12 +95,11 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         this(levels, capacity, null);
     }
     
-    public Bag(int levels, int capacity, AtomicDurations forgettingRate) {        
+    public Bag(int levels, int capacity, AtomicInteger forgettingRate) {        
         this.levels = levels;
         this.forgettingRate = forgettingRate;
         
         THRESHOLD = (int)(Parameters.BAG_THRESHOLD * levels);
-        //THRESHOLD = levels + 1; //fair/flat takeOut policy
         
         this.capacity = capacity;
         
@@ -192,7 +191,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
     public boolean putIn(final E newItem, final boolean nameTableInsert) {
                         
         if (nameTableInsert) {
-            final CharSequence newKey = newItem.name();
+            final CharSequence newKey = newItem.getKey();
             final E oldItem = nameTable.put(newKey, newItem);            
             if (oldItem != null) {                  // merge duplications
                 outOfBase(oldItem);
@@ -202,7 +201,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
-            final CharSequence overflowKey = overflowItem.name();
+            final CharSequence overflowKey = overflowItem.getKey();
             nameTable.remove(overflowKey);
             return (overflowItem != newItem);
         } else {
@@ -263,7 +262,6 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         }
     }
     
-
     @Override
     public E takeOut(final boolean removeFromNameTable) {
         if (size() == 0) return null; // empty bag                
@@ -273,11 +271,10 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         }
         
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
-               
         currentCounter--;
         
         if (removeFromNameTable) {
-            nameTable.remove(selected.name());
+            nameTable.remove(selected.getKey());
             //refresh();
         }
         
@@ -346,7 +343,7 @@ public class Bag<E extends Item> extends AbstractBag<E>  {
         return oldItem;		// TODO return null is a bad smell
     }
 
-    protected final void ensureLevelExists(final int level) {
+    protected void ensureLevelExists(int level) {
         if (itemTable[level]==null)
             itemTable[level] = newLevel();
     }
