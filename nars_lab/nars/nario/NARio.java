@@ -3,6 +3,7 @@ package nars.nario;
 import java.awt.event.KeyEvent;
 import static java.lang.Math.log;
 import static java.lang.Math.signum;
+import static java.lang.Math.signum;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -10,6 +11,7 @@ import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.build.Default;
 import nars.core.build.Discretinuous;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -55,7 +57,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
         
-        NAR nar = new Discretinuous().simulationTime().
+        NAR nar = new Default().simulationTime().
                 /*temporalPlanner(12,64,16).*/build();
         
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
@@ -217,11 +219,11 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
-            boolean representation_simple=false;
+            boolean representation_simple=true;
             public String direction(int i,int j) {
                 if(!representation_simple) {
                     //return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
-                    return "(&&,"+String.valueOf(i)+","+String.valueOf(j)+")";
+                    return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
                 }
                 else {
                     if(Math.abs(i) > Math.abs(j)) {
@@ -267,7 +269,7 @@ public class NARio extends Run {
                         scene.toggleKey(i, false);
                     }
                 }
-                if(Memory.randomNumber.nextDouble()>1.0/30.0) {
+                if(Memory.randomNumber.nextDouble()>1.0/30.0 && tt<200) {
                     
                     
                     
@@ -510,7 +512,7 @@ public class NARio extends Run {
                     lastY = y;
                     gotCoin = 0;
                 }
-                if(www%20==0) {
+                if(www%200==0) {
                     nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(2,0)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(1,1)+" --> moved>!"); //move right
