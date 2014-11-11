@@ -219,14 +219,14 @@ public class Hauto {
             if(wish.equals("closed") || wish.equals("off")) {
                 inverse=true;
             }
-            wish=wish.replace("closed", "opened").replace("off", "on");
+            String wishreal=wish.replace("closed", "opened").replace("off", "on");
             
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
-                    nar.addInput("<" + readCells[x][y].name+" --> "+wish+">! :|:"); //in order to make NARS an observer
+                    nar.addInput("<" + readCells[x][y].name+" --> "+wishreal+">! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("(--,<" + readCells[x][y].name+" --> "+wish+">)! :|:");
+                    nar.addInput("(--,<" + readCells[x][y].name+" --> "+wishreal+">)! :|:");
                 }
 //--nar.step(1);
             }
@@ -234,9 +234,9 @@ public class Hauto {
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
                 if(!inverse) {
-                    nar.addInput("<" + s +" --> "+wish+">! :|:"); //in order to make NARS an observer
+                    nar.addInput("<" + s +" --> "+wishreal+">! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("(--,<" + s +" --> "+wish+">)! :|:");
+                    nar.addInput("(--,<" + s +" --> "+wishreal+">)! :|:");
                 }
                 //--nar.step(1);
             }
