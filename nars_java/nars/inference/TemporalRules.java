@@ -327,8 +327,8 @@ public class TemporalRules {
         int order = order(timeDiff, durationCycles);
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
-        TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
-        TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
+        TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+        TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
