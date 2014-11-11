@@ -42,6 +42,7 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Terms;
 import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
@@ -205,6 +206,21 @@ public class TemporalRules {
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
             Conjunction S=(Conjunction) Conjunction.make(term,order1);
+            
+            //check if term has a element which is equal to C
+            for(Term t : term) {
+                if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {
+                    return false;
+                }
+                for(Term u : term) {
+                    if(u!=t) { //important: checking reference here is as it should be!
+                        if(Terms.equalSubTermsInRespectToImageAndProduct(t, u)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            
             Implication whole=Implication.make(S, C,order2);
             
             if(whole!=null) {
