@@ -75,7 +75,7 @@ public class NARio extends Run {
        // nar.param().termLinkForgetDurations.set(99.0f);
         
         //new TextOutput(nar, System.out).setShowInput(true);
-        int memCyclesPerFrame = 200;
+        int memCyclesPerFrame = 10;
         (nar.param).duration.set(memCyclesPerFrame*2); //2 frames seems good
         (nar.param).noiseLevel.set(0);
         

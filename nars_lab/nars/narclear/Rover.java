@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Curve;
+import nars.core.build.Default;
 import nars.entity.Task;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -605,13 +606,13 @@ public class Rover extends PhysicsModel {
     public static void main(String[] args) {
         //NAR nar = new Default().
         //NAR nar = new DiscretinuousBagNARBuilder().
-        NAR nar = new Curve().
-                setConceptBagLevels(100).
-                setConceptBagSize(1024).simulationTime().
+        NAR nar = new Default()
+                /*setConceptBagLevels(100).
+                setConceptBagSize(1024)*/ .simulationTime().
                 build();
         
         float framesPerSecond = 50f;
-        int cyclesPerFrame = 200; //was 200        
+        int cyclesPerFrame = 10; //was 200        
         (nar.param).noiseLevel.set(0);
         (nar.param).duration.set(cyclesPerFrame);
         
