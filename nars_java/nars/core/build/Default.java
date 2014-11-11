@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import nars.core.Attention;
+import nars.core.Build;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
-import nars.core.Build;
 import nars.core.Param;
 import nars.core.Parameters;
 import nars.core.control.DefaultAttention;
@@ -26,6 +26,7 @@ import nars.operator.Operator;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
+import nars.plugin.mental.MinimalInternalExperience;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
 import nars.storage.CacheBag;
@@ -134,6 +135,10 @@ public class Default extends Build implements ConceptBuilder {
             n.addPlugin(pluginPlanner);
         }
         
+        if(Parameters.INTERNAL_EXPERIENCE) {
+            MinimalInternalExperience nal9_1=new MinimalInternalExperience();
+            n.addPlugin(nal9_1);
+        }
         if(Parameters.INTERNAL_EXPERIENCE_FULL) {
             FullInternalExperience nal9=new FullInternalExperience();
             n.addPlugin(nal9);
