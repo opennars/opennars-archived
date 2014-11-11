@@ -214,15 +214,30 @@ public class Hauto {
         }
         
         if(!"".equals(wish)) {
+            
+            boolean inverse=false;
+            if(wish.equals("closed") || wish.equals("off")) {
+                inverse=true;
+            }
+            wish=wish.replace("closed", "opened").replace("off", "on");
+            
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
-                nar.addInput("<" + readCells[x][y].name+" --> "+wish+">! :|:"); //in order to make NARS an observer
-                //--nar.step(1);
+                if(!inverse) {
+                    nar.addInput("<" + readCells[x][y].name+" --> "+wish+">! :|:"); //in order to make NARS an observer
+                } else {
+                    nar.addInput("(--,<" + readCells[x][y].name+" --> "+wish+">)! :|:");
+                }
+//--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
-                nar.addInput("<" + s +" --> "+wish+">! :|:"); //in order to make NARS an observer
+                if(!inverse) {
+                    nar.addInput("<" + s +" --> "+wish+">! :|:"); //in order to make NARS an observer
+                } else {
+                    nar.addInput("(--,<" + s +" --> "+wish+">)! :|:");
+                }
                 //--nar.step(1);
             }
             return;
