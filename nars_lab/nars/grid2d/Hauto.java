@@ -56,7 +56,8 @@ public class Hauto {
                     }
                     if(!nope) {
                         TestChamber.space.add(new Pizza((int)i, (int)j, "pizza"+entityID.toString()));
-                        nar.addInput("<pizza"+entityID.toString()+" --> pizza>."); 
+                        if(TestChamber.staticInformation)
+                            nar.addInput("<pizza"+entityID.toString()+" --> pizza>."); 
                         entityID++;
                     }
                 }
@@ -174,7 +175,8 @@ public class Hauto {
         if(oper.equals("perceive")) {
              readCells[(int) x][(int) y].name = "place"+entityID.toString();
             writeCells[(int) x][(int) y].name = "place"+entityID.toString();
-            nar.addInput("<"+"place"+entityID.toString()+" --> place>.");
+            if(TestChamber.staticInformation)
+                nar.addInput("<"+"place"+entityID.toString()+" --> place>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," + "place"+entityID.toString() + ") =/> <Self --> [curious]>>.");
             }
@@ -228,7 +230,8 @@ public class Hauto {
         
         if(!"".equals(doorname) && selected.material==Material.Door) {
             space.add(new Key((int)x, (int)y, doorname.replace("door", "key")));
-            nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
+            if(TestChamber.staticInformation)
+                nar.addInput("<"+doorname.replace("door", "key")+" --> key>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," +doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
                 space.nar.addInput("<(^pick," + doorname.replace("door", "key") + ") =/> <Self --> [curious]>>.");
@@ -241,7 +244,8 @@ public class Hauto {
         }
         if(!"".equals(doorname) && selected.material==Material.Pizza) {
             space.add(new Pizza((int)x, (int)y, doorname));
-            nar.addInput("<"+doorname+" --> pizza>.");
+            if(TestChamber.staticInformation)
+                nar.addInput("<"+doorname+" --> pizza>.");
             if(TestChamber.curiousity) {
                 space.nar.addInput("<(^go-to," + doorname + ") =/> <Self --> [curious]>>.");
             }
@@ -283,7 +287,8 @@ public class Hauto {
             //if it has name already, dont allow overwrite
 
             if(readCells[(int) x][(int) y].name.equals("")) {
-                nar.addInput("<"+name+" --> "+Klass+">.");
+                if(TestChamber.staticInformation)
+                    nar.addInput("<"+name+" --> "+Klass+">.");
                 readCells[(int) x][(int) y].name = name;
                 writeCells[(int) x][(int) y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
