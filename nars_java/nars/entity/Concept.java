@@ -324,10 +324,12 @@ public class Concept extends Item<Term> {
 
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
-                if (!Executive.isExecutableTerm(task.sentence.content)) {
-                    memory.emit(UnexecutableGoal.class, task, this, nal);
-                } else {
-                    memory.executive.decisionMaking(task, this);
+                if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>memory.getCycleTime()-memory.param.duration.get()) {
+                    if (!Executive.isExecutableTerm(task.sentence.content)) {
+                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    } else {
+                        memory.executive.decisionMaking(task, this);
+                    }
                 }
             }
         }
