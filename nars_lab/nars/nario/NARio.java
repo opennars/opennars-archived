@@ -414,7 +414,7 @@ public class NARio extends Run {
                         
                     int[] keys = new int[] { Mario.KEY_LEFT,Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED };
                     for (final int k : keys) {
-                        String ko = "keyboard" + k;
+                        String ko = "^keyboard" + k;
                         if (nar.memory.getOperator(ko) == null) {
                             nar.memory.addOperator(new NullOperator("^" + "keyboard" + k) {
 
