@@ -17,7 +17,7 @@ public class EventEmitter {
     
     /** Observes events emitted by EventEmitter */
     public interface Observer<C> {
-        public void event(Class<? extends C> event, Object[] arguments);
+        public void event(Class<? extends C> event, Object[] args);
     }
 
     private final Map<Class<?>, List<Observer>> events;
@@ -37,9 +37,9 @@ public class EventEmitter {
 
     /** EventEmitter with a fixed set of known events; the 'events' map
      *  can then be made unmodifiable and non-concurrent for speed.    */
-    public EventEmitter(Class... eventClasses) {
-        events = new HashMap(eventClasses.length);
-        for (Class c : eventClasses) {
+    public EventEmitter(Class... knownEventClasses) {
+        events = new HashMap(knownEventClasses.length);
+        for (Class c : knownEventClasses) {
             events.put(c, newObserverList());
         }
     }

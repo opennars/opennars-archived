@@ -96,7 +96,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue deduction(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue deduction(final TruthValue v1, final TruthValue v2) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();
@@ -112,7 +112,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param reliance Confidence of the second (analytical) premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue deduction(final TruthValue v1, final float reliance) {
+    public static final TruthValue deduction(final TruthValue v1, final float reliance) {
         final float f1 = v1.getFrequency();
         final float c1 = v1.getConfidence();
         final float c = and(f1, c1, reliance);
@@ -377,16 +377,25 @@ public final class TruthFunctions extends UtilityFunctions {
         return analogy(v2, v0);
     }
     
+    
+    /** functions the same as TruthValue, but being a separate class,
+     *  indicates it was the result of eternalization */
+    public static final class EternalizedTruthValue extends TruthValue {
+        public EternalizedTruthValue(final float f, final float c) {
+            super(f, c);
+        }        
+    }
+    
     /**
      * From one moment to eternal
      * @param v1 Truth value of the premise
      * @return Truth value of the conclusion
      */
-    public static final TruthValue eternalization(final TruthValue v1) {
+    public static final EternalizedTruthValue eternalize(final TruthValue v1) {
         final float f1 = v1.getFrequency();
         final float c1 = v1.getConfidence();
         final float c = w2c(c1);
-        return new TruthValue(f1, c);
+        return new EternalizedTruthValue(f1, c);
     }
     
     public static final float temporalProjection(final long sourceTime, final long targetTime, final long currentTime) {

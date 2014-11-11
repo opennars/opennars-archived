@@ -17,6 +17,7 @@
  */
 package nars.prolog;
 
+import java.nio.CharBuffer;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -166,7 +167,7 @@ public class Struct extends Term {
     /**
      * Builds a compound, with a linked list of arguments
      */
-    Struct(String f, LinkedList<Term> al) {
+    public Struct(String f, LinkedList<Term> al) {
         name = f;
         arity = al.size();
         if (arity > 0) {
@@ -222,6 +223,12 @@ public class Struct extends Term {
     public String getName() {
         return name;
     }
+
+    public Term[] getArg() {
+        return arg;
+    }
+    
+    
     
     /**
      * Gets the i-th element of this structure
@@ -722,6 +729,12 @@ public class Struct extends Term {
     
     //
     
+    public static final CharSequence atomEscape(CharSequence n) {
+        CharBuffer cb = CharBuffer.allocate(n.length()+2);
+        cb.append('\'').append(n).append('\'');
+        return cb.compact().toString();
+    }
+    
     /**
      * Gets the string representation of this structure
      *
@@ -737,7 +750,7 @@ public class Struct extends Term {
         } else if (name.equals("{}")) {
             return ("{" + toString0_bracket() + "}");
         } else {
-            String s = (Parser.isAtom(name) ? name : "'" + name + "'");
+            CharSequence s = (Parser.isAtom(name) ? name : atomEscape(name));
             if (arity > 0) {
                 s += "(";
                 for (int c = 1;c < arity;c++) {
@@ -753,7 +766,7 @@ public class Struct extends Term {
                     s = s + ((Var)arg[arity - 1]).toStringFlattened() + ")";
                 }
             }
-            return s;
+            return s.toString();
         }
     }
     

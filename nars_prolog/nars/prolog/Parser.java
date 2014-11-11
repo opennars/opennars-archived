@@ -54,7 +54,7 @@ import nars.prolog.interfaces.IParser;
  * op(type,n) ::= atom | { symbol }+
  */
 @SuppressWarnings("serial")
-public class Parser implements /*Castagna 06/2011*/IParser,/**/ Serializable
+public class Parser implements /*Castagna 06/2011*/IParser,/**/ Serializable, Iterable<Term>
 {
 	private static class IdentifiedTerm {
 		private int priority;
@@ -662,10 +662,10 @@ public class Parser implements /*Castagna 06/2011*/IParser,/**/ Serializable
 	/**
 	 * @return true if the String could be a prolog atom
 	 */
-	 public static boolean isAtom(String s) {
+	 public static boolean isAtom(final CharSequence s) {
 		 return atom.matcher(s).matches();
 	 }
 
-	 static private Pattern atom = Pattern.compile("(!|[a-z][a-zA-Z_0-9]*)");
+	 static private final Pattern atom = Pattern.compile("(!|[a-z][a-zA-Z_0-9]*)");
 
 }

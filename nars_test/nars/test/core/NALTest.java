@@ -16,9 +16,12 @@ import java.util.TreeMap;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
+import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.gui.InferenceLogger;
 import nars.io.Output;
+import nars.io.Output.ERR;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.Texts;
@@ -35,19 +38,21 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class NALTest  {
         
-    int minCycles = 150; //TODO reduce this to one or zero
 
     static {
         Memory.randomNumber.setSeed(1);
         Parameters.DEBUG = true;
     }
 
-    boolean showOutput = false;
-    boolean saveSimilar = true;
-    boolean showSuccess = false;
-    boolean showDebug = false;
-    boolean showTrace = false;
-    
+    int minCycles = 1550; //TODO reduce this to one or zero
+    static public boolean showOutput = false;
+    static public boolean saveSimilar = true;
+    static public boolean showSuccess = false;
+    static public boolean showFail = true;
+    static public boolean showTrace = false;
+    static public boolean showReport = true;
+    static public boolean requireSuccess = true;
+    //static public Narsese narsese;
     
     final int similarityThreshold = 4;
     
@@ -56,6 +61,7 @@ public class NALTest  {
 
     protected static Map<String, String> exCache = new HashMap(); //path -> script data
     public static Map<String, Boolean> tests = new HashMap();
+    public static Map<String, Double> scores = new HashMap();
     final String scriptPath;
     
     /** reads an example file line-by-line, before being processed, to extract expectations */
@@ -71,9 +77,11 @@ public class NALTest  {
             if (s.indexOf(expectOutContains)==0) {
 
                 //without ') suffix:
-                String e = s.substring(expectOutContains.length(), s.length()-2);                                
-
+                String e = s.substring(expectOutContains.length(), s.length()-2);                           
+                
                 expects.add(new ExpectContains(n, e, saveSimilar));
+
+                
             }
             
             
@@ -86,8 +94,29 @@ public class NALTest  {
                 String e = s.substring(expectOutContains2.length(), s.length()-2); 
                 e = e.replace("\\\\","\\");
                 
+                /*try {                    
+                    Task t = narsese.parseTask(e);                    
+                    expects.add(new ExpectContainsSentence(n, t.sentence));
+                } catch (Narsese.InvalidInputException ex) {
+                    expects.add(new ExpectContains(n, e, saveSimilar));
+                } */
+                
                 expects.add(new ExpectContains(n, e, saveSimilar));
-            }                
+
+            }     
+            
+            //TEMPORARY, process old script format
+            final String expectOutNotContains2 = "''outputMustNotContain('";
+
+            if (s.indexOf(expectOutNotContains2)==0) {
+
+                //without ') suffix:
+                String e = s.substring(expectOutNotContains2.length(), s.length()-2); 
+                e = e.replace("\\\\","\\");
+                
+                expects.add(new ExpectNotContains(n, e));
+
+            }   
             
             final String expectOutEmpty = "''expect.outEmpty";
             if (s.indexOf(expectOutEmpty)==0) {                                
@@ -124,27 +153,34 @@ public class NALTest  {
     }
     
     public NAR newNAR() {
-        return new DefaultNARBuilder().build();
+        return NAR.build(new Default());
+        //return NAR.build(Default.fromJSON("nal/build/pei1.fast.nar"));        
         //return new ContinuousBagNARBuilder().build();
         //return new DiscretinuousBagNARBuilder().build();
     }
     
     @Parameterized.Parameters
     public static Collection params() {
+        
         Map<String,Object> l = new TreeMap();
         
-        File folder = new File("nal/test");
+        final String[] directories = new String[] { "nal/test", "nal/DecisionMaking" };
         
-        for (final File file : folder.listFiles()) {
-            if (file.getName().equals("README.txt"))
-                continue;
-            if(!("extra".equals(file.getName()))) {
-                addTest(file.getName());
-                l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+        for (String dir : directories ) {
+
+            File folder = new File(dir);
+        
+            for (final File file : folder.listFiles()) {
+                if (file.getName().equals("README.txt"))
+                    continue;
+                if(!("extra".equals(file.getName()))) {
+                    addTest(file.getName());
+                    l.put(file.getName(), new Object[] { file.getAbsolutePath() } );
+                }
             }
+            
         }
-        
-        
+                
         return l.values();
     }
     
@@ -154,7 +190,10 @@ public class NALTest  {
         tests.put(name, true);
     }
 
-    public static void runTests(Class c) {
+    public static double runTests(Class c) {
+
+        tests.clear();
+        scores.clear();
         
         if (waitForEnterKeyOnStart) {
             System.out.println("When ready, press enter");
@@ -166,8 +205,7 @@ public class NALTest  {
         //Result result = org.junit.runner.JUnitCore.runClasses(NALTest.class);
         
         Result result = JUnitCore.runClasses(new ParallelComputer(true, true), c);
-      
-        System.out.println("\n\n");
+              
         
         for (Failure f : result.getFailures()) {
             String test = f.getMessage().substring(f.getMessage().indexOf("test/nal") + 8, f.getMessage().indexOf(".nal"));
@@ -193,26 +231,39 @@ public class NALTest  {
                 levelSuccess[level]++;
             }
         }
-        int totalSucceeded = 0, total = 0;
-        for (int i = 0; i < 9; i++) {
-            float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
-            String prefix = (i > 0) ? ("NAL" + i) : "Other";
-            
-            System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
-            totalSucceeded += levelSuccess[i];
-            total += levelTotals[i];
+
+        double totalScore = 0;
+        for (Double d : scores.values())
+            totalScore += d;
+        
+        if (showReport) {
+            int totalSucceeded = 0, total = 0;
+            for (int i = 0; i < 9; i++) {
+                float rate = (levelTotals[i] > 0) ? ((float)levelSuccess[i]) / levelTotals[i] : 0;
+                String prefix = (i > 0) ? ("NAL" + i) : "Other";
+
+                System.out.println(prefix + ": " + (rate*100.0) + "%  (" + levelSuccess[i] + "/" + levelTotals[i] + ")" );
+                totalSucceeded += levelSuccess[i];
+                total += levelTotals[i];
+            }
+            System.out.println(totalSucceeded + " / " + total);
+
+            System.out.println("Score: " + totalScore);
         }
-        System.out.println(totalSucceeded + " / " + total);
+        
+        return totalScore;
         
     }
     
     public static void main(String[] args) {
         
         runTests(NALTest.class);
+
     }
 
     public NALTest(String scriptPath) {        
         this.scriptPath = scriptPath;
+        
     }
 
 //    public Sentence parseOutput(String o) {
@@ -221,35 +272,46 @@ public class NALTest  {
 //    }
     
     
-    protected void testNAL(final String path) {               
+    public double run() {               
+        return testNAL(scriptPath);
+    }
+    
+    protected double testNAL(final String path) {               
         Memory.resetStatic();
-        final NAR n = newNAR();
         
         final List<Expect> expects = new ArrayList();
         
-                
-        String example = getExample(path);
-        List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
-        for (Expect e1 : extractedExpects)
-            expects.add(e1);
-        
-        if (showOutput)
-            new TextOutput(n, System.out);
-        if (showTrace) {
-            new InferenceLogger(n, System.out);
-        }
-        
-        
-        n.addInput(new TextInput(example));
-        n.step(1);
-        
+        NAR n = null;
         boolean error = false;
         try {
-            n.finish(minCycles, showDebug);
+            n = newNAR();
+
+
+            
+
+
+            String example = getExample(path);
+            List<Expect> extractedExpects = getExpectations(n, example, saveSimilar);
+            for (Expect e1 : extractedExpects)
+                expects.add(e1);
+
+            if (showOutput)
+                new TextOutput(n, System.out);
+            if (showTrace) {
+                new InferenceLogger(n, System.out);
+            }
+
+
+            n.addInput(new TextInput(example));
+            n.finish(minCycles);
         }
-        catch(Throwable e){ 
-            e.printStackTrace();
-            error = true; 
+        catch(Throwable e){     
+            System.err.println(e);
+            if (Parameters.DEBUG) {                
+                e.printStackTrace();
+            }
+            
+            error = true;
         }
       
         
@@ -259,10 +321,31 @@ public class NALTest  {
         
         boolean success = expects.size() > 0 && (!error);
         for (Expect e: expects) {
-            if (!e.realized) success = false;
+            if (!e.succeeded) success = false;
         }
 
-        if ((!success) || (success && showSuccess)) {
+        double score = Double.POSITIVE_INFINITY;
+        if (success) {
+            long lastSuccess = -1;
+            for (Expect e: expects) {
+                if (e.successAt!=-1) {
+                    if (lastSuccess < e.successAt)
+                        lastSuccess = e.successAt;
+                }                
+            }
+            if (lastSuccess!=-1) {
+                //score = 1.0 + 1.0 / (1+lastSuccess);
+                score = lastSuccess;
+                scores.put(path, score);
+            }
+        }
+        else {
+            scores.put(path, Double.POSITIVE_INFINITY);
+        }
+        
+        //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
+
+        if ((!success & showFail) || (success && showSuccess)) {
             System.err.println('\n' + path + " @" + n.memory.getCycleTime());
             for (Expect e: expects) {
                 System.err.println("  " + e);
@@ -270,8 +353,11 @@ public class NALTest  {
         }
         
         //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
-        assertTrue(path, success);
+        if (requireSuccess)
+            assertTrue(path, success);
         
+        
+        return score;
         
     }
 
@@ -286,33 +372,46 @@ public class NALTest  {
 
     public static abstract class Expect extends Output {
 
-        public boolean realized = false;
+        public boolean succeeded = false;
         public List<CharSequence> exact = new ArrayList();
         public final NAR nar;
-        
+        long successAt = -1;
 
         public Expect(NAR nar) {
             super(nar);
             this.nar = nar;
         }
         
+        public boolean isInverse() { return false; }
+        
         @Override
         public void event(Class channel, Object... args) {
-            if (channel == OUT.class) {
-                Object signal = args[0];
+            if ((succeeded) && (!isInverse()))
+                return;
+            if ((channel == OUT.class) || (channel == EXE.class)) {
+                Object signal = args[0];                
                 if (condition(channel, signal)) {
-                    exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
-                    realized = true;
+                    if (saveSimilar)
+                        exact.add(TextOutput.getOutputString(channel, signal, true, true, nar));
+                    setSucceeded();
                 }
             }
         }
+        
+        protected void setSucceeded() { 
+            if (successAt == -1)
+                successAt = nar.time();
+            succeeded = true;            
+        }
+        
+        public boolean success() { return succeeded; }
         
         /** returns true if condition was satisfied */
         abstract public boolean condition(Class channel, Object signal);
 
         @Override
         public String toString() {            
-            return  getClass().getSimpleName() + " " + (realized ? "OK: " + exact : getFailureReason());
+            return  getClass().getSimpleName() + " " + (succeeded ? "OK: " + exact : getFailureReason());
         }
 
         abstract public String getFailureReason();
@@ -324,7 +423,7 @@ public class NALTest  {
         
         public ExpectOutputEmpty(NAR nar) {
             super(nar);
-            realized = true;
+            succeeded = true;
         }
 
         public String getFailureReason() {
@@ -336,18 +435,18 @@ public class NALTest  {
             //any OUT or ERR output is a failure
             if ((channel == OUT.class) || (channel == ERR.class)) {
                 output.add(channel.getSimpleName().toString() + ": " + signal.toString());
-                realized = false;
+                succeeded = false;
                 return false;
             }
             return false;
         }
     }
-
+    
     public static class ExpectContains extends Expect {
 
-        private final String containing;
+        final String containing;
         public Map<String, Integer> almost = new HashMap();
-        private final boolean saveSimilar;
+        final boolean saveSimilar;
 
         public ExpectContains(NAR nar, String containing, boolean saveSimilar) {
             super(nar);            
@@ -384,11 +483,22 @@ public class NALTest  {
                 return c.subList(0, max);            
         }
         
-        @Override
-        public boolean condition(Class channel, Object signal) {
-            if (channel == OUT.class) {
-                CharSequence o = TextOutput.getOutputString(channel, signal, false, false, nar);
-                if (o.toString().contains(containing)) return true;
+        public boolean cond(Class channel, Object signal) {
+            
+            if ((channel == OUT.class) || (channel == EXE.class)) {
+                
+                String o;
+                if (signal instanceof Task) {
+                    //only compare for Sentence string, faster than TextOutput.getOutputString
+                    //which also does unescaping, etc..
+                    Sentence s = ((Task)signal).sentence;
+                    o = s.toString(nar, false).toString();
+                    if (o.contains(containing)) return true;                    
+                }
+                else {
+                    o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
+                    if (o.contains(containing)) return true;
+                }
 
                 if (saveSimilar) {
                     int dist = Texts.levenshteinDistance(o, containing);            
@@ -401,13 +511,47 @@ public class NALTest  {
             }
             return false;
         }
+        
+        @Override
+        public boolean condition(Class channel, Object signal) {
+            if (succeeded)
+                return true;
+            return cond(channel,signal);
+        }
     }
-
-    /** whether to print the execution output to System.out */
-    public void setOutput(boolean output) {
-        this.showOutput = output;
-    }
-
     
+    
+    public static class ExpectNotContains extends ExpectContains {
+
+        
+        public ExpectNotContains(NAR nar, String containing) {
+            super(nar, containing, false);
+            succeeded = true;
+        }
+
+        @Override
+        public String getFailureReason() {
+            return "incorrect output: " + containing;
+        }
+
+
+        
+        @Override
+        public boolean condition(Class channel, Object signal) {
+            if (!succeeded)
+                return false;
+            if (cond(channel,signal)) {
+                onFailure(channel, signal);
+                succeeded = false;
+                return false;
+            }
+            return true;
+        }
+        
+        public boolean isInverse() { return true; }
+
+        protected void onFailure(Class channel, Object signal) {
+        }
+    }
     
 }

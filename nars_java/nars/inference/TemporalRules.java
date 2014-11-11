@@ -19,12 +19,14 @@ package nars.inference;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
+import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
@@ -37,8 +39,10 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Interval;
 import nars.language.Product;
+import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Terms;
 import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
@@ -116,12 +120,14 @@ public class TemporalRules {
 
     public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
         int order = ORDER_INVALID;
+        int order1Reverse = reverseOrder(order1);
+        
         if ((order2 == TemporalRules.ORDER_NONE)) {
-            order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
+            order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
             order = (figure % 10 == 1) ? order2 : reverseOrder(order2); // switch when 12 or 22
         } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
-            order = (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
+            order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
         } else if (order1 == order2) {
             order = (figure == 21) ? order1 : -order1;
         }
@@ -151,8 +157,11 @@ public class TemporalRules {
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static void temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
-        //TODO prevent trying question sentences, may cause NPE
+    public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+        
+        //prevent trying question sentences, causes NPE
+        if ((s1.truth == null) || (s2.truth == null))
+            return false;
         
         //try if B1 unifies with B2, if yes, create new judgement
         Implication S1=(Implication) s1.content;
@@ -176,7 +185,7 @@ public class TemporalRules {
         }
         
         if(args==null)
-            return;
+            return false;
                 
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
@@ -190,32 +199,51 @@ public class TemporalRules {
                 if(term[i] instanceof CompoundTerm) {
                     term[i]=((CompoundTerm) term[i]).applySubstitute(res1);
                     if(term[i]==null) { //it resulted in invalid term for example <a --> a>, so wrong
-                        return;
+                        return false;
                     }
                 }
             }
             int order1=s1.getTemporalOrder();
             int order2=s2.getTemporalOrder();
             Conjunction S=(Conjunction) Conjunction.make(term,order1);
+            
+            //check if term has a element which is equal to C
+            for(Term t : term) {
+                if(Terms.equalSubTermsInRespectToImageAndProduct(t, C)) {
+                    return false;
+                }
+                for(Term u : term) {
+                    if(u!=t) { //important: checking reference here is as it should be!
+                        if(Terms.equalSubTermsInRespectToImageAndProduct(t, u)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            
             Implication whole=Implication.make(S, C,order2);
             
             if(whole!=null) {
                 TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 BudgetValue budget = BudgetFunctions.forward(truth, nal);
-                if(budget!=null) {
-                    budget.setPriority(Math.min(0.99f, budget.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
-                    budget.setDurability(Math.min(0.99f,budget.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
-                }
-                nal.doublePremiseTask(whole, truth, budget, true);
+                budget.setPriority((float) Math.min(0.99, budget.getPriority()));
+                return nal.doublePremiseTask(whole, truth, budget, true)!=null;
             }
         }
+        return false;
+    }
+    
+    /** whether a term can be used in temoralInduction(,,) */
+    protected static boolean termForTemporalInduction(final Term t) {
+        return (t instanceof Inheritance) || (t instanceof Similarity);
     }
     
     
-    
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+    public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal) {
+        
+        
         if ((s1.truth==null) || (s2.truth==null))
-            return;
+            return Collections.EMPTY_LIST;
         
         Term t1 = s1.content;
         Term t2 = s2.content;
@@ -231,12 +259,13 @@ public class TemporalRules {
         }*/
         
         //since induction shouldnt miss something trivial random is not good here
-        if (/*Memory.randomNumber.nextDouble()>0.5 &&*/ (t1 instanceof Inheritance) && (t2 instanceof Inheritance)) {
+            ///ex: *Memory.randomNumber.nextDouble()>0.5 &&*/
+        
+        if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
+            
             Statement ss1 = (Statement) t1;
             Statement ss2 = (Statement) t2;
 
-            
-            
             Variable var1 = new Variable("$0");
             Variable var2 = var1;
 
@@ -253,6 +282,9 @@ public class TemporalRules {
                     boolean anyone=false;
                     Term comp=ss1.getSubject();
                     Term ss2_term = ((Operation)ss2).getSubject();
+                    
+                    boolean applicableVariableType = !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT);
+                    
                     if(ss2_term instanceof Product) {
                         Product ss2_prod=(Product) ss2_term;
                         for(final Term t : ss2_prod.term)
@@ -261,7 +293,7 @@ public class TemporalRules {
                                 anyone=true;
                             }
                         }
-                        if(anyone && !(comp instanceof Variable && ((Variable)comp).getType()==Symbols.VAR_INDEPENDENT)) { //only if there is one and it isnt a variable already
+                        if(anyone && applicableVariableType) { //only if there is one and it isnt a variable already
                             Term[] ars = ss2_prod.cloneTerms();
                             for(int i=0;i<ars.length;i++) {
                                 if(ars[i].equals(comp)) {
@@ -270,8 +302,12 @@ public class TemporalRules {
                             }
 
                             t11 = Statement.make(ss1, var1, ss1.getPredicate());
-                            Product S=(Product) new Product(ars);
-                            Operation op=(Operation) Operation.make(S, ss2.getPredicate());
+                            
+                            Operation op=(Operation) Operation.make(
+                                    new Product(ars), 
+                                    ss2.getPredicate()
+                            );
+                            
                             t22 = op;
                         }
                     }
@@ -279,9 +315,9 @@ public class TemporalRules {
             }
         }
         
-        if (Statement.invalidStatement(t1, t2)) {
-            return;
-        }
+        if (Statement.invalidStatement(t1, t2))
+            return Collections.EMPTY_LIST;
+        
         
         final Interval.AtomicDuration duration = nal.mem().param.duration;
         int durationCycles = duration.get();
@@ -290,7 +326,7 @@ public class TemporalRules {
         long time2 = s2.getOccurenceTime();
         long timeDiff = time2 - time1;
         List<Interval> interval;
-        if (Math.abs(timeDiff) > durationCycles) {
+        if (!concurrent(time1, time2, durationCycles)) {
             interval = Interval.intervalTimeSequence(Math.abs(timeDiff), Parameters.TEMPORAL_INTERVAL_PRECISION, nal.mem());
             if (timeDiff > 0) {
                 t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
@@ -304,53 +340,63 @@ public class TemporalRules {
                 }
             }
         }
-        int order;
-        if (timeDiff > durationCycles) {
-            order = TemporalRules.ORDER_FORWARD;
-        } else if (timeDiff < -durationCycles) {
-            order = TemporalRules.ORDER_BACKWARD;
-        } else {
-            order = TemporalRules.ORDER_CONCURRENT;
-        }
+        int order = order(timeDiff, durationCycles);
         TruthValue givenTruth1 = s1.truth;
         TruthValue givenTruth2 = s2.truth;
-        TruthValue truth1 = TruthFunctions.abduction(givenTruth1, givenTruth2);
-        TruthValue truth2 = TruthFunctions.abduction(givenTruth2, givenTruth1);
+        TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+        TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
         TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         BudgetValue budget1 = BudgetFunctions.forward(truth1, nal);
         BudgetValue budget2 = BudgetFunctions.forward(truth2, nal);
-        //only boost for this one
-        if(budget2!=null) {
-            budget2.setPriority(Math.min(0.99f, budget2.getPriority()+Parameters.TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT));
-            budget2.setDurability(Math.min(0.99f,budget2.getDurability()+Parameters.TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT));
-        }
+        budget2.setPriority((float) Math.min(0.99, budget2.getPriority()*Parameters.TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR));
         BudgetValue budget3 = BudgetFunctions.forward(truth3, nal);
         Statement statement1 = Implication.make(t1, t2, order);
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
+        
+        List<Task> success=new ArrayList<Task>();
         if(t11!=null && t22!=null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if(!tooMuchTemporalStatements(statement11)) {
-                nal.doublePremiseTask(statement11, truth1, budget1,false);
+                Task t=nal.doublePremiseTask(statement11, truth1, budget1,false);
+                if(t!=null) {
+                    success.add(t);
+                }
             }
             if(!tooMuchTemporalStatements(statement22)) {
-                nal.doublePremiseTask(statement22, truth2, budget2,false);
+               Task t=nal.doublePremiseTask(statement22, truth2, budget2,false);
+                if(t!=null) {
+                    success.add(t);
+                }
             }
             if(!tooMuchTemporalStatements(statement33)) {
-                nal.doublePremiseTask(statement33, truth3, budget3,false);
+                Task t=nal.doublePremiseTask(statement33, truth3, budget3,false);
+                if(t!=null) {
+                    success.add(t);
+                }
             }
         }
         if(!tooMuchTemporalStatements(statement1)) {
-            nal.doublePremiseTask(statement1, truth1, budget1,false);
+            Task t=nal.doublePremiseTask(statement1, truth1, budget1,false);
+            if(t!=null) {
+                    success.add(t);
+                }
         }
         if(!tooMuchTemporalStatements(statement2)) {
-            nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
-        }
+            Task t=nal.doublePremiseTask(statement2, truth2, budget2,true); //=/> only to  keep graph simple for now
+                 if(t!=null) {
+                    success.add(t);
+                }
+            }
         if(!tooMuchTemporalStatements(statement3)) {
-            nal.doublePremiseTask(statement3, truth3, budget3,false);
+            Task t=nal.doublePremiseTask(statement3, truth3, budget3,false);
+            if(t!=null) {
+                    success.add(t);
+                }
         }
+        return success;
     }
     
     /**
@@ -361,16 +407,16 @@ public class TemporalRules {
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+        
         if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;
         }
+        
         TruthValue truth = solution.truth;
-        if (problem.getOccurenceTime() != solution.getOccurenceTime()) {
-            //TODO avoid creating entire Sentence; 
-            //only calculate TruthValue which is all that is useful here
-            Sentence cloned = solution.projection(problem.getOccurenceTime(), memory.time());
-            truth = cloned.truth;
+        if (problem.getOccurenceTime()!=solution.getOccurenceTime()) {
+            truth = solution.projectionTruth(problem.getOccurenceTime(), memory.time());            
         }
+        
         if (problem.containQueryVar()) {
             return truth.getExpectation() / solution.content.getComplexity();
         } else {
@@ -415,4 +461,43 @@ public class TemporalRules {
         }
         return budget;
     }
+
+    public static int order(final long timeDiff, final int durationCycles) {
+        final int halfDuration = durationCycles/2;
+        if (timeDiff > halfDuration) {
+            return ORDER_FORWARD;
+        } else if (timeDiff < -halfDuration) {
+            return ORDER_BACKWARD;
+        } else {
+            return ORDER_CONCURRENT;
+        }
+    }
+    /** if (relative) event B after (stationary) event A then order=forward;
+     *                event B before       then order=backward
+     *                occur at the same time, relative to duration: order = concurrent
+     */
+    public static int order(final long a, final long b, final int durationCycles) {        
+        if ((a == Stamp.ETERNAL) || (b == Stamp.ETERNAL))
+            throw new RuntimeException("order() does not compare ETERNAL times");
+        
+        return order(b - a, durationCycles);
+    }
+    
+    public static boolean concurrent(final long a, final long b, final int durationCycles) {        
+        //since Stamp.ETERNAL is Integer.MIN_VALUE, 
+        //avoid any overflow errors by checking eternal first
+        
+        if (a == Stamp.ETERNAL) {
+            //if both are eternal, consider concurrent.  this is consistent with the original
+            //method of calculation which compared equivalent integer values only
+            return (b == Stamp.ETERNAL);
+        }
+        else if (b == Stamp.ETERNAL) {
+            return false; //a==b was compared above
+        }
+        else {        
+            return order(a, b, durationCycles) == ORDER_CONCURRENT;
+        }
+    }
+    
 }

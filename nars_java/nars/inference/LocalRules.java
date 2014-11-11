@@ -21,16 +21,18 @@
 package nars.inference;
 
 import java.util.Arrays;
-import nars.core.Events.Solution;
+import nars.core.Events.Solved;
+import nars.core.Events.Unsolved;
 import nars.core.Memory;
-import nars.entity.BudgetValue;
 import nars.core.control.NAL;
+import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
 import static nars.inference.TemporalRules.matchingOrder;
 import static nars.inference.TemporalRules.reverseOrder;
+import nars.io.Output;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Equivalence;
@@ -136,7 +138,7 @@ public class LocalRules {
         
         if (!TemporalRules.matchingOrder(problem.getTemporalOrder(), belief.getTemporalOrder())) {
             //System.out.println("Unsolved: Temporal order not matching");
-            memory.emit(Solution.class, task, belief, false, "Non-matching temporal Order");
+            memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return false;
         }
         
@@ -149,7 +151,7 @@ public class LocalRules {
                     memory.emotion.adjustHappy(oldQ, task.getPriority());
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
-                memory.emit(Solution.class, task, belief, false, "Lower quality");               
+                memory.emit(Unsolved.class, task, belief, "Lower quality");               
                 return false;
             }
         }
@@ -182,15 +184,28 @@ public class LocalRules {
         BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);
         if ((budget != null) && budget.aboveThreshold()) {                       
             
-            memory.emit(Solution.class, task, belief, true);
-            //memory.output(task);
+            //Solution Activated
+            if(task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK) {
+                memory.emit(Solved.class, task, belief);   //solution to quests and questions can be always showed   
+            } else {
+                memory.emit(Output.class, task, belief);   //goal things only show silence related 
+            }
             
-            //System.out.println("Solved: Solution activated");            
-            memory.addNewTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
+            
+            /*memory.output(task);
+                        
+            //only questions and quests get here because else output is spammed
+            if(task.sentence.isQuestion() || task.sentence.isQuest()) {
+                memory.emit(Solved.class, task, belief);          
+            } else {
+                memory.emit(Output.class, task, belief);            
+            }*/
+                        
+            nal.addTask(nal.getCurrentTask(), budget, belief, task.getParentBelief());
             return true;
         }
         else {
-            memory.emit(Solution.class, task, belief, false, "Insufficient budget");
+            memory.emit(Unsolved.class, task, belief, "Insufficient budget");
         }
         return false;
     }

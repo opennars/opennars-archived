@@ -32,6 +32,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.List;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.ChainShape;
@@ -68,6 +70,9 @@ public class DrawPhy2D extends DebugDraw {
     Transform xf = new Transform();
     Color3f color = new Color3f();
 
+    public final List<LayerDraw> layers = new ArrayList();
+    private Graphics2D graphics;
+    
     public DrawPhy2D(TestPanelJ2D argTestPanel, boolean yFlip) {        
         panel = argTestPanel;
         this.yFlip = yFlip;        
@@ -75,9 +80,25 @@ public class DrawPhy2D extends DebugDraw {
     }
 
 
+    public interface LayerDraw {
+        public void drawGround(DrawPhy2D draw, World w);
+        public void drawSky(DrawPhy2D draw, World w);
+    }
+    
+    public void addLayer(LayerDraw l) {
+        layers.add(l);
+    }
+    public void removeLayer(LayerDraw l) {
+        layers.remove(l);
+    }
+    
     
     public void draw(World w) {
+        
+        graphics = panel.getDBGraphics();        
 
+        for (LayerDraw l : layers) l.drawGround(this, w);
+        
         int flags = getFlags();
         //boolean wireframe = (flags & DebugDraw.e_wireframeDrawingBit) != 0;
 
@@ -142,6 +163,9 @@ public class DrawPhy2D extends DebugDraw {
 //        if ((flags & DebugDraw.e_dynamicTreeBit) != 0) {
 //            m_contactManager.m_broadPhase.drawTree(m_debugDraw);
 //        }
+
+        for (LayerDraw l : layers) l.drawSky(this, w);
+
         flush();
 
     }
@@ -178,12 +202,17 @@ public class DrawPhy2D extends DebugDraw {
         if (o instanceof DrawProperty) {
             DrawProperty d = (DrawProperty)o;
             d.before(b, this);
+            
+            if ((fillColor == null) && (stroke == null))
+                return;
         }
         else {
             strokeColor = defaultStrokeColor;
             fillColor = defaultFillColor;
             stroke = defaultStroke;
         }
+        
+        
         
         xf.set(b.getTransform());
         
@@ -357,8 +386,7 @@ public class DrawPhy2D extends DebugDraw {
     private final Vec2 sp1 = new Vec2();
     private final Vec2 sp2 = new Vec2();
 
-    @Override
-    public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
+    @Override public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
         getWorldToScreenToOut(p1, sp1);
         getWorldToScreenToOut(p2, sp2);
 
@@ -369,6 +397,18 @@ public class DrawPhy2D extends DebugDraw {
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
     }
 
+    public void drawSegment(Vec2 p1, Vec2 p2, Color3f color, float alpha) {
+        getWorldToScreenToOut(p1, sp1);
+        getWorldToScreenToOut(p2, sp2);
+
+        
+        Color c = new Color(color.x, color.y, color.z, alpha);
+        Graphics2D g = getGraphics();        
+        g.setColor(c);
+        g.setStroke(stroke);
+        g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
+    }
+    
     public void drawAABB(AABB argAABB, Color3f color) {
         Vec2 vecs[] = vec2Array.get(4);
         argAABB.getVertices(vecs);
@@ -511,12 +551,35 @@ public class DrawPhy2D extends DebugDraw {
     private final static IntArray xIntsPool = new IntArray();
     private final static IntArray yIntsPool = new IntArray();
 
+    public void drawSolidRect(float px, float py, float w, float h, float r, float G, float b) {
+        Graphics2D g = getGraphics();
+        //saveState(g);
+        
+        getWorldToScreenToOut(px, py, temp);
+        int ipx = (int)temp.x;  int ipy = (int)temp.y;
+        getWorldToScreenToOut(px+w, py+h, temp);
+        int jpx = (int)temp.x;  int jpy = (int)temp.y;
+        int iw = jpx - ipx;
+        int ih = -(jpy - ipy);
+          
+//        if ((ipy/2 > g.getDeviceConfiguration().getBounds().getHeight()) ||
+//                (ipx/2 > g.getDeviceConfiguration().getBounds().getWidth()))
+//                    return;
+        g.setColor(new Color(r, G, b));
+        g.fillRect(ipx-iw/2, ipy-ih/2, iw, ih);
+
+        //if (g.getDeviceConfiguration().getBounds().intersects(ipx-iw/2, ipy-ih/2, iw, ih)) {
+        //}        
+        
+        //restoreState(g);        
+    }
+
     @Override
     public void drawSolidPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
         Color s = strokeColor;
         Color f = fillColor;
         Graphics2D g = getGraphics();
-        saveState(g);
+        //saveState(g);
         int[] xInts = xIntsPool.get(vertexCount);
         int[] yInts = yIntsPool.get(vertexCount);
         for (int i = 0; i < vertexCount; i++) {
@@ -529,14 +592,14 @@ public class DrawPhy2D extends DebugDraw {
         g.fillPolygon(xInts, yInts, vertexCount);
         g.setColor(s);
         g.drawPolygon(xInts, yInts, vertexCount);
-        restoreState(g);
+        //restoreState(g);
     }
 
     @Override
     public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color) {
         Color s = strokeColor; //new Color(color.x, color.y, color.z, 1f);
         Graphics2D g = getGraphics();
-        saveState(g);
+        //saveState(g);
         int[] xInts = xIntsPool.get(vertexCount);
         int[] yInts = yIntsPool.get(vertexCount);
         for (int i = 0; i < vertexCount; i++) {
@@ -547,7 +610,7 @@ public class DrawPhy2D extends DebugDraw {
         g.setStroke(stroke);
         g.setColor(s);
         g.drawPolygon(xInts, yInts, vertexCount);
-        restoreState(g);
+        //restoreState(g);
     }
 
     @Override
@@ -561,8 +624,8 @@ public class DrawPhy2D extends DebugDraw {
         g.drawString(s, x, y);
     }
 
-    private Graphics2D getGraphics() {
-        return panel.getDBGraphics();
+    public Graphics2D getGraphics() {        
+        return graphics;
     }
 
     private final Vec2 temp2 = new Vec2();

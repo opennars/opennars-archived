@@ -18,7 +18,7 @@ package nars.timeline.example;
 
 import nars.core.NAR;
 import nars.core.Param;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.build.Default;
 import nars.gui.NWindow;
 import nars.gui.output.chart.TimeSeries.FirstOrderDifferenceTimeSeries;
 import nars.gui.output.timeline.Timeline2DCanvas;
@@ -30,25 +30,25 @@ import nars.util.NARTrace;
 public class NARCompare1 extends TimelineExample {
     
     public static void setA(Param p) {
-        p.beliefForgetDurations.set(10);
+        p.termLinkForgetDurations.set(10);
     }
     
     public static void setB(Param p) {
-        p.beliefForgetDurations.set(5);
+        p.termLinkForgetDurations.set(5);
     }
     
     public static void main(String[] args) {
         int cycles = 128;
 
         String input = "<a --> b>.\n" + "<b --> c>.\n" + "<a --> c>?\n";
-        NAR a = new DefaultNARBuilder().build();
-        setA(a.param());        
+        NAR a = new Default().build();
+        setA(a.param);        
         NARTrace at = new NARTrace(a);
         a.addInput(input);
         a.finish(cycles);
 
-        NAR b = new DefaultNARBuilder().build();
-        setB(b.param());
+        NAR b = new Default().build();
+        setB(b.param);
         NARTrace bt = new NARTrace(b);
         b.addInput(input);
         b.finish(cycles);

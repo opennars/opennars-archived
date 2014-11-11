@@ -38,6 +38,8 @@ public class DifferenceExt extends CompoundTerm {
         super(arg);
         
         ensureValidDifferenceArguments(arg);        
+        
+        init(arg);
     }
 
 
@@ -50,8 +52,8 @@ public class DifferenceExt extends CompoundTerm {
         return new DifferenceExt(term);
     }
 
-    @Override public CompoundTerm clone(Term[] replaced) {
-        return (CompoundTerm) make(replaced);
+    @Override public Term clone(Term[] replaced) {
+        return make(replaced);
     }
 
     

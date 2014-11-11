@@ -36,21 +36,19 @@ public abstract class Statement extends CompoundTerm {
     
     /**
      * Constructor with partial values, called by make
-     *
+     * Subclass constructors should call init after any initialization
+     * 
      * @param arg The component list of the term
      */
     protected Statement(final Term[] arg) {
         super(arg);
     }
     
-    protected Statement(final Term subj, final Term pred) {
-        this(new Term[] { subj, pred} );
-    }
-    
-    
 
     @Override
     protected void init(Term[] t) {
+        if (t.length!=2)
+            throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
         if (t[0]==null)
             throw new RuntimeException("Null subject: " + this);
         if (t[1]==null)
@@ -149,6 +147,9 @@ public abstract class Statement extends CompoundTerm {
     
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
+        if(subj==null || pred==null) {
+            return null;
+        }
         if (statement instanceof Inheritance) {
             return Inheritance.make(subj, pred);
         }
@@ -241,7 +242,7 @@ public abstract class Statement extends CompoundTerm {
                 
         cb.append(STATEMENT_CLOSER.ch);
                         
-        return cb.compact();
+        return cb.compact().toString();
     }    
     /**
      * Check the validity of a potential Statement. [To be refined]

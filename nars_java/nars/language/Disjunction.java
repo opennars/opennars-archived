@@ -38,9 +38,9 @@ public class Disjunction extends CompoundTerm {
     private Disjunction(final Term[] arg) {
         super(arg);
         
-        if (Parameters.DEBUG) {
-            Terms.verifySortedAndUnique(arg, false);
-        }        
+        if (Parameters.DEBUG) { Terms.verifySortedAndUnique(arg, false);         }        
+        
+        init(arg);
     }
 
     
@@ -59,8 +59,8 @@ public class Disjunction extends CompoundTerm {
     }
 
     @Override
-    public CompoundTerm clone(Term[] x) {
-        return (CompoundTerm) make(Term.toSortedSet(x));
+    public Term clone(Term[] x) {
+        return make(Term.toSortedSet(x));
     }
     
     

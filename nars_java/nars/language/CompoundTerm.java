@@ -77,12 +77,13 @@ public abstract class CompoundTerm extends Term {
     @Override public abstract CompoundTerm clone();
 
     
+    /** subclasses should be sure to call init() in their constructors; it is not done here
+     to allow subclass constructors to set data before calling init() */
     public CompoundTerm(final Term[] components) {
         super();
 
         this.term = components;            
-        
-        init(term);
+                
     }
     
     /** call this after changing Term[] contents */
@@ -115,25 +116,37 @@ public abstract class CompoundTerm extends Term {
         }                    
     }
 
-    
-    abstract public CompoundTerm clone(final Term[] replaced);
+    /** Must be Term return type because the type of Term may change with different arguments */
+    abstract public Term clone(final Term[] replaced);
     
     @Override
     public CompoundTerm cloneDeep() {
-        return clone(cloneTermsDeep());
+        Term c = clone(cloneTermsDeep());
+        if (c.getClass()!=getClass())
+            throw new RuntimeException("cloneDeep resulted in different class: " + c + " from " + this);
+        if (isNormalized())
+            ((CompoundTerm)c).setNormalized(true);
+        
+        return (CompoundTerm)c;
     }
     
-    public CompoundTerm cloneDeepVariables() {
-        return clone(cloneVariableTermsDeep());
+    public CompoundTerm cloneDeepVariables() {        
+        Term c = clone(cloneVariableTermsDeep());
+        if (c == null)
+            throw new RuntimeException("clone(cloneVariableTermsDeep()) resulted in null: " + this);
+        if (c.getClass()!=getClass())
+            throw new RuntimeException("cloneDeepVariables resulted in different class: " + c + " from " + this);                
+        
+        return (CompoundTerm)c;
     }
     
     /** override in subclasses to avoid unnecessary reinit */
-    public CompoundTerm _clone(final Term[] replaced) {
+    /*public CompoundTerm _clone(final Term[] replaced) {
         if (Terms.equals(term, replaced)) {
             return this;
         }
         return clone(replaced);
-    }
+    }*/
 
 
     
@@ -271,7 +284,7 @@ public abstract class CompoundTerm extends Term {
         
         n.append(COMPOUND_TERM_CLOSER.ch);
                         
-        return n.compact();
+        return n.compact().toString();
     }
     
 
@@ -410,8 +423,9 @@ public abstract class CompoundTerm extends Term {
         for (int i = 0; i < l.length; i++)  {     
             Term t = term[i];
             if (t.hasVar()) {
-                if (term[i] instanceof CompoundTerm)
+                if (term[i] instanceof CompoundTerm) {
                     t = ((CompoundTerm)t).cloneDeepVariables();
+                }
                 else /* it's a variable */
                     t = t.clone();
             }
@@ -677,13 +691,11 @@ public abstract class CompoundTerm extends Term {
      * May return null if the term can not be created
      * @param subs
      */
-    public CompoundTerm applySubstitute(final Map<Term, Term> subs) {   
+    public Term applySubstitute(final Map<Term, Term> subs) {   
         if ((subs == null) || (subs.isEmpty())) {            
             return this;
         }
-        
-        //if (!containsAnyTermsOf(subs.keySet()))
-            //return this;
+                
         Term[] tt = new Term[term.length];
         boolean modified = false;
         
@@ -701,13 +713,13 @@ public abstract class CompoundTerm extends Term {
                     modified = true;
                 }
             } else if (t1 instanceof CompoundTerm) {
-                CompoundTerm ss = ((CompoundTerm) t1).applySubstitute(subs);
+                Term ss = ((CompoundTerm) t1).applySubstitute(subs);
                 if (ss!=null) {
                     tt[i] = ss;
                     if (!tt[i].equals(term[i]))
                         modified = true;
                 }
-            }            
+            }
         }
         if (!modified)
             return this;
@@ -719,6 +731,16 @@ public abstract class CompoundTerm extends Term {
         return this.clone(tt);
     }
 
+    /** returns result of applySubstitute, if and only if it's a CompoundTerm. 
+     * otherwise it is null */
+    public CompoundTerm applySubstituteToCompound(Map<Term, Term> substitute) {
+        Term t = applySubstitute(substitute);
+        if (t instanceof CompoundTerm)
+            return ((CompoundTerm)t);
+        return null;
+    }
+
+    
     /* ----- link CompoundTerm and its term ----- */
     /**
      * Build TermLink templates to constant term and subcomponents
@@ -785,37 +807,40 @@ public abstract class CompoundTerm extends Term {
     
     @Override
     public boolean equals(final Object that) {
-        if (that==this) return true;
-        
-        if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            if (!(that instanceof CompoundTerm)) return false;
+        if (that==this) return true;                
+        if (!(that instanceof Term))
+            return false;
+        if (Parameters.TERM_ELEMENT_EQUIVALENCY)
+            return equalsByTerm(that);
+        return name().equals(((Term)that).name());
+    }
+    
+    public boolean equalsByTerm(final Object that) {
+        if (!(that instanceof CompoundTerm)) return false;
 
-            final CompoundTerm t = (CompoundTerm)that;        
+        final CompoundTerm t = (CompoundTerm)that;        
 
-            if (operator() != t.operator())
+        if (operator() != t.operator())
+            return false;
+
+        if (getComplexity()!= t.getComplexity())
+            return false;
+
+        if (getTemporalOrder()!=t.getTemporalOrder())
+            return false;
+
+        if (!equals2(t))
+            return false;
+
+        if (term.length!=t.term.length)
+            return false;
+
+        for (int i = 0; i < term.length; i++) {            
+            if (!term[i].equals(t.term[i]))
                 return false;
-
-            if (getComplexity()!= t.getComplexity())
-                return false;
-
-            if (getTemporalOrder()!=t.getTemporalOrder())
-                return false;
-
-            if (!equals2(t))
-                return false;
-
-            if (term.length!=t.term.length)
-                return false;
-
-            for (int i = 0; i < term.length; i++) {            
-                if (!term[i].equals(t.term[i]))
-                    return false;
-            }
-
-            return true;
         }
-        return super.equals(that);
-        
+
+        return true;        
     }
     
     /** additional equality checks, in subclasses*/
@@ -926,11 +951,8 @@ public abstract class CompoundTerm extends Term {
     public boolean isNormalized() {
         return normalized;
     }
-    
 
     
-
-
 
 
 }

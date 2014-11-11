@@ -66,7 +66,7 @@ import nars.gui.output.graph.ProcessingGraphPanel;
 import nars.gui.output.graph.SentenceGraphCanvas;
 import nars.gui.output.timeline.TimelinePanel;
 import nars.inference.Executive;
-import nars.inference.Executive.TaskExecution;
+import nars.inference.Executive.Execution;
 import nars.inference.GraphExecutive;
 import nars.io.TextInput;
 import nars.io.TextOutput;
@@ -203,7 +203,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
                 @Override
                 public void actionPerformed(ActionEvent e) {                    
                     new NWindow("Planning", new SwingLogPanel(NARControls.this, 
-                            Executive.class, TaskExecution.class, 
+                            Executive.class, Execution.class, 
                             GraphExecutive.ParticlePath.class, 
                             GraphExecutive.ParticlePlan.class))
                     .show(500, 300);
@@ -655,7 +655,7 @@ public class NARControls extends JPanel implements ActionListener, Observer {
             @Override
             public void onChange(float v) {
                 int level = (int) v;
-                nar.param().noiseLevel.set(level);
+                (nar.param).noiseLevel.set(level);
             }
 
         };
@@ -798,8 +798,8 @@ public class NARControls extends JPanel implements ActionListener, Observer {
         c.ipady = 4;
 
         p.add(new NSlider(memory.param.decisionThreshold, "Decision Threshold", 0.0f, 1.0f), c);
-        p.add(new NSlider(memory.param.taskForgetDurations, "Task Memory Duration", 0.5f, 20), c);
-        p.add(new NSlider(memory.param.beliefForgetDurations, "Belief Memory Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.taskLinkForgetDurations, "Task Memory Duration", 0.5f, 20), c);
+        p.add(new NSlider(memory.param.termLinkForgetDurations, "Belief Memory Duration", 0.5f, 20), c);
         p.add(new NSlider(memory.param.conceptForgetDurations, "Concept Memory Duration", 0.5f, 20), c);
 
         

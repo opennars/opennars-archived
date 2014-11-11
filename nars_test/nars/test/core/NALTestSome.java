@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import nars.core.NAR;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -15,7 +16,7 @@ import org.junit.runners.Parameterized;
 public class NALTestSome extends NALTest {
 
    public static boolean include(String filename) {
-       return filename.startsWith("nal1.1");
+       return filename.startsWith("notcontain.nal");
    }
 
    
@@ -39,11 +40,15 @@ public class NALTestSome extends NALTest {
         org.junit.runner.JUnitCore.runClasses(NALTestSome.class);
    }    
 
-   public NALTestSome(String scriptPath) {
+//   public NALTestSome(String scriptPath) {
+//       this(scriptPath, true);
+//   }
+   
+   public NALTestSome(String scriptPath, boolean showOutput) {
         super(scriptPath);
-        showSuccess = true;
-        showOutput = true;
-        showTrace = false;
+        this.showSuccess = showOutput;
+        this.showOutput = showOutput;
+        this.showTrace = false;
         System.out.println("Running: "  + scriptPath);
         //setOutput(true);
    }

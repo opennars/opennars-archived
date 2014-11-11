@@ -65,8 +65,9 @@ public class RuleTables {
     
     public static void InternalOperations(Memory memory,Sentence belief, NAL nal, Term beliefTerm, Term taskTerm) {
     
-        if(Parameters.INTERNAL_EXPERIENCE_FULL && Memory.randomNumber.nextDouble()<Parameters.INTERNAL_EXPERIENCE_PROBABILITY) {
-            String[] ops=new String[]{"^remind","^doubt","^consider","^evaluate","hestitate"}; //the operators which dont have a innate belief
+        if(Parameters.INTERNAL_EXPERIENCE_FULL && Memory.randomNumber.nextDouble()<Parameters.INTERNAL_EXPERIENCE_PROBABILITY &&
+                Memory.randomNumber.nextDouble()<0.25) { //make 4 times less probable to do one of those than by innate beliefs for now
+            String[] ops=new String[]{"^remind","^doubt","^consider","^evaluate","hestitate","^wonder","^belief","^want"}; //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
             Operator op=memory.getOperator(ops[Memory.randomNumber.nextInt(ops.length)]);
             Product prod=new Product(new Term[]{belief.content});
@@ -82,7 +83,7 @@ public class RuleTables {
                 float quality = BudgetFunctions.truthToQuality(sentence.truth);
                 BudgetValue budget = new BudgetValue(
                     Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                    Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL, 
+                    Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
@@ -114,7 +115,7 @@ public class RuleTables {
 
                 if(valid) {
                     Operator op=memory.getOperator("^anticipate");
-                    Product args=(Product) new Product(new Term[]{imp.getPredicate()});
+                    Product args=new Product(new Term[]{imp.getPredicate()});
                     Term new_term=Operation.make(args, /* --> */ op);
 
                     Sentence sentence = new Sentence(
@@ -125,7 +126,7 @@ public class RuleTables {
                     float quality = BudgetFunctions.truthToQuality(sentence.truth);
                     BudgetValue budget = new BudgetValue(
                         Parameters.DEFAULT_GOAL_PRIORITY*Parameters.INTERNAL_EXPERIENCE_PRIORITY_MUL, 
-                        Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_QUALITY_MUL, 
+                        Parameters.DEFAULT_GOAL_DURABILITY*Parameters.INTERNAL_EXPERIENCE_DURABILITY_MUL, 
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
@@ -154,9 +155,11 @@ public class RuleTables {
         final Term beliefTerm = bLink.target;       // cloning for substitution
         
         
-        //CONTRAPOSITION
+        //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Statement) && (taskTerm instanceof Implication) && (taskSentence.isJudgment())) {
-            StructuralRules.contrapositionAttempts((Statement)taskTerm, taskSentence, nal); 
+            if(((Statement)taskTerm).getSubject() instanceof Negation && bLink.target.equals(((Statement)taskTerm).getSubject())) { 
+                StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
+            } 
         }        
 
         
@@ -171,13 +174,59 @@ public class RuleTables {
         
         if (belief != null) {   
             
+            //TODO
+            //(&/,a) goal didnt get unwinded, so lets unwind it
+            if(task.sentence.content instanceof Conjunction && task.sentence.punctuation==Symbols.GOAL_MARK) {
+                Conjunction s=(Conjunction) task.sentence.content;
+                Term newterm=s.term[0];
+                TruthValue truth=task.sentence.truth;
+                BudgetValue newBudget=BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), nal);
+                nal.doublePremiseTask(newterm, truth, newBudget, false);
+            }
+            
             InternalOperations(memory, belief, nal, beliefTerm, taskTerm);
             
+             //this is a new attempt/experiment to make nars effectively track temporal coherences
+            if(beliefTerm instanceof Implication && belief.isEternal() && 
+                    (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
+                for(int i=0;i<Parameters.TEMPORAL_CHAINING_ATTEMPTS;i++) {
+                    
+                    Task best=nal.memory.temporalCoherences.takeNext();
+                    if (best == null) {
+                        break;                        
+                    }
+                    
+                    nal.memory.temporalCoherences.putBack(best, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+                    
+                    Sentence s=best.sentence;
+                    Term t=s.content;
+                    
+                    if(!(t instanceof Implication) || s.getOccurenceTime()!=Stamp.ETERNAL)
+                        continue;
+                    
+                    Implication Imp=(Implication) t;
+                    if(Imp.getTemporalOrder()!=TemporalRules.ORDER_FORWARD && Imp.getTemporalOrder()!=TemporalRules.ORDER_CONCURRENT) {
+                        continue;
+                    }
+
+                    Task sich=nal.getCurrentTask();
+                    nal.setCurrentTask(best);
+                    
+                    if(TemporalRules.temporalInductionChain(s, belief, nal)) {
+                        break;
+                    }
+                    
+                    nal.setCurrentTask(sich);
+                }
+            }
+
+            //while this is the old way, which seem to miss so many temporal coherences that it is not even worth the rule:
             if(beliefTerm instanceof Implication && 
              (beliefTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) &&
              taskTerm instanceof Implication && 
              (taskTerm.getTemporalOrder()==TemporalRules.ORDER_FORWARD || taskTerm.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
-                if(taskSentence.stamp.getOccurrenceTime()==Stamp.ETERNAL && belief.stamp.getOccurrenceTime()==Stamp.ETERNAL) {
+                if(taskSentence.isEternal() && belief.isEternal() ||
+                   belief.after(taskSentence, memory.param.duration.get())) {
                     TemporalRules.temporalInductionChain(taskSentence, belief, nal);
                 }
             }
@@ -291,7 +340,16 @@ public class RuleTables {
                         if (belief != null) {
                             bIndex = bLink.getIndex(1);
                             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
-                                conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                
+                                //THIS CONDITION IS NEW:
+                                //Because this one shouldnt happen:
+                                //IN <(&/,<{door5} --> opened>,+1) =/> (^deactivate,{switch0})>. %1.00;0.90%
+                                //IN <{door5} --> opened>! %1.00;0.90%
+                                //EXE (^deactivate,{switch0})
+                                //TODO: ANALYZE IN DETAIL
+                                if(taskSentence.punctuation==Symbols.JUDGMENT_MARK) {
+                                    conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                }
                             }
                         }
                         break;
@@ -727,7 +785,8 @@ public class RuleTables {
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
+                if (compound.term[0] instanceof CompoundTerm)
+                    StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
             } else {
                 StructuralRules.transformNegation(compound, nal);
             }
@@ -817,11 +876,11 @@ public class RuleTables {
             }            
         } 
         
-        /*else if ((statement instanceof Implication) && (compound instanceof Negation)) {
+       /* else if ((statement instanceof Implication) && (compound instanceof Negation)) {
             if (index == 0) {
-                StructuralRules.contraposition(statement, memory.getCurrentTask().getSentence(), memory);
+                StructuralRules.contraposition(statement, nal.getCurrentTask().sentence, nal);
             } else {
-                StructuralRules.contraposition(statement, memory.getCurrentBelief(), memory);
+                StructuralRules.contraposition(statement, nal.getCurrentBelief(), nal);
             }        
         }*/
         

@@ -47,23 +47,34 @@ public class Events {
         }        
     }
     
+    public static class Perceive {    }
+    
     //when remembered a previously forgotten concept
     public static class ConceptRemember {    }
     
     public static class ConceptForget { }
     public static class ConceptBeliefAdd { }
     public static class ConceptBeliefRemove { }
+    
     public static class ConceptGoalAdd { }
     public static class ConceptGoalRemove { }
     public static class ConceptQuestionAdd { }
     public static class ConceptQuestionRemove { }
+
+    
+    //planning
+    public static class UnexecutableGoal {   }
+    public static class UnexecutableOperation {   }
+    public static class NewTaskExecution {    }
+    
 
     public static class TermLinkAdd { }
     public static class TermLinkRemove { }
     public static class TaskLinkAdd { }
     public static class TaskLinkRemove { }
     
-    public static class Solution { }
+    public static class Solved { }
+    public static class Unsolved { }
     
     
     public static class ConceptFire { }
@@ -134,6 +145,12 @@ public class Events {
         
         
     }
+
+    
+
+    
+
+    
 
     
     

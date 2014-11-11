@@ -37,7 +37,7 @@ import nars.language.Term;
  * <p>
  * This class is mainly used in inference.RuleTable to dispatch premises to inference rules
  */
-public class TermLink extends Item<TermLink> implements TLink {
+public class TermLink extends Item<TermLink> implements TLink<Term> {
     
     
     /** At C, point to C; TaskLink only */
@@ -134,10 +134,11 @@ public class TermLink extends Item<TermLink> implements TLink {
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;
+        if (hashCode()!=obj.hashCode()) return false;
+        
         if (obj instanceof TermLink) {
             TermLink t = (TermLink)obj;
             
-            if (t.hash != hash) return false;
             if (type != t.type) return false;
             if (!Arrays.equals(t.index, index)) return false;
             
@@ -241,6 +242,12 @@ public class TermLink extends Item<TermLink> implements TLink {
     @Override public void end() {
         
     }
+
+    @Override
+    public Term getTarget() {
+        return target;
+    }
+
 
     
     

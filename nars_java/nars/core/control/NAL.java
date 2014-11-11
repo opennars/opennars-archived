@@ -4,7 +4,9 @@
  */
 package nars.core.control;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
@@ -16,8 +18,10 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.Implication;
 import nars.language.Negation;
 import nars.language.Term;
 import nars.language.Variable;
@@ -27,7 +31,7 @@ import nars.operator.Operation;
  * NAL Reasoner Process.  Includes all reasoning process state.
  */
 public abstract class NAL implements Runnable {
-    public final Memory mem;
+    public final Memory memory;
     protected Term currentTerm;
     protected Concept currentConcept;
     protected Task currentTask;
@@ -37,14 +41,18 @@ public abstract class NAL implements Runnable {
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
 
+    /** stores the tasks added by this inference process */
+    protected List<Task> tasksAdded = new ArrayList();
+    //TODO tasksDicarded
+    
     public NAL(Memory mem) {
         super();
-        this.mem = mem;
+        this.memory = mem;
     }
 
 
     public void emit(final Class c, final Object... o) {
-        mem.emit(c, o);
+        memory.emit(c, o);
     }
 
     /**
@@ -53,26 +61,71 @@ public abstract class NAL implements Runnable {
      * @param task the derived task
      */
     public boolean derivedTask(final Task task, final boolean revised, final boolean single, Sentence occurence, Sentence occurence2) {
+        if(task.sentence.content instanceof Operation) {
+            if(((Operation)task.sentence.content).getPredicate()==memory.getOperator("^deactivate") && task.sentence.punctuation==Symbols.GOAL_MARK) {
+                boolean breakpoint=true;
+                //this is a very serious bug, there is no evidence in 
+                /*
+                (^go-to,{switch0}). :|: %1.00;0.90%
+6
+<{switch0} --> at>. :|: %1.00;0.90%
+6
+(^activate,{switch0}). :|: %1.00;0.90%
+6
+<{door5} --> opened>. :|: %1.00;0.90%
+6
+(^deactivate,{switch0}). :|: %1.00;0.90%
+6
+(--,<{door5} --> opened>). :|: %1.00;0.90%
+6
+(^go-to,{place4}). :|: %1.00;0.90%
+6
+<{place4} --> at>. :|: %1.00;0.90%
+6
+<{door5} --> opened>!
+<{door5} --> opened>!
+<{door5} --> opened>!
+                */
+                //for it and still it is the only thing which gets executed,
+                //while the much more rational and win-bringing possibilies
+                //are not even considered
+                //TODO: Find reasons and bugfix
+                
+                //a simpler case which also shows it:
+                
+                /*
+                    IN <(&/,<{door5} --> opened>,+1) =/> (^deactivate,{switch0})>. %1.00;0.90%
+    IN <{door5} --> opened>! %1.00;0.90%
+   EXE $0.65;0.45;0.72$ ^deactivate([{switch0}])=null
+                */
+            }
+        }
+        //if(task.sentence.content instanceof Implication && ((Implication) task.sentence.content).getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
+        ////    return false; //inference rules do not handle this case correctly already, this needs deeper analysis
+            //this one is also quite serious, for now we don't allow =\> statements
+            //as long as its not guranteed that there are inference rules like detachment
+            //which lead to a decision making catastrophe due to ignoring that its a relation into the past
+        //} //for example sth =\> goal gets sth with detachment
         if (!task.budget.aboveThreshold()) {
-            mem.removeTask(task, "Insufficient Budget");
+            memory.removeTask(task, "Insufficient Budget");
             return false;
         }
         if (task.sentence != null && task.sentence.truth != null) {
             float conf = task.sentence.truth.getConfidence();
             if (conf == 0) {
                 //no confidence - we can delete the wrongs out that way.
-                mem.removeTask(task, "Ignored (zero confidence)");
+                memory.removeTask(task, "Ignored (zero confidence)");
                 return false;
             }
         }
         
         if (Parameters.DERIVE_ONLY_DEMANDED_TASKS) {
             if ((task.sentence.punctuation==Symbols.JUDGMENT_MARK) && !(task.sentence.content instanceof Operation)) {             
-                boolean noConcept = mem.concept(task.sentence.content) == null;
+                boolean noConcept = memory.concept(task.sentence.content) == null;
                 
                 if (noConcept) { 
                     //there is no question and goal of this, return
-                    mem.removeTask(task, "No demand exists");
+                    memory.removeTask(task, "No demand exists");
                     return false;
                 }
             }
@@ -82,14 +135,14 @@ public abstract class NAL implements Runnable {
         
         
         final Stamp stamp = task.sentence.stamp;
-        if (occurence != null && occurence.getOccurenceTime() != Stamp.ETERNAL) {
+        if (occurence != null && !occurence.isEternal()) {
             stamp.setOccurrenceTime(occurence.getOccurenceTime());
         }
-        if (occurence2 != null && occurence2.getOccurenceTime() != Stamp.ETERNAL) {
+        if (occurence2 != null && !occurence2.isEternal()) {
             stamp.setOccurrenceTime(occurence2.getOccurenceTime());
         }
         if (stamp.latency > 0) {
-            mem.logic.DERIVATION_LATENCY.commit(stamp.latency);
+            memory.logic.DERIVATION_LATENCY.commit(stamp.latency);
         }
         
         final Term currentTaskContent = getCurrentTask().getContent();
@@ -125,7 +178,7 @@ public abstract class NAL implements Runnable {
 
                     for (final Term chain1 : chain) {                
                         if (tc.equals(chain1)) {
-                            mem.removeTask(task, "Cyclic Reasoning");
+                            memory.removeTask(task, "Cyclic Reasoning");
                             return false;
                         }
                     }
@@ -138,23 +191,23 @@ public abstract class NAL implements Runnable {
             for (int i = 0; i < stampLength; i++) {
                 final long baseI = stamp.evidentialBase[i];
                 for (int j = 0; j < stampLength; j++) {
-                    if ((i != j) && (baseI == stamp.evidentialBase[j]) && !(task.sentence.punctuation == Symbols.GOAL_MARK && task.sentence.content instanceof Operation)) {
-                        mem.removeTask(task, "Overlapping Revision Evidence");
+                    if ((i != j) && (baseI == stamp.evidentialBase[j])) {
+                        memory.removeTask(task, "Overlapping Revision Evidence");
                         //"(i=" + i + ",j=" + j +')' /* + " in " + stamp.toString()*/
                         return false;
                     }
                 }
             }
         }
-        mem.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
         if (task.sentence.content instanceof Operation) {
             Operation op = (Operation) task.sentence.content;
             if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
                 return false;
             }
         }
-        mem.logic.TASK_DERIVED.commit(task.budget.getPriority());
-        mem.addNewTask(task, "Derived");
+        memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
+        memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
+        addTask(task, "Derived");
         return true;
     }
 
@@ -181,10 +234,11 @@ public abstract class NAL implements Runnable {
      * @param newTruth The truth value of the sentence in task
      * @param newBudget The budget value in task
      */
-    public void doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+    public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
         if (!newBudget.aboveThreshold()) {
-            return;
+            return null;
         }
+        Task derived = null;
         if (newContent != null) {
             {
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, newTruth, getTheNewStamp());
@@ -192,23 +246,15 @@ public abstract class NAL implements Runnable {
                 if (newTask!=null) {
                     boolean added = derivedTask(newTask, false, false, null, null);
                     if (added && temporalAdd) {
-                        mem.temporalRuleOutputToGraph(newSentence, newTask);
+                        memory.temporalRuleOutputToGraph(newSentence, newTask);
                     }
-                }
-            }
-            if (temporalAdd && Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL != 0.0) {
-                TruthValue truthEt = newTruth.clone();
-                truthEt.setConfidence(newTruth.getConfidence() * Parameters.IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL);
-                final Sentence newSentence = (new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, getTheNewStamp().cloneEternal()));
-                final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
-                if (newTask!=null) {
-                    boolean added = derivedTask(newTask, false, false, null, null);
-                    if (added && temporalAdd) {
-                        mem.temporalRuleOutputToGraph(newSentence, newTask);
+                    if(added) {
+                        derived=newTask;
                     }
                 }
             }
         }
+        return derived;
     }
 
     /**
@@ -300,7 +346,7 @@ public abstract class NAL implements Runnable {
     //        setNewStamp(null);
     //    }
     public long getTime() {
-        return mem.time();
+        return memory.time();
     }
 
     public Stamp getNewStamp() {
@@ -430,14 +476,30 @@ public abstract class NAL implements Runnable {
     }
 
     public Memory mem() {
-        return mem;
+        return memory;
     }
-    //    public Future immediateProcess(Memory mem, Task t, ExecutorService exe) {
-    //        return exe.submit(new Runnable() {
-    //            @Override public void run() {
-    //                immediateProcess(mem, t);
-    //            }
-    //        });
-    //    }
+    
+    /** tasks added with this method will be remembered by this NAL instance; useful for feedback */
+    public void addTask(Task t, String reason) {
+        
+        memory.addNewTask(t, reason);
+        
+        tasksAdded.add(t);
+        
+    }
+    
+    /**
+     * Activated task called in MatchingRules.trySolution and
+     * Concept.processGoal
+     *
+     * @param budget The budget value of the new Task
+     * @param sentence The content of the new Task
+     * @param candidateBelief The belief to be used in future inference, for
+     * forward/backward correspondence
+     */
+    public void addTask(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Sentence candidateBelief) {        
+        addTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
+                "Activated");        
+    }    
     
 }

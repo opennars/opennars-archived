@@ -23,8 +23,8 @@ package nars.inference;
 import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.entity.BudgetValue;
 import nars.core.control.NAL;
+import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
@@ -54,7 +54,7 @@ import nars.language.Term;
  */
 public final class StructuralRules {
 
-    private static final float RELIANCE = Parameters.RELIANCE;
+   
 
     /* -------------------- transform between compounds and term -------------------- */
     /**
@@ -111,7 +111,7 @@ public final class StructuralRules {
             return;
         
         Sentence sentence = nal.getCurrentTask().sentence;
-        TruthValue truth = TruthFunctions.deduction(sentence.truth, RELIANCE);
+        TruthValue truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.singlePremiseTask(content, truth, budget);
     }
@@ -194,10 +194,14 @@ public final class StructuralRules {
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
         TruthValue truth = sentence.truth;
-        TruthValue truthDed = TruthFunctions.deduction(truth, RELIANCE);
-        TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, RELIANCE));
+        
+        final float reliance = nal.memory.param.reliance.floatValue();
+        TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
+        TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
+        
         if (component.equals(subj)) {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(compound, pred, order, truthDed, nal);
@@ -250,8 +254,10 @@ public final class StructuralRules {
             return;
         }
         
-        TruthValue truthDed = TruthFunctions.deduction(truth, RELIANCE);
-        TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, RELIANCE));
+        final float reliance = nal.memory.param.reliance.floatValue();
+        TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
+        TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
         if (compound.equals(subj)) {
@@ -591,18 +597,20 @@ public final class StructuralRules {
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
 
+        final float reliance = nal.memory.param.reliance.floatValue();
+
         BudgetValue budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else {  // need to redefine the cases
             if ((sentence.isJudgment()) == (compoundTask == (compound instanceof Conjunction))) {
-                truth = TruthFunctions.deduction(truth, RELIANCE);
+                truth = TruthFunctions.deduction(truth, reliance);
             } else if (sentence.isGoal()) {
-                truth = TruthFunctions.deduction(truth, RELIANCE);
+                truth = TruthFunctions.deduction(truth, reliance);
             }else {
                 TruthValue v1, v2;
                 v1 = TruthFunctions.negation(truth);
-                v2 = TruthFunctions.deduction(v1, RELIANCE);
+                v2 = TruthFunctions.deduction(v1, reliance);
                 truth = TruthFunctions.negation(v2);
             }
             budget = BudgetFunctions.forward(truth, nal);
@@ -636,30 +644,6 @@ public final class StructuralRules {
         nal.singlePremiseTask(content, truth, budget);
     }
 
-    /** Attempt contraposition()'s according to probability */
-    public static void contrapositionAttempts(Statement taskTerm, Sentence taskSentence, NAL nal) {
-        
-        //don't let this rule apply every time, make it dependent on complexity
-        double n=taskTerm.getComplexity() * nal.mem().param.contrapositionPriority.get(); 
-
-        //let's assume hierachical tuple (triangle numbers) amount for this
-        double w=1.0/n; 
-
-        //so that NARS memory will not be spammed with contrapositions
-        if(Memory.randomNumber.nextDouble()<w) { 
-            //before it was the linkage which did that
-            //now we some sort "emulate" it.
-            StructuralRules.contraposition(taskTerm, taskSentence, nal); 
-        } 
-
-       // double n2=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
-        double w2=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
-        if(Memory.randomNumber.nextDouble()<w2) { //so that NARS memory will not be spammed with contrapositions
-            StructuralRules.contraposition(taskTerm, taskSentence, nal); //before it was the linkage which did that
-        } //now we some sort "emulate" it.
-
-        
-    }
     /**
      * {<A ==> B>, A@(--, A)} |- <(--, B) ==> (--, A)>
      *

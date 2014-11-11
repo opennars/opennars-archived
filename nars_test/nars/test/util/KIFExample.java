@@ -18,7 +18,7 @@
 package nars.test.util;
 
 import nars.core.NAR;
-import nars.core.build.CurveBagNARBuilder;
+import nars.core.build.Curve;
 import nars.gui.NARSwing;
 import nars.util.kif.KIFInput;
 
@@ -32,12 +32,12 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
         
         
-        NAR n = new CurveBagNARBuilder(true)
+        NAR n = new Curve(true)
                 .setConceptBagSize(16192)
                 .build();
                 
         
-        n.param().noiseLevel.set(40);
+        (n.param).noiseLevel.set(40);
         
         KIFInput k = new KIFInput("/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);

@@ -24,25 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Date;
-import javarepl.ExpressionReader;
-import javarepl.Main;
-import static javarepl.Main.printColors;
-import static javarepl.Result.result;
-import javarepl.ResultPrinter;
-import javarepl.client.EvaluationResult;
-import javarepl.client.JavaREPLClient;
-import javarepl.console.ConsoleConfig;
-import static javarepl.console.ConsoleConfig.consoleConfig;
-import javarepl.console.SimpleConsole;
-import javarepl.console.commands.EvaluateFromHistory;
-import javarepl.console.commands.ListValues;
-import javarepl.console.commands.SearchHistory;
-import javarepl.console.commands.ShowHistory;
-import javarepl.console.rest.RestConsole;
-import javarepl.internal.totallylazy.Option;
-import static javarepl.internal.totallylazy.Option.none;
-import nars.core.build.DefaultNARBuilder.CommandLineNARBuilder;
+import nars.core.build.Default.CommandLineNARBuilder;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -67,69 +49,16 @@ public class NARRun {
 
 
 
-    public static void main(String... args) throws Exception {
-        Main.process = none();
-        Main.console = new ResultPrinter(printColors(args));
-
-        ConsoleConfig config = consoleConfig()                
-                //.historyFile(new File(getProperty("user.home"), ".javarepl-embedded.history"))
-                .commands(
-                        ListValues.class,
-                        ShowHistory.class,
-                        EvaluateFromHistory.class,
-                        SearchHistory.class)                
-                .results(
-                        result("date", new Date()),
-                        result("num", 42));
-
-        int port = 8001;
-        new RestConsole(new SimpleConsole(config), port);
-        
-        JavaREPLClient client = new JavaREPLClient("localhost", 8001);
-                
-        //JavaREPLClient client = clientFor(hostname(args), port(args));
-        ExpressionReader expressionReader = Main.expressionReaderFor("nars", client);
-
-        Option<String> expression = none();
-        Option<EvaluationResult> result = none();
-        while (expression.isEmpty() || !result.isEmpty()) {
-            expression = expressionReader.readExpression();
-
-            if (!expression.isEmpty()) {
-                result = client.execute(expression.get());
-                if (!result.isEmpty())
-                    Main.console.printEvaluationResult(result.get());
-            }
-        }
-    }
-
-    public static void startReplWeb() throws Exception {
-        ConsoleConfig config = consoleConfig()                
-                //.historyFile(new File(getProperty("user.home"), ".javarepl-embedded.history"))
-                .commands(
-                        ListValues.class,
-                        ShowHistory.class,
-                        EvaluateFromHistory.class,
-                        SearchHistory.class)                
-                .results(
-                        result("date", new Date()),
-                        result("num", 42));
-
-        int port = 8001;
-        new RestConsole(new SimpleConsole(config), port);
-        
-        
-    }
     
     /**
      * The entry point of the standalone application.
      * <p>
      * @param args optional argument used : one addInput file
      */
-    public static void main1(String args[]) {
+    public static void main(String args[]) {
                 
-        NARRun nars = new NARRun(new CommandLineNARBuilder(args).build());        
-        nars.runInference(args);
+        NARRun nars = new NARRun(NAR.build(new CommandLineNARBuilder(args)));
+        nars.run(args);
         
         // TODO only if single finish ( no reset in between )
         if (nars.dumpLastState) {
@@ -146,7 +75,7 @@ public class NARRun {
      * non-static equivalent to {@link #main(String[])} : finish to completion from
  an addInput file
      */
-    public void runInference(String args[]) {
+    public void run(String args[]) {
         TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
         output.setErrors(true);
         output.setErrorStackTrace(true);

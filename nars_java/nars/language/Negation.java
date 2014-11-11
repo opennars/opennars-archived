@@ -32,6 +32,8 @@ public class Negation extends CompoundTerm {
      * original term using Negation.make */
     protected Negation(final Term t) {
         super(new Term[] { t });
+        
+        init(term);
     }
 
     @Override
@@ -57,10 +59,10 @@ public class Negation extends CompoundTerm {
     }
 
     @Override
-    public CompoundTerm clone(Term[] replaced) {
+    public Term clone(final Term[] replaced) {
         if (replaced.length!=1)
             return null;
-        return (CompoundTerm) make(replaced[0]);
+        return make(replaced[0]);
     }
     
     

@@ -24,13 +24,15 @@ import nars.util.graph.ImplicationGraph.Cause;
 
 public class ImplicationGraph extends SentenceGraph<Cause> {
 
+    float minConfidence = 0.25f;
+    
     public static class Cause {
         public final Term cause;
         public final Term effect;
         public final Sentence parent;
         
-        /** strength below which an item will be removed */
-        public final double minStrength = 0.01;
+//        /** strength below which an item will be removed */
+//        public final double minStrength = 0.01;
         
         private double activity = 0;
         
@@ -89,7 +91,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     
     
 
-    float minConfidence = 0.1f;
+    
     
 
     public ImplicationGraph(NAR nar) {
@@ -121,10 +123,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
                 if (!containsSrc && !containsTgt)
                     continue;
                 
-                if (s.getTruth()!=null)
-                    if (s.getTruth().getExpectation() < minPriority)
-                        continue;
-                
                 if (!containsSrc) super.addVertex(src);
                 if (!containsTgt) super.addVertex(tgt);
                     
@@ -146,16 +144,19 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             this.previous = previous;            
             this.parent = parent;
             this.hash = Objects.hash(previous, parent, o.term);
+            init(o.term);
         }
 
         
         @Override public boolean equals(final Object that) {
             if (that == this) return true;
+            if (hashCode()!=that.hashCode()) return false;
+            
             if (that instanceof UniqueOperation) {
                 UniqueOperation u = (UniqueOperation)that;
                 if (!u.parent.equals(parent)) return false;
                 if (!Objects.equals(u.previous, previous)) return false;
-                return super.equals(that);
+                return name().equals(u.name());
             }
             return false;
         }        
@@ -175,7 +176,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         private final int hash;
     
         public UniqueInterval(Implication parent, Term previous, Interval i) {
-            super(i.magnitude, true);                
+            super(i.magnitude, true);            
+            
             this.previous = previous;
             this.parent = parent;
             this.hash = Objects.hash(i, previous, parent);
@@ -188,6 +190,8 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         @Override public boolean equals(final Object that) {
             if (that == this) return true;           
+            if (hashCode()!=that.hashCode()) return false;
+            
             if (that instanceof UniqueInterval) {
                 UniqueInterval u = (UniqueInterval)that;
                 if (magnitude!=u.magnitude) return false;
@@ -203,6 +207,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public static class PostCondition extends Negation {
         public PostCondition(final Term t) {
             super(t);                
+            init(term);
         }
 
         @Override
@@ -216,9 +221,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
             return super.equals(that);
         }
 
-
-        @Override  protected void init(Term[] components) {
-        }
         
     }
     
@@ -241,7 +243,6 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     @Override
     public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
 
-        
         
         if (!(ct instanceof Implication)) {
             return false;
@@ -391,7 +392,9 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     public Cause newImplicationEdge(final Term source, final Term target, Item i, final Sentence parent) {
         if (source.equals(target))
             return null;
-                    
+
+        //System.out.println("cause: " + source +  " -> " + target + " in " + parent);
+        
         Cause c = new Cause(source, target, parent);
         try {
             addEdge(source, target, c);

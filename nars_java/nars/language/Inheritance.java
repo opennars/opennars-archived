@@ -36,11 +36,13 @@ public class Inheritance extends Statement {
      * @param arg The component list of the term
      */
     protected Inheritance(final Term[] arg) {
-        super(arg);       
+        super(arg);  
+        
+        init(arg);
     }
     
     protected Inheritance(final Term subj, final Term pred) {
-        super(subj, pred);
+        this(new Term[] { subj, pred} );
     }
 
 
@@ -52,12 +54,20 @@ public class Inheritance extends Statement {
         return make(getSubject(), getPredicate());
     }
 
-    @Override public CompoundTerm clone(Term[] t) {
+    @Override public Inheritance clone(Term[] t) {
         if (t.length!=2)
             throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
+                
         return make(t[0], t[1]);
     }
 
+    /** alternate version of Inheritance.make that allows equivalent subject and predicate
+     * to be reduced to the common term.      */
+    public static Term makeTerm(final Term subject, final Term predicate) {
+        if (subject.equals(predicate))
+            return subject;                
+        return make(subject, predicate);        
+    }
 
     /**
      * Try to make a new compound from two term. Called by the inference rules.
@@ -67,9 +77,8 @@ public class Inheritance extends Statement {
      * @return A compound generated or null
      */
     public static Inheritance make(final Term subject, final Term predicate) {
-        
-        if (invalidStatement(subject, predicate)) {
-            //throw new RuntimeException("Inheritance.make: Invalid Inheritance statement: subj=" + subject + ", pred=" + predicate);
+                
+        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {            
             return null;
         }
         

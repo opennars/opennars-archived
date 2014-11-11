@@ -16,10 +16,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.prolog;
-import    java.io.IOException;
+import com.google.common.collect.Lists;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 
 /**
@@ -63,6 +65,8 @@ public class Theory implements Serializable, PrologTermIterator {
         }
         this.theory=theory;
     }
+
+    
     
     Theory() {
         this.theory = "";
@@ -81,8 +85,13 @@ public class Theory implements Serializable, PrologTermIterator {
         this.clauseList = clauseList;
     }
     
+    public static Theory parse(Prolog engine, String input) throws InvalidTheoryException {
+       LinkedList<Term> tc = Lists.newLinkedList(new Parser(engine.getOperatorManager(), input));
+       return new Theory(new Struct(".", tc));       
+    }
+    
     @Override
-    public Iterator<? extends Term> iterator(Prolog engine) {
+    public Iterator<? extends nars.prolog.Term> iterator(Prolog engine) {
         if (isTextual())
             return new Parser(engine.getOperatorManager(), theory).iterator();
         else

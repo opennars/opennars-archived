@@ -20,17 +20,15 @@
  */
 package nars.storage;
 
-import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import nars.core.Parameters;
 import nars.entity.Item;
 
@@ -47,7 +45,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     /**
      * firing threshold
      */
-    public final int THRESHOLD;
+    public final int fireCompleteLevelThreshold;
 
     /**
      * shared DISTRIBUTOR that produce the probability distribution
@@ -88,11 +86,16 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     private final boolean[] levelEmpty;
 
 
-
+    
     public LevelBag(int levels, int capacity) {
+        this(levels, capacity, (int) (Parameters.BAG_THRESHOLD * levels));
+    }
+
+    /** thresholdLevel = 0 disables "fire level completely" threshold effect */
+    public LevelBag(int levels, int capacity, int thresholdLevel) {
         this.levels = levels;
 
-        THRESHOLD = (int) (Parameters.BAG_THRESHOLD * levels);
+        this.fireCompleteLevelThreshold = thresholdLevel;
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
 
         this.capacity = capacity;
@@ -105,23 +108,28 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         Arrays.fill(levelEmpty, true);
 
         DISTRIBUTOR = Distributor.get(this.levels).order;
-
+        distributorLength = DISTRIBUTOR.length;        
+ 
         clear();
     }
 
     public class Level<E> implements Iterable<E> {
         private final int thisLevel;
-        Deque<E> items;
+        
+        //Deque<E> items;
+        LinkedHashSet<E> items;
         
                 
         public Level(int level, int numElements) {
             super();
-            if (Parameters.THREADS == 1) {
+            items = new LinkedHashSet(numElements);
+            
+            /*if (Parameters.THREADS == 1) {
                 items = new ArrayDeque(numElements);
             }
             else {
                 items = new ConcurrentLinkedDeque();
-            }
+            }*/
             this.thisLevel = level;
         }
 
@@ -154,7 +162,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
             return false;
         }
 
-        public boolean remove(Object o) {
+        public boolean remove(E o) {
             if (items.remove(o)) {
                 levelIsEmpty(items.isEmpty());
                 return true;
@@ -163,7 +171,8 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
 
         public E removeFirst() {
-            E e = items.pollFirst();
+            E e = items.iterator().next();
+            items.remove(e);
             if (e!=null) {
                 levelIsEmpty(items.isEmpty());
             }
@@ -171,11 +180,12 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         }
 
         public E peekFirst() {
-            return items.peekFirst();
+            return items.iterator().next();
         }
 
         public Iterator<E> descendingIterator() {
-            return items.descendingIterator();
+            return items.iterator();
+            //return items.descendingIterator();
         }
         
         
@@ -184,8 +194,6 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
     
     private Level<E> newLevel(int l) {
         return new Level(l, 1 + capacity / levels);
-        //return new LinkedList<E>();  //not good
-        //return new FastTable<E>(); //slower than arraydeque under current loads    
     }
     
     @Override
@@ -215,7 +223,7 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         if ((Parameters.DEBUG) && (Parameters.THREADS==1)) {
         
             int is = sizeItems();
-            if (is!=in) {                
+            if (Math.abs(is-in) > 1 ) {                
                 throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in + ", capacity=" + getCapacity());
 
             }
@@ -284,46 +292,30 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
 //        return (level == null) || (level.isEmpty());
 //    }
 
-    final public int nextNonEmptyLevel(int levelIndex) {
-        //group this code into one function so it hopefully gets inlined */
-        final int distributorLength = DISTRIBUTOR.length;        
+
+    final int distributorLength;
+    
+    /** look for a non-empty level */
+    protected final void nextNonEmptyLevel() {
+               
         int cl = currentLevel;
 
-        do {
-            cl = DISTRIBUTOR[((levelIndex++) % distributorLength)];            
-        } while (levelEmpty[cl]); //levelEmpty[currentLevel));
+        do {                        
+        } while (levelEmpty[cl = DISTRIBUTOR[(levelIndex++) % distributorLength]]);
 
-        currentLevel = cl; //write to object outside of the loop
-
-        return levelIndex;
-    }
-
-    protected void nextNonEmptyLevel() {
-        // look for a non-empty level
-        if (size() == 1) {
-            //optimized case: only one item - just find the next non-empty level
-            int levelsTraversed = 0;
-            do {
-                currentLevel = (currentLevel + 1) % levels;
-                levelsTraversed++;
-            } while (levelEmpty[currentLevel]);
-            levelIndex = (levelIndex + levelsTraversed) % DISTRIBUTOR.length;
-        } else {
-            levelIndex = nextNonEmptyLevel(levelIndex);
-        }
-
-        if (currentLevel < THRESHOLD) { // for dormant levels, take one item
+        currentLevel = cl;
+        
+        if (currentLevel < fireCompleteLevelThreshold) { // for dormant levels, take one item
             currentCounter = 1;
         } else {                  // for active levels, take all current items
-            currentCounter = getLevelSize(currentLevel);
+            currentCounter = getNonEmptyLevelSize(currentLevel);
         }
     }
 
     @Override
     public E peekNext() {
         if (size() == 0) return null; // empty bag                
-        
-        
+                
         if (levelEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             nextNonEmptyLevel();
         }
@@ -358,6 +350,9 @@ public class LevelBag<E extends Item<K>,K> extends Bag<E,K> {
         return selected;
     }
 
+    public int getNonEmptyLevelSize(final int level) {
+        return this.level[level].size();
+    }
     public int getLevelSize(final int level) {
         return (levelEmpty[level]) ? 0 : this.level[level].size();
     }

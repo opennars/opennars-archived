@@ -4,8 +4,8 @@ import java.util.List;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events;
 import nars.core.NAR;
-import nars.core.NARBuilder;
-import nars.core.build.DefaultNARBuilder;
+import nars.core.Build;
+import nars.core.build.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import static nars.grid2d.Hauto.DOWN;
@@ -35,7 +35,7 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        NARBuilder builder = new DefaultNARBuilder();
+        Build builder = new Default();
         
         //set NAR architecture parameters:
         //builder...
@@ -43,7 +43,8 @@ public class TestChamber {
         NAR nar = builder.build();
         
         //set NAR runtime parmeters: 
-        nar.param().noiseLevel.set(0); 
+        //(nar.param).duration.set(10);
+        (nar.param).noiseLevel.set(0); 
         new NARSwing(nar);
 
         new TestChamber(nar);
@@ -264,7 +265,7 @@ public class TestChamber {
                                                 }
                                             }
                                         }
-                                        nar.addInput("<"+goal+" --> hold>. :|:");
+                                        //nar.addInput("<"+goal+" --> hold>. :|:");
                                     }
                                     else
                                     if("deactivate".equals(opname)) {
@@ -276,7 +277,7 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.OFFSWITCH;
                                                         cells.readCells[i][j].charge=0.0f;
                                                         cells.writeCells[i][j].charge=0.0f;
-                                                        nar.addInput("<"+goal+" --> off>. :|:");
+                                                        //nar.addInput("<"+goal+" --> off>. :|:");
                                                     }
                                                 }
                                             }
@@ -293,7 +294,7 @@ public class TestChamber {
                                                         cells.writeCells[i][j].logic=Logic.SWITCH;
                                                         cells.readCells[i][j].charge=1.0f;
                                                         cells.writeCells[i][j].charge=1.0f;
-                                                        nar.addInput("<"+goal+" --> on>. :|:");
+                                                        //nar.addInput("<"+goal+" --> on>. :|:");
                                                     }
                                                 }
                                             }

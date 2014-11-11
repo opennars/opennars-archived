@@ -1,11 +1,15 @@
 package nars.core.build;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import nars.core.Attention;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
-import nars.core.NARBuilder;
+import nars.core.Build;
 import nars.core.Param;
 import nars.core.Parameters;
 import nars.core.control.DefaultAttention;
@@ -16,8 +20,11 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import nars.io.DefaultTextPerception;
 import nars.language.Term;
+import nars.operator.Operator;
 import nars.plugin.mental.Abbreviation;
+import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.TemporalParticlePlanner;
 import nars.storage.Bag;
@@ -27,34 +34,43 @@ import nars.storage.LevelBag;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
+public class Default extends Build implements ConceptBuilder {
 
     
-    public int taskLinkBagLevels;
+
+    
+    int taskLinkBagLevels;
     
     /** Size of TaskLinkBag */
-    public int taskLinkBagSize;
+    int taskLinkBagSize;
     
-    public int termLinkBagLevels;
+    int termLinkBagLevels;
     
     /** Size of TermLinkBag */
-    public int termLinkBagSize;
+    int termLinkBagSize;
     
     /** determines maximum number of concepts */
-    private int conceptBagSize;    
+    int conceptBagSize;    
+    
+    int conceptBagLevels;
     
     /** max # subconscious "subconcept" concepts */
-    private int subconceptBagSize;
+    int subconceptBagSize;
 
     /** Size of TaskBuffer */
-    private int taskBufferSize = 10;
-    private Memory.Timing timing = Timing.Iterative;
-    private Memory.Forgetting forgetMode = Forgetting.Iterative;
-    private int taskBufferLevels;
+    int taskBufferSize;
     
+    int taskBufferLevels;
+            
+    transient TemporalParticlePlanner pluginPlanner = null;
+
     
-    public DefaultNARBuilder() {
+    public Default() {
         super();
+    
+        this.type = "level";
+        
+       // temporalPlanner(8, 64, 16);
         
         setConceptBagSize(1000);        
         setSubconceptBagSize(0);
@@ -68,47 +84,56 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         
         setNovelTaskBagSize(10);
         setNovelTaskBagLevels(100);
+
+        
+        param.duration.set(5);
+        param.conceptForgetDurations.set(2.0);
+        param.taskLinkForgetDurations.set(4.0);
+        param.termLinkForgetDurations.set(10.0);
+        param.novelTaskForgetDurations.set(2.0);
+                
+        param.conceptBeliefsMax.set(7);
+        param.conceptGoalsMax.set(7);
+        param.conceptQuestionsMax.set(5);
+        
+        param.conceptsFiredPerCycle.set(1);
+        
+        param.termLinkMaxReasoned.set(3);
+        param.termLinkMaxMatched.set(10);
+        param.termLinkRecordLength.set(10);
+        
+        param.setForgetting(Forgetting.Iterative);
+        param.setTiming(Timing.Iterative);
+        param.noiseLevel.set(100);
+
+        param.reliance.set(0.9f);
+        
+        param.decisionThreshold.set(0.30);
+    
+    }
+
+    
+
+    public Default temporalPlanner(float searchDepth, int planParticles, int inlineParticles) {
+        pluginPlanner = new TemporalParticlePlanner(searchDepth, planParticles, inlineParticles);
+        return this;
     }
 
     @Override
-    public Param newParam() {
-        Param p = new Param();
-        p.setTiming(timing);
-        p.noiseLevel.set(100);
+    public NAR init(NAR n) {
         
-        p.decisionThreshold.set(0.30);
+        for (Operator o : DefaultOperators.get())
+            n.memory.addOperator(o);
+        for (Operator o : ExampleOperators.get())
+            n.memory.addOperator(o);
         
-        p.duration.set(5);
-        p.conceptForgetDurations.set(2.0);
-        p.taskForgetDurations.set(4.0);
-        p.beliefForgetDurations.set(10.0);
-        p.newTaskForgetDurations.set(2.0);
                 
-        p.conceptBeliefsMax.set(7);
-        p.conceptGoalsMax.set(7);
-        p.conceptQuestionsMax.set(5);
+        n.addPlugin(new DefaultTextPerception());
         
-        p.contrapositionPriority.set(30);
-                
-        p.termLinkMaxReasoned.set(3);
-        p.termLinkMaxMatched.set(10);
-        p.termLinkRecordLength.set(10);
-        
-        p.setForgetMode(forgetMode);
-        
-        return p;
-    }
-
-    @Override
-    public NAR build() {
-        NAR n = super.build();
-        
-        //the only plugin which is dependent on a parameter
-        //because it enriches NAL8 performance a lot:
-        if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
-            TemporalParticlePlanner planner=new TemporalParticlePlanner();
-            n.addPlugin(planner);
+        if(pluginPlanner!=null) {
+            n.addPlugin(pluginPlanner);
         }
+        
         if(Parameters.INTERNAL_EXPERIENCE_FULL) {
             FullInternalExperience nal9=new FullInternalExperience();
             n.addPlugin(nal9);
@@ -117,46 +142,47 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
             Abbreviation nal9abr=new Abbreviation();
             n.addPlugin(nal9abr);
         }
-        
+        if(Parameters.INTERNAL_EXPERIENCE_FULL) {
+            Counting nal9cnt=new Counting();
+            n.addPlugin(nal9cnt);
+        }
+
         return n;
     }
-    
-    
-    
-    @Override
-    public Attention newAttention(Param p, ConceptBuilder c) {
-        return new DefaultAttention(newConceptBag(p), newSubconceptBag(p), c);
-    }
 
-    @Override
-    public ConceptBuilder getConceptBuilder() {
+
+    ConceptBuilder getConceptBuilder() {
         return this;
     }
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {        
-        Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getTaskLinkBagSize());
-        Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getTermLinkBagSize());
+        Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+        Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
         return new Concept(b, t, taskLinks, termLinks, m);        
     }
 
     
-    protected Bag<Concept,Term> newConceptBag(Param p) {
+    public Bag<Concept,Term> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
     
-    protected CacheBag<Term,Concept> newSubconceptBag(Param p) {        
+    CacheBag<Term,Concept> newSubconceptBag() {        
         if (getSubconceptBagSize() == 0) return null;
         return new CacheBag(getSubconceptBagSize());
     }
 
     @Override
-    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag(Param p) {
+    public Attention newAttention() {
+        return new DefaultAttention(newConceptBag(), newSubconceptBag(), getConceptBuilder());
+    }
+    
+    public Bag<Task<Term>,Sentence<Term>> newNovelTaskBag() {
         return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
     }
 
-    public DefaultNARBuilder setSubconceptBagSize(int subconceptBagSize) {
+    public Default setSubconceptBagSize(int subconceptBagSize) {
         this.subconceptBagSize = subconceptBagSize;
         return this;
     }
@@ -167,12 +193,12 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     
     
     public int getConceptBagSize() { return conceptBagSize; }    
-    public DefaultNARBuilder setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
+    public Default setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
-    /** Level granularity in Bag, usually 100 (two digits) */    
-    private int conceptBagLevels;
+    
+    
     public int getConceptBagLevels() { return conceptBagLevels; }    
-    public DefaultNARBuilder setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
+    public Default setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
         
     /**
      * @return the taskLinkBagLevels
@@ -181,12 +207,12 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return taskLinkBagLevels;
     }
        
-    public DefaultNARBuilder setTaskLinkBagLevels(int taskLinkBagLevels) {
+    public Default setTaskLinkBagLevels(int taskLinkBagLevels) {
         this.taskLinkBagLevels = taskLinkBagLevels;
         return this;
     }
 
-    public DefaultNARBuilder setNovelTaskBagSize(int taskBufferSize) {
+    public Default setNovelTaskBagSize(int taskBufferSize) {
         this.taskBufferSize = taskBufferSize;
         return this;
     }
@@ -195,7 +221,7 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return taskBufferSize;
     }
     
-    public DefaultNARBuilder setNovelTaskBagLevels(int l) {
+    public Default setNovelTaskBagLevels(int l) {
         this.taskBufferLevels = l;
         return this;
     }
@@ -205,11 +231,11 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
     }
     
 
-    public int getTaskLinkBagSize() {
+    public int getConceptTaskLinks() {
         return taskLinkBagSize;
     }
 
-    public DefaultNARBuilder setTaskLinkBagSize(int taskLinkBagSize) {
+    public Default setTaskLinkBagSize(int taskLinkBagSize) {
         this.taskLinkBagSize = taskLinkBagSize;
         return this;
     }
@@ -218,32 +244,38 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
         return termLinkBagLevels;
     }
 
-    public DefaultNARBuilder setTermLinkBagLevels(int termLinkBagLevels) {
+    public Default setTermLinkBagLevels(int termLinkBagLevels) {
         this.termLinkBagLevels = termLinkBagLevels;
         return this;
     }
 
-    public int getTermLinkBagSize() {
+    public int getConceptTermLinks() {
         return termLinkBagSize;
     }
 
-    public DefaultNARBuilder setTermLinkBagSize(int termLinkBagSize) {
+    public Default setTermLinkBagSize(int termLinkBagSize) {
         this.termLinkBagSize = termLinkBagSize;
         return this;
     }
 
     
-    public static class CommandLineNARBuilder extends DefaultNARBuilder {
-        private final Param param;
+    public Default realTime() {
+        param.setTiming(Timing.Real);
+        param.setForgetting(Forgetting.Periodic);
+        return this;
+    }
+    public Default simulationTime() {
+        param.setTiming(Timing.Simulation);
+        param.setForgetting(Forgetting.Periodic);
+        return this;
+    }
 
-        @Override public Param newParam() {        
-            return param;
-        }
+    
+    
+    public static class CommandLineNARBuilder extends Default {
 
         public CommandLineNARBuilder(String[] args) {
             super();
-
-            param = super.newParam();
 
             for (int i = 0; i < args.length; i++) {
                 String arg = args[i];
@@ -259,9 +291,6 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
                 }            
             }        
         }
-
-
-
         /**
          * Decode the silence level
          *
@@ -272,31 +301,21 @@ public class DefaultNARBuilder extends NARBuilder implements ConceptBuilder {
             return !"--silence".equals(param);
         }
     }
+
+    public static Default fromJSON(String filePath) {
+        
+        try {
+            String c = readFile(filePath, Charset.defaultCharset());                        
+            return Param.json.fromJson(c, Default.class);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
     
-    public DefaultNARBuilder realTime() {
-        timing = Timing.Real;
-        forgetMode = Forgetting.Periodic;
-        return this;
-    }
-    public DefaultNARBuilder simulationTime() {
-        timing = Timing.Simulation;        
-        forgetMode = Forgetting.Periodic;
-        return this;
-    }
-    
-
-    /* ---------- initial values of run-time adjustable parameters ---------- */
-//    /** Concept decay rate in ConceptBag, in [1, 99]. */
-//    private static final int CONCEPT_CYCLES_TO_FORGET = 10;
-//    /** TaskLink decay rate in TaskLinkBag, in [1, 99]. */
-//    private static final int TASK_LINK_CYCLES_TO_FORGET = 20;
-//    /** TermLink decay rate in TermLinkBag, in [1, 99]. */
-//    private static final int TERM_LINK_CYCLES_TO_FORGET = 50;        
-//    /** Task decay rate in TaskBuffer, in [1, 99]. */
-//    private static final int NEW_TASK_FORGETTING_CYCLE = 10;
-
-    public void setForgetMode(Forgetting forgetMode) {
-        this.forgetMode = forgetMode;
-    }
-
+    static String readFile(String path, Charset encoding) 
+        throws IOException  {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+      }
 }

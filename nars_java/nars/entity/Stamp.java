@@ -20,6 +20,9 @@
  */
 package nars.entity;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,9 +32,12 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javarepl.internal.totallylazy.Lists;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.ORDER_BACKWARD;
+import static nars.inference.TemporalRules.ORDER_FORWARD;
+import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Tense;
 import static nars.language.Tense.Future;
@@ -74,7 +80,7 @@ public class Stamp implements Cloneable {
     /**
      * used when the occurrence time cannot be estimated, means "unknown"
      */
-    public static final long UNKNOWN = Integer.MAX_VALUE;
+    //public static final long UNKNOWN = Integer.MAX_VALUE;
 
     
     /** caches evidentialBase as a set for comparisons and hashcode.
@@ -92,8 +98,7 @@ public class Stamp implements Cloneable {
     /* used for lazily calculating derivationChain on-demand */
     private DerivationBuilder derivationBuilder = null;
     
-    /** analytics metric */
-    public final long latency;
+    
     
     /**
      * derivation chain containing the used premises and conclusions which made
@@ -102,26 +107,68 @@ public class Stamp implements Cloneable {
      */
     private Collection<Term> derivationChain;
     
+    /** analytics metric */
+    transient public final long latency;
+    
+    /** cache of hashcode of evidential base */
+    transient private int evidentialHash;
+
+    
+    public boolean before(Stamp s, int duration) {
+        if (isEternal() || s.isEternal())
+            return false;
+        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_BACKWARD;
+    }
+    
+    public boolean after(Stamp s, int duration) {
+        if (isEternal() || s.isEternal())
+            return false;
+        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;        }
+
+    public float getOriginality() {
+        return 1.0f / (evidentialBase.length + 1);
+    }
+    
     public interface DerivationBuilder {
         LinkedHashSet<Term> build();
     }
     
     /** creates a Derivation Chain by collating / zipping 2 Stamps Derivation Chains */
     public static class ZipperDerivationBuilder implements DerivationBuilder {
-        private final Stamp first;
-        private final Stamp second;
+        private final WeakReference<Stamp> first;
+        private final WeakReference<Stamp> second;
 
         public ZipperDerivationBuilder(Stamp first, Stamp second) {
-            this.first = first;
-            this.second = second;
+            this.first = new WeakReference(first);
+            this.second = new WeakReference(second);
         }
             
         @Override public LinkedHashSet<Term> build()  {
-            final Collection<Term> chain1 = first.getChain();
+            Stamp ff = first.get();
+            Stamp ss = second.get();
+            
+            //check if the parent stamps still exist, because they may have been garbage collected
+            if ((ff == null) && (ss == null)) {                
+                return new LinkedHashSet();
+            }
+            else {
+                //TODO decide if it can use the parent chains directly?
+                if (ff == null) {
+                    //ss!=null
+                    return new LinkedHashSet(ss.getChain());
+                }
+                else if (ss == null) {
+                    //ff!=null                    
+                    return new LinkedHashSet(ff.getChain());
+                }
+            }
+                    
+            final Collection<Term> chain1 = ff.getChain();
+            final Collection<Term> chain2 = ss.getChain();
+            
             final Iterator<Term> iter1 = chain1.iterator();
             int i1 = chain1.size() - 1;
-
-            final Collection<Term> chain2 = second.getChain();        
+            
             final Iterator<Term> iter2 = chain2.iterator();
             int i2 = chain2.size() - 1;
 
@@ -170,14 +217,19 @@ public class Stamp implements Cloneable {
     
     /** lazily inherit the derivation from a parent, causing it to cache the derivation also (in case other children get it */
     public static class InheritDerivationBuilder implements DerivationBuilder {
-        private final Stamp parent;
+        private final WeakReference<Stamp> parent;
 
         public InheritDerivationBuilder(Stamp parent) {
-            this.parent = parent;            
+            this.parent = new WeakReference(parent);            
         }
         
         @Override public LinkedHashSet<Term> build() {
-            Collection<Term> p = parent.getChain();
+            if (parent.get() == null) {
+                //parent doesnt exist anymore (garbage collected)
+                return new LinkedHashSet();
+            }
+            
+            Collection<Term> p = parent.get().getChain();
             if (p instanceof LinkedHashSet)
                 return (LinkedHashSet)p;
             else
@@ -287,11 +339,15 @@ public class Stamp implements Cloneable {
         this(memory.time(), tense, memory.newStampSerial(), memory.param.duration.get());
     }
 
+    /** creates a stamp with default Present tense */
     public Stamp(final Memory memory) {
         this(memory, Tense.Present);
     }
 
     
+    public boolean isEternal() {
+        return occurrenceTime == ETERNAL;
+    }
     /** sets the creation time; used to set input tasks with the actual time they enter Memory */
     public void setCreationTime(long time, int duration) {
         creationTime = time;
@@ -375,7 +431,7 @@ public class Stamp implements Cloneable {
             return derivationChain;
         else {
             //unmodifiable list copy
-            return Lists.list(derivationChain);
+            return Lists.newArrayList(derivationChain);
         }
     }
 
@@ -446,46 +502,65 @@ public class Stamp implements Cloneable {
      * @return The TreeSet representation of the evidential base
      */
     private long[] toSet() {        
-        if (evidentialSet == null)        
+        if (evidentialSet == null) {        
             evidentialSet = toSetArray(evidentialBase);
+            evidentialHash = Arrays.hashCode(evidentialSet);
+        }
         
         return evidentialSet;
     }
 
+    
+    @Override public boolean equals(final Object that) {
+        throw new RuntimeException("Use other equals() method");
+    }
+    
     /**
-     * Check if two stamps contains the same content
+     * Check if two stamps contains the same types of content
      *
      * @param that The Stamp to be compared
-     * @return Whether the two have contain the same elements
+     * @return Whether the two have contain the same evidential base
      */
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        
-        if (!(that instanceof Stamp)) {
-            return false;
+    public boolean equals(Stamp s, final boolean creationTime, final boolean ocurrenceTime, final boolean evidentialBase, final boolean derivationChain) {
+        if (this == s) return true;
+
+        if (creationTime)
+            if (getCreationTime()!=s.getCreationTime()) return false;
+        if (ocurrenceTime)
+            if (getOccurrenceTime()!=s.getOccurrenceTime()) return false;       
+        if (evidentialBase) {
+            if (evidentialHash() != s.evidentialHash()) return false;
+            if (!Arrays.equals(toSet(), s.toSet())) return false;
         }
-
-        Stamp s = (Stamp)that;
-
-        /*
-        if (occurrenceTime!=s.occurrenceTime)
-            return false;
-        if (creationTime!=s.creationTime)
-            return false;
-        */
         
-        return Arrays.equals(toSet(), s.toSet());
+        //two beliefs can have two different derivation chains altough they share same evidental bas
+        //in this case it shouldnt return true
+        if (derivationChain)
+            if (!chainEquals(getChain(), s.getChain())) return false;
+        
+        return true;        
     }
+            
 
+    /** necessary because LinkedHashSet.equals does not compare order, only set content */
+    public static boolean chainEquals(final Collection<Term> a, final Collection<Term> b) {
+        if (a == b) return true;
+        
+        if ((a instanceof LinkedHashSet) && (b instanceof LinkedHashSet))
+            return Iterators.elementsEqual(a.iterator(), b.iterator());        
+        else
+            return a.equals(b);
+    }
+    
     /**
      * The hash code of Stamp
      *
      * @return The hash code
      */
-    @Override
-    public final int hashCode() {
-        return Arrays.hashCode(toSet());
+    public final int evidentialHash() {
+        if (evidentialSet==null)
+            toSet();       
+        return evidentialHash;
     }
 
     public Stamp cloneWithNewCreationTime(long newCreationTime) {
@@ -541,17 +616,15 @@ public class Stamp implements Cloneable {
         if (occurrenceTime == Stamp.ETERNAL) {
             return "";
         }
-
-        long timeDiff = occurrenceTime - currentTime;
         
-        if (timeDiff > duration) {
-            return Symbols.TENSE_FUTURE;
-        } else if (timeDiff < -duration) {
-            return Symbols.TENSE_PAST;
-        } else {
-            return Symbols.TENSE_PRESENT;
-        }
-        
+        switch (TemporalRules.order(currentTime, occurrenceTime, duration)) {
+            case ORDER_FORWARD:
+                return Symbols.TENSE_FUTURE;
+            case ORDER_BACKWARD:
+                return Symbols.TENSE_PAST;
+            default:
+                return Symbols.TENSE_PRESENT;
+        }        
     }
 
     public void setOccurrenceTime(final long time) {

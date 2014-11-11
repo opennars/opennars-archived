@@ -302,7 +302,7 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        if ((order != ORDER_NONE) && !taskSentence.isGoal() && !taskSentence.isQuest()) {
+        if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();
@@ -662,6 +662,9 @@ public final class SyllogisticRules {
                 content = Statement.make(st2, term2, term1, st2.getTemporalOrder());
             } else {
                 content = term1;
+                if(content.hasVarIndep()) {
+                    return false;
+                }
             }
             if (sentence.isQuestion() || sentence.isQuest()) {
                 budget = BudgetFunctions.backwardWeak(value2, nal);
@@ -685,6 +688,9 @@ public final class SyllogisticRules {
                 content = Statement.make(st1, term1, term2, st1.getTemporalOrder());
             } else {
                 content = term2;
+                if(content.hasVarIndep()) {
+                    return false;
+                }
             }
             if (sentence.isQuestion() || sentence.isQuest()) {
 

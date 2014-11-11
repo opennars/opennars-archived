@@ -66,26 +66,49 @@ public class Engine /*Castagna 06/2011*/implements IEngine/**/{
 	/**
 	 * Core of engine. Finite State Machine
 	 */
-	StateEnd run() {
+	StateEnd run(double maxTimeSeconds) {
 		String action;
-
+                
+                long timeoutNS = (long)(maxTimeSeconds * 1e9);
+                
+                long start = System.nanoTime();
+                
+                /** only check every N iterations because System.nanotime could be expensive
+                 *  in an inner-loop like this
+                 */
+                long cyclesToCheckForTimeout = 256;
+                long cycle = 1; //skip first
+                
 		do {
-			if (mustStop) {
-				nextState = manager.END_FALSE;
-				break;
-			}
-			action = nextState.toString();
+                    
+                    if ((timeoutNS > 0) && (cycle % cyclesToCheckForTimeout == 0)) {
+                        long now = System.nanoTime();
+                        if (now - start > timeoutNS)
+                            mustStop = true;                        
+                    }
 
-			nextState.doJob(this);
-			manager.spy(action, this);
-			
+                    if (mustStop) {
+                        nextState = manager.END_FALSE;
+                        break;
+                    }
+                    action = nextState.toString();
+
+                    nextState.doJob(this);
+                    manager.spy(action, this);
+		
+                    cycle++;
 
 		} while (!(nextState instanceof StateEnd));
+                
 		nextState.doJob(this);
 
+                
 		return (StateEnd)(nextState);
 	}
 
+        StateEnd run() {
+            return run(0);
+        }
 
 	/*
 	 * Methods for spyListeners

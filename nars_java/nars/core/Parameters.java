@@ -36,28 +36,27 @@ public class Parameters {
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
     
-    public static float TEMPORAL_JUDGEMENT_PRIORITY_INCREMENT=0.0f; //how much =/> should be gained
-    public static float TEMPORAL_JUDGEMENT_DURABILITY_INCREMENT=0.0f; //how much =/> should be gained
+    //how much priority should finding temporal coherences have?
+    //examples showed, that linking succeeding found events, namely the new rule temporalInductionChain
+    //happens so rarely, that it is not of use for any real example
+    //here the best tasks will compete in a bag, and for every temporal implication n attemps will be done
+    //to take one out which can be chained
+    public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
+    //priority boost
+    public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=2.0;  //experiment
 
-    public static boolean TEMPORAL_PARTICLE_PLANNER=false; //no planner anymore by default, it seems it has advanced
-    
     //can only be activated in plugin menu no,
     public static boolean INTERNAL_EXPERIENCE=false;
     //so dont change these two to true
-    public static boolean INTERNAL_EXPERIENCE_FULL=true;
+    public static boolean INTERNAL_EXPERIENCE_FULL=false;
     
     //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_PROBABILITY=0.0005f;
-    
-    //if one event happens after another, it already gives at least a bit evidence that this is not time dependent.
-    public static float IMMEDIATE_ETERNALIZATION_CONFIDENCE_MUL=0.0f;
+    public static float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=1.0f;
     //internal experience has less priority?
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=1.0f;
-    //internal experience has less quality?
-    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=1.0f;  
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 
@@ -65,9 +64,7 @@ public class Parameters {
      */
     public static final float HORIZON = 1;
     
-    /** Reliance factor, the empirical confidence of analytical truth. */
-    public static final float RELIANCE = (float) 0.9;    // the same as default confidence
-    
+
 
     
     /** determines the internal precision used for TruthValue calculations.
@@ -172,9 +169,6 @@ public class Parameters {
      * Optimal value to be determined.
      */
     public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
-    
-    /** how quickly a task's priority is adjusted by a fired tasklink */
-    public static float TASK_PRIORITY_MOMENTUM = 0.5f;
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;

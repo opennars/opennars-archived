@@ -1,8 +1,11 @@
-package nars.operator;
+package nars.core.build;
 
+import nars.operator.NullOperator;
+import nars.operator.Operator;
 import nars.operator.io.Say;
 import nars.operator.math.Add;
 import nars.operator.math.Count;
+import nars.operator.math.Expression;
 import nars.operator.mental.Anticipate;
 import nars.operator.mental.Believe;
 import nars.operator.mental.Doubt;
@@ -48,7 +51,7 @@ public class DefaultOperators {
             new Doubt(),        // decrease the confidence of a belief
             new Hesitate(),      // decrease the confidence of a goal
             
-             new Anticipate(),      // expect an event
+            new Anticipate(),      // expect an event
 
             // feeling operations
             new FeelHappy(),
@@ -57,6 +60,7 @@ public class DefaultOperators {
             // math operations
             new Count(),
             new Add(),
+            new Expression(),
 
             new Javascript(),      // javascript evaluation
             

@@ -4,17 +4,19 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import static com.google.common.collect.Iterators.singletonIterator;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.EventEmitter.Observer;
 import nars.core.Events.FrameEnd;
 import nars.core.Events.FrameStart;
+import nars.core.Events.Perceive;
 import nars.core.Memory.TaskSource;
 import nars.core.Memory.Timing;
+import static nars.core.Parameters.DEBUG;
 import nars.core.control.AbstractTask;
 import nars.entity.Task;
 import nars.gui.NARControls;
@@ -26,8 +28,6 @@ import nars.io.Output.IN;
 import nars.io.TextInput;
 import nars.io.buffer.Buffer;
 import nars.io.buffer.FIFO;
-import nars.io.narsese.Narsese;
-import nars.language.Term;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 
@@ -56,14 +56,12 @@ public class NAR implements Runnable, TaskSource {
               " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
             + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
               "    Github website:  http://github.com/opennars/ \n";    
+
+
     
     private Thread thread = null;
     long minCyclePeriodMS;
     
-    /**
-     * global DEBUG print switch
-     */
-    public static boolean DEBUG = false;
     /**
      * The name of the reasoner
      */
@@ -72,6 +70,7 @@ public class NAR implements Runnable, TaskSource {
      * The memory of the reasoner
      */
     public final Memory memory;
+    public final Param param;
     
     
     /** The addInput channels of the reasoner     */
@@ -80,8 +79,9 @@ public class NAR implements Runnable, TaskSource {
     /** pending input and output channels to add on the next cycle. */
     private final List<InPort<Object,AbstractTask>> newInputChannels;
     
+    
 
-    public class PluginState {
+    public class PluginState implements Serializable {
         final public Plugin plugin;
         boolean enabled = false;
 
@@ -109,18 +109,12 @@ public class NAR implements Runnable, TaskSource {
     
     protected final List<PluginState> plugins = new CopyOnWriteArrayList<>();
     
-    /**
-     * Flag for running continuously
-     */
+    /** Flag for running continuously  */
     private boolean running = false;
     
-
     
-    /**arbitrary data associated with this particular NAR instance can be stored here */
-    public final HashMap data = new HashMap();
-        
-
-    public final Perception perception;
+    /** used by stop() to signal that a running loop should be interrupted */
+    private boolean stopped = false;
     
     
     private boolean inputting = true;
@@ -132,15 +126,13 @@ public class NAR implements Runnable, TaskSource {
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     
     
-    public NAR(Memory m, Perception p) {
-        this.memory = m;
-        this.perception = p;                
+    protected NAR(final Memory m) {
+        this.memory = m;        
+        this.param = m.param;
         
         //needs to be concurrent in case we change this while running
         inputChannels = new ArrayList();
         newInputChannels = new CopyOnWriteArrayList();
-    
-        this.perception.start(this);
 
     }
 
@@ -148,7 +140,7 @@ public class NAR implements Runnable, TaskSource {
      * Reset the system with an empty memory and reset clock. Called locally and
      * from {@link NARControls}.
      */     
-    public synchronized void reset() {
+    public void reset() {
         int numInputs = inputChannels.size();
         for (int i = 0; i < numInputs; i++) {
             InPort port = inputChannels.get(i);
@@ -203,10 +195,13 @@ public class NAR implements Runnable, TaskSource {
             super(input, buffer, initialAttention);
         }
 
+        @Override public void perceive(final Object x) {
+            memory.emit(Perceive.class, this, x);
+        }
+        
         @Override
-        public Iterator<AbstractTask> process(final Object x) {
+        public Iterator<AbstractTask> postprocess(final Iterator<AbstractTask> at) {
             try {
-                Iterator<AbstractTask> at = perception.perceive(x);
                 if (creationTime == -1)
                     return at;
                 else {                    
@@ -228,6 +223,8 @@ public class NAR implements Runnable, TaskSource {
                 }
             }
             catch (Throwable e) {
+                if (Parameters.DEBUG)
+                    throw e;
                 return singletonIterator(new Echo(ERR.class, e));
             }
         }
@@ -247,7 +244,9 @@ public class NAR implements Runnable, TaskSource {
         try {
             i.update();
             newInputChannels.add(i);
-        } catch (IOException ex) {                    
+        } catch (IOException ex) {  
+            if (Parameters.DEBUG)
+                throw new RuntimeException(ex.toString());
             emit(ERR.class, ex);
         }
         ioChanged = true;
@@ -287,15 +286,15 @@ public class NAR implements Runnable, TaskSource {
     }
     
 
-    public void startFPS(final float targetFPS, int memoryCyclesPerCycle, float durationsPerFrame) {        
+    public void startFPS(final float targetFPS, int cyclesPerFrame, float durationsPerFrame) {        
         long cycleTime = (long)(1000f / targetFPS);
-        param().duration.set(Math.round(cycleTime / durationsPerFrame));
-        start(cycleTime, memoryCyclesPerCycle);        
+        param.duration.set((int)(cyclesPerFrame / durationsPerFrame));
+        start(cycleTime, cyclesPerFrame);        
     }
     
-    public void start(final long minCyclePeriodMS, int memoryCyclesPerCycle) {
+    public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
         this.minCyclePeriodMS = minCyclePeriodMS;
-        this.cyclesPerFrame = memoryCyclesPerCycle;
+        this.cyclesPerFrame = cyclesPerFrame;
         if (thread == null) {
             thread = new Thread(this, "Inference");
             thread.start();
@@ -332,7 +331,7 @@ public class NAR implements Runnable, TaskSource {
             thread.interrupt();
             thread = null;
         }
-        this.cyclesPerFrame = 1;
+        stopped = true;
         running = false;
     }    
     
@@ -346,39 +345,38 @@ public class NAR implements Runnable, TaskSource {
         
         final boolean wasRunning = running;
         running = true;
-        for (int f = 0;  f < frames; f++) {
+        stopped = false;
+        for (int f = 0; (f < frames) && (!stopped); f++) {
             frame();
         }
-        running = wasRunning;
+        running = wasRunning;        
     }
     
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
-    public void finish(final int cycles) {
-        finish(cycles, false);
-    }
+    public void finish(int cycles) {
     
-    /** Run a fixed number of cycles, then finish any remaining walking steps.  Debug parameter sets debug.*/
-    public void finish(int cycles, final boolean debug) {
-        DEBUG = debug; 
         running = true;
+        stopped = false;
 
         updatePorts();
 
         //clear existing input
-        int cyclesCompleted = 0;
+        
+        long cycleStart = time();
         do {
-            step(1);
-            cyclesCompleted++;
+            step(1);           
         }
-        while (!inputChannels.isEmpty());
-                        
+        while ((!inputChannels.isEmpty()) && (!stopped));
+                   
+        long cyclesCompleted = time() - cycleStart;
+        
         //queue additional cycles, 
         cycles -= cyclesCompleted;
         if (cycles > 0)
             memory.stepLater(cycles);
         
         //finish all remaining cycles
-        while (!memory.isProcessingInput()) {
+        while (!memory.isProcessingInput() && (!stopped)) {
             step(1);
         }
         running = false;
@@ -387,8 +385,9 @@ public class NAR implements Runnable, TaskSource {
 
     /** Main loop executed by the Thread.  Should not be called directly. */
     @Override public void run() {
+        stopped = false;
         
-        while (running) {      
+        while (running && !stopped) {      
             
             frame();
                         
@@ -488,43 +487,38 @@ public class NAR implements Runnable, TaskSource {
         memory.event.emit(c, o);
     }
     
+    
+    protected void frame() {
+        frame(cyclesPerFrame);
+    }
+    
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    private void frame() {
-        
-        if (DEBUG) {
-            debugTime();            
-        }                
+    public void frame(int cycles) {
         
         long timeStart = System.currentTimeMillis();
-        
+
         emit(FrameStart.class);
 
         updatePorts();
-        
+
         try {
-            for (int i = 0; i < cyclesPerFrame; i++)
+            for (int i = 0; i < cycles; i++)
                 memory.cycle(this);
         }
         catch (Throwable e) {
-            emit(ERR.class, e);
-
-            System.err.println(e);
-            e.printStackTrace();
-            if (Parameters.DEBUG) {
-                throw e;
-            }
+            memory.error(e);
         }
-        
+
         emit(FrameEnd.class);
-        
+
         long timeEnd = System.currentTimeMillis();
-        
+
         if (memory.getTiming() == Timing.Real) {
             long frameTime = timeEnd - timeStart;
-            final int d = param().duration.get();
-            
+            final int d = param.duration.get();
+
             //warn if frame consumed more time than reasoner duration
             if (frameTime > d) {
                 emit(ERR.class, 
@@ -573,19 +567,7 @@ public class NAR implements Runnable, TaskSource {
 
 
 
-    public Param param() {
-        return memory.param;
-    }
-    
-    /** parses and returns a Term from a string; or null if parsing error */
-    public Term term(final String s) {        
-        try {
-            return perception.getText().narsese.parseTerm(s);
-        } catch (Narsese.InvalidInputException ex) {
-            emit(ERR.class, ex);
-        }
-        return null;
-    }
+       
 
     /** stops ad empties all input channels into a receiver. this
         results in no pending input. 
@@ -616,4 +598,31 @@ public class NAR implements Runnable, TaskSource {
     public List<InPort<Object, AbstractTask>> getInPorts() {
         return inputChannels;
     }
+
+
+    public static NAR build(Class<? extends Build> g) {
+        try {
+            return build(g.newInstance());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public static NAR build(Class<? extends Build> g, Param p) {
+        try {
+            return build(g.newInstance(), p);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public static NAR build(Build g) {
+        return build(g, g.param);        
+    }
+    
+    public static NAR build(Build g, Param p) {        
+        NAR n = g.init(new NAR(g.newMemory(p)));
+        return n;
+    }    
+
 }

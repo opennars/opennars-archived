@@ -34,15 +34,16 @@ import nars.core.Events.TaskLinkAdd;
 import nars.core.Events.TaskLinkRemove;
 import nars.core.Events.TermLinkAdd;
 import nars.core.Events.TermLinkRemove;
+import nars.core.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
-import nars.core.Parameters;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import nars.inference.Executive;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import static nars.inference.TemporalRules.concurrent;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
@@ -223,11 +224,12 @@ public class Concept extends Item<Term> {
         if (oldBelief != null) {
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp)) {
+            if (newStamp.equals(oldStamp,false,false,true,true)) {
                 if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
                     //task.budget.decPriority(0);    // duplicated task
-                    memory.removeTask(task, "Duplicated");
                 }   // else: activated belief
+                
+                memory.removeTask(task, "Duplicated");                
                 return;
             } else if (revisible(judg, oldBelief)) {
                 
@@ -247,7 +249,7 @@ public class Concept extends Item<Term> {
 //                ) != null) {
                     
                 Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
-                if (projectedBelief.getOccurenceTime() != oldBelief.getOccurenceTime()) {
+                if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                     nal.singlePremiseTask(projectedBelief, task.budget);
                 }
                 nal.setCurrentBelief(projectedBelief);
@@ -298,15 +300,15 @@ public class Concept extends Item<Term> {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            if (newStamp.equals(oldStamp)) {
-                //return; //duplicate
+            if (newStamp.equals(oldStamp,false,false,true,true)) {
+                return; //duplicate
             } else if (revisible(goal, oldGoal)) {
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 boolean success=revision(goal,oldGoal,false,nal);
-                if(!success) {
-                    //return; //hm if revision could hamper goals from re-selecting candidates,
-                } //no execution would work twice. they have to be repeatable, its revision itself
-            } //which looks if revisable and only derives a new task if no overlap in evidental base - patrick
+                if(success) { //it is revised, so there is a new task for which this function will be called
+                    return; //with higher/lower desire
+                } 
+            } 
         } 
         
         if (task.aboveThreshold()) {
@@ -314,19 +316,17 @@ public class Concept extends Item<Term> {
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
             if (belief != null) {
-                trySolution(belief, task, nal); //ok, lets use this solution
+                trySolution(belief, task, nal); // check if the Goal is already satisfied
             }
 
-            // still worth pursuing? or was the solution good?
+            // still worth pursuing?
             if (task.aboveThreshold()) {
 
                 addToTable(task, goal, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if (!Executive.isExecutableTerm(task.sentence.content)) {
-                    if(Parameters.TEMPORAL_PARTICLE_PLANNER) {
-                        memory.executive.decisionPlanning(nal, task, this);
-                    }
-                } else {     
+                    memory.emit(UnexecutableGoal.class, task, this, nal);
+                } else {
                     memory.executive.decisionMaking(task, this);
                 }
             }
@@ -434,6 +434,7 @@ public class Concept extends Item<Term> {
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
+                    //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }
                 table.add(i, newSentence);
@@ -486,7 +487,7 @@ public class Concept extends Item<Term> {
      *
      * @param taskLink The termLink to be inserted
      */
-    public boolean insertTaskLink(final TaskLink taskLink) {        
+    protected boolean insertTaskLink(final TaskLink taskLink) {        
         
         TaskLink removed = taskLinks.putIn(taskLink);
         
@@ -660,7 +661,7 @@ public class Concept extends Item<Term> {
 ////            }
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
-            if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
+            if (projectedBelief.getOccurenceTime()!=belief.getOccurenceTime()) {
                 nal.singlePremiseTask(projectedBelief, task.budget);
             }
             
@@ -728,12 +729,10 @@ public class Concept extends Item<Term> {
      * @return The selected TermLink
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
-
-        if (termLinks.size() == 0)
-            return null;
+        
         
         int toMatch = memory.param.termLinkMaxMatched.get(); //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
-        for (int i = 0; i < toMatch; i++) {
+        for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
             final TermLink termLink = termLinks.takeNext();
             if (termLink==null)
@@ -751,7 +750,7 @@ public class Concept extends Item<Term> {
     }
 
     public void returnTermLink(TermLink termLink) {
-        termLinks.putBack(termLink, memory.param.beliefForgetDurations.getCycles(), memory);
+        termLinks.putBack(termLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
     }
 
     /**
@@ -775,7 +774,7 @@ public class Concept extends Item<Term> {
     }
 
     /** get a random belief, weighted by their sentences confidences */
-    public Sentence getBeliefRandomByConfidence() {
+    public Sentence getBeliefRandomByConfidence() {        
         if (beliefs.isEmpty()) return null;
         
         float totalConfidence = getBeliefConfidenceSum();
@@ -807,5 +806,22 @@ public class Concept extends Item<Term> {
         return t / beliefs.size();        
     }
 
+    
+    public CharSequence getBeliefsSummary() {
+        if (beliefs.isEmpty())
+            return "0 beliefs";        
+        StringBuilder sb = new StringBuilder();
+        for (Sentence s : beliefs)
+            sb.append(s.toString()).append('\n');       
+        return sb;
+    }
+    public CharSequence getDesiresSummary() {
+        if (desires.isEmpty())
+            return "0 desires";        
+        StringBuilder sb = new StringBuilder();
+        for (Sentence s : desires)
+            sb.append(s.toString()).append('\n');       
+        return sb;
+    }
 
 }

@@ -6,8 +6,6 @@ package nars.core.control;
 
 import nars.core.Events;
 import nars.core.Memory;
-import nars.core.control.NAL;
-import nars.entity.Concept;
 import nars.entity.Task;
 
 /**
@@ -27,21 +25,22 @@ public class ImmediateProcess extends NAL {
     @Override
     public void run() {
         setCurrentTask(task);
-        mem.logic.TASK_IMMEDIATE_PROCESS.commit();
+        memory.logic.TASK_IMMEDIATE_PROCESS.commit();
         emit(Events.TaskImmediateProcess.class, task);
         setCurrentTerm(currentTask.getContent());
-        setCurrentConcept(mem.conceptualize(currentTask.budget, getCurrentTerm()));
+        setCurrentConcept(memory.conceptualize(currentTask.budget, getCurrentTerm()));
         if (getCurrentConcept() != null) {
             boolean processed = getCurrentConcept().directProcess(this, currentTask);
             if (processed) {
-                mem.event.emit(Events.ConceptDirectProcessedTask.class, currentTask);
+                memory.event.emit(Events.ConceptDirectProcessedTask.class, currentTask);
             }
         }
-        boolean stmUpdated = mem.executive.inductionOnSucceedingEvents(currentTask, this);
-        if (stmUpdated) {
-            mem.logic.SHORT_TERM_MEMORY_UPDATE.commit();
+        if (!currentTask.sentence.isEternal()) {
+            boolean stmUpdated = memory.executive.inductionOnSucceedingEvents(currentTask, this);
+            if (stmUpdated) {
+                memory.logic.SHORT_TERM_MEMORY_UPDATE.commit();
+            }
         }
-        
     }
     
 }

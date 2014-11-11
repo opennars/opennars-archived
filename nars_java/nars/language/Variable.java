@@ -20,13 +20,19 @@
  */
 package nars.language;
 
-import java.util.Objects;
+import java.nio.CharBuffer;
 import nars.core.Parameters;
+import static nars.io.Symbols.VAR_DEPENDENT;
+import static nars.io.Symbols.VAR_INDEPENDENT;
+import static nars.io.Symbols.VAR_QUERY;
+import static nars.language.Variable.newName;
 
 /**
  * A variable term, which does not correspond to a concept
  */
 public class Variable extends Term {
+
+    
     
 
     
@@ -59,6 +65,8 @@ public class Variable extends Term {
         this.type = n.charAt(0);
         this.scope = scope != null ? scope : this;
         this.hash = 0; //calculate lazily
+        if (!validVariableType(type)) 
+            throw new RuntimeException("Invalid variable type: " + n);
         return this;
     }
     
@@ -120,43 +128,43 @@ public class Variable extends Term {
     @Override public boolean equals(final Object that) {
         if (that == this) return true;
         if (!(that instanceof Variable)) return false;
-        Variable v = (Variable)that;
-        
+                
         if (Parameters.TERM_ELEMENT_EQUIVALENCY) {
-            
-
-            //TODO factor these comparisons into 2 nested if's
-
-            if ((v.scope == v) && (scope == this))
-                //both are unscoped, so compare by name only
-                return name().equals(v.name());
-            else if ((v.scope!=v) && (scope==this))
-                return false;
-            else if ((v.scope==v) && (scope!=this))
-                return false;
-            else {
-                if (!name().equals(v.name()))
-                    return false;
-
-                if (scope == v.scope) return true;
-
-                if (scope.hashCode()!=v.scope.hashCode())
-                    return false;
-
-                //WARNING infinnite loop can happen if the two scopes start equaling echother
-                //we need a special equals comparison which ignores variable scope when recursively
-                //called from this
-                //until then, we'll use the name for comparison because it wont 
-                //invoke infinite recursion
-
-                return scope.name().equals(v.scope.name());
-            }
-            
+            return equalsTerm(that);
         }
         else {
-            if (!super.equals(that))
-                return false;
+            Variable v = (Variable)that;
+            if (!name().equals(v.name())) return false;
             return (v.getScope().name().equals(getScope().name()));
+        }
+    }
+    
+    public boolean equalsTerm(Object that) {
+        //TODO factor these comparisons into 2 nested if's
+        Variable v = (Variable)that;
+        if ((v.scope == v) && (scope == this))
+            //both are unscoped, so compare by name only
+            return name().equals(v.name());
+        else if ((v.scope!=v) && (scope==this))
+            return false;
+        else if ((v.scope==v) && (scope!=this))
+            return false;
+        else {
+            if (!name().equals(v.name()))
+                return false;
+
+            if (scope == v.scope) return true;
+
+            if (scope.hashCode()!=v.scope.hashCode())
+                return false;
+
+            //WARNING infinnite loop can happen if the two scopes start equaling echother
+            //we need a special equals comparison which ignores variable scope when recursively
+            //called from this
+            //until then, we'll use the name for comparison because it wont 
+            //invoke infinite recursion
+
+            return scope.name().equals(v.scope.name());       
         }
     }
 
@@ -186,9 +194,9 @@ public class Variable extends Term {
         return (that instanceof Variable) ? ((Comparable)name()).compareTo(that.name()) : -1;
     }*/
 
-    boolean isQueryVariable() { return getType() == '?';    }
-    boolean isDependentVariable() { return getType() == '#';    }
-    boolean isIndependentVariable() { return getType() == '$';    }
+    boolean isQueryVariable() { return getType() == VAR_QUERY;    }
+    boolean isDependentVariable() { return getType() == VAR_DEPENDENT;    }
+    boolean isIndependentVariable() { return getType() == VAR_INDEPENDENT;    }
 
     boolean isCommon() {     
         CharSequence n = name();
@@ -200,5 +208,49 @@ public class Variable extends Term {
         return scope;
     }
 
+
+    public static boolean validVariableType(final char c) {
+        return (c == VAR_QUERY) || (c == VAR_DEPENDENT) || (c == VAR_INDEPENDENT);
+    }
+    
+    private static final int MAX_CACHED_VARNAME_INDEXES = 64;
+    private static final CharSequence[] vn1 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    private static final CharSequence[] vn2 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    private static final CharSequence[] vn3 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    
+    
+    public static CharSequence getName(char type, int index) {
+        if (index > MAX_CACHED_VARNAME_INDEXES)
+            return newName(type, index);
+        
+        
+        CharSequence[] cache;
+        switch (type) {
+            case VAR_INDEPENDENT: cache = vn1; break;
+            case VAR_DEPENDENT: cache = vn2; break;
+            case VAR_QUERY: cache = vn3; break;
+            default:
+                throw new RuntimeException("Invalid variable type");
+        }
+        
+        CharSequence c = cache[index];
+        if (c == null) {
+            c = newName(type, index);
+            cache[index] = c;
+        }
+            
+        return c;
+    }
+    
+    protected static CharSequence newName(char type, int index) {
+        
+        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
+        CharBuffer cb  = CharBuffer.allocate(1 + digits).append(type);
+        do {
+            cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
+        } while (index != 0);
+        return cb.compact().toString();
+
+    }
     
 }

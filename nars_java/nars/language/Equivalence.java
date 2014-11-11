@@ -23,6 +23,7 @@ package nars.language;
 import java.util.Arrays;
 import nars.inference.TemporalRules;
 import nars.io.Symbols.NativeOperator;
+import static nars.language.Inheritance.make;
 
 /**
  * A Statement about an Equivalence relation.
@@ -40,6 +41,7 @@ public class Equivalence extends Statement {
         super(components);
         
         temporalOrder = order;
+        
         init(components);
     }
 
@@ -53,11 +55,20 @@ public class Equivalence extends Statement {
         return new Equivalence(term, temporalOrder);
     }
     
-    @Override public CompoundTerm clone(final Term[] t) {        
+    @Override public Equivalence clone(final Term[] t) {        
         if (t.length!=2)
             throw new RuntimeException("Equivalence requires 2 components: " + Arrays.toString(t));
+        
         return make(t[0], t[1], temporalOrder);
     }
+    
+    /** alternate version of Inheritance.make that allows equivalent subject and predicate
+     * to be reduced to the common term.      */
+    public static Term makeTerm(final Term subject, final Term predicate, int temporalOrder) {
+        if (subject.equals(predicate))
+            return subject;                
+        return make(subject, predicate, temporalOrder);        
+    }    
 
 
     /**
@@ -74,13 +85,17 @@ public class Equivalence extends Statement {
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
-        if (invalidStatement(subject, predicate)) {
+        if (subject==null || predicate==null || invalidStatement(subject, predicate)) {
             return null;
         }
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence)) {
             return null;
         }
+        
+        if (subject.equals(predicate))
+            return null;
+        
         if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
                 || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
             Term interm = subject;
@@ -103,8 +118,10 @@ public class Equivalence extends Statement {
                 copula = NativeOperator.EQUIVALENCE;
         }
         
-        return new Equivalence(                
-                Term.toSortedSetArray(subject, predicate), temporalOrder);
+        Term[] t = Term.toSortedSetArray(subject, predicate);
+        if (t.length != 2)
+            return null;        
+        return new Equivalence(t, temporalOrder);
     }
 
     /**

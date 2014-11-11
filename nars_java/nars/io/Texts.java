@@ -17,8 +17,8 @@ public class Texts {
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html
     
-    public final static Map<Character,Character> escapeMap = new HashMap();
-    public final static Map<Character,Character> escapeMapReverse = new HashMap();
+    public final static Map<Character,Character> escapeMap = new HashMap(256);
+    public final static Map<Character,Character> escapeMapReverse = new HashMap(256);
     static {
         char[][] escapings = new char[][] {
             {':', '\u25B8'},
@@ -77,6 +77,7 @@ public class Texts {
 
     protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {       
         StringBuilder b = new StringBuilder(s.length());
+        
         
         final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
         
@@ -330,18 +331,17 @@ public class Texts {
             case 0: return "0.00";
         }
                     
-        StringBuilder sb = new StringBuilder(4);
         if (hundredths > 9) {
-            sb.append("0.");
             int tens = hundredths/10;
-            sb.append((char)('0' + tens));
-            sb.append((char)('0' + hundredths%10));
+            return new String(new char[] {
+                '0', '.', (char)('0' + tens), (char)('0' + hundredths%10)
+            });
         }
         else {
-            sb.append("0.0");
-            sb.append((char)('0' + hundredths));
+            return new String(new char[] {
+                '0', '.', '0', (char)('0' + hundredths)
+            });
         }            
-        return sb;        
     }
     
     final static Format oneDecimal = new DecimalFormat("0.0");    
@@ -379,29 +379,30 @@ public class Texts {
         return n2((float)p);
     }
 
-    /** fast append to CharBuffer */
-    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
-        if (s instanceof CharBuffer) {            
-            c.put((CharBuffer)s);            
-            return c;
-        }
-        else if (s instanceof String) {
-            c.put(getCharArray((String)s), 0, s.length());            
-            return c;
-        }
-        else {
-            return c.append(s);
-        }
-    }
+//    /** fast append to CharBuffer */
+//    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
+//        if (s instanceof CharBuffer) {            
+//            
+//            c.append((CharBuffer)s);
+//            return c;
+//        }
+//        else if (s instanceof String) {
+//            //c.put(getCharArray((String)s), 0, s.length());            
+//            return c.append(s);
+//        }
+//        else {
+//            return c.append(s);
+//        }
+//    }
     
-    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
-        return c.put(s);        
-    }
-    public final static CharBuffer append(final CharBuffer c, final String s) {
-        return c.put(getCharArray(s));        
-    }
-    public final static CharBuffer append(final CharBuffer b, final char c) {
-        return b.put(c);        
-    }
+//    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
+//        return c.put(s);        
+//    }
+//    public final static CharBuffer append(final CharBuffer c, final String s) {
+//        return c.put(getCharArray(s));        
+//    }
+//    public final static CharBuffer append(final CharBuffer b, final char c) {
+//        return b.put(c);        
+//    }
 
 }
