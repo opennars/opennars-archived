@@ -281,7 +281,13 @@ public class Terms {
             for(Term sA : componentsA) {
                 boolean had=false;
                 for(Term sB : componentsB) {
-                    if(sA.toString().equals(sB.toString())) {
+                    if(sA instanceof Variable && sB instanceof Variable) {
+                        if(sA.name.equals(sB.name)) {
+                            had=true;
+                        }
+                    } 
+                    else
+                    if(sA.equals(sB)) {
                         had=true;
                     }
                 }
