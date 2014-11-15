@@ -130,24 +130,24 @@ public class Rover extends PhysicsModel {
             
             
             
-            int pixels = 5;
+            int pixels = 3;
             float aStep = 1.5f / pixels;
             float retinaArc = aStep;
             int retinaResolution = 5; //should be odd # to balance
             float L = 35.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
-                vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.2f,
+                vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.0f,
                             retinaArc, retinaResolution, L, 3));
             }
             
-            pixels=3;
+            /*pixels=3;
             Vec2 backRetina = new Vec2(0, -0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 vision.add(new VisionRay(world,"back" + i, torso, backRetina, -(MathUtils.PI/2f + aStep*i*4),
                            retinaArc, retinaResolution,
                            5.5f, 3));
-            }
+            }*/
             
             //Vec2 backRetina = new Vec2(0, -0.5f);
             //vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f, 3));
@@ -280,7 +280,8 @@ public class Rover extends PhysicsModel {
                     sight.set("<(*," + id + ","+Sgood+") --> see>. :|:");
                 }
                 else {
-                    sight.set("<(*," + id + ",empty) --> see>. :|:");
+                    //no need to do that
+                    //sight.set("<(*," + id + ",empty) --> see>. :|:");
                 }
             }
         }
@@ -532,7 +533,7 @@ public class Rover extends PhysicsModel {
                             rover.stop();
                             break;
                         case "random": //tend forward
-                            nar.addInput("(^motor,random). :|:\n");
+                            //nar.addInput("(^motor,random). :|:\n");
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
                             
@@ -616,6 +617,7 @@ public class Rover extends PhysicsModel {
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200        
         (nar.param).noiseLevel.set(0);
+        (nar.param).decisionThreshold.set(0);
         (nar.param).duration.set(cyclesPerFrame);
         
 
