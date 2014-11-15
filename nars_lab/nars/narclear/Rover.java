@@ -199,8 +199,7 @@ public class Rover extends PhysicsModel {
                 point1 = body.getWorldPoint(point);
 
                 Body hit = null;
-                
-                float minDist = 1000;
+                float minDist = 999999;
                 
                 float dArc = arc / resolution;
                 for (int r = 0; r < resolution; r++) {
@@ -225,10 +224,12 @@ public class Rover extends PhysicsModel {
                         pooledHead.set(ccallback.m_normal);
                         pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
                         draw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
-                        hit = ccallback.body;
+                        
 
-                        if (d < minDist)
+                        if (d < minDist) {
                             minDist = d;
+                            hit = ccallback.body;
+                        }
                     } else {
                         draw().drawSegment(point1, point2, laserColor);
                     }
@@ -275,7 +276,8 @@ public class Rover extends PhysicsModel {
                     String Sgood= good ? "good" : "bad";
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
-                    sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                    //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                    sight.set("<(*," + id + ","+Sgood+") --> see>. :|:");
                 }
                 else {
                     sight.set("<(*," + id + ",empty) --> see>. :|:");
