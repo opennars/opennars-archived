@@ -76,7 +76,7 @@ public class NARio extends Run {
         
         //new TextOutput(nar, System.out).setShowInput(true);
         int memCyclesPerFrame = 10;
-        (nar.param).duration.set(memCyclesPerFrame*2); //2 frames seems good
+        (nar.param).duration.set(memCyclesPerFrame); //2 frames seems good
         (nar.param).noiseLevel.set(0);
         
         float fps = 20f;
@@ -219,8 +219,10 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
-            boolean representation_simple=false;
+            boolean representation_simple=true;
+            boolean right=false;
             public String direction(int i,int j) {
+                right=false;
                 if(!representation_simple) {
                     //return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
                     return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
@@ -232,6 +234,7 @@ public class NARio extends Run {
                         } 
                         else
                         if(i>0) {
+                            right=true;
                             return "right";
                         }
                     } else {
@@ -269,7 +272,7 @@ public class NARio extends Run {
                         scene.toggleKey(i, false);
                     }
                 }
-                if(Memory.randomNumber.nextDouble()>1.0/30.0 && tt<200) {
+                if(Memory.randomNumber.nextDouble()<1.0/10.0 && tt<200) {
                     
                     
                     
@@ -345,8 +348,10 @@ public class NARio extends Run {
                         if (movement) {
 
                             if (!((mx==0) && (my==0))) {
-                                if (moveInput.set(/*"$" + movementPriority + "$"*/"<"+direction(mx,my)+" --> moved>. :|:")) {
+                                String dir=direction(mx,my);
+                                if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
                                     //if significantly changed block position, record it for next difference
+                                    nar.addInput("<right --> moved>. :|:");
                                     lastMX = x;
                                     lastMY = y;
                                 }
@@ -356,10 +361,10 @@ public class NARio extends Run {
                             
                         }
                         else {
-                            if (moveInput.set("<"+direction(0,0)+" --> moved>. :|:")) { //stopped
+                            //if (moveInput.set("<"+direction(0,0)+" --> moved>. :|:")) { //stopped
                                 lastMX = x;
                                 lastMY = y;
-                            }
+                            //}
                 
                         }
 
@@ -513,12 +518,13 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 if(www%200==0) {
-                    nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(2,0)+" --> moved>!"); //move right
+                     nar.addInput("<right --> moved>!");
+                     /* nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
+                  nar.addInput("<"+direction(2,0)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(1,1)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(2,2)+" --> moved>!"); //move right
                     nar.addInput("<"+direction(1,-1)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(2,-2)+" --> moved>!"); //move right
+                    nar.addInput("<"+direction(2,-2)+" --> moved>!"); //move right */
                     //nar.addInput("<"+direction(1,1)+" --> moved>!");
                 }
                 www++;
