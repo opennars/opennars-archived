@@ -57,7 +57,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
         
-        NAR nar = new Default().simulationTime().
+        NAR nar = new Default().simulationTime().setConceptBagSize(500).
                 /*temporalPlanner(12,64,16).*/build();
         
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
@@ -78,6 +78,7 @@ public class NARio extends Run {
         int memCyclesPerFrame = 10;
         (nar.param).duration.set(memCyclesPerFrame); //2 frames seems good
         (nar.param).noiseLevel.set(0);
+        (nar.param).decisionThreshold.set(0);
         
         float fps = 20f;
         gameRate = 1.0f / fps;
@@ -135,7 +136,7 @@ public class NARio extends Run {
     protected void setKey(int k, boolean pressed) {
         if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
+        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")!");
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
