@@ -35,15 +35,6 @@ public class Parameters {
     //              in the lifetime of the system, though different systems may take different
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
-    
-    //how much priority should finding temporal coherences have?
-    //examples showed, that linking succeeding found events, namely the new rule temporalInductionChain
-    //happens so rarely, that it is not of use for any real example
-    //here the best tasks will compete in a bag, and for every temporal implication n attemps will be done
-    //to take one out which can be chained
-    public static double TEMPORAL_CHAINING_ATTEMPTS=10;  //experiment
-    //priority boost
-    public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=2.0;  //experiment
 
     //full NAL9 mode //not recommened, system cant grasp the consequences
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
