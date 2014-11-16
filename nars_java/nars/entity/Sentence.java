@@ -491,7 +491,7 @@ public class Sentence<T extends Term> implements Cloneable {
                 opName = "^wonder";
                 break;
             case Symbols.QUEST_MARK:
-                opName = "^assess";
+                opName = "^evaluate";
                 break;
             default:
                 return null;

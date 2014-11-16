@@ -47,6 +47,7 @@ public class Evaluate extends Operator {
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+        
         Term content = args[0];
         
         Sentence sentence = new Sentence(content, Symbols.QUEST_MARK, null, new Stamp(memory));

@@ -45,18 +45,24 @@ public class Parameters {
     //priority boost
     public static double TEMPORAL_INDUCTION_PRIORITY_BOOST_FACTOR=2.0;  //experiment
 
-    //limited NAL9 mode, doesnt break most normal examples
-    public static boolean INTERNAL_EXPERIENCE=false;
-    //full NAL9 mode, not very effective yet
+    //full NAL9 mode //not recommened, system cant grasp the consequences
     public static boolean INTERNAL_EXPERIENCE_FULL=false;
+    
+    public static boolean BE_RATIONAL=true; //don't allow ^want and ^believe to be active/have an effect, 
+    //which means its only used as monitor
+    
+    //rational NAL9 mode //this one works nice
+    public static boolean INTERNAL_EXPERIENCE=true;
+    
+    public static double INTERNAL_EXPERIENCE_CREATION_BUDGET_SUMMARY=0.75;
     
     //internal experience has less durability?
     public static float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
     
     //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=1.0f;
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
     //internal experience has less priority?
-    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=1.0f;
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 
