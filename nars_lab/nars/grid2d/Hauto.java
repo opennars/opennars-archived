@@ -61,7 +61,7 @@ public class Hauto {
                         entityID++;
                     }
                 }
-                nar.addInput("<"+r.name+" --> on>. :|:");
+                nar.addInput("<"+r.name+" --> [on]>. :|:");
             }
             w.light=1.0f;
             
@@ -76,13 +76,13 @@ public class Hauto {
             if(NeighborsValue2("op_or", i, j, readcells, "having_charge", 1.0f) != 0) {
                 w.is_solid=false;
                 if(r.is_solid) {
-                    nar.addInput("<"+r.name+" --> opened>. :|:");
+                    nar.addInput("<"+r.name+" --> [opened]>. :|:");
                 }
             }
             else {
                 if(!r.is_solid && TestChamber.keyn!=doornumber(r)) {
                     w.is_solid=true;
-                    nar.addInput("(--,<"+r.name+" --> opened>). :|:");
+                    nar.addInput("(--,<"+r.name+" --> [opened]>). :|:");
                 }
             }
         }
@@ -154,7 +154,7 @@ public class Hauto {
         }
         if(r.machine==Machine.Light || r.machine==Machine.Turret) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
-                nar.addInput("(--,<"+r.name+" --> on>). :|:");
+                nar.addInput("(--,<"+r.name+" --> [on]>). :|:");
             }
         }
             //w.charge *= w.conductivity;
@@ -224,9 +224,9 @@ public class Hauto {
             if(!"".equals(readCells[x][y].name)) {
                 //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
-                    nar.addInput("<" + readCells[x][y].name+" --> "+wishreal+">! :|:"); //in order to make NARS an observer
+                    nar.addInput("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("(--,<" + readCells[x][y].name+" --> "+wishreal+">)! :|:");
+                    nar.addInput("(--,<" + readCells[x][y].name+" --> ["+wishreal+"]>)! :|:");
                 }
 //--nar.step(1);
             }
@@ -234,9 +234,9 @@ public class Hauto {
             if(!s.equals("")) {
                 //nar.addInput("(^" + oper + ","+s+")!"); 
                 if(!inverse) {
-                    nar.addInput("<" + s +" --> "+wishreal+">! :|:"); //in order to make NARS an observer
+                    nar.addInput("<" + s +" --> ["+wishreal+"]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("(--,<" + s +" --> "+wishreal+">)! :|:");
+                    nar.addInput("(--,<" + s +" --> ["+wishreal+"]>)! :|:");
                 }
                 //--nar.step(1);
             }
@@ -307,7 +307,7 @@ public class Hauto {
                 readCells[(int) x][(int) y].name = name;
                 writeCells[(int) x][(int) y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
-                    nar.addInput("(--,<"+name+" --> "+"on>). :|:");
+                    nar.addInput("(--,<"+name+" --> "+"[on]>). :|:");
                     if(TestChamber.curiousity) {
                         space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
@@ -315,7 +315,7 @@ public class Hauto {
                     }
                 }
                 if(selected.logic==Logic.SWITCH) {
-                    nar.addInput("<"+name+" --> "+"on>. :|:");
+                    nar.addInput("<"+name+" --> "+"[on]>. :|:");
                     if(TestChamber.curiousity) {
                         space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
@@ -326,7 +326,7 @@ public class Hauto {
             else
             {
                 if(selected.logic==Logic.OFFSWITCH) { //already has a name so use this one
-                    nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"off>. :|:");
+                    nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"[off]>. :|:");
                     if(TestChamber.curiousity) {
                         space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
@@ -334,7 +334,7 @@ public class Hauto {
                     }
                 }
                 if(selected.logic==Logic.SWITCH) {
-                    nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"on>. :|:");
+                    nar.addInput("<"+readCells[(int) x][(int) y].name+" --> "+"[on]>. :|:");
                     if(TestChamber.curiousity) {
                         space.nar.addInput("<(^go-to," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.addInput("<(^activate," + readCells[(int) x][(int) y].name + ") =/> <Self --> [curious]>>.");
