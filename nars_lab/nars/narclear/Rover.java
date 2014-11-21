@@ -14,6 +14,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.language.Term;
@@ -505,7 +506,7 @@ public class Rover extends PhysicsModel {
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
             @Override
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
                 Term t1 = args[0];
                 float priority = operation.getTask().budget.getPriority();
 

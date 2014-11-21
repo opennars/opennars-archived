@@ -25,6 +25,7 @@ import nars.entity.BudgetValue;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Symbols;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -46,7 +47,7 @@ public class Evaluate extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Term content = args[0];
         
         Sentence sentence = new Sentence(content, Symbols.QUEST_MARK, null, new Stamp(memory));

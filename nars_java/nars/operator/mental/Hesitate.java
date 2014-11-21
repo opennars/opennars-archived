@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import nars.core.Memory;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -42,7 +43,7 @@ public class Hesitate extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Term term = args[0];
         Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(false);

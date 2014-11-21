@@ -13,8 +13,9 @@ import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.core.build.Neuromorphic;
+import nars.core.build.Default;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.narclear.jbox2d.j2d.DrawPhy2D;
@@ -289,7 +290,7 @@ public class Rover2 extends PhysicsModel {
         nar.addPlugin(new NullOperator("^motor") {
 
             @Override
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
 
                 Term t1 = args[0];
 
@@ -356,7 +357,7 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new Default().
         ////NAR nar = new CurveBagNARBuilder().
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-        NAR nar = NAR.build(new Neuromorphic().
+        NAR nar = NAR.build(new Default().
                 setConceptBagSize(1000).
                 setSubconceptBagSize(2000).
                 setTaskLinkBagLevels(10).

@@ -17,6 +17,7 @@
 package nars.operator.math;
 
 import nars.core.Memory;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
 import nars.operator.mental.Mental;
@@ -31,7 +32,7 @@ public class Add extends SynchronousFunctionOperator implements Mental {
     }
 
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    protected Term function(SlipNet memory, Term[] x) {
         if (x.length!= 2) {
             throw new RuntimeException("Requires 2 arguments");
         }

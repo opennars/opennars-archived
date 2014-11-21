@@ -23,6 +23,8 @@ import nars.core.control.FireConcept;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -30,7 +32,7 @@ import nars.operator.Operator;
 /**
  * Operator that activates a concept
  */
-public class Consider extends Operator implements Mental {
+public class Consider extends Operator implements Mental { 
 
     public static BudgetValue budgetMentalConcept(final Operation o) {
         return o.getTask().budget.clone();
@@ -48,10 +50,10 @@ public class Consider extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Term term = args[0];
         
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+        SlipNode concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         
         new FireConcept(memory, concept, 1) {
 

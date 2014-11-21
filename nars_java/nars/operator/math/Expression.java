@@ -2,6 +2,7 @@ package nars.operator.math;
 
 import java.util.List;
 import nars.core.Memory;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Texts;
 import static nars.io.Texts.unescape;
 import nars.language.Inheritance;
@@ -33,7 +34,7 @@ public class Expression  extends SynchronousFunctionOperator {
     
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    protected Term function(SlipNet memory, Term[] x) {
 
         //TODO this may not be thread-safe, this block may need synchronized:
         if (context == null) {

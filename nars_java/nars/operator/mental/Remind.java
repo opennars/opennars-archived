@@ -22,6 +22,8 @@ import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -44,9 +46,9 @@ public class Remind extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override    
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Term term = args[0];
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+        SlipNode concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         BudgetValue budget = new BudgetValue(Parameters.DEFAULT_QUESTION_PRIORITY, Parameters.DEFAULT_QUESTION_DURABILITY, 1);
         memory.concepts.activate(concept, budget, Activating.TaskLink);
         return null;

@@ -21,7 +21,6 @@
 package nars.gui;
 
 import automenta.vivisect.swing.NWindow;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import nars.core.NAR;
 import nars.core.build.Default.CommandLineNARBuilder;
+import nars.farg.workspace.Workspace;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 
@@ -92,10 +92,12 @@ public class NARSwing  {
         this(nar, true);
     }
 
+    Workspace attached_workspace;
     public NARSwing(NAR nar, boolean logPanel) {
         super();
                 
-        this.nar = nar;                
+        this.nar = nar;
+        attached_workspace=new Workspace(nar);
         
         controls = new NARControls(nar);        
         mainWindow = new NWindow(NAR.VERSION, controls);

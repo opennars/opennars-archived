@@ -20,6 +20,7 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.MemoryObserver;
 import nars.io.narsese.Narsese;
 import nars.language.Term;
@@ -284,13 +285,13 @@ public class NARTrace extends MemoryObserver implements Serializable {
     public static class ConceptBagTreeMLData extends CycleTreeMLData {
 
         public final Mode mode;
-        private final Iterable<Concept> concepts;
+        private final Iterable<SlipNode> concepts;
 
         public static enum Mode {
 
             ConceptPriorityTotal, TaskLinkPriorityMean, TermLinkPriorityMean /* add others */ };
 
-        public ConceptBagTreeMLData(NAR n, Iterable<Concept> concepts, int historySize, Mode mode) {
+        public ConceptBagTreeMLData(NAR n, Iterable<SlipNode> concepts, int historySize, Mode mode) {
             super(n, "Concepts: " + mode, historySize);
             this.mode = mode;
             this.concepts = concepts;
@@ -301,7 +302,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
         public float next(long time, NAR nar) {
             float r = 0;
             int numConcepts = 0;
-            for (Concept c : concepts) {
+            for (SlipNode c : concepts) {
                 switch (mode) {
                     case ConceptPriorityTotal:
                         r += c.getPriority();

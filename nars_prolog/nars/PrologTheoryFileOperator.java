@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
@@ -34,7 +35,7 @@ public class PrologTheoryFileOperator extends nars.operator.Operator {
     }
 
     @Override
-    protected List<Task> execute(nars.operator.Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(nars.operator.Operation operation, Term[] args, SlipNet memory) {
         if (args.length != 3) {
             return null;
         }

@@ -7,6 +7,7 @@ package nars.core.control;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 
 /**
  * Immediate processing of a new task, in constant time Local processing, in
@@ -16,7 +17,7 @@ public class ImmediateProcess extends NAL {
     final Task task;
     final int numSiblingTasks;
 
-    public ImmediateProcess(Memory mem, Task currentTask, int numSiblingTasks) {
+    public ImmediateProcess(SlipNet mem, Task currentTask, int numSiblingTasks) {
         super(mem);
         this.task = currentTask;
         this.numSiblingTasks = numSiblingTasks;

@@ -12,6 +12,7 @@ import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Conjunction;
@@ -31,7 +32,7 @@ public class Executive {
 
     public final GraphExecutive graph;
 
-    public final Memory memory;
+    public final SlipNet memory;
 
     ///** memory for faster execution of &/ statements (experiment) */
     //public final Deque<TaskConceptContent> next = new ArrayDeque<>();
@@ -75,7 +76,7 @@ public class Executive {
      */
     float motivationToFinishCurrentExecution = 1.5f;
 
-    public Executive(Memory mem) {
+    public Executive(SlipNet mem) {
         this.memory = mem;
 
         this.graph = new GraphExecutive(mem, this);

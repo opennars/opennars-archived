@@ -49,6 +49,8 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.BudgetFunctions;
 import nars.inference.Executive;
 import nars.inference.TemporalRules;
@@ -75,7 +77,7 @@ import static nars.io.Symbols.NativeOperator.INTERSECTION_EXT;
 import static nars.io.Symbols.NativeOperator.INTERSECTION_INT;
 import static nars.io.Symbols.NativeOperator.NEGATION;
 import static nars.io.Symbols.NativeOperator.PARALLEL;
-import static nars.io.Symbols.NativeOperator.PRODUCT;
+import static nars.io.Symbols.NativeOperator.PRODUCT; 
 import static nars.io.Symbols.NativeOperator.SEQUENCE;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
@@ -281,7 +283,7 @@ public class Memory implements Serializable {
         this.event = new MemoryEventEmitter();
         
         this.concepts = concepts;
-        this.concepts.init(this);
+        this.concepts.init((SlipNet) this);
         
         this.novelTasks = novelTasks;                
         if (novelTasks instanceof AttentionAware)
@@ -350,7 +352,7 @@ public class Memory implements Serializable {
         
         
         
-        this.executive = new Executive(this);
+        this.executive = new Executive((SlipNet) this);
                 
         //after this line begins actual inference, now that the essential data strucures are allocated
         //------------------------------------ 
@@ -462,7 +464,7 @@ public class Memory implements Serializable {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null 
      */
-    public Concept conceptualize(final BudgetValue budget, final Term term) {
+    public SlipNode conceptualize(final BudgetValue budget, final Term term) {
         boolean createIfMissing = true;
         
         return concepts.conceptualize(budget, term, createIfMissing);
@@ -768,7 +770,7 @@ public class Memory implements Serializable {
             
             if (task.isInput() || !task.sentence.isJudgment() || concept(task.sentence.content)!=null) { //it is a question/goal/quest or a concept which exists                   
                 // ok so lets fire it
-                queue.add(new ImmediateProcess(this, task, numTasks - 1)); 
+                queue.add(new ImmediateProcess((SlipNet) this, task, numTasks - 1)); 
             } else { 
                 final Sentence s = task.sentence;
                 if ((s!=null) && (s.isJudgment()||s.isGoal())) {
@@ -858,7 +860,7 @@ public class Memory implements Serializable {
         for (int i = 0; i < novelTasks.size(); i++) {
             final Task task = novelTasks.takeNext();       // select a task from novelTasks
             if (task != null) {            
-                queue.add(new ImmediateProcess(this, task, 0));
+                queue.add(new ImmediateProcess((SlipNet) this, task, 0));
                 executed++;
             }
         }

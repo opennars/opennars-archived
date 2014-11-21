@@ -5,6 +5,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import nars.core.Memory;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
@@ -21,7 +22,7 @@ public class Javascript extends SynchronousFunctionOperator implements Mental {
         super("^js");
     }
     
-    @Override protected Term function(Memory memory, Term[] args) {
+    @Override protected Term function(SlipNet memory, Term[] args) {
         if (args.length < 1) {
             return null;
         }

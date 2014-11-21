@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import nars.core.Attention;
+import nars.core.Build;
 import nars.core.Memory;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
 import nars.core.NAR;
-import nars.core.Build;
 import nars.core.Param;
 import static nars.core.build.Default.InternalExperienceMode.Full;
 import static nars.core.build.Default.InternalExperienceMode.Minimal;
@@ -21,6 +21,8 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import nars.farg.slipnet.SlipLink;
+import nars.farg.slipnet.SlipNode;
 import nars.io.DefaultTextPerception;
 import nars.language.Term;
 import nars.operator.Operator;
@@ -165,19 +167,19 @@ public class Default extends Build implements ConceptBuilder {
     }
 
     @Override
-    public Concept newConcept(BudgetValue b, Term t, Memory m) {        
-        Bag<TaskLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+    public SlipNode newConcept(BudgetValue b, Term t, Memory m) {        
+        Bag<SlipLink,Task> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLink,TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
-        return new Concept(b, t, taskLinks, termLinks, m);        
+        return new SlipNode(b, t, taskLinks, termLinks, m);        
     }
 
     
-    public Bag<Concept,Term> newConceptBag() {
+    public Bag<SlipNode,Term> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
     }
     
-    CacheBag<Term,Concept> newSubconceptBag() {        
+    CacheBag<Term,SlipNode> newSubconceptBag() {        
         if (getSubconceptBagSize() == 0) return null;
         return new CacheBag(getSubconceptBagSize());
     }

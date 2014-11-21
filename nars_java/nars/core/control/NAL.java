@@ -18,6 +18,9 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipLink;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Negation;
@@ -30,12 +33,12 @@ import nars.operator.Operation;
  */
 public abstract class NAL implements Runnable {
 
-    public final Memory memory;
+    public final SlipNet memory;
     protected Term currentTerm;
-    protected Concept currentConcept;
+    protected SlipNode currentConcept;
     protected Task currentTask;
     protected TermLink currentBeliefLink;
-    protected TaskLink currentTaskLink;
+    protected SlipLink currentTaskLink;
     protected Sentence currentBelief;
     protected Stamp newStamp;
     protected StampBuilder newStampBuilder;
@@ -44,7 +47,7 @@ public abstract class NAL implements Runnable {
     protected List<Task> tasksAdded = new ArrayList();
     //TODO tasksDicarded
     
-    public NAL(Memory mem) {
+    public NAL(SlipNet mem) {
         super();
         this.memory = mem;
     }
@@ -330,7 +333,7 @@ public abstract class NAL implements Runnable {
         this.currentTask = currentTask;
     }
 
-    public void setCurrentConcept(Concept currentConcept) {
+    public void setCurrentConcept(SlipNode currentConcept) {
         this.currentConcept = currentConcept;
     }
 
@@ -409,7 +412,7 @@ public abstract class NAL implements Runnable {
     /**
      * @param currentTaskLink the currentTaskLink to set
      */
-    public void setCurrentTaskLink(TaskLink currentTaskLink) {
+    public void setCurrentTaskLink(SlipLink currentTaskLink) {
         this.currentTaskLink = currentTaskLink;
     }
 

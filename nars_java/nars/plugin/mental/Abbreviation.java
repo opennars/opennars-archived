@@ -1,6 +1,7 @@
 package nars.plugin.mental;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.EventEmitter.EventObserver;
@@ -14,6 +15,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipNet;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import static nars.language.CompoundTerm.termArray;
@@ -21,7 +23,6 @@ import nars.language.Similarity;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.operator.mental.Mental;
 
 /**
@@ -55,7 +56,7 @@ public class Abbreviation implements Plugin {
          * @return Immediate results as Tasks
          */
         @Override
-        protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
             
             Term compound = args[0];
             
@@ -95,7 +96,7 @@ public class Abbreviation implements Plugin {
     
     @Override
     public boolean setEnabled(final NAR n, final boolean enabled) {
-        final Memory memory = n.memory;
+        final SlipNet memory = (SlipNet) n.memory;
         
         Operator _abbreviate = memory.getOperator("^abbreviate");
         if (_abbreviate == null) {

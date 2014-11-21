@@ -26,6 +26,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipNet;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Similarity;
@@ -49,7 +50,7 @@ public class Name extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Term compound = args[0];
         Term atomic = args[1];
         Similarity content = Similarity.make(compound, atomic);

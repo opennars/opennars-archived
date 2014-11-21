@@ -25,6 +25,7 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 
 /**
@@ -43,7 +44,7 @@ public class NullOperator extends Operator {
 
     /** called from Operator */
     @Override 
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         if (Parameters.DEBUG) {
             System.out.println("Executed: " + this);
             for (Term t : args) {

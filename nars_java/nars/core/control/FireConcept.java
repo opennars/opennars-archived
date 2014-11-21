@@ -10,17 +10,20 @@ import nars.entity.Concept;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import nars.farg.slipnet.SlipLink;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.RuleTables;
 
 abstract public class FireConcept extends NAL {
     
 
     
-    public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
+    public FireConcept(SlipNet mem, SlipNode concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, mem.param.termLinkMaxReasoned.get());
     }
     
-    public FireConcept(Memory mem, Concept concept, int numTaskLinks, int termLinkCount) {
+    public FireConcept(SlipNet mem, SlipNode concept, int numTaskLinks, int termLinkCount) {
         super(mem);
         this.termLinkCount = termLinkCount;
         this.currentConcept = concept;
@@ -67,7 +70,7 @@ abstract public class FireConcept extends NAL {
     }
 
     
-    protected void returnTaskLink(TaskLink t) {
+    protected void returnTaskLink(SlipLink t) {
         currentConcept.taskLinks.putBack(t, 
                 memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
         

@@ -7,6 +7,8 @@ import nars.entity.Sentence;
 import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TermLink;
+import nars.farg.slipnet.SlipLink;
+import nars.farg.slipnet.SlipNode;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.CurveBag;
@@ -31,7 +33,7 @@ public class Discretinuous extends Default {
     }
 
     @Override
-    public Bag<Concept,Term> newConceptBag() {
+    public Bag<SlipNode,Term> newConceptBag() {
         return new LevelBag(getConceptBagLevels(), getConceptBagSize());
         
         //NOT READY yet
@@ -40,15 +42,15 @@ public class Discretinuous extends Default {
 
 
     @Override
-    public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
+    public SlipNode newConcept(BudgetValue b, final Term t, final Memory m) {
         
         /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
         AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
         
-        Bag<TaskLink,Task> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
+        Bag<SlipLink,Task> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
         Bag<TermLink,TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
         
-        return new Concept(b, t, taskLinks, termLinks, m);        
+        return new SlipNode(b, t, taskLinks, termLinks, m);        
     }
     
 }

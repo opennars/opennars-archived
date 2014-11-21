@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.storage.Bag;
 
@@ -44,8 +45,8 @@ abstract public class Build extends Parameters  {
         return NAR.build(this);
     }
 
-    protected Memory newMemory(Param p) {        
-        return new Memory(p, newAttention(), newNovelTaskBag());
+    protected SlipNet newMemory(Param p) {        
+        return new SlipNet(p, newAttention(), newNovelTaskBag());
     }
 
     /** called after NAR created, for initializing it */

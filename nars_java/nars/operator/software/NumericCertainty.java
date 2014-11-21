@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Symbols;
 import nars.language.Tense;
 import nars.language.Term;
@@ -19,7 +20,7 @@ public class NumericCertainty extends Operator implements Mental{
     }
     
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         if (args.length != 4) {
             // TODO< error report >
             return null;

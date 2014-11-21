@@ -13,6 +13,8 @@ import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.ConceptBuilder;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.BudgetFunctions;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
@@ -27,15 +29,20 @@ import nars.storage.CacheBag;
 public class DefaultAttention implements Attention {
 
 
+     /** for removing a specific concept (if it's not putBack) */
+    public SlipNode takeOut(Term t) {
+        return concepts.take(t);
+    }
+
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
      * Concept bag. Containing all Concepts of the system
      */
-    public final Bag<Concept,Term> concepts;
-    public final CacheBag<Term, Concept> subcon;
+    public final Bag<SlipNode,Term> concepts;
+    public final CacheBag<Term, SlipNode> subcon;
     
     private final ConceptBuilder conceptBuilder;
-    private Memory memory;
+    private SlipNet memory;
     
     private Cycle loop = new Cycle();
     final List<Runnable> run = new ArrayList();
@@ -89,7 +96,7 @@ public class DefaultAttention implements Attention {
     }
     
             
-    public DefaultAttention(Bag<Concept,Term> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder) {
+    public DefaultAttention(Bag<SlipNode,Term> concepts, CacheBag<Term,SlipNode> subcon, ConceptBuilder conceptBuilder) {
         this.concepts = concepts;
         this.subcon = subcon;
         this.conceptBuilder = conceptBuilder;        
@@ -97,7 +104,7 @@ public class DefaultAttention implements Attention {
     }
 
     @Override
-    public void init(Memory m) {
+    public void init(SlipNet m) {
         this.memory = m;
         if (concepts instanceof AttentionAware)
             ((AttentionAware)concepts).setAttention(this);
@@ -113,7 +120,7 @@ public class DefaultAttention implements Attention {
     
     protected FireConcept next() {       
 
-        Concept currentConcept = concepts.takeNext();
+        SlipNode currentConcept = concepts.takeNext();
         if (currentConcept==null)
             return null;
             
@@ -187,7 +194,7 @@ public class DefaultAttention implements Attention {
     }
 
     
-    public Iterable<Concept> getConcepts() {
+    public Iterable<SlipNode> getConcepts() {
          return concepts.values();
     }
 
@@ -197,12 +204,12 @@ public class DefaultAttention implements Attention {
     }
 
     @Override
-    public Concept concept(final Term term) {
+    public SlipNode concept(final Term term) {
         return concepts.get(term);
     }
 
     @Override
-    public void conceptRemoved(Concept c) {
+    public void conceptRemoved(SlipNode c) {
         
         if (subcon!=null) {            
             subcon.add(c);
@@ -213,10 +220,10 @@ public class DefaultAttention implements Attention {
     }
     
     @Override
-    public Concept conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
+    public SlipNode conceptualize(BudgetValue budget, final Term term, boolean createIfMissing) {
         
         //see if concept is active
-        Concept concept = concepts.take(term);
+        SlipNode concept = concepts.take(term);
         
         //try remembering from subconscious
         if ((concept == null) && (subcon!=null)) {
@@ -255,7 +262,7 @@ public class DefaultAttention implements Attention {
         }
 
         
-        Concept displaced = concepts.putBack(concept, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+        SlipNode displaced = concepts.putBack(concept, memory.param.cycles(memory.param.conceptForgetDurations), memory);
                 
         if (displaced == null) {
             //added without replacing anything
@@ -281,7 +288,7 @@ public class DefaultAttention implements Attention {
     }
     
     
-    @Override public void activate(final Concept c, final BudgetValue b, Activating mode) {
+    @Override public void activate(final SlipNode c, final BudgetValue b, Activating mode) {
         concepts.take(c.name());
         BudgetFunctions.activate(c.budget, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
@@ -294,17 +301,17 @@ public class DefaultAttention implements Attention {
 //    }
 
     @Override
-    public Concept sampleNextConcept() {
+    public SlipNode sampleNextConcept() {
         return concepts.peekNext();
     }
 
     @Override
-    public Iterator<Concept> iterator() {
+    public Iterator<SlipNode> iterator() {
         return concepts.iterator();
     }
 
     @Override
-    public Memory getMemory() {
+    public SlipNet getMemory() {
         return memory;
     }
 

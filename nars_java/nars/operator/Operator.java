@@ -28,6 +28,7 @@ import nars.core.NAR;
 import nars.core.Plugin;
 import nars.entity.BudgetValue;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Output.EXE;
 import nars.language.Product;
 import nars.language.Statement;
@@ -63,7 +64,7 @@ public abstract class Operator extends Term implements Plugin {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
+    protected abstract List<Task> execute(Operation operation, Term[] args, SlipNet memory);
 
     /**
     * The standard way to carry out an operation, which invokes the execute
@@ -74,7 +75,7 @@ public abstract class Operator extends Term implements Plugin {
     * @param memory The memory on which the operation is executed
     * @return true if successful, false if an error occurred
     */
-    public final boolean call(final Operation operation, final Term[] args, final Memory memory) {
+    public final boolean call(final Operation operation, final Term[] args, final SlipNet memory) {
         try {
             List<Task> feedback = execute(operation, args, memory);            
             memory.executedTask(operation);
@@ -141,7 +142,7 @@ public abstract class Operator extends Term implements Plugin {
         }
     }
 
-    public final boolean call(final Operation op, final Memory memory) {
+    public final boolean call(final Operation op, final SlipNet memory) {
         Product args = op.getArguments();
         return call(op, args.term, memory);
     }

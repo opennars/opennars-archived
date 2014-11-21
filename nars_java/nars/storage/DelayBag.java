@@ -16,6 +16,7 @@ import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Concept;
 import nars.entity.Item;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.BudgetFunctions;
 import nars.util.sort.ArraySortedIndex;
 
@@ -157,8 +158,8 @@ public class DelayBag<E extends Item<K>,K> extends Bag<E,K> implements Attention
 
     protected E removeItem(final K k) {        
         E x = items.remove(k);        
-        if ((attention!=null) && (x instanceof Concept) && (x != null)) {
-            attention.conceptRemoved((Concept)x);
+        if ((attention!=null) && (x instanceof SlipNode) && (x != null)) {
+            attention.conceptRemoved((SlipNode)x);
         }
         return x;
     }

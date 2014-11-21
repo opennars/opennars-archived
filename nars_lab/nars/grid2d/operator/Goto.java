@@ -23,6 +23,7 @@ package nars.grid2d.operator;
 import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.grid2d.TestChamber;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -41,7 +42,7 @@ public class Goto extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          

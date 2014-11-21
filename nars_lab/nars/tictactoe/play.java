@@ -26,6 +26,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.gui.NARSwing;
 import nars.language.Term;
 import nars.operator.Operation;
@@ -294,7 +295,7 @@ public class play extends javax.swing.JFrame {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          

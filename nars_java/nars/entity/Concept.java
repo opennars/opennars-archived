@@ -20,7 +20,6 @@
  */
 package nars.entity;
 
-import nars.core.control.NAL;
 import java.util.ArrayList;
 import java.util.List;
 import nars.core.Events.BeliefSelect;
@@ -37,12 +36,15 @@ import nars.core.Events.TermLinkRemove;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.core.control.NAL;
+import nars.farg.slipnet.SlipLink;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import static nars.inference.TemporalRules.solutionQuality;
+import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
@@ -60,7 +62,7 @@ public class Concept extends Item<Term> {
     /**
      * Task links for indirect processing
      */
-    public final Bag<TaskLink,Task> taskLinks;
+    public final Bag<SlipLink,Task> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
@@ -114,7 +116,7 @@ public class Concept extends Item<Term> {
      * @param tm A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term tm, Bag<TaskLink,Task> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term tm, Bag<SlipLink,Task> taskLinks, Bag<TermLink,TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = tm;
@@ -382,7 +384,7 @@ public class Concept extends Item<Term> {
     public void linkToTask(final Task task) {
         final BudgetValue taskBudget = task.budget;
 
-        insertTaskLink(new TaskLink(task, null, taskBudget,
+        insertTaskLink(new SlipLink(task, null, taskBudget,
                 memory.param.termLinkRecordLength.get()));  // link type: SELF
 
         if (term instanceof CompoundTerm) {
@@ -402,7 +404,7 @@ public class Concept extends Item<Term> {
                         if (componentConcept != null) {
 
                             componentConcept.insertTaskLink(
-                                    new TaskLink(task, termLink, subBudget,
+                                    new SlipLink(task, termLink, subBudget,
                                             memory.param.termLinkRecordLength.get()));
                         }
 //                        }
@@ -485,7 +487,7 @@ public class Concept extends Item<Term> {
      *
      * @param taskLink The termLink to be inserted
      */
-    protected boolean insertTaskLink(final TaskLink taskLink) {        
+    protected boolean insertTaskLink(final SlipLink taskLink) {        
         
         TaskLink removed = taskLinks.putIn(taskLink);
         

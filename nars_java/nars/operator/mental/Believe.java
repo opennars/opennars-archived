@@ -29,6 +29,7 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipNet;
 import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Term;
@@ -51,7 +52,7 @@ public class Believe extends Operator implements Mental {
 +    * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         if(Parameters.BE_RATIONAL) { //passive
             return null;
         }

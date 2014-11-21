@@ -3,6 +3,7 @@ package nars.nario;
 import java.awt.event.KeyEvent;
 import static java.lang.Math.log;
 import static java.lang.Math.signum;
+import static java.lang.Math.signum;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -12,6 +13,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.language.Term;
@@ -423,7 +425,7 @@ public class NARio extends Run {
                             nar.memory.addOperator(new NullOperator("^" + "keyboard" + k) {
 
                                 @Override
-                                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {                                  
+                                protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {                                  
                                     
                                     String state = args[0].toString();
                                     

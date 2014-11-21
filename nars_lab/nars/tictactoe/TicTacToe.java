@@ -45,6 +45,7 @@ import nars.core.build.Discretinuous;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.gui.NARSwing;
 import nars.io.Output.OUT;
 import nars.language.Term;
@@ -218,7 +219,7 @@ public class TicTacToe extends JPanel {
         }
 
         @Override
-        protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
             
             int i = -1;
             try {

@@ -20,6 +20,7 @@ package nars.operator.mental;
 import java.util.ArrayList;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
@@ -41,7 +42,7 @@ public class Register extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Operator op=new NullOperator(args[0].toString());
         memory.addOperator(op);  // add error checking
         return null;

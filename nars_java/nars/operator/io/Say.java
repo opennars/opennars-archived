@@ -23,6 +23,7 @@ package nars.operator.io;
 import java.util.List;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
@@ -38,7 +39,7 @@ public class Say extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
 

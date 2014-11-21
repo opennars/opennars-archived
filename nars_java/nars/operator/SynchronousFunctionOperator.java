@@ -6,6 +6,7 @@ import java.util.Arrays;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Symbols;
 import nars.language.Inheritance;
 import nars.language.Product;
@@ -28,7 +29,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    abstract protected Term function(Memory memory, Term[] x);
+    abstract protected Term function(SlipNet memory, Term[] x);
     
     /** the term that the output will inherit from; analogous to the 'Range' of a function in mathematical terminology */
     abstract protected Term getRange();
@@ -37,7 +38,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
     //abstract protected int getMaxArity();
     
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory m) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet m) {
         //TODO make memory access optional by constructor argument
         //TODO allow access to NAR instance?
         if (args.length < 2) {

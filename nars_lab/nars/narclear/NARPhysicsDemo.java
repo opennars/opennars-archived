@@ -5,6 +5,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.build.Default;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.ChangedTextInput;
 import nars.language.Term;
 import nars.operator.NullOperator;
@@ -54,7 +55,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         
         arm = getModel();
         n.memory.addOperator(new NullOperator("^joint") {
-            @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            @Override protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
 
                 if ((autonomous) || (operation.getTask().isInput())) {
                     

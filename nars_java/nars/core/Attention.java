@@ -1,7 +1,8 @@
 package nars.core;
 
 import nars.entity.BudgetValue;
-import nars.entity.Concept;
+import nars.farg.slipnet.SlipNet;
+import nars.farg.slipnet.SlipNode;
 import nars.inference.BudgetFunctions.Activating;
 import nars.language.Term;
 
@@ -10,7 +11,7 @@ import nars.language.Term;
  *  activating them during a memory cycle.  In essence it forms the very core of the memory,
  *  responsible for efficiently storing all NAR Concept's and which of those will activate
  *  at the beginning of each cycle.*/
-public interface Attention extends Iterable<Concept> {
+public interface Attention extends Iterable<SlipNode> {
 
 
     public interface AttentionAware {
@@ -33,32 +34,32 @@ public interface Attention extends Iterable<Concept> {
 
     /** Maps Term to associated Concept. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known */
-    public Concept concept(Term term);
+    public SlipNode concept(Term term);
 
     /**
      * Creates and adds new concept to the memory.  May also be called 'cognize' because
      * it is like a request to process a symbolic pattern (term).
      * @return the new concept, or null if the memory is full
      */
-    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing);
+    public SlipNode conceptualize(BudgetValue budget, Term term, boolean createIfMissing);
 
     /** Activates a concept, adjusting its budget.  
      *  May be invoked by the concept processor or at certain points in the reasoning process.
      */
-    public void activate(Concept c, BudgetValue b, Activating mode);
+    public void activate(SlipNode c, BudgetValue b, Activating mode);
 
     //public void forget(Concept c);
     
     /**
      * Provides a "next" concept for sampling during inference. 
      */
-    public Concept sampleNextConcept();
+    public SlipNode sampleNextConcept();
 
-    public void init(Memory m);
+    public void init(SlipNet m);
 
     /** used by the bag to explicitly forget an item asynchronously */
-    public void conceptRemoved(Concept c);
+    public void conceptRemoved(SlipNode c);
     
-    public Memory getMemory();
+    public SlipNet getMemory();
     
 }

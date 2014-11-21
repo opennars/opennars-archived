@@ -33,8 +33,10 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import nars.farg.slipnet.SlipNet;
 import nars.inference.BudgetFunctions;
 import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.order;
 import static nars.inference.TemporalRules.order;
 import nars.io.Symbols;
 import nars.language.Negation;
@@ -98,7 +100,7 @@ public class Anticipate extends Operator implements EventObserver, Mental {
 +    * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         
         Term content = args[0];
         anticipateTime=memory.time() + (int)(memory.getDuration() * anticipateDurations);

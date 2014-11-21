@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 
 /**
@@ -33,7 +34,7 @@ abstract public class Decision extends Operator {
         reset();
     }    
     
-    @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    @Override protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         Term x = args[0];        
         vote.put(x, vote.getOrDefault(x, 0)+1);
         if (first == null)

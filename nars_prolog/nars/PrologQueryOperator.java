@@ -5,6 +5,7 @@ import java.util.List;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.language.Inheritance;
@@ -51,7 +52,7 @@ public class PrologQueryOperator extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         if (args.length < 2) {
             // TODO< error report >
             return null;

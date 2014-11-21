@@ -20,6 +20,7 @@ package nars.operator.mental;
 import java.util.ArrayList;
 import nars.core.Memory;
 import nars.entity.Task;
+import nars.farg.slipnet.SlipNet;
 import nars.language.Term;
 import nars.operator.Operation;
 
@@ -39,7 +40,7 @@ public class FeelBusy extends Feel implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args, SlipNet memory) {
         return feeling(memory.emotion.busy(), memory);
     }    
 }

@@ -18,6 +18,7 @@
 package nars.operator.math;
 
 import nars.core.Memory;
+import nars.farg.slipnet.SlipNet;
 import nars.language.CompoundTerm;
 import nars.language.SetExt;
 import nars.language.SetInt;
@@ -51,7 +52,7 @@ public class Count extends SynchronousFunctionOperator implements Mental {
     
     
     @Override
-    protected Term function(Memory memory, Term[] x) {
+    protected Term function(SlipNet memory, Term[] x) {
         if (x.length!=1) {
             throw new RuntimeException(requireMessage);
         }
