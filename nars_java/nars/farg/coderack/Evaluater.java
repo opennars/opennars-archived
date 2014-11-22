@@ -28,6 +28,7 @@ public class Evaluater extends Codelet {
     @Override
     public void run(Workspace ws) {
         
+        
         SlipNode c=this.mem.concepts.sampleNextConcept();
         if(c.term instanceof Implication && ((Implication)c.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
             Concept d=ws.nar.memory.concept(((Implication)c.term).getPredicate());
@@ -36,7 +37,7 @@ public class Evaluater extends Codelet {
             }
         }
         
-        if(!c.term.toString().contains("^") && !(c.term instanceof Implication)) { //not about any influence and not implication? decrease priority..
+        if(ws.n_concepts>300 && !c.term.toString().contains("^") && !(c.term instanceof Implication)) { //not about any influence and not implication? decrease priority..
             c.decPriority(0.5f);
         }
     }
