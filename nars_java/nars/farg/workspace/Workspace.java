@@ -22,6 +22,7 @@ public class Workspace {
 
     public double tenperature=0.0;
     public NAR nar;
+    public int n_concepts=0;
     public Workspace(NAR nar) {
         this.nar=nar;
         Workspace ws=this;
@@ -31,10 +32,12 @@ public class Workspace {
 
             @Override
             public void event(Class event, Object[] args) {
-                Codelet cod=codelets.takeNext();
-                cod.run(ws);
-                codelets.putIn(cod);
-                tenperature=calc_temperature();
+                for(int i=0;i<10;i++) { //process 10 codelets in each step
+                    Codelet cod=codelets.takeNext();
+                    cod.run(ws);
+                    codelets.putIn(cod);
+                    tenperature=calc_temperature();
+                }
             }
             
         });
@@ -42,14 +45,17 @@ public class Workspace {
 
     public double calc_temperature() {
         double s=0.0f;
-        int n=0;
+        n_concepts=0;
         for(SlipNode node : nar.memory.concepts) {
             if(!node.desires.isEmpty()) {
                 s+=node.getPriority()*node.desires.get(0).truth.getExpectation();
             }
-            n++;
+            if(!node.questions.isEmpty()) { //also wondering
+                s+=node.getPriority()*0.5; 
+            }
+            n_concepts++;
         }
-        return s/((double) n);
+        return s/((double) n_concepts);
         //return nar.memory.emotion.happy();
     }
         
