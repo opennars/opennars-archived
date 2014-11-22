@@ -34,7 +34,7 @@ public class Workspace {
 
             @Override
             public void event(Class event, Object[] args) {
-                for(int i=0;i<20;i++) { //process 10 codelets in each step
+                for(int i=0;i<5;i++) { //process 10 codelets in each step
                     Codelet cod=codelets.takeNext();
                     cod.run(ws);
                     codelets.putIn(cod);
