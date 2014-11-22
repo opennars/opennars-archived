@@ -25,7 +25,7 @@ public class Breaker extends Codelet {
     @Override
     public void run(Workspace ws) {
         
-        if(Memory.randomNumber.nextDouble()<ws.tenperature) {
+        if(Memory.randomNumber.nextDouble()>ws.tenperature) {
             return;
         }
         
