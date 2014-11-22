@@ -25,7 +25,7 @@ public class Breaker extends Codelet {
     @Override
     public void run(Workspace ws) {
         
-        if(Memory.randomNumber.nextDouble()*0.1f>ws.tenperature) { //temperature too low
+        if(Memory.randomNumber.nextDouble()*0.2f>ws.tenperature) { //temperature too low
             return;
         }
         
@@ -33,12 +33,12 @@ public class Breaker extends Codelet {
         
         SlipNode c=this.mem.concepts.sampleNextConcept();
         
-        if(c==null || Memory.randomNumber.nextDouble()*10.0<c.getPriority()) //priority too high
+        if(c==null || Memory.randomNumber.nextDouble()*5.0<c.getPriority()) //priority too high
             return;
         
         double n=ws.n_concepts;
         
-        if(n<80) {
+        if(n<100) {
             return; //really too less concepts we dont want to forget all..
         }
         
