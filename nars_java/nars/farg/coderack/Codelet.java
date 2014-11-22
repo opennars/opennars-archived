@@ -29,7 +29,12 @@ public class Codelet extends Item<Term> {
     //Rule (NAL inference instead)
     //Correspondence
     
-    //break may make sense but this we have to evaluate..
+    
+    
+    //breakers make sense
+    //evaluaters make sense
+    //scouts may make sense
+    //builders are captured by NAL so can be done by evaluaters
     
     Object args;
     public int timestamp;

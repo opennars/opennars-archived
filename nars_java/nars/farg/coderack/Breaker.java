@@ -38,7 +38,7 @@ public class Breaker extends Codelet {
         
         double n=ws.n_concepts;
         
-        if(n<100) {
+        if(n<200) {
             return; //really too less concepts we dont want to forget all..
         }
         

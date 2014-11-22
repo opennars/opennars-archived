@@ -19,6 +19,7 @@ import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Sentence;
 import nars.entity.Task;
+import nars.farg.workspace.Workspace;
 import nars.gui.InferenceLogger;
 import nars.io.Output;
 import nars.io.Output.ERR;
@@ -377,9 +378,12 @@ public class NALTest  {
         public final NAR nar;
         long successAt = -1;
 
+        Workspace ws;
+                
         public Expect(NAR nar) {
             super(nar);
             this.nar = nar;
+            ws=new Workspace(nar);
         }
         
         public boolean isInverse() { return false; }

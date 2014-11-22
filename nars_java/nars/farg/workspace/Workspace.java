@@ -12,6 +12,7 @@ import nars.entity.BudgetValue;
 import nars.farg.coderack.Breaker;
 import nars.farg.coderack.Codelet;
 import nars.farg.coderack.Coderack;
+import nars.farg.coderack.Evaluater;
 import nars.farg.slipnet.SlipNode;
 
 /**
@@ -28,11 +29,12 @@ public class Workspace {
         Workspace ws=this;
         codelets=new Coderack(FARGParameters.codelet_level,FARGParameters.max_codelets);
         codelets.putIn(new Breaker(new BudgetValue(0.9f,0.9f,0.5f),nar.memory,new int[]{1,2,3}));
+        codelets.putIn(new Evaluater(new BudgetValue(0.9f,0.9f,0.5f),nar.memory,new int[]{1,2,3}));
         nar.on(CycleEnd.class, new EventObserver() { 
 
             @Override
             public void event(Class event, Object[] args) {
-                for(int i=0;i<10;i++) { //process 10 codelets in each step
+                for(int i=0;i<20;i++) { //process 10 codelets in each step
                     Codelet cod=codelets.takeNext();
                     cod.run(ws);
                     codelets.putIn(cod);
