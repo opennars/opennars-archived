@@ -9,6 +9,7 @@ import nars.core.Memory;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Item;
+import nars.farg.workspace.Workspace;
 import nars.language.Term;
 
 /**
@@ -46,7 +47,7 @@ public class Codelet extends Item<Term> {
     }
     
     
-    public void run() {}
+    public void run(Workspace ws) {}
 
     @Override
     public Term name() {

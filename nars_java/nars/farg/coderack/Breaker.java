@@ -10,6 +10,7 @@ import nars.core.control.DefaultAttention;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.farg.slipnet.SlipNode;
+import nars.farg.workspace.Workspace;
 
 /**
  *
@@ -22,9 +23,9 @@ public class Breaker extends Codelet {
     }
     
     @Override
-    public void run() {
+    public void run(Workspace ws) {
         
-        if(Memory.randomNumber.nextDouble()<mem.emotion.happy()) {
+        if(Memory.randomNumber.nextDouble()<ws.tenperature) {
             return;
         }
         
