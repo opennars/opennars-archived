@@ -37,6 +37,11 @@ public class Breaker extends Codelet {
             return;
         
         double n=ws.n_concepts;
+        
+        if(n<80) {
+            return; //really too less concepts we dont want to forget all..
+        }
+        
         double AMOUNT_OF_CONCEPTS_MAX=1000; //TODO create parameter or get somehow
         
         if(Memory.randomNumber.nextDouble()*AMOUNT_OF_CONCEPTS_MAX<n)
