@@ -7,6 +7,7 @@ package nars.farg.workspace;
 
 import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.CycleEnd;
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.entity.BudgetValue;
 import nars.farg.coderack.Breaker;
@@ -34,17 +35,34 @@ public class Workspace {
 
             @Override
             public void event(Class event, Object[] args) {
-                for(int i=0;i<8;i++) { //process 10 codelets in each step
+                for(int i=0;i<10;i++) { //process 10 codelets in each step
                     Codelet cod=codelets.takeNext();
-                    cod.run(ws);
-                    codelets.putIn(cod);
+                    if(cod!=null) {
+                        cod.run(ws);
+                        codelets.putIn(cod);
+                    }
                     tenperature=calc_temperature();
                 }
+                controller();
             }
-            
         });
     }
 
+    public void controller() { //corresponds to FARG controller
+        if(n_concepts>300) {
+            codelets.putIn(new Breaker(new BudgetValue(0.9f,0.9f,0.5f),nar.memory,new int[]{1,2,3}));
+        }
+        if(n_concepts>400) {
+            codelets.putIn(new Breaker(new BudgetValue(0.9f,0.9f,0.5f),nar.memory,new int[]{1,2,3}));
+        }
+        if(n_concepts>500) {
+            codelets.putIn(new Breaker(new BudgetValue(0.9f,0.9f,0.5f),nar.memory,new int[]{1,2,3}));
+        }
+        if(Memory.randomNumber.nextDouble()>0.99) {
+             codelets.putIn(new Evaluater(new BudgetValue(0.9f,0.9f,0.5f),nar.memory,new int[]{1,2,3}));
+        }
+    }
+    
     public double calc_temperature() {
         double s=0.0f;
         n_concepts=0;
