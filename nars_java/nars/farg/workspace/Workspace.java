@@ -14,6 +14,7 @@ import nars.farg.coderack.Breaker;
 import nars.farg.coderack.Codelet;
 import nars.farg.coderack.Coderack;
 import nars.farg.coderack.Evaluater;
+import nars.farg.slipnet.SlipNet;
 import nars.farg.slipnet.SlipNode;
 
 /**
@@ -21,10 +22,12 @@ import nars.farg.slipnet.SlipNode;
  * @author patrick.hammer
  */
 public class Workspace {
-
     public double tenperature=0.0;
     public NAR nar;
     public int n_concepts=0;
+    
+    public Coderack codelets;
+    
     public Workspace(NAR nar) {
         this.nar=nar;
         Workspace ws=this;
@@ -38,8 +41,11 @@ public class Workspace {
                 for(int i=0;i<10;i++) { //process 10 codelets in each step
                     Codelet cod=codelets.takeNext();
                     if(cod!=null) {
-                        cod.run(ws);
-                        codelets.putIn(cod);
+                        Codelet.RunResult runResult = cod.run(ws);
+                        
+                        if (runResult.putback) {
+                            codelets.putIn(cod);
+                        }
                     }
                     tenperature=calc_temperature();
                 }
@@ -80,5 +86,5 @@ public class Workspace {
     }
         
     
-    Coderack codelets;
+    
 }

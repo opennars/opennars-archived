@@ -1,8 +1,3 @@
-/*
- * Here comes the text of your license
- * Each line should be prefixed with  * 
- */
-
 package nars.farg.coderack;
 
 import nars.core.Memory;
@@ -16,7 +11,7 @@ import nars.language.Term;
  *
  * @author patrick.hammer
  */
-public class Codelet extends Item<Term> {
+public abstract class Codelet extends Item<Term> {
     //Codelet is a small amount of code that has a chance to be run.
     //since I believe NAL makes this idea obsolete to a large extent,
     //here we concentrate on parts which NAL can't make obsolete
@@ -36,6 +31,14 @@ public class Codelet extends Item<Term> {
     //scouts may make sense
     //builders are captured by NAL so can be done by evaluaters
     
+    public class RunResult {
+        public boolean putback;
+        
+        public RunResult(boolean putback) {
+            this.putback = putback;
+        }
+    }
+    
     Object args;
     public int timestamp;
     public Object bin=null;
@@ -52,7 +55,7 @@ public class Codelet extends Item<Term> {
     }
     
     
-    public void run(Workspace ws) {}
+    public abstract RunResult run(Workspace ws);
 
     @Override
     public Term name() {

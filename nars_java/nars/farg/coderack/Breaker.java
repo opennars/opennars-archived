@@ -22,11 +22,10 @@ public class Breaker extends Codelet {
         super(budget, mem, args);
     }
     
-    @Override
-    public void run(Workspace ws) {
+    public RunResult run(Workspace ws) {
         
         if(Memory.randomNumber.nextDouble()*0.2f>ws.tenperature) { //temperature too low
-            return;
+            return new RunResult(true);
         }
         
         
@@ -34,23 +33,25 @@ public class Breaker extends Codelet {
         SlipNode c=this.mem.concepts.sampleNextConcept();
         
         if(c==null || Memory.randomNumber.nextDouble()*5.0<c.getPriority()) //priority too high
-            return;
+            return new RunResult(true);
         
         double n=ws.n_concepts;
         
         if(n<200) {
-            return; //really too less concepts we dont want to forget all..
+            return new RunResult(true); //really too less concepts we dont want to forget all..
         }
         
         double AMOUNT_OF_CONCEPTS_MAX=1000; //TODO create parameter or get somehow
         
         if(Memory.randomNumber.nextDouble()*AMOUNT_OF_CONCEPTS_MAX<n)
-            return; //too less concepts
+            return new RunResult(true);; //too less concepts
   
 
           // if(c.desires.isEmpty() || c.desires.get(0).truth.getExpectation()<0.5) {
                 ((DefaultAttention)mem.concepts).takeOut(c.term);
             //}
+        
+        return new RunResult(true);
     }
     
 }

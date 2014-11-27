@@ -24,9 +24,8 @@ public class Evaluater extends Codelet {
     public Evaluater(BudgetValue budget,Memory mem, Object args) {
         super(budget, mem, args);
     }
-    
-    @Override
-    public void run(Workspace ws) {
+
+    public RunResult run(Workspace ws) {
         
         
         SlipNode c=this.mem.concepts.sampleNextConcept();
@@ -40,6 +39,8 @@ public class Evaluater extends Codelet {
         if(ws.n_concepts>300 && !c.term.toString().contains("^") && !(c.term instanceof Implication)) { //not about any influence and not implication? decrease priority..
             c.decPriority(0.5f);
         }
+        
+        return new RunResult(true);
     }
     
 }
