@@ -69,10 +69,11 @@ public class Operation extends Inheritance {
      * @return A compound generated or null
      */
     public static Operation make(final Operator oper, Term[] arg, boolean addSelf) {        
-
+           
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
+        addSelf=false;
         if(addSelf && !Term.isSelf(arg[arg.length-1])) {
             Term[] arg2=new Term[arg.length+1];
             for(int i=0;i<arg.length;i++) {
