@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import nars.core.Events.ConceptNew;
 import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskRemove;
-import nars.core.Memory.Timing;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Task;
@@ -96,10 +95,13 @@ public class InferenceLogger extends MemoryObserver {
 
 
     
-
+    static class Time {
+        
+    }
+    
     @Override
     public void onCycleStart(long clock) {
-        output(Timing.class, clock);
+        output(Time.class, clock);
     }
 
     @Override

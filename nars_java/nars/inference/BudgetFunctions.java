@@ -160,8 +160,11 @@ public final class BudgetFunctions extends UtilityFunctions {
      *
      * @param receiver The budget receiving the activation
      * @param amount The budget for the new item
+     * @return the delta priority
      */
-    public static void activate(final BudgetValue receiver, final BudgetValue amount, Activating mode) {        
+    public static float activate(final BudgetValue receiver, final BudgetValue amount, Activating mode) {        
+        
+        float prevPrio = receiver.getPriority();
         switch (mode) {
             case Max:
                 BudgetFunctions.merge(receiver, amount);
@@ -173,6 +176,8 @@ public final class BudgetFunctions extends UtilityFunctions {
                 receiver.setQuality( receiver.getQuality() );
                 break;
         }
+        
+        return receiver.getPriority() - prevPrio;
         
     }
 

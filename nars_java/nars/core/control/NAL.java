@@ -86,6 +86,13 @@ public abstract class NAL implements Runnable {
             }
         }
         
+        
+        /** experimental: task priority conservation */
+        BudgetValue taskPriority = getCurrentTask().getBudget();
+        task.budget.andPriority(taskPriority);        
+        
+        
+        
         final Sentence occurence = parent!=null ? parent.sentence : null;
 
         
@@ -183,7 +190,8 @@ public abstract class NAL implements Runnable {
         
         task.setParticipateInTemporalInduction(false);
         memory.event.emit(Events.TaskDerive.class, task, revised, single, occurence, occurence2);
-        memory.logic.TASK_DERIVED.commit(task.budget.getPriority());
+        memory.logic.TASK_DERIVED.commit(task.budget.getPriority());        
+        
         addTask(task, "Derived");
         return true;
     }
@@ -212,6 +220,7 @@ public abstract class NAL implements Runnable {
      * @param newBudget The budget value in task
      */
     public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalAdd) {
+
         
         if (!newBudget.aboveThreshold()) {
             return null;

@@ -35,7 +35,7 @@ import nars.core.Attention.AttentionAware;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
 import nars.core.Events.TaskRemove;
-import static nars.core.Memory.Forgetting.Periodic;
+import static nars.core.Memory.Forgetting.DeltaPeriod;
 import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.ImmediateProcess;
@@ -139,7 +139,7 @@ public class Memory implements Serializable {
 
 
     public static enum Forgetting {
-        Iterative, Periodic
+        Iterative, DeltaPeriod
     }
     
     public enum Timing {
@@ -468,11 +468,6 @@ public class Memory implements Serializable {
      */
     public Concept conceptualize(final BudgetValue budget, final Term term) {
         boolean createIfMissing = true;
-        
-        /*Concept c = concept(term);
-        if (c!=null)
-            System.out.print(c.budget + "   ");
-        System.out.println(term + " conceptualize: " + budget);*/
                 
         return concepts.conceptualize(budget, term, createIfMissing);
     }
@@ -583,7 +578,7 @@ public class Memory implements Serializable {
             case Iterative:                
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
-            case Periodic:
+            case DeltaPeriod:
                 BudgetFunctions.forgetPeriodic(x.budget, forgetCycles, relativeThreshold, time());
                 break;
         }

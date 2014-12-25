@@ -57,6 +57,7 @@ public class Events {
     //when remembered a previously forgotten concept
     public static class ConceptRemember {    }
     
+    public static class ConceptActivate {    }
     public static class ConceptForget { }
     public static class ConceptBeliefAdd { }
     public static class ConceptBeliefRemove { }
@@ -177,6 +178,8 @@ public class Events {
         
         
     }
+
+    
     
     
 }

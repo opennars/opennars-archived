@@ -78,8 +78,10 @@ public class Parameters {
     public static final float DEFAULT_CREATION_EXPECTATION = (float) 0.66;
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = (float) 0.9;
+    
     /** Default priority of input judgment */
-    public static final float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
+    public static float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
+    
     /** Default durability of input judgment */
     public static float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */

@@ -582,7 +582,7 @@ public class Concept extends Item<Term> implements Termable {
 
                 Term target = template.target;
 
-                final Concept concept = memory.conceptualize(taskBudget, target);
+                final Concept concept = memory.conceptualize(subBudget, target);
                 if (concept == null) {
                     continue;
                 }

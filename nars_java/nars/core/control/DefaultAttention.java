@@ -254,13 +254,18 @@ public class DefaultAttention implements Attention {
 
             if (memory.logic!=null)
                 memory.logic.CONCEPT_NEW.commit(term.getComplexity());
-            memory.emit(Events.ConceptNew.class, concept);                
+            
+            memory.emit(Events.ConceptNew.class, concept);
+            memory.emit(Events.ConceptActivate.class, concept, concept.getPriority());
         }
         else if (concept!=null) {            
             
             //apply budget to existing concept
             //memory.logic.CONCEPT_ACTIVATE.commit(term.getComplexity());
-            BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);            
+            
+            float delta = BudgetFunctions.activate(concept.budget, budget, Activating.TaskLink);
+            
+            memory.emit(Events.ConceptActivate.class, concept, delta);
         }
         else {
             //unable to create, ex: has variables
@@ -297,7 +302,10 @@ public class DefaultAttention implements Attention {
     
     @Override public void activate(final Concept c, final BudgetValue b, Activating mode) {
         concepts.take(c.name());
-        BudgetFunctions.activate(c.budget, b, mode);
+        
+        float delta = BudgetFunctions.activate(c.budget, b, mode);
+        memory.emit(Events.ConceptActivate.class, c, delta);
+        
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
     

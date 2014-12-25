@@ -22,6 +22,7 @@ public abstract class MemoryObserver extends AbstractObserver {
                 Events.CycleStart.class,
                 Events.CycleEnd.class,
                 Events.ConceptNew.class,
+                Events.ConceptActivate.class,
                 Events.ConceptForget.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,

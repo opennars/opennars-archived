@@ -163,6 +163,7 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
+       
                 
         nal.doublePremiseTask(
                 Statement.make(taskContent, term1, term2, order), 

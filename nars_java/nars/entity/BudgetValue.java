@@ -132,7 +132,10 @@ public class BudgetValue implements Cloneable {
     public void andPriority(final float v) {
         setPriority( and(priority, v) );
     }
-
+    public void andPriority(BudgetValue b) {
+        andPriority(b.getPriority());
+    }
+    
     /**
      * Decrease priority value by a percentage of the remaining range
      * @param v The decreasing percent
@@ -324,6 +327,8 @@ public class BudgetValue implements Cloneable {
     public long getLastForgetTime() {
         return lastForgetTime;
     }
+
+
 
     /** indicates an implementation has, or is associated with a specific BudgetValue */
     public interface Budgetable {

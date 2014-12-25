@@ -284,12 +284,12 @@ public class Default extends Build implements ConceptBuilder {
     
     public Default realTime() {
         param.setTiming(Timing.Real);
-        param.setForgetting(Forgetting.Periodic);
+        param.setForgetting(Forgetting.DeltaPeriod);
         return this;
     }
     public Default simulationTime() {
         param.setTiming(Timing.Simulation);
-        param.setForgetting(Forgetting.Periodic);
+        param.setForgetting(Forgetting.DeltaPeriod);
         return this;
     }
 
