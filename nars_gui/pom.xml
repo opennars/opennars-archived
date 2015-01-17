@@ -76,7 +76,7 @@
             <artifactId>core</artifactId>
             <version>3.0</version>
             <!--<scope>system</scope>
-            <systemPath>${basedir}/lib/processing/core/3.0/core-3.0.jar</systemPath>-->
+            <systemPath>${basedir}${file.separator}lib${file.separator}processing${file.separator}core${file.separator}3.0${file.separator}core-3.0.jar</systemPath>-->
         </dependency>
 
         <dependency>
