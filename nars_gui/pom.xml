@@ -23,10 +23,12 @@
             <id>core</id>
             <name>processing.org</name>
             <releases>
+                <updatePolicy>always</updatePolicy>
                 <enabled>true</enabled>
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
             <snapshots>
+                <updatePolicy>always</updatePolicy>
                 <enabled>false</enabled>
             </snapshots>
             <url>file://${project.basedir}${file.separator}lib</url>
@@ -75,8 +77,8 @@
             <groupId>processing</groupId>
             <artifactId>core</artifactId>
             <version>3.0</version>
-            <!--<scope>system</scope>
-            <systemPath>${basedir}${file.separator}lib${file.separator}processing${file.separator}core${file.separator}3.0${file.separator}core-3.0.jar</systemPath>-->
+            <scope>system</scope>
+            <systemPath>${basedir}${file.separator}lib${file.separator}processing${file.separator}core-3.0.jar</systemPath>
         </dependency>
 
         <dependency>
