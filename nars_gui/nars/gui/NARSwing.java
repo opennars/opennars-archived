@@ -157,8 +157,6 @@ public class NARSwing  {
           
         NAR nar = new NAR(new CommandLineNARBuilder(args));
         
-        
-        
         NARSwing swing = new NARSwing(nar);
 
         
