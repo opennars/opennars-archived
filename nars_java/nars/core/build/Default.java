@@ -88,7 +88,7 @@ public class Default extends Build implements ConceptBuilder {
        // temporalPlanner(8, 64, 16);
         
         setConceptBagSize(1000);        
-        setSubconceptBagSize(0);
+        setSubconceptBagSize(1000); //0
         setConceptBagLevels(100);
         
         setTaskLinkBagSize(20);
