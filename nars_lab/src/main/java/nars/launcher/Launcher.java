@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 public class Launcher extends javax.swing.JFrame {
 
     public static File resource(String path) {
-        return new File("./nars_lab/nars/launcher/" + path);
+        return new File("./nars_lab/src/main/java/nars/launcher/" + path);
     }
     
     /**
