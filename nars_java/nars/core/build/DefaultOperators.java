@@ -7,10 +7,12 @@ import nars.operator.math.Add;
 import nars.operator.math.Count;
 import nars.operator.math.MathExpression;
 import nars.operator.mental.Believe;
+import nars.operator.mental.Consider;
 import nars.operator.mental.Doubt;
 import nars.operator.mental.Evaluate;
 import nars.operator.mental.FeelBusy;
 import nars.operator.mental.FeelHappy;
+import nars.operator.mental.Forget;
 import nars.operator.mental.Hesitate;
 import nars.operator.mental.Name;
 import nars.operator.mental.Register;
@@ -43,7 +45,8 @@ public class DefaultOperators {
             
             //concept operations for internal perceptions
             new Remind(),   // create/activate a concept
-            //new Consider(nal),  // find the most active concept            
+            new Consider(),  // find the most active concept            
+            new Forget(),
             new Name(),         // turn a compount term into an atomic term
             //new Abbreviate(),
             new Register(),
