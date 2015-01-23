@@ -617,7 +617,7 @@ public class Rover extends PhysicsModel {
         NAR nar = new Default().simulationTime().
                 build();
 
-        //nar.addPlugin(new TemporalParticlePlanner());
+        nar.addPlugin(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).noiseLevel.set(0);

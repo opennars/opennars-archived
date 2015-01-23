@@ -20,6 +20,7 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
+import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
 import processing.core.PVector;
@@ -47,6 +48,8 @@ public class TestChamber {
         NAR nar = builder.build();
         //set NAR runtime parmeters:  
 
+        nar.addPlugin(new TemporalParticlePlanner());
+        
         for(NAR.PluginState pluginstate : nar.getPlugins()) {
             if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
                 nar.removePlugin(pluginstate);
