@@ -40,9 +40,6 @@ import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.ImmediateProcess;
 import nars.core.control.NAL;
-import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMeter;
-import nars.io.meter.ResourceMeter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -52,8 +49,6 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.inference.TemporalRules;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
@@ -82,6 +77,9 @@ import static nars.io.Symbols.NativeOperator.PRODUCT;
 import static nars.io.Symbols.NativeOperator.SEQUENCE;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import nars.io.meter.EmotionMeter;
+import nars.io.meter.LogicMeter;
+import nars.io.meter.ResourceMeter;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
@@ -95,6 +93,7 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
+import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Product;
 import nars.language.SetExt;
@@ -108,6 +107,8 @@ import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
+import nars.plugin.app.plan.MultipleExecutionManager;
+import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.storage.Bag;
 
 
@@ -1032,22 +1033,58 @@ public class Memory implements Serializable {
             return false;
         }
 
-        for (Task stmLast : stm) {
-
-            if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
-                return false;
+        Sentence[] stc=new Sentence[stm.size()];
+        int i=0;
+        for (Task stmLast : stm) { //convert into more flexible data structure
+            stc[i]=stmLast.sentence;
+            i++;
+        }
+        
+        Term[] termli=new Term[stc.length*2];
+        
+        int j=0;
+        for(i=0;i<stc.length;i++) {
+            
+            termli[j]=stc[i].term;
+            j++;
+            if(i<stm.size()-1) {
+                //occurence time difference of sentence to next sentence
+                Sentence last=stc[i];
+                Sentence news=stc[i+1];
+                //
+                termli[j]=Interval.interval(news.getOccurenceTime()-last.getOccurenceTime(), nal.memory);
+                j++;
+            } else {
+                //occurence time difference of sentence to next sentence
+                Sentence last=stc[i];
+                Sentence news=newEvent.sentence;
+                //
+                termli[j]=Interval.interval(news.getOccurenceTime()-last.getOccurenceTime(), nal.memory);
+                j++;
             }
+        }
+        Conjunction conj=(Conjunction) Conjunction.make(termli,TemporalRules.ORDER_FORWARD);
+        
+        if(termli.length>0) {
 
-            nal.setTheNewStamp(newEvent.sentence.stamp, stmLast.sentence.stamp, time());
+            Sentence s=new Sentence(conj,Symbols.JUDGMENT_MARK,newEvent.sentence.truth.clone(),new Stamp(nal.memory));
+            
+            
+           // if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
+           //     return false;
+           // }
+
+            nal.setTheNewStamp(newEvent.sentence.stamp, s.stamp, time());
             nal.setCurrentTask(newEvent);
 
-            Sentence previousBelief = stmLast.sentence;
+            Sentence previousBelief = s;
             nal.setCurrentBelief(previousBelief);
             
             Sentence currentBelief = newEvent.sentence;
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
             TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+            
         }
 
         ////for this heuristic, only use input events & task effects of operations

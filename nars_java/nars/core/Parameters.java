@@ -180,7 +180,7 @@ public class Parameters {
     public static boolean IMMEDIATE_ETERNALIZATION=true;
     
     
-    public static int STM_SIZE = 1;
+    public static int STM_SIZE = 7; //magic number ;)
     
     
     
