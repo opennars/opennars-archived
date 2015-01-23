@@ -20,6 +20,7 @@ import nars.language.Term;
 import nars.narclear.jbox2d.TestbedSettings;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
+import nars.plugin.app.plan.TemporalParticlePlanner;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
