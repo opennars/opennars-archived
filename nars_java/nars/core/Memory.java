@@ -1163,8 +1163,10 @@ public class Memory implements Serializable, EventObserver {
             return false;
         }
 
-        for (Task stmLast : stm) {
+        if(true) { //for (Task stmLast : stm) {
 
+            Task stmLast=stm.getLast();
+            
             if (equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
                 return false;
             }
