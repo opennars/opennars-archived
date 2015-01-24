@@ -1163,7 +1163,7 @@ public class Memory implements Serializable, EventObserver {
             return false;
         }
 
-        if(true) { //for (Task stmLast : stm) {
+        if(!stm.isEmpty()) { //for (Task stmLast : stm) {
 
             Task stmLast=stm.getLast();
             
