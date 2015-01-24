@@ -70,7 +70,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
     /**
      * The truth value of Judgment, or desire value of Goal     
      */
-    public final TruthValue truth;
+    public TruthValue truth;
     
     /**
      * Partial record of the derivation path

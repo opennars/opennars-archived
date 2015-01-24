@@ -74,11 +74,11 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
         return revision(v1, v2, new TruthValue());
     }
     
-    static final TruthValue revision(final TruthValue v1, final TruthValue v2, final TruthValue result) {
+    public static final TruthValue revision(final TruthValue v1, final TruthValue v2, final TruthValue result) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float w1 = c2w( v1.getConfidence() );
