@@ -3,6 +3,7 @@ package nars.plugin.app.plan;
 //or by other plugins which demand adding of executions
 //GCM is always in the lead and should be so it does not need to use this.
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class MultipleExecutionManager {
 
     public final GraphExecutive graph;
     public final Memory memory;
-    public final NavigableSet<Execution> tasks;
+    public final ArrayList<Execution> tasks; //NavigableSet<Execution>
     private final Set<Execution> tasksToRemove = new ConcurrentSkipListSet();
     /**
      * number of tasks that are active in the sorted priority buffer for
@@ -58,9 +59,9 @@ public class MultipleExecutionManager {
         
         this.graph = new GraphExecutive(mem, this);
 
-        this.tasks = new ConcurrentSkipListSet<Execution>() {
+        this.tasks = new ArrayList<Execution>() {
 
-            @Override
+         /*   @Override nope nope
             public boolean add(Execution e) {
                 boolean b = super.add(e);
                 if (!b) {
@@ -75,7 +76,7 @@ public class MultipleExecutionManager {
                 }
                 return true;
             }
-
+*/
         };
 
     }
@@ -261,7 +262,7 @@ public class MultipleExecutionManager {
             if (tasks.add(te)) {
                 //added successfully
 
-                memory.emit(Execution.class, te);
+               // memory.emit(Execution.class, te); only because its added does not mean that it was executed..
                 return true;
             }
         }
@@ -336,12 +337,12 @@ public class MultipleExecutionManager {
                     memory.emit(MultipleExecutionManager.class, memory.time(), tcc);
                 }
             } else {
-                memory.emit(MultipleExecutionManager.class, memory.time(), tasks.first());
+                memory.emit(MultipleExecutionManager.class, memory.time(), tasks.get(0));
             }
 
         }
 
-        Execution executing = tasks.first();
+        Execution executing = tasks.get(tasks.size()-1); //wtf, it should be vice versa..
         Task top = executing.t;
         Term term = top.getTerm();
         if (term instanceof Operation) {

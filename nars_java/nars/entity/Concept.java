@@ -38,21 +38,27 @@ import nars.core.Events.TermLinkRemove;
 import nars.core.Events.UnexecutableGoal;
 import nars.core.Memory;
 import nars.core.NARRun;
+import nars.core.Parameters;
 import nars.core.control.NAL;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.Implication;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.plugin.app.plan.MultipleExecutionManager;
+import nars.plugin.app.plan.MultipleExecutionManager.Execution;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 
@@ -372,14 +378,59 @@ public class Concept extends Item<Term> implements Termable {
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
                 if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
-                    if(!executeDecision(task)) {
-                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    //search for the best explaination
+                    //currently only highest truth expectation
+                    
+                    Term bestPlan=null;
+                    float bestEx=0;
+                    TruthValue T=null;
+                    if(task.isInput()) { //only do for input tasks so far
+                        for(Concept c: nal.memory.concepts) {
+                            if(c.term instanceof Implication) {
+                                Implication imp=(Implication) c.term;
+                                if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD && imp.getPredicate().equals(task.sentence.term)) { 
+                                    //ok it is also a explaination which has goal as consequence, so lets see how good it is
+                                    if(!c.beliefs.isEmpty()) {
+                                        float Ex=c.beliefs.get(0).truth.getExpectation();
+                                        if(Ex>bestEx) {
+                                            bestEx=Ex;
+                                            bestPlan=imp.getSubject();
+                                            T=c.beliefs.get(0).truth;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+                    
+                    if(bestPlan!=null) { //(T term, char punctuation, TruthValue newTruth, Stamp newStamp)
+                        if(bestPlan instanceof Conjunction) {
+                            for(Term t: ((Conjunction)bestPlan).term) {
+                                ex_plan_elem(t,T,nal);
+                            }
+                        } else {
+                            ex_plan_elem(bestPlan,T,nal);
+                        }
+                    }
+                    /*if(!executeDecision(task)) {
+                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    }*/
                 }
             }
         }
     }
 
+    public void ex_plan_elem(Term elemt, TruthValue T, NAL nal)
+    {
+        Sentence s=new Sentence(elemt,Symbols.JUDGMENT_MARK,T,new Stamp(nal.memory));
+        Task Task=new Task(s,new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, T));
+        Concept ex=nal.memory.conceptualize(Task.budget, s.term);
+        //nal.memory.executive.addExecution(ex, Task);
+       // Execution Test=new Execution(nal.memory, nal.memory.executive, ex, Task); 
+        //nal.memory.executive.executeConjunctionSequence(Test, (Conjunction)s.term);
+        nal.memory.executive.addExecution(ex, Task);
+    }
+    
     /**
      * To answer a question by existing beliefs
      *
