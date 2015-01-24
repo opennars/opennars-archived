@@ -246,7 +246,7 @@ public class Memory implements Serializable, EventObserver {
                 boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                 
                 if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
-                   // c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                    //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
                 } else { //it matched and other consequence, so negative evidence
                     c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
                 } //todo use derived task with revision instead
@@ -1179,7 +1179,14 @@ public class Memory implements Serializable, EventObserver {
 
             //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
             TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
+            
+
+            temporalPredictionsAdapt();
+
+            
         }
+        
+        
 
         ////for this heuristic, only use input events & task effects of operations
         ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
