@@ -399,14 +399,15 @@ public class Concept extends Item<Term> implements Termable {
                                         boolean isop=true;
                                         for(Term h : seq) {
                                             if(!(h instanceof Operation)) {
+                                                //it is also fine
                                                 isop=false;
                                                 break;
                                             }
                                         }
                                         
-                                        if(!isop) {
-                                            continue;
-                                        }
+                                       // if(!isop) {
+                                       //     continue;
+                                       // }
                                             
                                         //ok it is also a explaination which has goal as consequence, so lets see how good it is
                                         if(!c.beliefs.isEmpty()) {
@@ -441,6 +442,9 @@ public class Concept extends Item<Term> implements Termable {
 
     public void ex_plan_elem(Term elemt, TruthValue T, NAL nal)
     {
+        if(!(elemt instanceof Operation)) {
+            return;
+        }
         Sentence s=new Sentence(elemt,Symbols.JUDGMENT_MARK,T,new Stamp(nal.memory));
         Task Task=new Task(s,new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY, Parameters.DEFAULT_GOAL_DURABILITY, T));
         Concept ex=nal.memory.conceptualize(Task.budget, s.term);
