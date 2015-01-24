@@ -26,7 +26,6 @@ import nars.nario.sprites.Sparkle;
 import nars.nario.sprites.Sprite;
 import nars.operator.NullOperator;
 import nars.operator.Operation;
-import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.InternalExperience;
 
 /**
@@ -64,7 +63,7 @@ public class NARio extends Run {
         NAR nar = new Default().simulationTime().setConceptBagSize(500).
                 /*temporalPlanner(12,64,16).*/build();
         
-        nar.addPlugin(new TemporalParticlePlanner());
+        //nar.addPlugin(new TemporalParticlePlanner());
 
        // NAR nar = new CurveBagNARBuilder().simulationTime().build();
         /*nar.param().termLinkRecordLength.set(4);

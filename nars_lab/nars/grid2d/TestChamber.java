@@ -54,7 +54,7 @@ public class TestChamber {
             }
         }
   
-        nar.addPlugin(new TemporalParticlePlanner());
+        //nar.addPlugin(new TemporalParticlePlanner());
         
         //(nar.param).duration.set(10);
         (nar.param).noiseLevel.set(0); 
