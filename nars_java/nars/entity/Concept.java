@@ -383,7 +383,7 @@ public class Concept extends Item<Term> implements Termable {
                     if(!executeDecision(task)) { //see if there is a sequence of operators known to achieve the goal instead
                         if(true)  {//deactivate this way of executing for now
                             memory.emit(UnexecutableGoal.class, task, this, nal);
-                            return;
+                            return; 
                         }
                         Term bestPlan=null;
                         float bestEx=0;
