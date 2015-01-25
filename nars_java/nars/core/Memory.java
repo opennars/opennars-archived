@@ -144,7 +144,7 @@ public class Memory implements Serializable, EventObserver {
                (((Implication) derivedTask.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
                     ((Implication) derivedTask.sentence.term).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
-                if(!current_tasks.contains(derivedTask) && !Variables.containVar(derivedTask.sentence.term.name())) {
+                if(!current_tasks.contains(derivedTask)) {
                     current_tasks.add(derivedTask);
                 }
             }
@@ -209,7 +209,8 @@ public class Memory implements Serializable, EventObserver {
                 }
 
                 //handling of other events, seeing if they match and are right in time
-                if(!args[i].equals(lastEvents.get(i-off).sentence.term)) { //it didnt match, instead sth different unexpected happened
+                
+                if(!Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, args[i], lastEvents.get(i-off).sentence.term)) { //it didnt match, instead sth different unexpected happened
                     matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
                     break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
                 } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
@@ -246,8 +247,8 @@ public class Memory implements Serializable, EventObserver {
             if(matched && lastEvents.size()>args.length-off) { 
                 long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
                 boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
-
-                if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
+                 
+                if(right_in_time && Variables.hasSubstitute(Symbols.VAR_INDEPENDENT,imp.getPredicate(),lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
                     //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
                     Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT_MARK,new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(this));
                     Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
@@ -258,7 +259,6 @@ public class Memory implements Serializable, EventObserver {
                     Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } //todo use derived task with revision instead
-
             }
         }
         for(Task t: derivetasks) {
@@ -1198,8 +1198,16 @@ public class Memory implements Serializable, EventObserver {
             
 
             temporalPredictionsAdapt(nal);
-
-            
+            ArrayList<Task> toDelete=new ArrayList<Task>();
+            for(Task t: current_tasks) {
+                Concept w=nal.memory.concept(t.sentence.term);
+                if(w==null) { //concept does not exist anymore, delete
+                    toDelete.add(t);
+                }
+            }
+            for(Task t: toDelete) {
+                current_tasks.remove(t);
+            }
         }
         
         
