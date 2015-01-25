@@ -381,6 +381,10 @@ public class Concept extends Item<Term> implements Termable {
                     //search for the best explaination
                     //currently only highest truth expectation
                     if(!executeDecision(task)) { //see if there is a sequence of operators known to achieve the goal instead
+                        if(true)  {//deactivate this way of executing for now
+                            memory.emit(UnexecutableGoal.class, task, this, nal);
+                            return;
+                        }
                         Term bestPlan=null;
                         float bestEx=0;
                         TruthValue T=null;
@@ -433,7 +437,7 @@ public class Concept extends Item<Term> implements Termable {
                             }
                         }
                     
-                        //memory.emit(UnexecutableGoal.class, task, this, nal);
+                        //
                     }
                 }
             }
