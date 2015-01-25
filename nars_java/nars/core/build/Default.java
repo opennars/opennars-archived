@@ -33,6 +33,7 @@ import nars.plugin.app.plan.TemporalParticlePlanner;
 import nars.plugin.mental.Abbreviation;
 import nars.plugin.mental.Counting;
 import nars.plugin.mental.FullInternalExperience;
+import nars.plugin.mental.GlobalAnticipation;
 import nars.plugin.mental.InternalExperience;
 import nars.plugin.mental.RuntimeNARSettings;
 import nars.storage.Bag;
@@ -153,7 +154,8 @@ public class Default extends Build implements ConceptBuilder {
             n.addPlugin(pluginPlanner);
         }
         
-        //n.addPlugin(new Anticipate());      // expect an event
+        n.addPlugin(new Anticipate());      // expect an event
+        n.addPlugin(new GlobalAnticipation());
         
         if (internalExperience==Minimal) {            
             n.addPlugin(new InternalExperience());

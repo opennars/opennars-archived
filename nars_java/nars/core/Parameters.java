@@ -28,7 +28,7 @@ package nars.core;
 public class Parameters {
     
     
-    public static double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.01;
+    
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
@@ -182,10 +182,7 @@ public class Parameters {
     public static boolean IMMEDIATE_ETERNALIZATION=true;
     
     
-    public static int STM_SIZE = 20;
-    
-    
-    
+    public static int STM_SIZE = 1;
     
 }
 
