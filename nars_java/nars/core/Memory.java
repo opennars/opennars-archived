@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javolution.context.ConcurrentContext;
 import nars.core.Attention.AttentionAware;
+import nars.core.EventEmitter.EventObserver;
 import nars.core.Events.ConceptBeliefRemove;
 import nars.core.Events.ResetEnd;
 import nars.core.Events.ResetStart;
@@ -43,9 +45,6 @@ import static nars.core.Memory.Timing.Iterative;
 import nars.core.control.AbstractTask;
 import nars.core.control.ImmediateProcess;
 import nars.core.control.NAL;
-import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMeter;
-import nars.io.meter.ResourceMeter;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -55,9 +54,8 @@ import nars.entity.Task;
 import nars.entity.TaskLink;
 import nars.entity.TruthValue;
 import nars.inference.BudgetFunctions;
-import nars.plugin.app.plan.MultipleExecutionManager;
-import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.inference.TemporalRules;
+import nars.inference.TruthFunctions;
 import nars.io.Output.ERR;
 import nars.io.Output.IN;
 import nars.io.Output.OUT;
@@ -85,6 +83,9 @@ import static nars.io.Symbols.NativeOperator.PRODUCT;
 import static nars.io.Symbols.NativeOperator.SEQUENCE;
 import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import static nars.io.Symbols.NativeOperator.SET_INT_OPENER;
+import nars.io.meter.EmotionMeter;
+import nars.io.meter.LogicMeter;
+import nars.io.meter.ResourceMeter;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.DifferenceExt;
@@ -98,6 +99,7 @@ import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.IntersectionExt;
 import nars.language.IntersectionInt;
+import nars.language.Interval;
 import nars.language.Negation;
 import nars.language.Product;
 import nars.language.SetExt;
@@ -105,17 +107,16 @@ import nars.language.SetInt;
 import nars.language.Tense;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import nars.language.Variables;
 import nars.operator.Operation;
 import nars.operator.Operator;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
 import nars.operator.io.SetVolume;
+import nars.plugin.app.plan.MultipleExecutionManager;
+import static nars.plugin.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 import nars.storage.Bag;
-import nars.core.EventEmitter.EventObserver;
-import nars.inference.TruthFunctions;
-import nars.language.Interval;
-import nars.language.Variables;
 
 
 /**
@@ -133,7 +134,7 @@ import nars.language.Variables;
  */
 public class Memory implements Serializable, EventObserver {
     
-    ArrayList<Task> current_tasks=new ArrayList<Task>();
+    final List<Task> current_tasks=new ArrayList<Task>();
     
     @Override
     public void event(Class event, Object[] args) {
@@ -158,7 +159,7 @@ public class Memory implements Serializable, EventObserver {
     
     
     //check all predictive statements, match them with last events
-    public void temporalPredictionsAdapt() {
+    public void temporalPredictionsAdapt(NAL nal) {
         if(Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV==0.0f) {
             return; 
         }
@@ -173,11 +174,12 @@ public class Memory implements Serializable, EventObserver {
         }
         
         final long duration = this.param.duration.get();
+        ArrayList<Task> derivetasks=new ArrayList<Task>();
         
         for(final Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
             boolean concurrent_conjunction=false;
             Term[] args=new Term[1];
-            Implication imp=(Implication) c.sentence.term;
+            Implication imp=(Implication) c.sentence.term.clone();
             boolean concurrent_implication=imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT;
             args[0]=imp.getSubject();
             if(imp.getSubject() instanceof Conjunction) {
@@ -201,23 +203,23 @@ public class Memory implements Serializable, EventObserver {
                     off++;
                     continue;
                 }
-                
+
                 if(i-off>=lastEvents.size()) {
                     break;
                 }
-                
+
                 //handling of other events, seeing if they match and are right in time
                 if(!args[i].equals(lastEvents.get(i-off).sentence.term)) { //it didnt match, instead sth different unexpected happened
                     matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
                     break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
                 } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
-                    
+
                     if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5f) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
                         //it didn't happen
                         matched=false;
                         break;
                     }
-                    
+
                     long occurence=lastEvents.get(i-off).sentence.getOccurenceTime();
                     boolean right_in_time=Math.abs(occurence-expected_time) < ((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
                     if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
@@ -230,7 +232,7 @@ public class Memory implements Serializable, EventObserver {
                     expected_time+=duration;
                 }
             }
-            
+
             if(concurrent_conjunction && !concurrent_implication) { //implication is not concurrent
                 expected_time+=duration; //so here we have to add duration
             }
@@ -239,17 +241,29 @@ public class Memory implements Serializable, EventObserver {
                 expected_time-=duration;
             } //else if both are concurrent, time has never been added so correct
               //else if both are not concurrent, time was always added so also correct
-            
+
             //ok it matched, is the consequence also right?
             if(matched && lastEvents.size()>args.length-off) { 
                 long occurence=lastEvents.get(args.length-off).sentence.getOccurenceTime();
                 boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/Parameters.TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
-                
+
                 if(right_in_time && imp.getPredicate().equals(lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
                     //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT_MARK,new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(this));
+                    Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
+                    derivetasks.add(t);
                 } else { //it matched and other consequence, so negative evidence
-                    c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                   // c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
+                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT_MARK,new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(this));
+                    Task t=new Task(s2,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
+                    derivetasks.add(t);
                 } //todo use derived task with revision instead
+
+            }
+        }
+        for(Task t: derivetasks) {
+            if(nal.derivedTask(t, false, false, null, null)) {
+                boolean debug=true;
             }
         }
     }
@@ -1183,7 +1197,7 @@ public class Memory implements Serializable, EventObserver {
             TemporalRules.temporalInduction(currentBelief, previousBelief, nal);
             
 
-            temporalPredictionsAdapt();
+            temporalPredictionsAdapt(nal);
 
             
         }
