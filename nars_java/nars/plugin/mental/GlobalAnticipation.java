@@ -40,6 +40,24 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
     public final List<Task> current_tasks=new ArrayList<Task>();
     int MatchUpTo=20;
     
+    public void setMatchEventsMax(double value) {
+        MatchUpTo=(int) value;
+    }
+    
+    public double getMatchEventsMax() {
+        return MatchUpTo;
+    }
+    
+    public double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.01;
+    
+    public double getTemporalAccuracy() {
+        return TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
+    }
+    
+    public void setTemporalAccuracy(double value) {
+        TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=value;
+    }
+    
     @Override
     public void event(Class event, Object[] args) {
         if (event == Events.TaskDerive.class) {
@@ -73,8 +91,6 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
             temporalPredictionsAdapt(nal);
         }
     }  
-    
-    public double TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV=0.01;
     
     //check all predictive statements, match them with last events
     public void temporalPredictionsAdapt(NAL nal) {
