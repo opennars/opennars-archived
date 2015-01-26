@@ -155,7 +155,7 @@ public class Default extends Build implements ConceptBuilder {
         }
         
         n.addPlugin(new Anticipate());      // expect an event
-        n.addPlugin(new GlobalAnticipation());
+        //n.addPlugin(new GlobalAnticipation());
         
         if (internalExperience==Minimal) {            
             n.addPlugin(new InternalExperience());
