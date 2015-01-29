@@ -3,7 +3,7 @@
  * Each line should be prefixed with  * 
  */
 
-package nars.plugin.mental;
+//package nars.plugin.mental;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -34,9 +34,9 @@ import nars.operator.mental.Anticipate;
  *
  * @author tc
  */
-public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
+public class GlobalAnticipation { //implements Plugin, EventEmitter.EventObserver {
 
-    public final ArrayDeque<Task> stm = new ArrayDeque();
+    /*public final ArrayDeque<Task> stm = new ArrayDeque();
     public final List<Task> current_tasks=new ArrayList<Task>();
     int MatchUpTo=20;
     
@@ -224,6 +224,6 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
         }
         
         return true;
-    }
+    }*/
     
 }
