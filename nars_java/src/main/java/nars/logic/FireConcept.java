@@ -210,20 +210,6 @@ abstract public class FireConcept extends NAL {
 
         if (belief != null) {
 
-            //TODO
-            //(&/,a) goal didnt get unwinded, so lets unwind it
-            if(taskTerm instanceof Conjunction && taskSentence.punctuation== Symbols.GOAL) {
-                Conjunction s=(Conjunction)taskTerm;
-
-                CompoundTerm newterm = Sentence.termOrNull(s.term[0]);
-                if (newterm!=null) {
-                    TruthValue truth = taskSentence.truth;
-                    BudgetValue newBudget = BudgetFunctions.forward(TruthFunctions.deduction(truth, truth), this);
-                    doublePremiseTask(newterm, truth, newBudget, false);
-                }
-            }
-
-
             if (LocalRules.match(task, belief, this)) {
                 return;
             }
