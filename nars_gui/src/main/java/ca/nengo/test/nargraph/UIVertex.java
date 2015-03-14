@@ -1,7 +1,10 @@
 package ca.nengo.test.nargraph;
 
 import automenta.vivisect.dimensionalize.UIEdge;
+import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.PaintContext;
+import ca.nengo.ui.model.icon.ModelIcon;
+import ca.nengo.ui.model.icon.NodeIcon;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import com.google.common.collect.Iterables;
@@ -29,10 +32,16 @@ abstract public class UIVertex<V extends Named> extends AbstractWidget implement
         this.vertex = vertex;
         this.coords = new ArrayRealVector(2);
 
+
         //initial random position, to seed layout
         double x, y;
         move(x = 1000 * (Math.random() - 0.5), y = 1000*(Math.random() - 0.5));
         coords.setEntry(0, x); coords.setEntry(1, y);
+    }
+
+    @Override
+    public ModelIcon newIcon(ModelObject UI) {
+        return new NodeIcon(UI);
     }
 
     @Override

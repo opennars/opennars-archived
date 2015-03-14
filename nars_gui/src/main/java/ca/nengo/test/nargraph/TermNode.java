@@ -152,8 +152,10 @@ public class TermNode extends UIVertex {
             priority = 0;
             scale = 0.5f;
         }
-        icon.getBody().setPaint(color);
-        icon.setTransparency(alpha);
+        if (icon!=null) {
+            icon.getBody().setPaint(color);
+            icon.setTransparency(alpha);
+        }
 
         if (priority < 0) priority = 0;
 
@@ -171,7 +173,7 @@ public class TermNode extends UIVertex {
 
         //TODO combine these into one Transform update
         ui.scaleTo(scale * (0.75f + priority), 0.05);
-        ui.dragTo(x, y, bounds.getWidth() /* speed */, 0.005);
+        ui.dragTo(x, y, 0.2f * bounds.getWidth() /* speed */, 0.005, 5);
 
 
         //System.out.println(x + " " + y);

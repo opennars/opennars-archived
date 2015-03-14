@@ -603,7 +603,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
                         deltaLengthWithRadius = minDist;
                     }
 
-                    double force = fcSq / deltaLengthWithRadius;
+                    double force = Math.sqrt(fcSq);// / deltaLengthWithRadius;
 
                     force /= deltaLength;
 

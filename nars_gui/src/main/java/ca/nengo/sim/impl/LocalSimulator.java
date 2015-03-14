@@ -208,8 +208,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
 
             float currentProgress = ((float) time - startTime) / (endTime - startTime);
             
-            SimulatorEvent event=new SimulatorEvent(currentProgress,
-                    SimulatorEvent.Type.STEP_TAKEN);
+            SimulatorEvent event=new SimulatorEvent(currentProgress, SimulatorEvent.Type.STEP_TAKEN);
             fireSimulatorEvent(event);
             if (event.getInterrupt()) interrupt=true;
 
@@ -237,8 +236,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
                 myProjection.getTarget().apply(values);
             }
 
-            Iterable<? extends Node> nn = network.nodes();
-            for (Node myNode : nn) {
+            for (Node myNode : network.nodes()) {
                 //if (myNode == null) continue;
                 if (myNode instanceof NetworkImpl) {
                     ((NetworkImpl) myNode).run(startTime, endTime, false);
@@ -423,7 +421,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
     /**
      * @see ca.nengo.sim.Simulator#getProbes()
      */
-    public Probe[] getProbes() {
+    @Deprecated public Probe[] getProbes() {
         return myProbes.toArray(new Probe[myProbes.size()]);
     }
     

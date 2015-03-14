@@ -36,7 +36,6 @@ import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.elastic.ElasticGround;
 import ca.nengo.ui.lib.world.handler.AbstractStatusHandler;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
@@ -73,9 +72,6 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
      */
     protected final Map<Node, UINeoNode> neoNodesChildren = Parameters.newHashMap();
 
-    public NodeViewer(UINodeViewable nodeContainer) {
-        this(nodeContainer, new ElasticGround());
-    }
     /**
      * @param nodeContainer
      *            UI Object containing the Node model

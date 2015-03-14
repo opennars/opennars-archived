@@ -8,7 +8,6 @@ import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.object.BoundsHandle;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
-import ca.nengo.ui.model.icon.EmptyIcon;
 import ca.nengo.ui.model.icon.ModelIcon;
 import org.piccolo2d.util.PBounds;
 
@@ -26,6 +25,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
     public AbstractWidget(String name, double width, double height) {
         super(name);
 
+
         ui = newUI(width, height);
         //setBounds(-width/2,-height/2,width,height);
     }
@@ -35,9 +35,10 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
     }
 
     public ModelIcon newIcon(ModelObject UI) {
-        EmptyIcon ei = new EmptyIcon(UI);
-        ei.setLabelVisible(false);
-        return ei;
+        //EmptyIcon ei = new EmptyIcon(UI);
+        //ei.setLabelVisible(false);
+        //return ei;
+        return null;
     }
 
     public PBounds setBounds(double x, double y, double w, double h) {
@@ -89,11 +90,12 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
                 BoundsHandle.addBoundsHandlesTo(this);
 
 
-
             setIcon(newIcon(this));
 
 
-            setSize(getIcon().getWidth(), getIcon().getHeight());
+
+            //setSize(getIcon().getWidth(), getIcon().getHeight());
+            setSize(width, height);
 
 
             repaint();
@@ -128,8 +130,8 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
             super.dragTo(dx, dy);
         }
         @Override
-        public void dragTo(double dx, double dy, double speed, double arrivalSpeed /* 1 - LERP momentum */) {
-            super.dragTo(dx, dy, speed, arrivalSpeed);
+        public void dragTo(double dx, double dy, double speed, double arrivalSpeed /* 1 - LERP momentum */, double epsilon) {
+            super.dragTo(dx, dy, speed, arrivalSpeed, epsilon);
         }
 
         @Override

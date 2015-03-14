@@ -611,8 +611,12 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		/*
 		 * layout widgets such as Origins and Terminations
-		 */
-        Rectangle2D bounds = getIcon().localToParent(getIcon().getBounds());
+		  */
+        Rectangle2D bounds;
+        if (getIcon()!=null)
+            bounds = getIcon().localToParent(getIcon().getBounds());
+        else
+            bounds = getBoundsReference();
 
         double offsetX = bounds.getX();
         double offsetY = bounds.getY();
@@ -621,9 +625,9 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
         double centerY = offsetY + bounds.getHeight() / 2f;
 
         double termX = -20 + bounds.getX();
-        double termY = getIcon().getHeight() + offsetY;
+        double termY = bounds.getHeight() + offsetY;
 
-        double originX = getIcon().getWidth() + 5 + offsetX;
+        double originX = bounds.getWidth() + 5 + offsetX;
         double originY = termY;
 
         double probeY = 0;
@@ -686,8 +690,12 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
     }
 
+    public Rectangle2D getBoundsReference() {
+        return pnode.getBoundsReference();
+    }
 
-	/**
+
+    /**
 	 * Removes a Probe UI object from node
 	 *
 	 * @param probe

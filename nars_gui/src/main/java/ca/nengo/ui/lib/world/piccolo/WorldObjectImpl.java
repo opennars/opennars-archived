@@ -388,8 +388,7 @@ public class WorldObjectImpl implements WorldObject {
         }
     }
 
-    public void dragTo(double x, double y, double speed, double arrivalSpeed /* max speed */) {
-        final double epsilon = 0.001f; //min movement which wont matter
+    public void dragTo(double x, double y, double speed, double arrivalSpeed /* max speed */, double epsilon /* //min movement which wont matter */) {
 
         if (isDraggable()) {
             Point2D offset = getOffset();
@@ -401,9 +400,8 @@ public class WorldObjectImpl implements WorldObject {
                 return;
             }
             else if (normSquare < speed*speed) {
+                //apply arrival speed
                 //nx = x; ny = y;
-
-                //apply arrival speed (LERP)
                 nx = (x * arrivalSpeed) + (1.0 - arrivalSpeed) * cx;
                 ny = (y * arrivalSpeed) + (1.0 - arrivalSpeed) * cy;
             }

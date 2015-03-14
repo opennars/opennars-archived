@@ -168,9 +168,9 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      *             (Mainly for NEFEnsembles).
      */
     public void setTime(final float time) {
-        Node[] nodes = getNodes();
 
-        for (Node workingNode : getNodes()) {
+
+        for (Node workingNode : nodes()) {
 
             if (workingNode instanceof DecodableGroupImpl) {
                 ((DecodableGroupImpl) workingNode).setTime(time);
@@ -323,7 +323,8 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      *
      * @return arraylist of origins
      */
-    public ArrayList<NSource> getNodeSources() {
+    //TODO replace this with an iterator wrapper
+    @Deprecated public ArrayList<NSource> getNodeSources() {
         Node[] nodes = getNodes();
         ArrayList<NSource> nodeSources = new ArrayList<NSource>(nodes.length);
         for (Node node : nodes) {
@@ -340,13 +341,14 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      * @see ca.nengo.model.Network#getNodes()
      */
     @Deprecated public Node[] getNodes() {
-        if (myNodeArray == null) {
-            //synchronized(myProbeables /* just some final variable for now */) {
-                Collection<N> c = getNodeCollection();
-                myNodeArray = c.toArray(new Node[c.size()]);
-            //}
-        }
-        return myNodeArray;
+        throw new RuntimeException("use nodes()");
+//        if (myNodeArray == null) {
+//            //synchronized(myProbeables /* just some final variable for now */) {
+//                Collection<N> c = getNodeCollection();
+//                myNodeArray = c.toArray(new Node[c.size()]);
+//            //}
+//        }
+//        return myNodeArray;
     }
 
     @Override
@@ -386,9 +388,8 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      */
     public int getNeuronCount() {
         int neuron_count = 0;
-        Node[] nodes = getNodes();
 
-        for (Node node : nodes) {
+        for (Node node : nodes()) {
             if (node instanceof NetworkImpl) {
                 neuron_count += ((NetworkImpl) node).getNeuronCount();
             } else if (node instanceof NEFGroupImpl) {
