@@ -122,7 +122,6 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                     add(new Line(str));
                 else
                     set(r, new Line(str));
-                layOut();
                 parse();
             }
 
@@ -168,7 +167,6 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         super(name);
             //lines.setLine(0, "[\"Hi, are you a bridge?\"]?");
             //lines.setLine(0, "<[TEXT_SYSTEM] --> [almost_operational]>.");
-            lines.setLine(0, "[TEXT_SYSTEM].");
         }
 
         @Override
@@ -232,11 +230,28 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         }
 
         private void parse() {
+            area.lines.layOut();
             cacheStuff();
             root = lang.text2match(text);
             updateMatchesBounds();
         }
 
+        public void keyPressed(PInputEvent event) {
+            char in = event.getKeyChar();
+
+            String debug = "//getKeyChar:" + String.valueOf((int) in) +
+                    "event: " + event + "isActionKey: " + event.isActionKey() + "";
+            lines.setLine(0, debug);
+            System.out.println(debug);
+            if (in == '\n') {
+                lines.add(cursor.r++, new Line());
+            } else if (in == 8) {
+                //
+            } else if (in != 0) {
+                lines.get(cursor.r).add(cursor.c++, new Glyph(in));
+            } else return;
+            parse();
+        }
 
     }
 
@@ -247,13 +262,18 @@ public class Editor extends DefaultNetwork implements UIBuilder {
     public NodeViewer viewer;
     private UINetwork ui;
     public Lang lang;
+    private KeyboardHandler keyHandler;
+    Cursor cursor;
 
     public Editor(String name, int charWidth, int charHeight, Lang lang) {
         super(name);
         this.lang = lang;
         setCharSize(charWidth, charHeight);
+        cursor = new Cursor("cursor1");
         area = new TextArea("area");
         setNode("area", area);
+        setNode("cursor", cursor);
+        area.lines.setLine(0, "[TEXT_SYSTEM].");
     }
 
     private void setCharSize(int charWidth, int charHeight) {
@@ -261,30 +281,39 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         this.charHeight = charHeight;
     }
 
-    public void keyPressed(PInputEvent event, int c, int r) {
-        char in = event.getKeyChar();
+    @Override
+    public void run(float startTime, float endTime) throws SimulationException {
+        enableInput();
+    }
 
-        String debug = "//getKeyChar:" + String.valueOf((int) in) +
-                "event: " + event + "isActionKey: " + event.isActionKey() + "";
-        area.lines.setLine(5, debug);
-        System.out.println(debug);
-        //System.out.println("nodemap: " + lines.nodeMap);
-        /*
-        if (in == '\n') {
-            area.lines.insert(r, new Line());
-        } else if (in == 8) {
-            //
-        } else if (in != 0) {
-            lines.getLine(r).insert(c, new Glyph(in));
-        } else return;
-        updateLang();
-        */
+    protected void enableInput() {
+        if ((keyHandler == null) && (viewer != null)) {
+            keyHandler = new KeyboardHandler() {
+
+                @Override
+                public void keyReleased(PInputEvent event) {
+                    //editor.keyReleased(event);
+                }
+
+                @Override
+                public void keyPressed(PInputEvent event) {
+
+                    area.keyPressed(event);
+                }
+            };
+            //ui.getPNode().getRoot().addInputEventListener(keyHandler);
+            //ui.getViewer().getSky().addInputEventListener(keyHandler);
+            viewer.getSky().addInputEventListener(keyHandler);
+            //viewer.getSky().addInputEventListener(keyHandler);
+
+        }
     }
 
     @Override
     public UINeoNode newUI(double width, double height) {
         return null; //ui;
     }
+
     public ca.nengo.ui.lib.world.piccolo.object.Window newUIWindow(double w, double h, boolean title, boolean minMax, boolean close) {
         //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
         UINetwork inviisbleIconUI = new DefaultUINetwork(this); //((UINetwork) newUI(1, 1));
