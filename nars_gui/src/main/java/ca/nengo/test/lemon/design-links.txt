@@ -1,5 +1,1 @@
 https://jonoscript.wordpress.com/2008/07/21/language-based-interfaces-part-1-the-problem/
-https://bitbucket.org/satyr/ubiquity/
-https://wiki.mozilla.org/Labs/Ubiquity/Latest_Ubiquity_User_Tutorial
-http://www.toolness.com/wp/2008/07/ubiquitous-interfaces-ubiquitous-functionality/ - comments
-

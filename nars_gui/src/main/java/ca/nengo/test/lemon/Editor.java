@@ -21,6 +21,7 @@ import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -122,7 +123,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                     add(new Line(str));
                 else
                     set(r, new Line(str));
-                parse();
+                update();
             }
 
             public void layOut() {
@@ -229,28 +230,55 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             }, false);
         }
 
-        private void parse() {
+        private void update() {
             area.lines.layOut();
             cacheStuff();
             root = lang.text2match(text);
             updateMatchesBounds();
+            if (cursor.c < 0) cursor.c = 0;
+            if (cursor.r < 0) cursor.r = 0;
+            cursor.updateBounds(area.lines.makeBounds(cursor.c, cursor.r));
         }
 
         public void keyPressed(PInputEvent event) {
-            char in = event.getKeyChar();
+            int c = event.getKeyCode();
+            String debug = "//getKeyCode:" + c +
+                    ", event: " + event + ", isActionKey: " + event.isActionKey() + "";
+            lines.setLine(5, debug);
+            System.out.println(debug);
+            switch (c) {
+                case KeyEvent.VK_UP:
+                    cursor.r -= 1;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    cursor.r += 1;
+                    break;
+                case KeyEvent.VK_LEFT:
+                    cursor.c -= 1;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    cursor.c += 1;
+                    break;
+            }
+            update();
 
-            String debug = "//getKeyChar:" + String.valueOf((int) in) +
-                    "event: " + event + "isActionKey: " + event.isActionKey() + "";
-            lines.setLine(0, debug);
+        }
+        public void keyTyped(PInputEvent event) {
+            char in = event.getKeyChar();
+            //event.getKeyCode()
+            String debug = "//getKeyChar:\"" + in + "\" (" + String.valueOf((int) in) +
+                    ") event: " + event + ", isActionKey: " + event.isActionKey() + "";
+            lines.setLine(5, debug);
             System.out.println(debug);
             if (in == '\n') {
                 lines.add(cursor.r++, new Line());
+                cursor.c = 0;
             } else if (in == 8) {
                 //
             } else if (in != 0) {
                 lines.get(cursor.r).add(cursor.c++, new Glyph(in));
             } else return;
-            parse();
+            update();
         }
 
     }
@@ -291,14 +319,21 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             keyHandler = new KeyboardHandler() {
 
                 @Override
+                public void keyTyped(final PInputEvent event) {
+                    area.keyTyped(event);
+                }
+
+
+                @Override
                 public void keyReleased(PInputEvent event) {
                     //editor.keyReleased(event);
                 }
 
                 @Override
                 public void keyPressed(PInputEvent event) {
-
                     area.keyPressed(event);
+
+
                 }
             };
             //ui.getPNode().getRoot().addInputEventListener(keyHandler);
@@ -330,36 +365,3 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
 
 }
-
-
-
-/**
- * horizontal print
- */
-            /*
-            public void set(int x, int y, CharSequence word) {
-                for (int i = 0; i < word.length(); i++) {
-                    char c = word.charAt(i);
-                    set(x + i, y, c);
-                }
-            }
-            */
-    /*
-            // set one char
-            public Node set(int x, int y, char c) {
-                if (c == ' ') {
-                    remove(l);
-                    return null;
-                }
-
-                Node existing = get(l);
-                if (existing != null && existing instanceof Glyph && (((Glyph) existing).getChar() == c))
-                    return existing;
-
-
-                Node n;
-                set(l, n = newChar(x, y, c));
-
-                return n;
-            }
-    */

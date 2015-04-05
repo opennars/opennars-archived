@@ -19,6 +19,7 @@ import java.util.HashMap;
 public class Cursor extends AbstractWidget {
     public int c, r;
 
+
     //private Boolean on = Boolean.TRUE;
 
     @Override
@@ -37,6 +38,11 @@ public class Cursor extends AbstractWidget {
         //UINeoNode x = ((UINeoNode)ui.getParent()).node();
         //network.addStepListener(subCycle);
 
+    }
+
+    public void updateBounds(PBounds b){
+           setBounds(0, 0, b.width, b.height);
+           move(b.x, b.y);
     }
 
     @Override
@@ -71,7 +77,7 @@ public class Cursor extends AbstractWidget {
 
 
         int ee = (int)(tc * (ww/4f))/2; //extra border
-        g.fillRect((int)(-ee), (int)(-ee), (int) (ww + ee*2), (int) (hh+ ee*2));
+        g.fillRect((int) (-ee), (int) (-ee), (int) (ww + ee * 2), (int) (hh + ee * 2));
 
 
 
@@ -86,13 +92,6 @@ public class Cursor extends AbstractWidget {
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
         return "";
     }
-
-    public void move(int c, int r)
-    {
-        this.c = c;
-        this.r = r;
-    }
-
     @Override
     public void run(float startTime, float endTime) throws SimulationException {
     }
