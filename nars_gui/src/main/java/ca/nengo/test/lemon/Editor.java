@@ -108,6 +108,17 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 }
             }
 
+            public String asString() {
+                StringBuilder text = new StringBuilder();
+                Iterator<Glyph> it = iterator();
+                while (it.hasNext()) {
+                    Glyph g = it.next();
+                    text.append((char) g.c);
+                }
+                return text.toString();
+            }
+
+
         }
 
         public class Lines extends ArrayList<Line> {
@@ -151,7 +162,8 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             StringBuilder text = new StringBuilder();
             Iterator<Line> lines_it = lines.iterator();
             while (lines_it.hasNext()) {
-                Iterator<Glyph> it = lines_it.next().iterator();
+                Line line = lines_it.next();
+                Iterator<Glyph> it = line.iterator();
                 while (it.hasNext()) {
                     Glyph g = it.next();
                     text.append((char)g.c);
