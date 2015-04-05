@@ -172,12 +172,12 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 text.append("\n");
                 text2glyphMap.add(null);
             }
-           this.text = text.toString();
+            this.text = text.toString();
         }
 
 
-    public TextArea(String name){
-        super(name);
+        public TextArea(String name){
+            super(name);
             //lines.setLine(0, "[\"Hi, are you a bridge?\"]?");
             //lines.setLine(0, "<[TEXT_SYSTEM] --> [almost_operational]>.");
         }
@@ -278,15 +278,16 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         public void keyTyped(PInputEvent event) {
             char in = event.getKeyChar();
             //event.getKeyCode()
-            String debug = "//getKeyChar:\"" + in + "\" (" + String.valueOf((int) in) +
-                    ") event: " + event + ", isActionKey: " + event.isActionKey() + "";
+            String debug = "//getKeyChar: " + String.valueOf((int) in) +
+                    ", event: " + event + ", isActionKey: " + event.isActionKey() + "";
             lines.setLine(5, debug);
             System.out.println(debug);
             if (in == '\n') {
                 lines.add(cursor.r++, new Line());
                 cursor.c = 0;
             } else if (in == 8) {
-                //
+                if (cursor.c > 0 && lines.size() > cursor.r && lines.get(cursor.r).size() >= cursor.c)
+                    lines.get(cursor.r).remove(--cursor.c);
             } else if (in != 0) {
                 lines.get(cursor.r).add(cursor.c++, new Glyph(in));
             } else return;
@@ -377,3 +378,13 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
 
 }
+/*
+    public Rule Input() {
+        return sequence(s(), zeroOrMore(sequence(firstOf(Comment(), Task()), s())), EOI);
+    }
+
+    public Rule Comment() {
+        return sequence("//", zeroOrMore(noneOf("\n")));
+    }
+
+ */
