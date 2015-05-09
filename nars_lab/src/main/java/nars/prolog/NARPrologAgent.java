@@ -128,12 +128,12 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
     }
 
     public ClauseInfo retractFact(Struct fact) {
-        return getTheoryManager().retract(fact);
+        return getTheories().retract(fact);
     }
 
     public boolean assertFact(Struct fact) {
         try {
-            boolean b = getTheoryManager().assertA(fact, true, null, true);
+            boolean b = getTheories().assertA(fact, true, null, true);
             return b;
         }
         catch (Exception e) {
@@ -145,8 +145,8 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
 
     public SolveInfo addTheory(final Struct clause) throws InvalidTheoryException {	//no syn
 
-        theoryManager.consult(clause, true, null);
-        SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
+        theories.consult(clause, true, null);
+        SolveInfo theoryGoal = theories.solveTheoryGoal();
 
         System.err.println("Prolog theory: " + clause + " (" + theoryGoal +")");
 

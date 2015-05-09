@@ -1,6 +1,7 @@
 package nars.tuprolog;
 
 import nars.tuprolog.event.*;
+import nars.tuprolog.interfaces.IProlog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Created by me on 5/9/15.
  */
-abstract public class AbstractEngineManager {
+abstract public class AbstractEngineManager implements IProlog {
 
     /*  spying activated ?  */
     private boolean spy;
@@ -85,9 +86,9 @@ abstract public class AbstractEngineManager {
     abstract public void identifyFunctor(Term term);
 
 
-    public abstract PrimitiveManager getPrimitiveManager();
+    public abstract Primitives getPrimitives();
 
-    public abstract LibraryManager getLibraryManager();
+    public abstract Libraries getLibraries();
 
 
 
@@ -107,7 +108,7 @@ abstract public class AbstractEngineManager {
      */
     public Term toTerm(String st) throws InvalidTermException {    //no syn
 
-        return Parser.parseSingleTerm(st, getOperatorManager());
+        return Parser.parseSingleTerm(st, getOperators());
     }
 
     /**
@@ -119,7 +120,7 @@ abstract public class AbstractEngineManager {
     /**
      * Gets the component managing operators
      */
-    abstract public OperatorManager getOperatorManager();
+    abstract public Operators getOperators();
 
     /**
      * Gets the list of the operators currently defined
@@ -127,7 +128,7 @@ abstract public class AbstractEngineManager {
      * @return the list of the operators
      */
     public Collection<Operator> getCurrentOperatorList() {    //no syn
-        return getOperatorManager().getOperators();
+        return getOperators().getOperators();
     }
 
     /**
@@ -138,17 +139,17 @@ abstract public class AbstractEngineManager {
      * not found
      */
     public Library getLibrary(String name) {    //no syn
-        return getLibraryManager().getLibrary(name);
+        return getLibraries().getLibrary(name);
     }
 
 
     protected Library getLibraryPredicate(String name, int nArgs) {        //no syn
-        return getPrimitiveManager().getLibraryPredicate(name, nArgs);
+        return getPrimitives().getLibraryPredicate(name, nArgs);
     }
 
 
     protected Library getLibraryFunctor(String name, int nArgs) {        //no syn
-        return getPrimitiveManager().getLibraryFunctor(name, nArgs);
+        return getPrimitives().getLibraryFunctor(name, nArgs);
     }
 
     // libraries management interface
@@ -164,7 +165,7 @@ abstract public class AbstractEngineManager {
      * @throws InvalidLibraryException if name is not a valid library
      */
     public Library loadLibrary(String className) throws InvalidLibraryException {    //no syn
-        return getLibraryManager().loadLibrary(className);
+        return getLibraries().load(className);
     }
 
     /**
@@ -179,7 +180,7 @@ abstract public class AbstractEngineManager {
      * @throws InvalidLibraryException if name is not a valid library
      */
     public Library loadLibrary(String className, String[] paths) throws InvalidLibraryException {    //no syn
-        return getLibraryManager().loadLibrary(className, paths);
+        return getLibraries().load(className, paths);
     }
 
 
@@ -193,7 +194,7 @@ abstract public class AbstractEngineManager {
      * @throws InvalidLibraryException if name is not a valid library
      */
     public void loadLibrary(Library lib) throws InvalidLibraryException {    //no syn
-        getLibraryManager().loadLibrary(lib);
+        getLibraries().load(lib);
     }
 
 
@@ -203,7 +204,7 @@ abstract public class AbstractEngineManager {
      * @return the list of the library names
      */
     public String[] getCurrentLibraries() {        //no syn
-        return getLibraryManager().getCurrentLibraries();
+        return getLibraries().getLibraries();
     }
 
 
@@ -214,7 +215,7 @@ abstract public class AbstractEngineManager {
      * @throws InvalidLibraryException if name is not a valid loaded library
      */
     public void unloadLibrary(String name) throws InvalidLibraryException {        //no syn
-        getLibraryManager().unloadLibrary(name);
+        getLibraries().unloadLibrary(name);
     }
 
 
@@ -272,7 +273,7 @@ abstract public class AbstractEngineManager {
         this.lastPath = s;
     }
 
-    abstract public TheoryManager getTheoryManager();
+    abstract public Theories getTheories();
 
 
     /**
@@ -283,7 +284,7 @@ abstract public class AbstractEngineManager {
      * @see Theory
      */
     public void setTheory(Theory th) throws InvalidTheoryException {    //no syn
-        getTheoryManager().clear();
+        getTheories().clear();
         addTheory(th);
     }
 
@@ -302,8 +303,8 @@ abstract public class AbstractEngineManager {
 
     public SolveInfo addTheory(final Iterator<? extends Term> i) throws InvalidTheoryException {    //no syn
         Theory oldTh = getDynamicTheoryCopy();
-        getTheoryManager().consult(i, true, null);
-        SolveInfo theoryGoal = getTheoryManager().solveTheoryGoal();
+        getTheories().consult(i, true, null);
+        SolveInfo theoryGoal = getTheories().solveTheoryGoal();
         Theory newTh = getDynamicTheoryCopy();
         TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);
         this.notifyChangedTheory(ev);
@@ -312,8 +313,8 @@ abstract public class AbstractEngineManager {
 
     public SolveInfo addTheory(final Struct s) throws InvalidTheoryException {    //no syn
         Theory oldTh = getDynamicTheoryCopy();
-        getTheoryManager().consult(s, true, null);
-        SolveInfo theoryGoal = getTheoryManager().solveTheoryGoal();
+        getTheories().consult(s, true, null);
+        SolveInfo theoryGoal = getTheories().solveTheoryGoal();
         Theory newTh = getDynamicTheoryCopy();
         TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);
         this.notifyChangedTheory(ev);
@@ -327,7 +328,7 @@ abstract public class AbstractEngineManager {
      */
     public Theory getDynamicTheoryCopy() {    //no syn
         try {
-            return new Theory(getTheoryManager().getTheory(true));
+            return new Theory(getTheories().getTheory(true));
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex);
@@ -803,7 +804,7 @@ abstract public class AbstractEngineManager {
 
     public Term termSolve(String st) {
         try {
-            Parser p = new Parser(getOperatorManager(), st);
+            Parser p = new Parser(getOperators(), st);
             Term t = p.nextTerm(true);
             return t;
         } catch (InvalidTermException e) {
@@ -843,5 +844,11 @@ abstract public class AbstractEngineManager {
 
     public abstract void setSetOfSolution(String s);
 
+
+    public abstract void cut();
+
+    public abstract void pushSubGoal(SubGoalTree abstractSubGoalTrees);
+
+    public abstract void identify(Term goal);
 
 }

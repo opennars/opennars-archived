@@ -43,23 +43,23 @@ import java.util.*;
  * @see Theory
  */
 @SuppressWarnings("serial")
-public class TheoryManager implements Serializable {
+public class Theories implements Serializable {
 
-    private ClauseDatabase dynamicDBase;
-    private ClauseDatabase staticDBase;
-    private ClauseDatabase retractDBase;
-    private Prolog engine;
-    private PrimitiveManager primitiveManager;
-    private Deque<Term> startGoalStack;
+    private final ClauseDatabase dynamicDBase;
+    private final ClauseDatabase staticDBase;
+    private final ClauseDatabase retractDBase;
+    private final AbstractEngineManager engine;
+    private final Primitives primitives;
+    private final Deque<Term> startGoalStack = new ArrayDeque();
     //Theory lastConsultedTheory;
 
-    public void initialize(Prolog vm) {
+    public Theories(AbstractEngineManager vm) {
+        engine = vm;
         dynamicDBase = new ClauseDatabase();
         staticDBase = new ClauseDatabase();
         retractDBase = new ClauseDatabase();
 //		lastConsultedTheory = new Theory();
-        engine = vm;
-        primitiveManager = engine.getPrimitiveManager();
+        primitives = vm.getPrimitives();
     }
 
     /**
@@ -213,7 +213,7 @@ public class TheoryManager implements Serializable {
     }
 
     public void consult(final Struct theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-        startGoalStack = new ArrayDeque<>();
+        startGoalStack.clear();
         try {
             if (!runDirective(theory))
                 assertZ(theory, dynamicTheory, libName, true);
@@ -223,7 +223,7 @@ public class TheoryManager implements Serializable {
     }
 
     public void consult(final Iterator<? extends Term> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-        startGoalStack = new ArrayDeque<>();
+        startGoalStack.clear();
         int clause = 1;
             /**/
         // iterate and assert all clauses in theory
@@ -247,7 +247,7 @@ public class TheoryManager implements Serializable {
         for (ClauseInfo d : dynamicDBase) {
             for (AbstractSubGoalTree sge : d.getBody()) {
                 Term t = ((SubGoalElement) sge).getValue();
-                primitiveManager.identifyPredicate(t);
+                primitives.identifyPredicate(t);
             }
         }
     }
@@ -256,7 +256,7 @@ public class TheoryManager implements Serializable {
      * Clears the clause dbase.
      */
     public synchronized void clear() {
-        dynamicDBase = new ClauseDatabase();
+        dynamicDBase.clear();
     }
 
     /**
@@ -293,7 +293,7 @@ public class TheoryManager implements Serializable {
                 //"':-'".equals(c.getName()) || ":-".equals(c.getName())) {
 
                 try {
-                    if (!primitiveManager.evalAsDirective(dir))
+                    if (!primitives.evalAsDirective(dir))
                         engine.warn("The directive " + dir.getPredicateIndicator() + " is unknown.");
                 } catch (Throwable th) {
                     engine.warn("An exception has been thrown during the execution of the " +
@@ -311,10 +311,10 @@ public class TheoryManager implements Serializable {
      */
     private Struct toClause(Struct t) {        //PRIMITIVE
         // TODO bad, slow way of cloning. requires approx twice the time necessary
-        t = (Struct) Term.createTerm(t.toString(), this.engine.getOperatorManager());
+        t = (Struct) Term.createTerm(t.toString(), this.engine.getOperators());
         if (!t.isClause())
             t = new Struct(":-", t, Struct.TRUE /* new Struct("true") */);
-        primitiveManager.identifyPredicate(t);
+        primitives.identifyPredicate(t);
         return t;
     }
 
@@ -365,12 +365,12 @@ public class TheoryManager implements Serializable {
         StringBuilder buffer = new StringBuilder();
         for (Iterator<ClauseInfo> dynamicClauses = dynamicDBase.iterator(); dynamicClauses.hasNext(); ) {
             ClauseInfo d = dynamicClauses.next();
-            buffer.append(d.toString(engine.getOperatorManager())).append('\n');
+            buffer.append(d.toString(engine.getOperators())).append('\n');
         }
         if (!onlyDynamic)
             for (Iterator<ClauseInfo> staticClauses = staticDBase.iterator(); staticClauses.hasNext(); ) {
                 ClauseInfo d = staticClauses.next();
-                buffer.append(d.toString(engine.getOperatorManager())).append('\n');
+                buffer.append(d.toString(engine.getOperators())).append('\n');
             }
         return buffer.toString();
     }
@@ -384,7 +384,7 @@ public class TheoryManager implements Serializable {
 //	}
 
     public void clearRetractDB() {
-        this.retractDBase = new ClauseDatabase();
+        this.retractDBase.clear();
     }
 
 

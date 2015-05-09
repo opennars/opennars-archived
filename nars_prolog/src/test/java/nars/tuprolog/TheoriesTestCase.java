@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import java.util.List;
 
-public class TheoryManagerTestCase extends TestCase {
+public class TheoriesTestCase extends TestCase {
 
 	public void testUnknownDirective() throws InvalidTheoryException, InvalidLibraryException {
 		String theory = ":- unidentified_directive(unknown_argument).";
@@ -37,7 +37,7 @@ public class TheoryManagerTestCase extends TestCase {
 		Prolog engine = new Prolog();
 		String theory = "test(A, B) :- A is 1+2, B is 2+3.";
 		engine.setTheory(new Theory(theory));
-		TheoryManager manager = engine.getTheoryManager();
+		Theories manager = engine.getTheories();
 		Struct testTerm = new Struct("test", new Struct("a"), new Struct("b"));
 		List<ClauseInfo> testClauses = manager.find(testTerm);
 		assertEquals(1, testClauses.size());

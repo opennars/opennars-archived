@@ -1,6 +1,6 @@
 package nars.tuprolog.interfaces;
 
-public interface IPrimitiveManager {
+public interface IPrimitives {
 	
 	boolean containsTerm(String name, int nArgs);
 

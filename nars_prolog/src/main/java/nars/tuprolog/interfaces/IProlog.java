@@ -13,12 +13,12 @@ public interface IProlog {
 	/**
 	 * Gets the component managing operators
 	 */
-	IOperatorManager getOperatorManager();
+	IOperators getOperators();
 		
 	/**
 	 * Gets the component managing primitives
 	 */
-	IPrimitiveManager getPrimitiveManager();
+	IPrimitives getPrimitives();
 	
 	/**
 	 * Gets current theory

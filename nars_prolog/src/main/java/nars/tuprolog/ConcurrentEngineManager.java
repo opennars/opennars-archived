@@ -39,8 +39,7 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
         if (goal instanceof Var)
             goal = goal.getTerm();
 
-        EngineRunner er = new EngineRunner(id);
-        er.initialize(this);
+        EngineRunner er = new EngineRunner(id, this);
 
         if (!unify(threadID, new Int(id))) return false;
 
@@ -180,15 +179,15 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
 
     }
 
-    private void addRunner(EngineRunner er, int id) {
+    protected void addRunner(EngineRunner er, int id) {
         runners.put(id, er);
     }
 
-    private void addThread(long pid, int id) {
+    protected void addThread(long pid, int id) {
         threads.put((int) pid, id);
     }
 
-    void cut() {
+    public void cut() {
         findRunner().cut();
     }
 
@@ -207,7 +206,7 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
         return runner.isHalted();
     }
 
-    void pushSubGoal(SubGoalTree goals) {
+    public void pushSubGoal(SubGoalTree goals) {
         EngineRunner runner = findRunner();
         runner.pushSubGoal(goals);
 
@@ -339,16 +338,18 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
     }
 
     public boolean mutexLock(String name) {
-        ReentrantLock mutex = locks.get(name);
-        if (mutex == null) {
-            createLock(name);
-            return mutexLock(name);
-        }
-        mutex.lock();
-		/*toSPY
+        while (true) {
+            ReentrantLock mutex = locks.get(name);
+            if (mutex == null) {
+                createLock(name);
+                continue;
+            }
+            mutex.lock();
+        /*toSPY
 		 * System.out.println("Thread id "+runnerId()+ " - mi sono impossessato del lock");
 		 */
-        return true;
+            return true;
+        }
     }
 
 

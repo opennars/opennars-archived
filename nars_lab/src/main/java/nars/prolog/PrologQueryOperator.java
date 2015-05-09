@@ -244,7 +244,7 @@ public class PrologQueryOperator extends Operator {
         SolveInfo solution;
         
         // parse, fill in known variables
-        nars.tuprolog.Parser parser = new nars.tuprolog.Parser(prolog.getOperatorManager(), goal);
+        nars.tuprolog.Parser parser = new nars.tuprolog.Parser(prolog.getOperators(), goal);
         
         nars.tuprolog.Term queryTerm = parser.nextTerm(true);
         

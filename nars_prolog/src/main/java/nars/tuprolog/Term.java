@@ -286,7 +286,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * @return the term represented by the string
      * @throws InvalidTermException if the string does not represent a valid term
      */
-    public static Term createTerm(String st, OperatorManager op) {
+    public static Term createTerm(String st, Operators op) {
         return Parser.parseSingleTerm(st, op);
     }
     
@@ -306,7 +306,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * Gets the string representation of this term
      * as an X argument of an operate, considering the associative property.
      */
-    String toStringAsArgX(OperatorManager op,int prio) {
+    String toStringAsArgX(Operators op,int prio) {
         return toStringAsArg(op,prio,true);
     }
     
@@ -314,7 +314,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * Gets the string representation of this term
      * as an Y argument of an operate, considering the associative property.
      */
-    String toStringAsArgY(OperatorManager op,int prio) {
+    String toStringAsArgY(Operators op,int prio) {
         return toStringAsArg(op,prio,false);
     }
     
@@ -325,7 +325,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      *  If the boolean argument is true, then the term must be considered
      *  as X arg, otherwise as Y arg (referring to prolog associative rules)
      */
-    String toStringAsArg(OperatorManager op,int prio,boolean x) {
+    String toStringAsArg(Operators op,int prio,boolean x) {
         return toString();
     }
     

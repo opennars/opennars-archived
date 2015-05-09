@@ -842,7 +842,7 @@ public class Struct extends Term {
         }
     }
     
-    private String toStringAsList(OperatorManager op) {
+    private String toStringAsList(Operators op) {
         Term h = arg[0];
         Term t = arg[1].getTerm();
         if (t.isList()) {
@@ -856,7 +856,7 @@ public class Struct extends Term {
         }
     }
     
-    String toStringAsArg(OperatorManager op,int prio,boolean x) {
+    String toStringAsArg(Operators op,int prio,boolean x) {
         int      p = 0;
         String   v = "";
         
@@ -871,7 +871,7 @@ public class Struct extends Term {
         }
         
         if (arity == 2) {
-            if ((p = op.opPrio(name,"xfx")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"xfx")) >= Operators.OP_LOW) {
                 return(
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                         arg[0].toStringAsArgX(op,p) +
@@ -879,7 +879,7 @@ public class Struct extends Term {
                         arg[1].toStringAsArgX(op,p) +
                         (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name,"yfx")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"yfx")) >= Operators.OP_LOW) {
                 return(
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                         arg[0].toStringAsArgY(op,p) +
@@ -887,7 +887,7 @@ public class Struct extends Term {
                         arg[1].toStringAsArgX(op,p) +
                         (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name,"xfy")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"xfy")) >= Operators.OP_LOW) {
                 if (!name.equals(",")) {
                     return(
                             (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
@@ -907,28 +907,28 @@ public class Struct extends Term {
             }
         }
         else if (arity == 1) {
-            if ((p = op.opPrio(name,"fx")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"fx")) >= Operators.OP_LOW) {
                 return(
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                         name + ' ' +
                         arg[0].toStringAsArgX(op,p) +
                         (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name,"fy")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"fy")) >= Operators.OP_LOW) {
                 return(
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                         name + ' ' +
                         arg[0].toStringAsArgY(op,p) +
                         (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name,"xf")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"xf")) >= Operators.OP_LOW) {
                 return(
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                         arg[0].toStringAsArgX(op,p) +
                                 ' ' + name + ' ' +
                         (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name,"yf")) >= OperatorManager.OP_LOW) {
+            if ((p = op.opPrio(name,"yf")) >= Operators.OP_LOW) {
                 return(
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                         arg[0].toStringAsArgY(op,p) +

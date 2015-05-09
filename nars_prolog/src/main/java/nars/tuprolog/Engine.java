@@ -49,7 +49,7 @@ public class Engine /*Castagna 06/2011*/ implements IEngine/**/ {
         this.nextState = manager.INIT;
         this.query = query;
         this.mustStop = false;
-        this.manager.getTheoryManager().clearRetractDB();
+        this.manager.getTheories().clearRetractDB();
     }
 
     public String toString() {

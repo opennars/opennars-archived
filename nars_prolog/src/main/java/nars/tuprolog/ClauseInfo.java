@@ -104,9 +104,9 @@ public class ClauseInfo {
      * recognizing operators stored by
      * the operate manager
      */
-    public String toString(OperatorManager op) {
+    public String toString(Operators op) {
         int p;
-        if ((p = op.opPrio(":-","xfx")) >= OperatorManager.OP_LOW) {
+        if ((p = op.opPrio(":-","xfx")) >= Operators.OP_LOW) {
             String st=indentPredicatesAsArgX(clause.getTerms(1),op,p);
             String head = clause.getTerms(0).toStringAsArgX(op,p);
             if (st.equals("true")) {
@@ -116,7 +116,7 @@ public class ClauseInfo {
             }
         }
         
-        if ((p = op.opPrio(":-","yfx")) >= OperatorManager.OP_LOW) {
+        if ((p = op.opPrio(":-","yfx")) >= Operators.OP_LOW) {
             String st=indentPredicatesAsArgX(clause.getTerms(1),op,p);
             String head = clause.getTerms(0).toStringAsArgY(op,p);
             if (st.equals("true")) {
@@ -126,7 +126,7 @@ public class ClauseInfo {
             }
         }
         
-        if ((p = op.opPrio(":-","xfy")) >= OperatorManager.OP_LOW) {
+        if ((p = op.opPrio(":-","xfy")) >= Operators.OP_LOW) {
             String st=indentPredicatesAsArgY(clause.getTerms(1),op,p);
             String head = clause.getTerms(0).toStringAsArgX(op,p);
             if (st.equals("true")) {
@@ -258,7 +258,7 @@ public class ClauseInfo {
         }
     }*/
     
-    static private String indentPredicatesAsArgX(Term t,OperatorManager op,int p) {
+    static private String indentPredicatesAsArgX(Term t,Operators op,int p) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")) {
@@ -279,7 +279,7 @@ public class ClauseInfo {
        }
     }
 
-    static private String indentPredicatesAsArgY(Term t,OperatorManager op,int p) {
+    static private String indentPredicatesAsArgY(Term t,Operators op,int p) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")) {

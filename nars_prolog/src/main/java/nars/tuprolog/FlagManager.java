@@ -27,23 +27,18 @@ import java.util.ArrayList;
 class FlagManager {
 
     /* flag list */
-    private ArrayList<Flag> flags;
+    private final ArrayList<Flag> flags;
 
     /**
 	 * mediator owner of the manager
 	 */
-    protected Prolog mediator;
+    protected final AbstractEngineManager mediator;
 
-    FlagManager() {
+    FlagManager(AbstractEngineManager vm) {
+        mediator = vm;
         flags = new ArrayList<>();
     }
 
-    /**
-     * Config this Manager
-     */
-    public void initialize(Prolog vm) {
-        mediator = vm;
-    }
 
     /**
      * Defines a new flag

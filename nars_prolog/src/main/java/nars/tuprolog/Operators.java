@@ -18,7 +18,7 @@
 package nars.tuprolog;
 
 import com.google.common.collect.HashBasedTable;
-import nars.tuprolog.interfaces.IOperatorManager;
+import nars.tuprolog.interfaces.IOperators;
 
 import java.io.Serializable;
 import java.util.*;
@@ -29,12 +29,12 @@ import java.util.*;
  * @see Operator
  */
 @SuppressWarnings("serial")
-/*Castagna 06/2911*/public/**/ class OperatorManager implements /*Castagna 06/2011*/IOperatorManager,/**/Serializable {
+/*Castagna 06/2911*/public/**/ class Operators implements /*Castagna 06/2011*/IOperators,/**/Serializable {
     
     /**
 	 * current known operators
 	 */
-    private OperatorRegister operatorList = new OperatorRegister();
+    private final OperatorRegister operatorList = new OperatorRegister();
     
     /** lowest operate priority */
     public static final int OP_LOW = 1;
@@ -87,11 +87,11 @@ import java.util.*;
      * 16/05/2011		 
      * Clone operation added		 
      */		 
-    public IOperatorManager clone() {		 
-    	OperatorManager om = new OperatorManager();		 
-    	om.operatorList = (OperatorRegister)this.operatorList.clone();		 
-    	return om;		 
-    }
+//    public IOperatorManager clone() {
+//    	Operators om = new Operators();
+//    	om.operatorList = (OperatorRegister)this.operatorList.clone();
+//    	return om;
+//    }
 /**/    
     /**
      * Register for operators

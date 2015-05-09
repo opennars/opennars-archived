@@ -12,25 +12,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 
 /**
  * @author Alex Benini
  * 
  */
-public class LibraryManager
+public class Libraries
 {
 
 	/* dynamically loaded built-in libraries */
-	private ArrayList<Library> currentLibraries;
+	private final ArrayList<Library> libraries = new ArrayList();
 
 	/*  */
-	private Prolog prolog;
-	private TheoryManager theoryManager;
-	private PrimitiveManager primitiveManager;
-	private Hashtable<String, URL> externalLibraries = new Hashtable<>();
+	private final AbstractEngineManager prolog;
+	private final Map<String, URL> externals = new HashMap();
 
 	/**
 	 * @author Alessio Mercurio
@@ -40,19 +39,13 @@ public class LibraryManager
 	 */
 	private String optimizedDirectory;
 
-	LibraryManager()
-	{
-		currentLibraries = new ArrayList<>();
-	}
 
 	/**
 	 * Config this Manager
 	 */
-	void initialize(Prolog vm)
+	public Libraries(AbstractEngineManager vm)
 	{
-		prolog = vm;
-		theoryManager = vm.getTheoryManager();
-		primitiveManager = vm.getPrimitiveManager();
+		this.prolog = vm;
 	}
 
 	/**
@@ -67,7 +60,7 @@ public class LibraryManager
 	 * @throws InvalidLibraryException
 	 *             if name is not a valid library
 	 */
-	public synchronized Library loadLibrary(String className)
+	public synchronized Library load(String className)
 			throws InvalidLibraryException
 	{
 		Library lib = null;
@@ -111,7 +104,7 @@ public class LibraryManager
 	 * @throws InvalidLibraryException
 	 *             if name is not a valid library
 	 */
-	public synchronized Library loadLibrary(String className, String[] paths)
+	public synchronized Library load(String className, String[] paths)
 			throws InvalidLibraryException
 	{
 		Library lib = null;
@@ -240,7 +233,7 @@ public class LibraryManager
 				
 				File file = new File(paths[0]);
 				URL url = (file.toURI().toURL());
-				externalLibraries.put(className, url);
+				externals.put(className, url);
 			} 
 			catch (MalformedURLException e)
 			{
@@ -249,7 +242,7 @@ public class LibraryManager
 		}
 		else
 		{
-			externalLibraries.put(className, getClassResource(lib.getClass()));
+			externals.put(className, getClassResource(lib.getClass()));
 		}
 		
 		bindLibrary(lib);
@@ -270,7 +263,7 @@ public class LibraryManager
 	 * @throws InvalidLibraryException
 	 *             if name is not a valid library
 	 */
-	public synchronized void loadLibrary(Library lib)
+	public synchronized void load(Library lib)
 			throws InvalidLibraryException
 	{
 		String name = lib.getName();
@@ -294,12 +287,12 @@ public class LibraryManager
 	 * 
 	 * @return the list of the library names
 	 */
-	public synchronized String[] getCurrentLibraries()
+	public synchronized String[] getLibraries()
 	{
-		String[] libs = new String[currentLibraries.size()];
+		String[] libs = new String[libraries.size()];
 		for (int i = 0; i < libs.length; i++)
 		{
-			libs[i] = currentLibraries.get(i).getName();
+			libs[i] = libraries.get(i).getName();
 		}
 		return libs;
 	}
@@ -316,7 +309,7 @@ public class LibraryManager
 			throws InvalidLibraryException
 	{
 		boolean found = false;
-		Iterator<Library> it = currentLibraries.listIterator();
+		Iterator<Library> it = libraries.listIterator();
 		while (it.hasNext())
 		{
 			Library lib = it.next();
@@ -325,7 +318,7 @@ public class LibraryManager
 				found = true;
 				it.remove();
 				lib.dismiss();
-				primitiveManager.deletePrimitiveInfo(lib);
+				getPrimitives().deletePrimitiveInfo(lib);
 				break;
 			}
 		}
@@ -333,10 +326,10 @@ public class LibraryManager
 		{
 			throw new InvalidLibraryException();
 		}
-		if (externalLibraries.containsKey(name))
-			externalLibraries.remove(name);
-		theoryManager.removeLibraryTheory(name);
-		theoryManager.rebindPrimitives();
+		if (externals.containsKey(name))
+			externals.remove(name);
+		getTheories().removeLibraryTheory(name);
+		getTheories().rebindPrimitives();
 		LibraryEvent ev = new LibraryEvent(prolog, name);
 		prolog.notifyUnloadedLibrary(ev);
 	}
@@ -356,19 +349,19 @@ public class LibraryManager
 		{
 			String name = lib.getName();
 			lib.setEngine(prolog);
-			currentLibraries.add(lib);
+			libraries.add(lib);
 			// set primitives
-			primitiveManager.createPrimitiveInfo(lib);
+			getPrimitives().createPrimitiveInfo(lib);
 			// set theory
 			String th = lib.getTheory();
 			if (th != null)
 			{
-				theoryManager.consult(new Theory(th), false, name);
-				theoryManager.solveTheoryGoal();
+				getTheories().consult(new Theory(th), false, name);
+				getTheories().solveTheoryGoal();
 			}
 			// in current theory there could be predicates and functors
 			// which become builtins after lib loading
-			theoryManager.rebindPrimitives();
+			getTheories().rebindPrimitives();
 			//
 			return lib;
 		} catch (InvalidTheoryException ex)
@@ -394,7 +387,7 @@ public class LibraryManager
 	 */
 	public synchronized Library getLibrary(String name)
 	{
-		for (Library alib : currentLibraries)
+		for (Library alib : libraries)
 		{
 			if (alib.getName().equals(name))
 			{
@@ -406,7 +399,7 @@ public class LibraryManager
 
 	public synchronized void onSolveBegin(Term g)
 	{
-		for (Library alib : currentLibraries)
+		for (Library alib : libraries)
 		{
 			alib.onSolveBegin(g);
 		}
@@ -414,7 +407,7 @@ public class LibraryManager
 
 	public synchronized void onSolveHalt()
 	{
-		for (Library alib : currentLibraries)
+		for (Library alib : libraries)
 		{
 			alib.onSolveHalt();
 		}
@@ -422,7 +415,7 @@ public class LibraryManager
 
 	public synchronized void onSolveEnd()
 	{
-		for (Library alib : currentLibraries)
+		for (Library alib : libraries)
 		{
 			alib.onSolveEnd();
 		}
@@ -430,12 +423,12 @@ public class LibraryManager
 
 	public synchronized URL getExternalLibraryURL(String name)
 	{
-		return isExternalLibrary(name) ? externalLibraries.get(name) : null;
+		return isExternalLibrary(name) ? externals.get(name) : null;
 	}
 
 	public synchronized boolean isExternalLibrary(String name)
 	{
-		return externalLibraries.containsKey(name);
+		return externals.containsKey(name);
 	}
 
 	private static URL getClassResource(Class<?> klass)
@@ -461,6 +454,17 @@ public class LibraryManager
 	public String getOptimizedDirectory()
 	{
 		return optimizedDirectory;
+	}
+
+
+
+	public Theories getTheories() {
+		return prolog.getTheories();
+	}
+
+
+	public Primitives getPrimitives() {
+		return prolog.getPrimitives();
 	}
 
 }

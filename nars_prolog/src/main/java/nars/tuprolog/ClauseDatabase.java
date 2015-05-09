@@ -32,6 +32,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterable<ClauseInfo> {
 
+
 	void addFirst(String key, ClauseInfo d) {
 		FamilyClausesList family = get(key);
 		if (family == null)
@@ -94,15 +95,17 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 			values = clauseDatabase.values().iterator();
 		}
 
-                @Override
+		@Override
 		public boolean hasNext() {
-			if (workingList != null && workingList.hasNext())
-				return true;
-			if (values.hasNext()) {
-				workingList = values.next().iterator();
-				return hasNext(); //start again on next workingList
+			while (true) {
+				if (workingList != null && workingList.hasNext())
+					return true;
+				if (values.hasNext()) {
+					workingList = values.next().iterator();
+					continue;
+				}
+				return false;
 			}
-			return false;
 		}
 
                 @Override

@@ -19,9 +19,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EngineRunner implements java.io.Serializable, Runnable {
 
 
-    private TheoryManager theoryManager;
-    private PrimitiveManager primitiveManager;
-    private LibraryManager libraryManager;
+    private Theories theories;
+    private Primitives primitives;
+    private Libraries libraries;
     private AbstractEngineManager  engineManager;
 
 
@@ -74,7 +74,7 @@ public class EngineRunner implements java.io.Serializable, Runnable {
     public static final int TRUE_CP = 2;
 
 
-    public EngineRunner(int id) {
+    public EngineRunner(int id, AbstractEngineManager vm) {
         /* Istanzio gli stati */
         INIT = new StateInit(this);
         GOAL_EVALUATION = new StateGoalEvaluation(this);
@@ -88,16 +88,10 @@ public class EngineRunner implements java.io.Serializable, Runnable {
         END_HALT = new StateEnd(this, HALT);
 
         this.id = id;
-    }
 
-
-    /**
-     * Config this Manager
-     */
-    void initialize(AbstractEngineManager vm) {
-        theoryManager = vm.getTheoryManager();
-        primitiveManager = vm.getPrimitiveManager();
-        libraryManager = vm.getLibraryManager();
+        theories = vm.getTheories();
+        primitives = vm.getPrimitives();
+        libraries = vm.getLibraries();
         engineManager = vm;
 
         detached = false;
@@ -109,7 +103,10 @@ public class EngineRunner implements java.io.Serializable, Runnable {
         lockVar = new ReentrantLock();
         cond = lockVar.newCondition();
         semaphore = new Object();
+
     }
+
+
 
     void spy(String action, Engine env) {
         engineManager.spy(action, env);
@@ -174,8 +171,8 @@ public class EngineRunner implements java.io.Serializable, Runnable {
         try {
             query.resolveTerm();
 
-            libraryManager.onSolveBegin(query);
-            primitiveManager.identifyPredicate(query);
+            libraries.onSolveBegin(query);
+            primitives.identifyPredicate(query);
 //            theoryManager.transBegin();
 
             freeze();
@@ -271,7 +268,7 @@ public class EngineRunner implements java.io.Serializable, Runnable {
      */
     public void solveHalt() {
         env.mustStop();
-        libraryManager.onSolveHalt();
+        libraries.onSolveHalt();
     }
 
     /**
@@ -281,7 +278,7 @@ public class EngineRunner implements java.io.Serializable, Runnable {
 
 //        theoryManager.transEnd(sinfo.isSuccess());
 //        theoryManager.optimize();
-        libraryManager.onSolveEnd();
+        libraries.onSolveEnd();
     }
 
 
@@ -310,11 +307,11 @@ public class EngineRunner implements java.io.Serializable, Runnable {
      */
 
     List<ClauseInfo> find(Term t) {
-        return theoryManager.find(t);
+        return theories.find(t);
     }
 
     void identify(Term t) {
-        primitiveManager.identifyPredicate(t);
+        primitives.identifyPredicate(t);
     }
 
 //    void saveLastTheoryStatus() {
@@ -455,8 +452,8 @@ public class EngineRunner implements java.io.Serializable, Runnable {
         return msgs.size();
     }
 
-    TheoryManager getTheoryManager() {
-        return theoryManager;
+    Theories getTheories() {
+        return theories;
     }
 
     public boolean getRelinkVar() {

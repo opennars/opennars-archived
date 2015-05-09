@@ -35,23 +35,24 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class BuiltIn extends Library {
 
-	private final ConcurrentEngineManager engineManager;
-	private final TheoryManager theoryManager;
-	private final LibraryManager libraryManager;
+	private final AbstractEngineManager engineManager;
+	private final Theories theories;
+	private final Libraries libraries;
 	private final FlagManager flagManager;
-	private final PrimitiveManager primitiveManager;
-	private final OperatorManager operatorManager;
+	private final Primitives primitives;
+	private final Operators operatorManager;
 
-	public BuiltIn(Prolog mediator) {
+	public BuiltIn(AbstractEngineManager mediator) {
 		super();
 		setEngine(mediator);
 		engineManager = mediator;
-		theoryManager = mediator.getTheoryManager();
-		libraryManager = mediator.getLibraryManager();
+		theories = mediator.getTheories();
+		libraries = mediator.getLibraries();
 		flagManager = mediator.getFlagManager();
-		primitiveManager = mediator.getPrimitiveManager();
-		operatorManager = mediator.getOperatorManager();
+		primitives = mediator.getPrimitives();
+		operatorManager = mediator.getOperators();
 	}
+
 
 	/**
 	 * Defines some synonyms
@@ -114,7 +115,7 @@ public class BuiltIn extends Library {
 					 }
 				 }
 			 }
-			 theoryManager.assertA((Struct) arg0, true, null, false);
+			 theories.assertA((Struct) arg0, true, null, false);
 			 return true;
 		 }
 		 if (arg0 instanceof Var)
@@ -140,7 +141,7 @@ public class BuiltIn extends Library {
 					 }
 				 }
 			 }
-			 theoryManager.assertZ((Struct) arg0, true, null, false);
+			 theories.assertZ((Struct) arg0, true, null, false);
 			 return true;
 		 }
 		 if (arg0 instanceof Var)
@@ -158,7 +159,7 @@ public class BuiltIn extends Library {
 				 throw PrologError.type_error(engineManager, 1, "clause", arg0);
 		 }
 		 Struct sarg0 = (Struct) arg0;
-		 ClauseInfo c = theoryManager.retract(sarg0);
+		 ClauseInfo c = theories.retract(sarg0);
 		 // if clause to retract found -> retract + true
 		 if (c != null) {
 			 Struct clause = null;
@@ -183,7 +184,7 @@ public class BuiltIn extends Library {
 		 if( ((Struct)arg0).getTerms(0).toString().equals("abolish") )
 			 throw PrologError.permission_error(engineManager, "modify", "static_procedure", arg0, new Struct(""));
 		 
-		 return theoryManager.abolish((Struct) arg0);
+		 return theories.abolish((Struct) arg0);
 	 }
 
 	 /*Castagna 06/2011*/	
@@ -222,7 +223,7 @@ public class BuiltIn extends Library {
 				 throw PrologError.type_error(engineManager, 1, "atom", arg0);
 		 }
 		 try {
-			 libraryManager.loadLibrary(((Struct) arg0).getName());
+			 libraries.load(((Struct) arg0).getName());
 			 return true;
 		 } catch (Exception ex) {
 			 throw PrologError.existence_error(engineManager, 1, "class", arg0,
@@ -251,7 +252,7 @@ public class BuiltIn extends Library {
 			 String[] paths = getStringArrayFromStruct((Struct) arg1);
 			 if(paths == null || paths.length == 0)
 				 throw PrologError.existence_error(engineManager, 2, "paths", arg1, new Struct("Invalid paths' list."));
-			 libraryManager.loadLibrary(((Struct) arg0).getName(), paths);
+			 libraries.load(((Struct) arg0).getName(), paths);
 			 return true;
 			
 		 } catch (Exception ex) {
@@ -282,7 +283,7 @@ public class BuiltIn extends Library {
 				 throw PrologError.type_error(engineManager, 1, "atom", arg0);
 		 }
 		 try {
-			 libraryManager.unloadLibrary(((Struct) arg0).getName());
+			 libraries.unloadLibrary(((Struct) arg0).getName());
 			 return true;
 		 } catch (Exception ex) {
 			 throw PrologError.existence_error(engineManager, 1, "class", arg0,
@@ -474,7 +475,7 @@ public class BuiltIn extends Library {
 			 throw PrologError.type_error(engineManager, 2, "list", arg1);
 		 List<ClauseInfo> l = null;
 		 try {
-			 l = theoryManager.find(arg0);
+			 l = theories.find(arg0);
 		 } catch (RuntimeException e) {
 
 		 }
@@ -551,7 +552,7 @@ public class BuiltIn extends Library {
 			 throw PrologError.type_error(engineManager, 3, "atom_or_atom_list",
 					 arg2);
 		 int priority = ((Int) arg0).intValue();
-		 if (priority < OperatorManager.OP_LOW || priority > OperatorManager.OP_HIGH)
+		 if (priority < Operators.OP_LOW || priority > Operators.OP_HIGH)
 			 throw PrologError.domain_error(engineManager, 1, "operator_priority", arg0);
 		 String specifier = ((Struct) arg1).getName();
 		 if (!specifier.equals("fx") && !specifier.equals("fy")
@@ -599,15 +600,15 @@ public class BuiltIn extends Library {
 	 public void initialization_1(Term goal) {
 		 goal = goal.getTerm();
 		 if (goal instanceof Struct) {
-			 primitiveManager.identifyPredicate(goal);
-			 theoryManager.addStartGoal((Struct) goal);
+			 primitives.identifyPredicate(goal);
+			 theories.addStartGoal((Struct) goal);
 		 }
 	 }
 
 	 public void $load_library_1(Term lib) throws InvalidLibraryException {
 		 lib = lib.getTerm();
 		 if (lib.isAtom())
-			 libraryManager.loadLibrary(((Struct) lib).getName());
+			 libraries.load(((Struct) lib).getName());
 	 }
 
 	 public void include_1(Term theory) throws

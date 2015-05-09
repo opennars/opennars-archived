@@ -132,12 +132,12 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     public ClauseInfo retractFact(Struct fact) {
-        return prolog.prolog.getTheoryManager().retract(fact);
+        return prolog.prolog.getTheories().retract(fact);
     }
 
     public boolean assertFact(Struct fact) {
         try {
-            boolean b = prolog.prolog.getTheoryManager().assertA(fact, true, null, true);
+            boolean b = prolog.prolog.getTheories().assertA(fact, true, null, true);
             return b;
         }
         catch (Exception e) {

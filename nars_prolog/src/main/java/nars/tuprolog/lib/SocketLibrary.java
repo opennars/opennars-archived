@@ -666,9 +666,9 @@ private class ThreadReader extends Thread {
 				if(this.isInterrupted())return;					
 				Struct s = (Struct) Term.createTerm(msg.getTerm().toString());
 				if (assertA)
-					mainEngine.getTheoryManager().assertA(s, true, "", false);
+					mainEngine.getTheories().assertA(s, true, "", false);
 				else
-					mainEngine.getTheoryManager().assertZ(s, true, "", false);
+					mainEngine.getTheories().assertZ(s, true, "", false);
 				assertA = true; // By default use assertA!
 				started = false;
 			} catch (IOException e) {

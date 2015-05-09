@@ -16,7 +16,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				StructTestCase.class, 
 				TermIteratorTestCase.class,
 				TheoryTestCase.class, 
-				TheoryManagerTestCase.class, 
+				TheoriesTestCase.class,
 				LibraryTestCase.class,                                 
 				ParserTestCase.class,
 				SpyEventTestCase.class, 

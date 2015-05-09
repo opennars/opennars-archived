@@ -1,5 +1,5 @@
 package nars.tuprolog.interfaces;
-public interface IOperatorManager {
+public interface IOperators {
 	
 	/**
 	 * Creates a new operate. If the operate is already provided,
@@ -7,9 +7,6 @@ public interface IOperatorManager {
 	 */
 	void opNew(String name, String type, int prio);
 	
-	/**
-	 * @return a copy of the current istance
-	 */
-	IOperatorManager clone();
+
 	
 }

@@ -20,7 +20,7 @@ public class JavaCollectionStoreFactory //implements ClauseStoreFactory
 			{
 				try
 				{
-					JavaLibrary jl = (JavaLibrary)prolog.getLibraryManager().getLibrary("alice.tuprolog.lib.JavaLibrary");
+					JavaLibrary jl = (JavaLibrary)prolog.getLibraries().getLibrary("alice.tuprolog.lib.JavaLibrary");
 					Term collectionTerm = s.getTerms(0).getTerm();
 					Object obj = jl.getRegisteredDynamicObject((Struct)collectionTerm);
 					if (obj instanceof java.util.Collection)

@@ -619,36 +619,40 @@ public class StateEnd extends State {
     }
 
     public Var structValue(Var v, int i) {
-        Struct s = new Struct();
-        Var vStruct = new Var();
-        while (v.getLink() != null) {
-            //System.out.println("*** cerco il valore v "+v+" tlink "+v.getLink());
-            if (v.getLink() instanceof Var) {
-                //System.out.println("*** il tlink � var");
-                v = (Var) v.getLink();
-            } else if (v.getLink() instanceof Struct) {
-                s = ((Struct) v.getLink());
-                //devo prendere l'i_esimo elemento della lista quindi scorro
-                //System.out.println("*** devo prendere l'i_esimo elemento della lista quindi scorro");
-                while (i > 0) {
-                    if (s.getTerms(1) instanceof Struct) {
-                        s = (Struct) s.getTerms(1);
-                    } else if (s.getTerms(1) instanceof Var) {
-                        vStruct = ((Var) s.getTerms(1));
-                        if (vStruct.getLink() != null) {
-                            i--;
-                            return structValue(vStruct, i);
+        structValue:
+        while (true) {
+            Struct s = new Struct();
+            Var vStruct = new Var();
+            while (v.getLink() != null) {
+                //System.out.println("*** cerco il valore v "+v+" tlink "+v.getLink());
+                if (v.getLink() instanceof Var) {
+                    //System.out.println("*** il tlink � var");
+                    v = (Var) v.getLink();
+                } else if (v.getLink() instanceof Struct) {
+                    s = ((Struct) v.getLink());
+                    //devo prendere l'i_esimo elemento della lista quindi scorro
+                    //System.out.println("*** devo prendere l'i_esimo elemento della lista quindi scorro");
+                    while (i > 0) {
+                        if (s.getTerms(1) instanceof Struct) {
+                            s = (Struct) s.getTerms(1);
+                        } else if (s.getTerms(1) instanceof Var) {
+                            vStruct = ((Var) s.getTerms(1));
+                            if (vStruct.getLink() != null) {
+                                i--;
+                                v = vStruct;
+                                continue structValue;
+                            }
+                            return vStruct;
                         }
-                        return vStruct;
+                        i--;
                     }
-                    i--;
-                }
-                vStruct = ((Var) s.getTerms(0));
-                break;
-            } else break;
+                    vStruct = ((Var) s.getTerms(0));
+                    break;
+                } else break;
+            }
+            //System.out.println("+++ ritorno "+vStruct);
+            return vStruct;
         }
-        //System.out.println("+++ ritorno "+vStruct);
-        return vStruct;
     }
 
     public void setStructValue(Var v, int i, Var v1) {

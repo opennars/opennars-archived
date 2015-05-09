@@ -17,8 +17,6 @@
  */
 package nars.tuprolog;
 
-import com.gs.collections.impl.map.mutable.primitive.IntIntHashMap;
-import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import nars.tuprolog.event.*;
 import nars.tuprolog.interfaces.IProlog;
 
@@ -34,15 +32,15 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
 
 
     /*  manager of current theory */
-    protected TheoryManager theoryManager;
+    protected Theories theories;
     /*  component managing primitive  */
-    private PrimitiveManager primitiveManager;
+    private Primitives primitives;
     /* component managing operators */
-    private OperatorManager opManager;
+    private Operators opManager;
     /* component managing flags */
     private FlagManager flagManager;
     /* component managing libraries */
-    private LibraryManager libraryManager;
+    private Libraries libraries;
 
 
 
@@ -88,19 +86,15 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
 
 
     protected void init() {
-        flagManager = new FlagManager();
-        libraryManager = new LibraryManager();
-        opManager = new OperatorManager();
-        theoryManager = new TheoryManager();
-        primitiveManager = new PrimitiveManager();
-        //config managers
-        theoryManager.initialize(this);
-        libraryManager.initialize(this);
-        flagManager.initialize(this);
-        primitiveManager.initialize(this);
+        flagManager = new FlagManager(this);
+        libraries = new Libraries(this);
+        opManager = new Operators();
+        primitives = new Primitives(this);
+        theories = new Theories(this);
 
-        er1 = new EngineRunner(rootID);
-        er1.initialize(this);
+        //config managers
+
+        er1 = new EngineRunner(rootID, this);
     }
 
 
@@ -115,29 +109,29 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
     /**
      * Gets the component managing theory
      */
-    @Override public TheoryManager getTheoryManager() {
-        return theoryManager;
+    @Override public Theories getTheories() {
+        return theories;
     }
 
     /**
      * Gets the component managing primitives
      */
-    @Override public PrimitiveManager getPrimitiveManager() {
-        return primitiveManager;
+    @Override public Primitives getPrimitives() {
+        return primitives;
     }
 
 
     /**
      * Gets the component managing libraries
      */
-    @Override public LibraryManager getLibraryManager() {
-        return libraryManager;
+    @Override public Libraries getLibraries() {
+        return libraries;
     }
 
     /**
      * Gets the component managing operators
      */
-    @Override public OperatorManager getOperatorManager() {
+    @Override public Operators getOperators() {
         return opManager;
     }
 
@@ -242,7 +236,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * @param term term to identify
      */
     @Override public void identifyFunctor(Term term) {    //no syn
-        primitiveManager.identifyFunctor(term);
+        primitives.identifyFunctor(term);
     }
 
 
@@ -255,7 +249,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * @return the string representing the term
      */
     public String toString(Term term) {        //no syn
-        return (term.toStringAsArgY(opManager, OperatorManager.OP_HIGH));
+        return (term.toStringAsArgY(opManager, Operators.OP_HIGH));
     }
 
 
