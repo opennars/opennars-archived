@@ -108,7 +108,7 @@ public class TheoryManager implements Serializable {
         Struct clause = toClause(cl);
         Struct struct = ((Struct) clause.getTerms(0));
         FamilyClausesList family = dynamicDBase.get(struct.getPredicateIndicator());
-        ExecutionContext ctx = engine.getEngineManager().getCurrentContext();
+        ExecutionContext ctx = engine.getCurrentContext();
 
 		/*creo un nuovo clause database x memorizzare la teoria all'atto della retract 
 		 * questo lo faccio solo al primo giro della stessa retract 

@@ -45,12 +45,12 @@ import java.util.Map;
  * <p>
  */
 @SuppressWarnings("serial")
-public abstract class Library implements Serializable, IPrimitives {
+public abstract class Library<E extends AbstractEngineManager> implements Serializable, IPrimitives {
     
     /**
 	 * prolog core which loaded the library
 	 */
-    protected Prolog engine;
+    protected E engine;
     
     /**
 	 * operate mapping
@@ -97,14 +97,14 @@ public abstract class Library implements Serializable, IPrimitives {
 	 * Gets the engine to which the library is bound
 	 * @return  the engine
 	 */
-    public Prolog getEngine() {
+    public E getEngine() {
         return engine;
     }
     
     /**
 	 * @param en
 	 */
-    public void setEngine(Prolog en) {	
+    public void setEngine(E en) {
         engine = en;
     }
     

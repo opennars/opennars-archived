@@ -92,13 +92,13 @@ public class Theory implements Serializable, PrologTermIterator {
         this(new Struct(t));
     }
 
-    public static Theory parse(Prolog engine, String input) throws InvalidTheoryException {
+    public static Theory parse(AbstractEngineManager engine, String input) throws InvalidTheoryException {
        Deque<Term> tc = Lists.newLinkedList(new Parser(engine.getOperatorManager(), input));
        return new Theory(new Struct(".", tc));       
     }
     
     @Override
-    public Iterator<? extends nars.tuprolog.Term> iterator(Prolog engine) {
+    public Iterator<? extends nars.tuprolog.Term> iterator(AbstractEngineManager engine) {
         if (isTextual())
             return new Parser(engine.getOperatorManager(), theory).iterator();
         else

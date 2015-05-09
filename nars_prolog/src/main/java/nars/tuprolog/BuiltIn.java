@@ -35,7 +35,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class BuiltIn extends Library {
 
-	private final EngineManager engineManager;
+	private final ConcurrentEngineManager engineManager;
 	private final TheoryManager theoryManager;
 	private final LibraryManager libraryManager;
 	private final FlagManager flagManager;
@@ -45,7 +45,7 @@ public class BuiltIn extends Library {
 	public BuiltIn(Prolog mediator) {
 		super();
 		setEngine(mediator);
-		engineManager = mediator.getEngineManager();
+		engineManager = mediator;
 		theoryManager = mediator.getTheoryManager();
 		libraryManager = mediator.getLibraryManager();
 		flagManager = mediator.getFlagManager();

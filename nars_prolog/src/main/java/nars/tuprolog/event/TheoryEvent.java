@@ -17,6 +17,7 @@
  */
 package nars.tuprolog.event;
 
+import nars.tuprolog.AbstractEngineManager;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.Theory;
 
@@ -32,7 +33,7 @@ public class TheoryEvent extends PrologEvent {
     private Theory oldTh;
     private Theory newTh;
     
-    public TheoryEvent(Prolog source, Theory oldth,Theory newth){
+    public TheoryEvent(AbstractEngineManager source, Theory oldth,Theory newth){
         super(source);
             oldTh=oldth;
             newTh=newth;

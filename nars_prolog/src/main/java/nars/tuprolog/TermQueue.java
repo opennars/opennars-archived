@@ -13,11 +13,11 @@ public class TermQueue {
 		queue=new ArrayDeque<>();
 	}
 	
-	public boolean get(Term t, EngineManager engine, EngineRunner er){
+	public boolean get(Term t, AbstractEngineManager  engine, EngineRunner er){
 		return searchLoop(t,engine,true, true, er);
 	}
 	
-	private synchronized boolean searchLoop(Term t, EngineManager engine, boolean block, boolean remove, EngineRunner er){
+	private synchronized boolean searchLoop(Term t, AbstractEngineManager  engine, boolean block, boolean remove, EngineRunner er){
 		boolean found=false;
 		do{
 			found=search(t,engine,remove);
@@ -31,7 +31,7 @@ public class TermQueue {
 	}
 	
 	
-	private synchronized boolean search(Term t, EngineManager engine, boolean remove){
+	private synchronized boolean search(Term t, AbstractEngineManager  engine, boolean remove){
 		boolean found=false;
 		Term msg=null;
 		Iterator<Term> it=queue.iterator();
@@ -53,15 +53,15 @@ public class TermQueue {
 	}
 	
 	
-	public synchronized boolean peek(Term t, EngineManager engine){
+	public synchronized boolean peek(Term t, AbstractEngineManager  engine){
 		return search(t,engine,false);
 	}
 	
-	public synchronized boolean remove (Term t, EngineManager engine){
+	public synchronized boolean remove (Term t, AbstractEngineManager  engine){
 		return search(t, engine, true);
 	}
 	
-	public synchronized boolean wait (Term t, EngineManager engine, EngineRunner er){
+	public synchronized boolean wait (Term t, AbstractEngineManager  engine, EngineRunner er){
 		return searchLoop(t,engine, true, false, er);
 	}
 	
