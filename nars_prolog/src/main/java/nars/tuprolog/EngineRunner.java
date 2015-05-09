@@ -20,11 +20,12 @@ import java.util.concurrent.locks.ReentrantLock;
 @SuppressWarnings("serial")
 public class EngineRunner implements java.io.Serializable, Runnable{
     
-    private Prolog                              mediator;
+
     private TheoryManager       theoryManager;
     private PrimitiveManager    primitiveManager;
     private LibraryManager      libraryManager;
     private EngineManager             engineManager;
+    @Deprecated private EngineManager             mediator;
     
     private boolean relinkVar = false;
 	private ArrayList<Term> bagOFres;
@@ -94,12 +95,12 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     /**
      * Config this Manager
      */
-    void initialize(Prolog vm) {
-        mediator = vm;
+    void initialize(EngineManager vm) {
+
         theoryManager    = vm.getTheoryManager();
         primitiveManager = vm.getPrimitiveManager();
         libraryManager   = vm.getLibraryManager();
-        engineManager = vm.getEngineManager();
+        mediator = engineManager = vm;
         
         detached = false;
         solving = false;

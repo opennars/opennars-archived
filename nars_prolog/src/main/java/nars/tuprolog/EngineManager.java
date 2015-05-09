@@ -13,28 +13,18 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("serial")
-public class EngineManager implements java.io.Serializable {
-	
-	private Prolog vm;
-	private MutableIntObjectMap<EngineRunner> runners;	//key: id; obj: runner
-	private MutableIntIntMap threads;	//key: pid; obj: id
-	private int rootID = 0;
-	private EngineRunner er1;
-	private int id = 0;
-	
-	private Map<String, TermQueue> queues;
-	private Map<String, ReentrantLock> locks;
+public abstract class EngineManager implements java.io.Serializable {
 
-	public void initialize(Prolog vm) {
-		this.vm=vm;
-		runners = new IntObjectHashMap().asSynchronized();
-		threads = new IntIntHashMap().asSynchronized();
-		queues =new HashMap<>();
-		locks = new HashMap<>();
-		
-		er1 = new EngineRunner(rootID);
-		er1.initialize(vm);	
-	}
+	protected MutableIntObjectMap<EngineRunner> runners;	//key: id; obj: runner
+	protected MutableIntIntMap threads;	//key: pid; obj: id
+	protected EngineRunner er1;
+	protected int id = 0;
+	protected int rootID = 0;
+
+	private Map<String, TermQueue> queues = new HashMap();
+	private Map<String, ReentrantLock> locks = new HashMap();
+
+
 	
 	public synchronized boolean threadCreate(Term threadID, Term goal) {
 		id += 1;
@@ -44,9 +34,9 @@ public class EngineManager implements java.io.Serializable {
 			goal = goal.getTerm();
 		
 		EngineRunner er = new EngineRunner(id);
-		er.initialize(vm);
+		er.initialize(this);
 		
-		if (!vm.unify(threadID, new Int(id))) return false;
+		if (!unify(threadID, new Int(id))) return false;
 		
 		er.setGoal(goal);
 		addRunner(er, id);
@@ -131,7 +121,7 @@ public class EngineManager implements java.io.Serializable {
 		if (er==null) return false;
 		TermQueue queue = queues.get(name);
 		if (queue==null) return false;
-		return queue.get(msg, vm, er);
+		return queue.get(msg, this, er);
 	}
 	
 	public boolean waitMsg(int id, Term msg){
@@ -145,7 +135,7 @@ public class EngineManager implements java.io.Serializable {
 		if (er==null) return false;
 		TermQueue queue=queues.get(name);
 		if (queue==null) return false;
-		return queue.wait(msg, vm, er);
+		return queue.wait(msg, this, er);
 	}
 	
 	public boolean peekMsg(int id, Term msg){
@@ -157,7 +147,7 @@ public class EngineManager implements java.io.Serializable {
 	public boolean peekMsg(String name, Term msg){
 		TermQueue queue = queues.get(name);
 		if (queue==null) return false;
-		return queue.peek(msg, vm);
+		return queue.peek(msg, this);
 	}
 
 	public boolean removeMsg(int id, Term msg){
@@ -169,7 +159,7 @@ public class EngineManager implements java.io.Serializable {
 	public boolean removeMsg(String name, Term msg){
 		TermQueue queue=queues.get(name);
 		if (queue==null) return false;
-		return queue.remove(msg, vm);
+		return queue.remove(msg, this);
 	}
 	
 	private void removeRunner(int id){
@@ -469,5 +459,21 @@ public class EngineManager implements java.io.Serializable {
     	EngineRunner r = this.findRunner();
     	r.clearSinfoSetOf();
     }
+
+	abstract public TheoryManager getTheoryManager();
+
+	public abstract PrimitiveManager getPrimitiveManager();
+
+	public abstract LibraryManager getLibraryManager();
+
+	public abstract void warn(String message);
+
+	public abstract boolean isWarning();
+
+	public abstract void exception(String message);
+
+	abstract public boolean unify(Term t0, Term t1);
+
+	abstract public boolean unify(Term t0, Term t1, ArrayList<Var> v1, ArrayList<Var> v2);
 }
 

@@ -17,14 +17,13 @@
  */
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntIntHashMap;
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import nars.tuprolog.event.*;
 import nars.tuprolog.interfaces.IProlog;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 //import alice.tuprologx.ide.ToolBar;
 
 
@@ -166,8 +165,13 @@ public class Prolog extends EngineManager implements /*Castagna 06/2011*/IProlog
         libraryManager.initialize(this);
         flagManager.initialize(this);
         primitiveManager.initialize(this);
-        this.initialize(this);
+        runners = new IntObjectHashMap().asSynchronized();
+        threads = new IntIntHashMap().asSynchronized();
+
+        er1 = new EngineRunner(rootID);
+        er1.initialize(this);
     }
+
 
 
     /**
@@ -518,10 +522,11 @@ public class Prolog extends EngineManager implements /*Castagna 06/2011*/IProlog
      * @param t1 second term to be unified
      * @return true if the unification was successful
      */
-    public boolean unify(Term t0, Term t1) {    //no syn
+    @Deprecated public boolean unify(Term t0, Term t1) {    //no syn
         return unify(t0, t1, new ArrayList(), new ArrayList());
     }
 
+    @Override
     public boolean unify(Term t0, Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
         return t0.unify(this, t1, v1, v2);
     }
