@@ -27,9 +27,9 @@ public class ISOIOLibraryTestCase {
 		try
 		{	
 			engine = new Prolog(new String[] {
-					"nars.prolog.lib.BasicLibrary",
-					"nars.prolog.lib.IOLibrary",
-			"nars.prolog.lib.ISOIOLibrary"});
+					"nars.tuprolog.lib.BasicLibrary",
+					"nars.tuprolog.lib.IOLibrary",
+			"nars.tuprolog.lib.ISOIOLibrary"});
 
 			File file = new File("/tmp");
 			writePath = file.getCanonicalPath() 

@@ -10,40 +10,40 @@ public class PrologTestCase extends TestCase {
 	public void testEngineInitialization() {
 		Prolog engine = new Prolog();
 		assertEquals(String.join(",",engine.getCurrentLibraries()), 4, engine.getCurrentLibraries().length);
-		assertNotNull(engine.getLibrary("nars.prolog.lib.BasicLibrary"));
-		assertNotNull(engine.getLibrary("nars.prolog.lib.ISOLibrary"));
-		assertNotNull(engine.getLibrary("nars.prolog.lib.IOLibrary"));
-		assertNotNull(engine.getLibrary("nars.prolog.lib.JavaLibrary"));
+		assertNotNull(engine.getLibrary("nars.tuprolog.lib.BasicLibrary"));
+		assertNotNull(engine.getLibrary("nars.tuprolog.lib.ISOLibrary"));
+		assertNotNull(engine.getLibrary("nars.tuprolog.lib.IOLibrary"));
+		assertNotNull(engine.getLibrary("nars.tuprolog.lib.JavaLibrary"));
 	}
 	
 	public void testLoadLibraryAsString() throws InvalidLibraryException {
 		Prolog engine = new Prolog();
-		engine.loadLibrary("nars.prolog.StringLibrary");
-		assertNotNull(engine.getLibrary("nars.prolog.StringLibrary"));
+		engine.loadLibrary("nars.tuprolog.StringLibrary");
+		assertNotNull(engine.getLibrary("nars.tuprolog.StringLibrary"));
 	}
 	
 	public void testLoadLibraryAsObject() throws InvalidLibraryException {
 		Prolog engine = new Prolog();
 		Library stringLibrary = new StringLibrary();
 		engine.loadLibrary(stringLibrary);
-		assertNotNull(engine.getLibrary("nars.prolog.StringLibrary"));
+		assertNotNull(engine.getLibrary("nars.tuprolog.StringLibrary"));
 		Library javaLibrary = new nars.tuprolog.lib.JavaLibrary();
 		engine.loadLibrary(javaLibrary);
-		assertSame(javaLibrary, engine.getLibrary("nars.prolog.lib.JavaLibrary"));
+		assertSame(javaLibrary, engine.getLibrary("nars.tuprolog.lib.JavaLibrary"));
 	}
 	
 	public void testGetLibraryWithName() throws InvalidLibraryException {
-		Prolog engine = new Prolog(new String[] {"nars.prolog.TestLibrary"});
+		Prolog engine = new Prolog(new String[] {"nars.tuprolog.TestLibrary"});
 		assertNotNull(engine.getLibrary("TestLibraryName"));
 	}
 	
 	public void testUnloadLibraryAfterLoadingTheory() throws Exception {
 		Prolog engine = new Prolog();
-		assertNotNull(engine.getLibrary("nars.prolog.lib.IOLibrary"));
+		assertNotNull(engine.getLibrary("nars.tuprolog.lib.IOLibrary"));
 		Theory t = new Theory("a(1).\na(2).\n");
 		engine.setTheory(t);
-		engine.unloadLibrary("nars.prolog.lib.IOLibrary");
-		assertNull(engine.getLibrary("nars.prolog.lib.IOLibrary"));
+		engine.unloadLibrary("nars.tuprolog.lib.IOLibrary");
+		assertNull(engine.getLibrary("nars.tuprolog.lib.IOLibrary"));
 	}
 	
 	public void testAddTheory() throws InvalidTheoryException {
@@ -72,14 +72,14 @@ public class PrologTestCase extends TestCase {
 	
 	public void testLibraryListener() throws InvalidLibraryException {
 		Prolog engine = new Prolog(new String[]{});
-		engine.loadLibrary("nars.prolog.lib.BasicLibrary");
-		engine.loadLibrary("nars.prolog.lib.IOLibrary");
+		engine.loadLibrary("nars.tuprolog.lib.BasicLibrary");
+		engine.loadLibrary("nars.tuprolog.lib.IOLibrary");
 		TestPrologEventAdapter a = new TestPrologEventAdapter();
 		engine.addLibraryListener(a);
-		engine.loadLibrary("nars.prolog.lib.JavaLibrary");
-		assertEquals("nars.prolog.lib.JavaLibrary", a.firstMessage);
-		engine.unloadLibrary("nars.prolog.lib.JavaLibrary");
-		assertEquals("nars.prolog.lib.JavaLibrary", a.firstMessage);
+		engine.loadLibrary("nars.tuprolog.lib.JavaLibrary");
+		assertEquals("nars.tuprolog.lib.JavaLibrary", a.firstMessage);
+		engine.unloadLibrary("nars.tuprolog.lib.JavaLibrary");
+		assertEquals("nars.tuprolog.lib.JavaLibrary", a.firstMessage);
 	}
 	
 	public void testTheoryListener() throws InvalidTheoryException {

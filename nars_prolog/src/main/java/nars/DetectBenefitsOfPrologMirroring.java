@@ -164,7 +164,7 @@
 //        float confidenceThresh = 0.5f;
 //        prologMirror = new NARPrologMirror(n, confidenceThresh, true, true, true) {
 //            @Override
-//            public Term answer(Task question, Term t, nars.prolog.Term pt) {
+//            public Term answer(Task question, Term t, nars.tuprolog.Term pt) {
 //                Term a = super.answer(question, t, pt);
 //                if (a!=null) prologEternalAnswers.hit();
 //                return a;

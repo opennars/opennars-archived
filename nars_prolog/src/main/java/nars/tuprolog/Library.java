@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -181,10 +183,10 @@ public abstract class Library implements Serializable, IPrimitives {
     /**
      * gets the list of predicates defined in the library
      */
-    public Map<Integer,List<PrimitiveInfo>> getPrimitives() {
+    public IntObjectHashMap<List<PrimitiveInfo>> getPrimitives() {
         try {
             java.lang.reflect.Method[] mlist = this.getClass().getMethods();
-            Map<Integer,List<PrimitiveInfo>> mapPrimitives = new HashMap<>();
+            IntObjectHashMap<List<PrimitiveInfo>> mapPrimitives = new IntObjectHashMap<List<PrimitiveInfo>>();
             mapPrimitives.put(PrimitiveInfo.DIRECTIVE,new ArrayList<>());
             mapPrimitives.put(PrimitiveInfo.FUNCTOR,new ArrayList<>());
             mapPrimitives.put(PrimitiveInfo.PREDICATE,new ArrayList<>());
@@ -199,7 +201,7 @@ public abstract class Library implements Serializable, IPrimitives {
                                 
                 int type;
                 if (returnTypeName.equals("boolean")) type = PrimitiveInfo.PREDICATE;
-                else if (returnTypeName.equals("nars.prolog.Term")) type = PrimitiveInfo.FUNCTOR;
+                else if (returnTypeName.equals("nars.tuprolog.Term")) type = PrimitiveInfo.FUNCTOR;
                 else if (returnTypeName.equals("void")) type = PrimitiveInfo.DIRECTIVE;
                 else continue;
                 

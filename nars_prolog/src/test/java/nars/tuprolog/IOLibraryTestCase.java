@@ -1,5 +1,6 @@
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import junit.framework.TestCase;
 import nars.tuprolog.lib.IOLibrary;
 
@@ -10,7 +11,7 @@ public class IOLibraryTestCase extends TestCase {
 	
 	public void testGetPrimitives() {
 		Library library = new IOLibrary();
-		Map<Integer, List<PrimitiveInfo>> primitives = library.getPrimitives();
+		IntObjectHashMap<List<PrimitiveInfo>> primitives = library.getPrimitives();
 		assertEquals(3, primitives.size());
 		assertEquals(0, primitives.get(PrimitiveInfo.DIRECTIVE).size());
 		assertTrue(primitives.get(PrimitiveInfo.PREDICATE).size() > 0);

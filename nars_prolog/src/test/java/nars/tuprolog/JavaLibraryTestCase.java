@@ -1,5 +1,6 @@
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import junit.framework.TestCase;
 import nars.tuprolog.lib.InvalidObjectIdException;
 import nars.tuprolog.lib.JavaLibrary;
@@ -19,7 +20,7 @@ public class JavaLibraryTestCase extends TestCase {
 	
 	public void testGetPrimitives() {
 		Library library = new JavaLibrary();
-		Map<Integer, List<PrimitiveInfo>> primitives = library.getPrimitives();
+		IntObjectHashMap<List<PrimitiveInfo>> primitives = library.getPrimitives();
 		assertEquals(3, primitives.size());
 		assertEquals(0, primitives.get(PrimitiveInfo.DIRECTIVE).size());
 		assertTrue(primitives.get(PrimitiveInfo.PREDICATE).size() > 0);
@@ -27,7 +28,7 @@ public class JavaLibraryTestCase extends TestCase {
 	}
 
 	public void testAnonymousObjectRegistration() throws InvalidTheoryException, InvalidObjectIdException {	
-		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
+		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.tuprolog.lib.JavaLibrary");
 		String theory = "demo(X) :- X <- update. \n";
 		engine.setTheory(new Theory(theory));
 
@@ -45,9 +46,9 @@ public class JavaLibraryTestCase extends TestCase {
 
 	public void testDynamicObjectsRetrival() throws PrologException {
 		Prolog engine = new Prolog();
-		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
+		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.tuprolog.lib.JavaLibrary");
 		String theory = "demo(C) :- \n" +
-				"java_object('nars.prolog.TestCounter', [], C), \n" +
+				"java_object('nars.tuprolog.TestCounter', [], C), \n" +
 				"C <- update, \n" +
 				"C <- update. \n";			
 		engine.setTheory(new Theory(theory));
@@ -291,7 +292,7 @@ public class JavaLibraryTestCase extends TestCase {
 
 
 
-		//JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
+		//JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.tuprolog.lib.JavaLibrary");
 		//Struct id = (Struct) info.getTerm("Res");
 		//Object obj = lib.getRegisteredObject(id);
 		//assertNull(obj);

@@ -38,13 +38,13 @@
 //import nars.logic.nal7.Tense;
 //import nars.logic.entity.Term;
 //import nars.logic.entity.Variable;
-//import nars.prolog.InvalidTermException;
-//import nars.prolog.InvalidTheoryException;
-//import nars.prolog.NoMoreSolutionException;
-//import nars.prolog.SolveInfo;
-//import nars.prolog.Struct;
-//import nars.prolog.Theory;
-//import nars.prolog.Var;
+//import nars.tuprolog.InvalidTermException;
+//import nars.tuprolog.InvalidTheoryException;
+//import nars.tuprolog.NoMoreSolutionException;
+//import nars.tuprolog.SolveInfo;
+//import nars.tuprolog.Struct;
+//import nars.tuprolog.Theory;
+//import nars.tuprolog.Var;
 //
 ///**
 // * Causes a NARProlog to mirror certain activity of a NAR.  It generates
@@ -60,7 +60,7 @@
 //    private float trueThreshold = 0.75f;
 //    private float falseThreshold = 0.25f;
 //    private float confidenceThreshold;
-//    private final Map<Sentence,nars.prolog.Term> beliefs = new HashMap();
+//    private final Map<Sentence,nars.tuprolog.Term> beliefs = new HashMap();
 //        
 //    private boolean eternalJudgments = true;
 //    private boolean presentJudgments = false;
@@ -248,7 +248,7 @@
 //                            break;
 //
 //
-//                        nars.prolog.Term solution = si.getSolution();
+//                        nars.tuprolog.Term solution = si.getSolution();
 //                        if (solution == null)
 //                            break;
 //
@@ -330,7 +330,7 @@
 //    /** creates a theory from a judgment Statement */
 //    Struct newJudgmentTheory(final Sentence judgment) throws InvalidTheoryException {
 //        
-//        nars.prolog.Term s;
+//        nars.tuprolog.Term s;
 //        /*if (judgment.truth!=null) {            
 //            s = pInfer(pterm(judgment.content), judgment.truth);
 //        }
@@ -348,25 +348,25 @@
 //    }
 //    
 //    Struct newQuestion(final Sentence question) {
-//        nars.prolog.Term s = pterm(question.term);
+//        nars.tuprolog.Term s = pterm(question.term);
 //        //TODO not working yet
 //        return (Struct) s;
 //    }
 //
 //    //NOT yet working
-//    public Struct pInfer(nars.prolog.Term t, TruthValue tv) {
+//    public Struct pInfer(nars.tuprolog.Term t, TruthValue tv) {
 //        double freq = tv.getFrequency();
 //        double conf = tv.getConfidence();
-//        Struct lt = new Struct(new nars.prolog.Term[] { t, 
-//            new Struct( new nars.prolog.Term[] { 
-//                new nars.prolog.Double(freq), 
-//                new nars.prolog.Double(conf) 
+//        Struct lt = new Struct(new nars.tuprolog.Term[] { t,
+//            new Struct( new nars.tuprolog.Term[] {
+//                new nars.tuprolog.Double(freq),
+//                new nars.tuprolog.Double(conf)
 //            }) 
 //        });        
 //        return new Struct("infer", lt);
 //    }
 //    
-//    public Struct negation(nars.prolog.Term t) {
+//    public Struct negation(nars.tuprolog.Term t) {
 //        return new Struct("negation", t);
 //    }
 //    
@@ -381,21 +381,21 @@
 //    }
 //    
 //    //NARS term -> Prolog term
-//    public nars.prolog.Term pterm(final Term term) {
+//    public nars.tuprolog.Term pterm(final Term term) {
 //        
 //        //CharSequence s = termString(term);
 //        if (term instanceof Statement) {
 //            Statement i = (Statement)term;
 //            String predicate = classPredicate(i.getClass());
-//            nars.prolog.Term subj = pterm(i.getSubject());
-//            nars.prolog.Term obj = pterm(i.getPredicate());
+//            nars.tuprolog.Term subj = pterm(i.getSubject());
+//            nars.tuprolog.Term obj = pterm(i.getPredicate());
 //            if ((subj!=null) && (obj!=null))
 //                return new Struct(predicate, subj, obj);
 //        }
 //        else if ((term instanceof SetTensional) || (term instanceof Product) /* conjunction */) {
 //            CompoundTerm s = (CompoundTerm)term;
 //            String predicate = classPredicate(s.getClass());
-//            nars.prolog.Term[] args = pterms(s.term);
+//            nars.tuprolog.Term[] args = pterms(s.term);
 //            if (args!=null)
 //                return new Struct(predicate, args);
 //        }
@@ -405,7 +405,7 @@
 //        //Image...
 //        //Conjunction...
 //        else if (term instanceof Negation) {
-//            nars.prolog.Term np = pterm(((Negation)term).term[0]);
+//            nars.tuprolog.Term np = pterm(((Negation)term).term[0]);
 //            if (np == null) return null;
 //            return new Struct("negation", np);
 //        }
@@ -427,7 +427,7 @@
 //    }
 //    
 //    /** Prolog term --> NARS statement */
-//    public Term nterm(final nars.prolog.Term term) {
+//    public Term nterm(final nars.tuprolog.Term term) {
 //        Memory mem = nar.memory;
 //        
 //        if (term instanceof Struct) {
@@ -474,7 +474,7 @@
 //        }
 //        else if (term instanceof Var) {
 //            Var v = (Var)term;
-//            nars.prolog.Term t = v.getTerm();
+//            nars.tuprolog.Term t = v.getTerm();
 //            if (t!=v) {
 //                System.out.println("Bound: " + v + " + -> " + t + " " + nterm(t));
 //                return nterm(t);
@@ -485,8 +485,8 @@
 //                return null;
 //            }
 //        }
-//        else if (term instanceof nars.prolog.Number) {
-//            nars.prolog.Number n = (nars.prolog.Number)term;
+//        else if (term instanceof nars.tuprolog.Number) {
+//            nars.tuprolog.Number n = (nars.tuprolog.Number)term;
 //            return new Term('"' + String.valueOf(n.doubleValue()) + '"');
 //        }
 //        
@@ -503,7 +503,7 @@
 //    }
 //    
 //    /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
-//    public Term answer(Task question, Term t, nars.prolog.Term pt) {
+//    public Term answer(Task question, Term t, nars.tuprolog.Term pt) {
 //        if (reportAnswers)
 //            System.err.println("Prolog answer: " + t);
 //        
@@ -522,13 +522,13 @@
 //        
 //        Sentence sentence = null;
 //
-//        public NARStruct(Sentence sentence, String predicate, nars.prolog.Term[] args) {
+//        public NARStruct(Sentence sentence, String predicate, nars.tuprolog.Term[] args) {
 //            super(predicate, args);
 //            
 //            this.sentence = sentence;
 //        }
 //        
-//        public NARStruct(String predicate, nars.prolog.Term... args) {
+//        public NARStruct(String predicate, nars.tuprolog.Term... args) {
 //            this(null, predicate, args);
 //        }
 //
@@ -545,9 +545,9 @@
 //    */
 //    
 //
-//    private static List<nars.prolog.Term> axioms = null;
+//    private static List<nars.tuprolog.Term> axioms = null;
 //    
-//    private List<? extends nars.prolog.Term> getAxioms() {
+//    private List<? extends nars.tuprolog.Term> getAxioms() {
 //        if (axioms==null) {
 //            try {
 //                Theory t = new Theory(
@@ -566,7 +566,7 @@
 //        return axioms;
 //    }
 //    
-//    public static Theory getTheory(Map<Sentence, nars.prolog.Term> beliefMap) throws InvalidTheoryException  {
+//    public static Theory getTheory(Map<Sentence, nars.tuprolog.Term> beliefMap) throws InvalidTheoryException  {
 //        return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
 //    }
 //    
@@ -577,8 +577,8 @@
 //    protected void onQuestion(Sentence s) {
 //    }
 //
-//    protected nars.prolog.Term[] pterms(Term[] term) {
-//        nars.prolog.Term[] tt = new nars.prolog.Term[term.length];
+//    protected nars.tuprolog.Term[] pterms(Term[] term) {
+//        nars.tuprolog.Term[] tt = new nars.tuprolog.Term[term.length];
 //        int i = 0;
 //        for (Term x : term) {
 //            if ((tt[i++] = pterm(x)) == null) return null;
@@ -586,10 +586,10 @@
 //        return tt;
 //    }
 //
-//    public Term[] nterm(final nars.prolog.Term[] term) {
+//    public Term[] nterm(final nars.tuprolog.Term[] term) {
 //        Term[] tt = new Term[term.length];
 //        int i = 0;
-//        for (nars.prolog.Term x : term) {
+//        for (nars.tuprolog.Term x : term) {
 //            if ((tt[i++] = nterm(x)) == null) return null;
 //        }
 //        return tt;        

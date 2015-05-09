@@ -111,6 +111,7 @@ public class NARPrologMirror extends AbstractMirror {
             nars.tuprolog.Term[] ax = toArray(new Theory(axiomString + '\n').iterator(prolog.prolog), nars.tuprolog.Term.class);
 //            nars.tuprolog.Term[] ax = Lists.transform(l, x -> new Struct(x)).toArray(new nars.tuprolog.Term[l.size()]);
             axioms = new Theory(ax);
+            prolog.setTheory(axioms);
         } catch (InvalidTheoryException e) {
             e.printStackTrace();
             System.exit(1);
@@ -163,16 +164,37 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     protected boolean forget(Sentence belief) {
-        if (beliefs.remove(belief) != null) {
+
+        nars.tuprolog.Term removed;
+        if ((removed = beliefs.remove(belief)) != null) {
+
+            if (!apply("retract", removed))
+                throw new RuntimeException("Could not retract: " + belief + " === " + removed);
 
             beliefsChanged();
 
             if (reportForgets) {
                 System.err.println("Prolog forget: " + belief);
             }
+
             return true;
         }
         return false;
+    }
+
+    public boolean apply(String functor, String term) {
+        return apply(functor, new Parser(term).nextTerm(true));
+    }
+
+    public boolean apply(String functor, nars.tuprolog.Term removed) {
+        Struct r = new Struct(functor,removed);
+        r.resolveTerm();
+        SolveInfo solution = solve(r);
+        return solution.isSuccess();
+    }
+
+    public SolveInfo solve(Struct r) {
+        return prolog.prolog.solve(r);
     }
 
     protected void updateBeliefs() {
@@ -314,10 +336,6 @@ public class NARPrologMirror extends AbstractMirror {
     public SolveInfo solve(Struct qh, float solveTime, Consumer<nars.tuprolog.Term> withSolution, int maxAnswers) throws InvalidTheoryException, NoSolutionException, NoMoreSolutionException {
         //System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");
 
-        Theory t = getTheory(beliefs);
-        t.append(axioms);
-
-        prolog.setTheory(t);
 
         SolveInfo si = prolog.query(qh, solveTime);
 
@@ -334,6 +352,8 @@ public class NARPrologMirror extends AbstractMirror {
                 if (solution == null)
                     break;
 
+                System.out.println(si.toString());
+
                 if (lastSolution != null && solution.equals(lastSolution))
                     continue;
 
@@ -341,7 +361,12 @@ public class NARPrologMirror extends AbstractMirror {
 
                 withSolution.accept(solution);
 
-                si = prolog.prolog.solveNext(solveTime);
+                try {
+                    si = prolog.prolog.solveNext(solveTime);
+                }
+                catch (NoMoreSolutionException e) {
+                    break;
+                }
 
                 solveTime /= 2d;
             }
@@ -387,6 +412,9 @@ public class NARPrologMirror extends AbstractMirror {
 
                     if (addOrRemove) {
                         if (beliefs.putIfAbsent(s, th) == null) {
+
+                            if (!apply("assert", th))
+                                throw new RuntimeException("Could not assert: " + s+ " === " + th);
 
                             beliefsChanged();
 
@@ -502,9 +530,11 @@ public class NARPrologMirror extends AbstractMirror {
         String s = c.getSimpleName();
         switch (s) {
             case "SetInt1":
+            case "SetIntN":
                 s = "setint";
                 break;
             case "SetExt1":
+            case "SetExtN":
                 s = "setext";
                 break;
         }
@@ -534,7 +564,7 @@ public class NARPrologMirror extends AbstractMirror {
         else if (term instanceof Negation) {
             nars.tuprolog.Term np = pterm(((Negation) term).term[0]);
             if (np == null) return null;
-            return new Struct("negation", np);
+            return new Struct("not", np);
         } else if (term.getClass().equals(Variable.class)) {
             return getVariable((Variable) term);
         } else if (term.getClass().equals(Atom.class)) {

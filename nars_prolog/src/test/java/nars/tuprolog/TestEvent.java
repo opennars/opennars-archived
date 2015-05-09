@@ -48,9 +48,9 @@ public class TestEvent {
         engine.addQueryListener(l);
         engine.addLibraryListener(l);
 
-        engine.loadLibrary("nars.prolog.lib.BasicLibrary");
-        engine.loadLibrary("nars.prolog.lib.JavaLibrary");
-        engine.loadLibrary("nars.prolog.lib.IOLibrary");
+        engine.loadLibrary("nars.tuprolog.lib.BasicLibrary");
+        engine.loadLibrary("nars.tuprolog.lib.JavaLibrary");
+        engine.loadLibrary("nars.tuprolog.lib.IOLibrary");
         
         Theory th = new Theory(
                 	"a(1).\n"+
@@ -64,7 +64,7 @@ public class TestEvent {
             sinfo = engine.solveNext();
         }
         
-        engine.unloadLibrary("nars.prolog.lib.IOLibrary");
+        engine.unloadLibrary("nars.tuprolog.lib.IOLibrary");
         
         th = new Theory(
             	"a(3).\n"+

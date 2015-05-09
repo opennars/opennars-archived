@@ -17,6 +17,7 @@
  */
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import nars.tuprolog.interfaces.IPrimitiveManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,12 +34,23 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     private Map<String,PrimitiveInfo> directiveHashMap;
     private Map<String,PrimitiveInfo> predicateHashMap;
     private Map<String,PrimitiveInfo> functorHashMap;
-    
+
+    public PrimitiveManager(boolean concurrent) {
+        if (concurrent) {
+            libHashMap        = Collections.synchronizedMap(new IdentityHashMap<>());
+            directiveHashMap  = Collections.synchronizedMap(new HashMap<>());
+            predicateHashMap  = Collections.synchronizedMap(new HashMap<>());
+            functorHashMap    = Collections.synchronizedMap(new HashMap<>());
+        }
+        else {
+            libHashMap        = new IdentityHashMap<>();
+            directiveHashMap  = new HashMap<>();
+            predicateHashMap  = new HashMap<>();
+            functorHashMap    = new HashMap<>();
+        }
+    }
     public PrimitiveManager() {
-        libHashMap        = Collections.synchronizedMap(new IdentityHashMap<>());
-        directiveHashMap  = Collections.synchronizedMap(new HashMap<>());
-        predicateHashMap  = Collections.synchronizedMap(new HashMap<>());
-        functorHashMap    = Collections.synchronizedMap(new HashMap<>());
+        this(false);
     }
     
     /**
@@ -49,7 +61,7 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     }
     
     void createPrimitiveInfo(IPrimitives src) {
-        Map<Integer,List<PrimitiveInfo>> prims = src.getPrimitives();
+        IntObjectHashMap<List<PrimitiveInfo>> prims = src.getPrimitives();
         Iterator<PrimitiveInfo> it = prims.get(PrimitiveInfo.DIRECTIVE).iterator();
         while(it.hasNext()) {
             PrimitiveInfo p = it.next();
@@ -164,27 +176,27 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
     
     
     Library getLibraryDirective(String name, int nArgs) {
-        try {
-            return (Library) directiveHashMap.get(name + '/' + nArgs).getSource();
-        } catch(NullPointerException e) {
-            return null;
-        }
+        PrimitiveInfo x = directiveHashMap.get(name + '/' + nArgs);
+        if (x == null) return null;
+        IPrimitives x1 = x.getSource();
+        if (x1 == null) return null;
+        return ((Library)x.getSource());
     }
     
     Library getLibraryPredicate(String name, int nArgs) {
-        try {
-            return (Library) predicateHashMap.get(name + '/' + nArgs).getSource();
-        } catch(NullPointerException e) {
-            return null;
-        }
+        PrimitiveInfo x = predicateHashMap.get(name + '/' + nArgs);
+        if (x == null) return null;
+        IPrimitives x1 = x.getSource();
+        if (x1 == null) return null;
+        return ((Library)x.getSource());
     }
     
     Library getLibraryFunctor(String name, int nArgs) {
-        try {
-            return (Library) functorHashMap.get(name + '/' + nArgs).getSource();
-        } catch(NullPointerException e) {
-            return null;
-        }
+        PrimitiveInfo x = functorHashMap.get(name + '/' + nArgs);
+        if (x == null) return null;
+        IPrimitives x1 = x.getSource();
+        if (x1 == null) return null;
+        return ((Library)x.getSource());
     }
     
     /*Castagna 06/2011*/

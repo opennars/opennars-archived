@@ -2,10 +2,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.model.impl.Default;
-import nars.tuprolog.InvalidTheoryException;
-import nars.tuprolog.MalformedGoalException;
-import nars.tuprolog.NoMoreSolutionException;
-import nars.tuprolog.NoSolutionException;
+import nars.tuprolog.*;
 
 import java.util.List;
 
@@ -15,7 +12,7 @@ import java.util.List;
 public class NARPrologStructuralInference {
 
     NAR n = new NAR(new Default());
-    NARPrologMirror pl = new NARPrologMirror(n, 0.90f, true, true, false) {
+    public final NARPrologMirror pl = new NARPrologMirror(n, 0.90f, true, true, false) {
         @Override
         public List<String> initAxioms() {
             List<String> l = super.initAxioms();
@@ -41,6 +38,10 @@ public class NARPrologStructuralInference {
 
         p.solve("rdf(a,b,c)");
         p.solve("not(X)");
+        p.solve("is(inheritance(this, truthy),true)");
+        p.solve("inheritance(this, truthy)=true");
+        p.pl.apply("assert", "itis(something).");
+        p.solve("is(itis(something),true)");
     }
 
     public NARPrologStructuralInference() {
@@ -71,7 +72,7 @@ public class NARPrologStructuralInference {
         n.input("(x1,x2,x3,x4,c).");
         n.run(1);
 
-        n.input("(--,<this --> true>).");
+        n.input("(--,<this --> truthy>).");
         n.run(1);
 
         n.input("<(*,subj,obj) --> predicate>.");
