@@ -725,10 +725,13 @@ abstract public class Concept extends Item<Term> implements Termed {
         if (removed != null) {
             if (removed == goalOrJudgment) return false;
 
-            memory.event.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
+            memory.event.emit(eventRemove, this, removed.sentence, goalOrJudgment);
+
+        }
+        else {
 
             if (preSize != table.size()) {
-                memory.event.emit(eventAdd, this, goalOrJudgment.sentence);
+                memory.event.emit(eventAdd, this, goalOrJudgment);
             }
         }
 

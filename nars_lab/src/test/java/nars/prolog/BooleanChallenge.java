@@ -30,27 +30,37 @@ import static nars.io.Texts.n4;
  */
 public class BooleanChallenge implements Reaction {
 
-    final float freqThresh = 0.4f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
+    final float freqThresh = 0.25f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
     private final double complete;
     boolean failOnError = false; //exit on the first logical error
     private boolean correctFeedback = false;
     boolean ignoreCorrectProvided = false; //if true, scores will only be updated if the answer is was not provided or if it was incorrect (provided or not provided)
-    float confThreshold = 0.01f; //confidence threshold for being counted as an answer
+    float confThreshold = 0.5f; //confidence threshold for being counted as an answer
     float inputConf = 0.95f;
 
     public static void main(String[] args) {
         Global.DEBUG = true;
-        NAR n = new NAR(new Default(2048, 4, 3).setInternalExperience(null));
+        NAR n = new NAR(new Default(4048, 4, 3).setInternalExperience(null));
 
         //NAR n = new NAR(new Discretinuous());
-        //new NARPrologMirror(n, 0.95f, true, true, false);
+        NARPrologMirror pl = new NARPrologMirror(n, 0.90f, true, true, false);
+        pl.setReportAnswers(true);
+        pl.setReportAssumptions(true);
         //NAR n = new CurveBagNARBuilder().build();
 
         //new TraceWriter(n, System.out);
         //new TextOutput(n, System.out);
 
-        new BooleanChallenge(n, 2, 22550, 0.15f).getScore();
+        new BooleanChallenge(n, 2, 10550, 0.5f).getScore();
 
+
+        /*
+        n.memory.getQuestionConcepts().forEach(x -> {
+
+            System.out.println(x + " " + x.getQuestions().get(0).getBestSolution());
+            System.out.println("  " + x.getStrongestBelief());
+        });
+        */
     }
 
 
@@ -109,9 +119,7 @@ public class BooleanChallenge implements Reaction {
 
         n.on(this, OUT.class);
 
-        //begin watchign for answers after input is finished
-        //this belief will signal the test to begin
-        n.input(startChallenge + ".");
+        inputAxioms();
 
         while (questionScores.size() < toAsk) {
             inputBoolean(bits, true);
@@ -137,7 +145,7 @@ public class BooleanChallenge implements Reaction {
         System.out.println(totalScoreWrong + " wrong, ");
 
 
-        this.complete = (questionScores.sum() / ((double)N));
+        this.complete = (questionScores.sum() / (toAsk));
         System.out.print(complete + " COMPLETE, ");
 
         this.score = complete * ((totalScoreCorrect) / (totalScoreCorrect + totalScoreWrong));
@@ -325,13 +333,18 @@ public class BooleanChallenge implements Reaction {
 
     void inputAxioms() {
 
-        nar.believe("<{or,xor,and} --> operate>", inputConf);
+        nar.believe("<{or,xor,and} <=> op>", inputConf);
 
         String a = "<{";
         for (int i = 1; i < (1 << bits); i++)
-            a += 'b' + i + ",";
-        a += "0} --> number>";
+            a += "b" + i + ",";
+        a += "b0} <=> number>";
         nar.believe(a, inputConf);
+
+        nar.believe("<b0 <-> (*,a0,a0)>");
+        nar.believe("<b1 <-> (*,a0,a1)>");
+        nar.believe("<b2 <-> (*,a1,a0)>");
+        nar.believe("<b3 <-> (*,a1,a1)>");
     }
 
     void addScore(Term q, Task a, boolean correct, float expectation) {
@@ -379,7 +392,7 @@ public class BooleanChallenge implements Reaction {
 
 
 
-        System.out.println(questionTime + "," + delay + ": " + a.sentence + "  " + n4(s) + "  " +
+        System.out.println("ANSWER:" + questionTime + "," + delay + ": " + a.sentence + "  " + n4(s) + "  " +
                 n4(totalScoreCorrect) + "-" + n4(totalScoreWrong) + "=" + n4(totalScoreCorrect - totalScoreWrong));
 
 
@@ -473,7 +486,7 @@ public class BooleanChallenge implements Reaction {
         sb.append("),");
             sb.append('b');
             sb.append(y);
-        sb.append(")} <-> ");
+        sb.append(")} --> ");
         sb.append(op);
         sb.append('>');
         return sb.toString();

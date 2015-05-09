@@ -32,7 +32,7 @@ public class PrologFact extends Operator {
 
         Sentence s = operation.getTask().sentence;
         if (s.punctuation == Symbols.GOAL) {
-            nars.tuprolog.Term factTerm = NARPrologMirror.pterm(args[0]);
+            nars.tuprolog.Term factTerm = NARPrologMirror.pterm(args[0]).resolveTerm();
 
             if (factTerm == null) return null;
 

@@ -33,7 +33,7 @@ public class PrologFactual extends TermFunction {
     public Object function(Term[] x) {
         Prolog p = context.getProlog(null); //default
 
-        nars.tuprolog.Term factTerm = NARPrologMirror.pterm(x[0]);
+        nars.tuprolog.Term factTerm = NARPrologMirror.pterm(x[0]).resolveTerm();
 
         if (factTerm == null)
             return "prolog_invalid";

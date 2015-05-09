@@ -503,7 +503,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 			return sinfo;
 		} else
 			throw new NoMoreSolutionException();
-	}
+		}
         public SolveInfo solveNext() throws NoMoreSolutionException {
             return solveNext(0);
         }

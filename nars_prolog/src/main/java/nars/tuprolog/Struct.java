@@ -502,8 +502,9 @@ public class Struct extends Term {
      * @param count start timestamp for variables of this term
      * @return next timestamp for other terms
      */
-    public long resolveTerm(Map<String,Var> vl, long count) {
+    public long resolveTerm(final Map<String,Var> vl, final long count) {
         long newcount=count;
+        final Term[] arg = this.arg;
         /*if (hasVar())*/ {
             for (int c = 0; c < arity; c++) {
                 Term term = arg[c];

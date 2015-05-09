@@ -115,8 +115,9 @@ public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/
      * 
      * If the variables has been already resolved, no renaming is done.
      */
-    public void resolveTerm() {
+    public Term resolveTerm() {
         resolveTerm(System.currentTimeMillis());
+        return this;
     }
     
     
