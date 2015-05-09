@@ -6,13 +6,13 @@ import java.util.Iterator;
 
 public class TermQueue {
 
-	private ArrayDeque<Term> queue;
+	private final ArrayDeque<Term> queue;
 	
 	public TermQueue(){
 		queue=new ArrayDeque<>();
 	}
 	
-	public synchronized boolean get(Term t, Prolog engine, EngineRunner er){
+	public boolean get(Term t, Prolog engine, EngineRunner er){
 		return searchLoop(t,engine,true, true, er);
 	}
 	

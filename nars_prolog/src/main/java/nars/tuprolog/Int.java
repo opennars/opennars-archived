@@ -28,12 +28,13 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class Int extends Number {
     
-   private int      value;
+    final private int      value;
     
     public Int(int v) {
         value = v;
     }
-    
+
+
     /**
      *  Returns the value of the Integer as int
      *

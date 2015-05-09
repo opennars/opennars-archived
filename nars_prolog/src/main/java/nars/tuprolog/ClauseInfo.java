@@ -32,17 +32,17 @@ public class ClauseInfo {
     /**
 	 * referring clause
 	 */
-    protected Struct clause;
+    protected final Struct clause;
     
     /**
 	 * head of clause
 	 */
-    private Struct head;
+    private final Struct head;
     
     /**
 	 * body of clause
 	 */
-    private SubGoalTree body;
+    private final SubGoalTree body;
     
     private Struct headCopy;
     
@@ -51,7 +51,7 @@ public class ClauseInfo {
     /**
 	 * if the clause is part of a theory in a lib (null if not)
 	 */
-    String libName;
+    final String libName;
     
     
     //usata da Find
@@ -63,6 +63,10 @@ public class ClauseInfo {
         head = extractHead(clause);
         body = extractBody(clause.getArg(1));
         libName = lib;
+    }
+
+    public ClauseInfo(Struct clause_) {
+        this(clause_, null);
     }
     
     
@@ -154,17 +158,17 @@ public class ClauseInfo {
         return libName;
     }
     
-    /**
-     * Perform copy for assertion operation
-     */
-    void performCopy() {
-        AbstractMap<Var,Var> v = new LinkedHashMap<>();
-        clause = (Struct) clause.copy(v, Var.ORIGINAL);
-        v = new IdentityHashMap<>();
-        head = (Struct)head.copy(v,Var.ORIGINAL);
-        body = new SubGoalTree();
-        bodyCopy(body,bodyCopy,v,Var.ORIGINAL);
-    }
+//    /**
+//     * Perform copy for assertion operation
+//     */
+//    void performCopy() {
+//        AbstractMap<Var,Var> v = new LinkedHashMap<>();
+//        clause = (Struct) clause.copy(v, Var.ORIGINAL);
+//        v = new IdentityHashMap<>();
+//        head = (Struct)head.copy(v,Var.ORIGINAL);
+//        body = new SubGoalTree();
+//        bodyCopy(body,bodyCopy,v,Var.ORIGINAL);
+//    }
     
     /**
      * Perform copy for use in current engine's demostration

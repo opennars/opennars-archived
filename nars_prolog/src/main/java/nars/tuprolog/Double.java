@@ -29,7 +29,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class Double extends Number {
     
-    private double value;
+    private final double value;
     
     public Double(double v) {
         value = v;

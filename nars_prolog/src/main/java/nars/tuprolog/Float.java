@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class Float extends Number {
     
-    private float value;
+    private final float value;
     
     public Float(float v) {
         value=v;

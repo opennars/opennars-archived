@@ -34,12 +34,12 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class BuiltIn extends Library {
 
-	private EngineManager engineManager;
-	private TheoryManager theoryManager;
-	private LibraryManager libraryManager;
-	private FlagManager flagManager;
-	private PrimitiveManager primitiveManager;
-	private OperatorManager operatorManager;
+	private final EngineManager engineManager;
+	private final TheoryManager theoryManager;
+	private final LibraryManager libraryManager;
+	private final FlagManager flagManager;
+	private final PrimitiveManager primitiveManager;
+	private final OperatorManager operatorManager;
 
 	public BuiltIn(Prolog mediator) {
 		super();
@@ -55,7 +55,7 @@ public class BuiltIn extends Library {
 	/**
 	 * Defines some synonyms
 	 */
-	 public String[][] getSynonymMap() {
+	final public String[][] getSynonymMap() {
 		 return new String[][] { { "!", "cut", "predicate" },
 				 { "=", "unify", "predicate" },
 				 { "\\=", "deunify", "predicate" },

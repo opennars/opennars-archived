@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class Long extends Number {
     
-   private long value;
+   private final long value;
     
     public Long(long v) {
         value = v;

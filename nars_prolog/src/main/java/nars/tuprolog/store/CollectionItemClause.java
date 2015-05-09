@@ -7,13 +7,13 @@ import nars.tuprolog.SubGoalTree;
 
 public class CollectionItemClause extends ClauseInfo
 {
-	private Object x;
-	private SubGoalTree body = new SubGoalTree();
+	//private Object x;
+	private final SubGoalTree body = new SubGoalTree();
 
 	public CollectionItemClause(Struct clause) 	{
         super(clause, null);
 	//	this.x = x;
-		this.clause = clause;
+
 	}
 	
 	public SubGoalTree getBody()

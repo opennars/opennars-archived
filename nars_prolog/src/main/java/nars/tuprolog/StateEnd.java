@@ -29,7 +29,7 @@ import java.util.StringTokenizer;
  */
 public class StateEnd extends State {
     
-    private int endState;    
+    private final int endState;
     private Struct goal;
     private List<Var> vars;
     private int setOfCounter = 0;

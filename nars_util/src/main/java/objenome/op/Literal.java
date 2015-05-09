@@ -138,14 +138,21 @@ public class Literal<X extends Object> extends Node<Void,X> {
      */
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) return true;
         if (!(obj instanceof Literal)) {
             return false;
         }
+
 
         Object objVal = ((Literal) obj).value;
         Object thisVal = value;
 
         return Objects.equals(objVal, thisVal);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 
     /**

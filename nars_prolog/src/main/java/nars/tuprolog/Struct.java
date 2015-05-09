@@ -456,9 +456,6 @@ public class Struct extends Term {
      * @param vMap is needed for register occurence of same variables
      */
     public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
-        if (this.isConstant()) {
-            return this; //re-use this instance
-        }
         Struct t = new Struct(arity);
         t.resolved  = resolved;
         t.name      = name;
@@ -476,9 +473,7 @@ public class Struct extends Term {
      * @param vMap is needed for register occurence of same variables
      */
     public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
-        if (this.isConstant()) {
-            return this; //re-use this instance
-        }
+
         Struct t = new Struct(arity);
         t.resolved  = false;
         t.name      = name;
@@ -488,11 +483,6 @@ public class Struct extends Term {
             t.arg[c] = arg[c].copy(vMap, substMap);
         }
         return t;
-    }
-
-    /** doesnt contani any vars */
-    public boolean isConstant() {
-        return false;
     }
 
 

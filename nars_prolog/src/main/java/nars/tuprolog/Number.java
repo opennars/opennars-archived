@@ -32,75 +32,75 @@ import java.util.AbstractMap;
  */
 @SuppressWarnings("serial")
 public abstract class Number extends Term  {
-    
+
     /**
      *  Returns the value of the number as int
      */
     public abstract int intValue();
-    
+
     /**
      *  Returns the value of the number as float
      */
     public abstract float floatValue();
-    
+
     /**
      *  Returns the value of the number as long
      */
     public abstract long longValue();
-    
+
     /**
      *  Returns the value of the number as double
      */
     public abstract double doubleValue();
-    
-    
+
+
     /** is this term a prolog integer term? */
     public abstract boolean isInteger();
-    
+
     /** is this term a prolog real term? */
     public abstract boolean isReal();
-    
+
     //
-    
-    /** is an int Integer number? 
+
+    /** is an int Integer number?
      * @deprecated Use <tt>instanceof Int</tt> instead. */
     public abstract boolean isTypeInt();
 
     /** is an int Integer number?
      * @deprecated Use <tt>instanceof Int</tt> instead. */
     public abstract boolean isInt();
-    
-    /** is a float Real number? 
+
+    /** is a float Real number?
      * @deprecated Use <tt>instanceof alice.tuprolog.Float</tt> instead. */
     public abstract boolean isTypeFloat();
 
     /** is a float Real number?
      * @deprecated Use <tt>instanceof alice.tuprolog.Float</tt> instead. */
     public abstract boolean isFloat();
-    
-    /** is a double Real number? 
+
+    /** is a double Real number?
      * @deprecated Use <tt>instanceof alice.tuprolog.Double</tt> instead.*/
     public abstract boolean isTypeDouble();
 
     /** is a double Real number?
      * @deprecated Use <tt>instanceof alice.tuprolog.Double</tt> instead. */
     public abstract boolean isDouble();
-    
-    /** is a long Integer number? 
+
+    /** is a long Integer number?
      * @deprecated Use <tt>instanceof alice.tuprolog.Long</tt> instead. */
     public abstract boolean isTypeLong();
 
     /** is a long Integer number?
      * @deprecated Use <tt>instanceof alice.tuprolog.Long</tt> instead. */
     public abstract boolean isLong();
-    
+
     public static Number createNumber(String s) {
         Term t = Term.createTerm(s);
         if (t instanceof Number)
             return (Number) t;
         throw new InvalidTermException("Term " + t + " is not a number.");
     }
-    
+
     /**
      * Gets the actual term referred by this Term.
      */
@@ -109,68 +109,68 @@ public abstract class Number extends Term  {
     }
 
 
-    
-    
-    
-    
+
+
+
+
     // checking type and properties of the Term
-    
+
     /** is this term a prolog numeric term? */
     final public boolean isNumber() {
         return true;
     }
-    
+
     /** is this term a struct  */
     final public boolean isStruct() {
         return false;
     }
-    
+
     /** is this term a variable  */
     final public boolean isVar() {
         return false;
     }
-    
+
     final public boolean isEmptyList() {
         return false;
     }
-    
+
     //
-    
+
     /** is this term a constant prolog term? */
     final public boolean isAtomic() {
         return true;
     }
-    
+
     /** is this term a prolog compound term? */
     final public boolean isCompound() {
         return false;
     }
-    
+
     /** is this term a prolog (alphanumeric) atom? */
     final public boolean isAtom() {
         return false;
     }
-    
+
     /** is this term a prolog list? */
     final public boolean isList() {
         return false;
     }
-    
+
     /** is this term a ground term? */
     final public boolean isGround() {
         return true;
     }
-    
-    
+
+
     //
-    
+
     /**
      * gets a copy of this term.
      */
     public Term copy(int idExecCtx) {
         return this;
     }
-    
+
     /**
      * gets a copy (with renamed variables) of the term.
      * <p>
@@ -180,7 +180,7 @@ public abstract class Number extends Term  {
     public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
         return this;
     }
-    
+
     /**
      * gets a copy of the term.
      */

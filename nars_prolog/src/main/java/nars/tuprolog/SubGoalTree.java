@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class SubGoalTree implements AbstractSubGoalTree, Iterable<AbstractSubGoalTree> {
     
-    private ArrayList<AbstractSubGoalTree> terms;
+    private final ArrayList<AbstractSubGoalTree> terms;
         //private LinkedList terms;
     
     public SubGoalTree() {
@@ -61,6 +61,7 @@ public class SubGoalTree implements AbstractSubGoalTree, Iterable<AbstractSubGoa
             return false;
         }
     }
+
     public SubGoalTree copy(){
         return new SubGoalTree(terms);
     }

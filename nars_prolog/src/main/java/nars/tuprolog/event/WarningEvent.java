@@ -29,7 +29,7 @@ public class WarningEvent extends EventObject {
     /**
 	 * event description
 	 */
-    private String msg;
+    private final String msg;
 
     public WarningEvent(Object source,String msg_){
         super(source);
