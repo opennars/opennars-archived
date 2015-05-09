@@ -124,7 +124,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 * @param libs the (class) name of the libraries to be loaded
 	 */
-	public Prolog(String[] libs) throws InvalidLibraryException {
+	public Prolog(String... libs) throws InvalidLibraryException {
 		this(false,true);
 		if (libs != null) {
 			for (int i = 0; i < libs.length; i++) {

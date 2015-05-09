@@ -19,20 +19,6 @@ public class NARPrologStructuralInference {
         @Override
         public List<String> initAxioms() {
             List<String> l = super.initAxioms();
-            l.add("connected(A,B) :- product(A, B).");
-            l.add("connected(A,B) :- similarity(A, B).");
-            l.add("connected(A,B) :- equivalence(A, B).");
-            l.add("connected(A,B) :- conjunction(A, B).");
-            l.add("connected(A,B) :- setint(A, B).");
-            l.add("connected(A,B) :- setext(A, B).");
-            l.add("connected(B,A) :- connected(A,B).");
-            //l.add("connected(X,Y) :- member(X,L), member(Y,L).");
-            l.add("[A] :- product(A).");
-            l.add("[A,B] :- product(A,B).");
-            l.add("[A,B,C] :- product(A,B,C).");
-
-            l.add("subject(S) :- inheritance(S,P).");
-            l.add("predicate(P) :- inheritance(S,P).");
             l.add("rdf(S,P,O) :- inheritance(product(S,O),P).");
 
 

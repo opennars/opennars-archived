@@ -1,22 +1,15 @@
 package nars.tuprolog;
 
-public class SubGoalElement extends AbstractSubGoalTree {
+abstract public class SubGoalElement implements AbstractSubGoalTree {
+
     
-    private Term term;
-    
-    public SubGoalElement(Term t) {
-        term = t;
-    }
-    
-    public Term getValue() {
-        return term;
-    }
+    abstract public Term getValue();
     
     public boolean isLeaf() { return true; }
     public boolean isRoot() { return false; }
     
     
     public String toString() {
-        return term.toString();
+        return getValue().toString();
     }
 }

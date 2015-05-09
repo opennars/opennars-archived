@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 
 public class OneWayList<E> {
     
-    private E head;
+    final private E head;
     private OneWayList<E> tail;
     
     public OneWayList(E head, OneWayList<E> tail){
@@ -49,9 +49,9 @@ public class OneWayList<E> {
         return head;
     }
     
-    public void setHead(E head) {
+    /*    public void setHead(E head) {
         this.head = head;
-    }
+    }*/
 
 
     public OneWayList<E> getTail() {
@@ -70,7 +70,7 @@ public class OneWayList<E> {
         tail.addLast(newTail);
     }
     
-    public OneWayList<E> get(int index){
+    public OneWayList<E> get(final int index){
         if(tail == null) throw new NoSuchElementException();
         if(index <= 0) return this;
         return tail.get(index-1);

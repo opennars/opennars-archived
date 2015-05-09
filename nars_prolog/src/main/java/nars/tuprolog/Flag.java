@@ -17,6 +17,7 @@
  */
 package nars.tuprolog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -77,9 +78,13 @@ class Flag implements java.io.Serializable {
      */
     public boolean isValidValue(Term value) {
         java.util.Iterator<? extends Term> it=valueList.listIterator();
+
+        ArrayList<Var> v1 = new ArrayList(), v2 = new ArrayList();
+        long now = System.currentTimeMillis();
+
         while (it.hasNext()) {
             Term t= it.next();
-            if (value.match(t)) {
+            if (value.match(t, now, v1, v2)) {
                 return true;
             }
         }
@@ -109,7 +114,7 @@ class Flag implements java.io.Serializable {
      * @return true if the value is valid
      */
     public boolean setValue(Term value) {
-        if (isValidValue(value) && modifiable) {
+        if (modifiable && isValidValue(value)) {
             this.value = value;
             return true;
         } else {

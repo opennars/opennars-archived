@@ -70,6 +70,8 @@ public class Var extends Term {
         }
     }
 
+
+
     /**
      * Creates an anonymous variable
      *
@@ -113,20 +115,16 @@ public class Var extends Term {
 
         id = idExecCtx;
 
+        completeName.setLength(0);
         if (id > -1) {
             //completeName = name + "_e" + idExecCtx;
-            completeName = completeName
-                    .delete(0, completeName.length())
-                    .append(name).append("_e").append(id);
+            completeName.append(name).append("_e").append(id);
         } else if (id == ORIGINAL) { //completeName = name;
-            completeName = completeName
-                    .delete(0, completeName.length())
-                    .append(name);
+            completeName.append(name);
         } else if (id == PROGRESSIVE) { //completeName = "_"+count;
-            completeName = completeName
-                    .delete(0, completeName.length())
-                    .append('_').append(count);
+            completeName.append('_').append(count);
         }
+
     }
 
     /**
@@ -167,9 +165,8 @@ public class Var extends Term {
         }
         Term t = getTerm();
         if (t instanceof Var) {
-            Object tt = substMap.get(t);
+            Object tt = substMap.putIfAbsent(t, v);
             if (tt == null) {
-                substMap.put(t, v);
                 v.link = null;
             } else {
                 v.link = (tt != v) ? (Var) tt : null;
@@ -197,6 +194,13 @@ public class Var extends Term {
     public final static void free(final List<Var> varsUnified) {
         for (final Var v : varsUnified) {
             v.free();
+        }
+    }
+    /** faster version for arraylist which doesnt involve iterator */
+    public final static void free(final ArrayList<Var> varsUnified) {
+        final int size = varsUnified.size();
+        for (int i = 0; i < size; i++) {
+            varsUnified.get(i).free();
         }
     }
 
@@ -421,11 +425,12 @@ public class Var extends Term {
             t = t.getTerm();
             if (t instanceof Var) {
                 if (this == t) {
-                    try {
+                    //try {
                         vl1.add(this);
-                    } catch (NullPointerException e) {/* vl1==null mean nothing intresting for the caller */
+                    /* vl1==null mean nothing intresting for the caller */
+                    /*} catch (NullPointerException e) {
 
-                    }
+                    }*/
                     return true;
                 }
             } else if (t instanceof Struct) {
@@ -437,11 +442,12 @@ public class Var extends Term {
                 return false;
             }
             link = t;
-            try {
+            //try {
                 vl1.add(this);
-            } catch (NullPointerException e) {/* vl1==null mean nothing intresting for the caller */
+            /* vl1==null mean nothing intresting for the caller */
+            /*} catch (NullPointerException e) {
 
-            }
+            }*/
             //System.out.println("VAR "+name+" BOUND to "+tlink+" - time: "+time+" - mark: "+mark);
             return true;
         } else {

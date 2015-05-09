@@ -50,7 +50,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     /* Last environment used */
     private Engine last_env;
     /* Stack environments of nidicate solving */
-    private LinkedList<Engine> stackEnv = new LinkedList<>();
+    private List<Engine> stackEnv = new ArrayList();
     private SolveInfo sinfo;
     private String sinfoSetOf;
     
@@ -285,10 +285,10 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     
     private void freeze() {
         if(env==null) return;
-        try {
-            if (stackEnv.getLast()==env) return;
-        } catch(NoSuchElementException e) {}
-        stackEnv.addLast(env);
+        int s = stackEnv.size();
+        if (s == 0) return;
+        if (stackEnv.get(s-1) == env) return;
+        stackEnv.add(env);
     }
     
     private void refreeze() {
@@ -299,7 +299,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     private void defreeze() {
         last_env = env;
         if (stackEnv.isEmpty()) return;
-        env = stackEnv.removeLast();
+        env = stackEnv.remove(stackEnv.size()-1);
     }
     
     

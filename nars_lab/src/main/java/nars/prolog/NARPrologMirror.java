@@ -101,7 +101,7 @@ public class NARPrologMirror extends AbstractMirror {
         this.confidenceThreshold = minConfidence;
         this.prolog = new NARTuprolog(nar);
         this.forgetCyclePeriod = nar.memory.duration() / 2;
-        this.maxSolveTime = 40.0f / 1e3f;
+        this.maxSolveTime = 10.0f * 1e-3f;
         this.minSolveTime = maxSolveTime / 2f;
 
         //HACK
@@ -712,10 +712,26 @@ public class NARPrologMirror extends AbstractMirror {
         l.add("similarity(A, B) :- similarity(B,A).");
         l.add("not(similar(A, B)) :- not(inheritance(A,B)),inheritance(B,A).");
         l.add("equivalence(A, B) :- equivalence(B,A).");
+
+
         //l.add("similarity(A, B) :- equivalence(A,B).");
         //l.add("not(equivalence(A, B)) :- not(similar(A,B)).");
+
         l.add("A :- negation(negation(A)).");
         l.add("not(A) :- negation(A).");
+        l.add("connected(A,B) :- product(A, B).");
+        l.add("connected(A,B) :- similarity(A, B).");
+        l.add("connected(A,B) :- equivalence(A, B).");
+        l.add("connected(A,B) :- conjunction(A, B).");
+        l.add("connected(A,B) :- setint(A, B).");
+        l.add("connected(A,B) :- setext(A, B).");
+        l.add("connected(B,A) :- connected(A,B).");
+        l.add("[A] :- product(A).");
+        l.add("[A,B] :- product(A,B).");
+        l.add("[A,B,C] :- product(A,B,C).");
+
+        l.add("subject(S) :- inheritance(S,P).");
+        l.add("predicate(P) :- inheritance(S,P).");
         return l;
     }
 

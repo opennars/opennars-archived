@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class SubGoalTree extends AbstractSubGoalTree implements Iterable<AbstractSubGoalTree> {
+public class SubGoalTree implements AbstractSubGoalTree, Iterable<AbstractSubGoalTree> {
     
     private ArrayList<AbstractSubGoalTree> terms;
         //private LinkedList terms;
@@ -18,8 +18,7 @@ public class SubGoalTree extends AbstractSubGoalTree implements Iterable<Abstrac
     }
     
     public void addChild(Term term) {
-        SubGoalElement l = new SubGoalElement(term);
-        terms.add(l);
+        terms.add(term);
     }
     
     public SubGoalTree addChild() {

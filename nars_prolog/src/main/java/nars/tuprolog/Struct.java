@@ -683,11 +683,16 @@ public class Struct extends Term {
     public boolean unify(final List<Var> vl1, final List<Var> vl2, Term t) {
         // In fase di unificazione bisogna annotare tutte le variabili della struct completa.
         t = t.getTerm();
+
+            final int ari = this.arity;
+            Term[] argg = this.arg;
+
+
         if (t instanceof Struct) {
             Struct ts = (Struct) t;
-            if ( arity == ts.arity && name.equals(ts.name)) {
-                for (int c = 0;c < arity;c++) {
-                    if (!arg[c].unify(vl1,vl2,ts.arg[c])) {
+            if ( ari == ts.arity && name.equals(ts.name)) {
+                for (int c = 0;c < ari;c++) {
+                    if (!argg[c].unify(vl1,vl2,ts.arg[c])) {
                         return false;
                     }
                 }

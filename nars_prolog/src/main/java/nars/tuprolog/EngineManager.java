@@ -3,6 +3,12 @@ package nars.tuprolog;
 //import java.io.File;
 //import java.io.IOException;
 
+import com.gs.collections.api.map.primitive.MutableIntIntMap;
+import com.gs.collections.api.map.primitive.MutableIntObjectMap;
+import com.gs.collections.impl.map.mutable.primitive.IntIntHashMap;
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import nars.jwam.datastructures.IntHashMap;
+
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -10,21 +16,21 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EngineManager implements java.io.Serializable {
 	
 	private Prolog vm;
-	private Hashtable<Integer, EngineRunner> runners;	//key: id; obj: runner
-	private Hashtable<Integer, Integer> threads;	//key: pid; obj: id
+	private MutableIntObjectMap<EngineRunner> runners;	//key: id; obj: runner
+	private MutableIntIntMap threads;	//key: pid; obj: id
 	private int rootID = 0;
 	private EngineRunner er1;
 	private int id = 0;
 	
-	private Hashtable<String, TermQueue> queues;
-	private Hashtable<String, ReentrantLock> locks;
+	private Map<String, TermQueue> queues;
+	private Map<String, ReentrantLock> locks;
 
 	public void initialize(Prolog vm) {
 		this.vm=vm;
-		runners=new Hashtable<>();
-		threads = new Hashtable<>();
-		queues =new Hashtable<>();
-		locks = new Hashtable<>();
+		runners = new IntObjectHashMap().asSynchronized();
+		threads = new IntIntHashMap().asSynchronized();
+		queues =new HashMap<>();
+		locks = new HashMap<>();
 		
 		er1 = new EngineRunner(rootID);
 		er1.initialize(vm);	
@@ -44,7 +50,7 @@ public class EngineManager implements java.io.Serializable {
 		
 		er.setGoal(goal);
 		addRunner(er, id);
-		Thread t = new Thread(er);
+		Thread t = new Thread(er, threadID.toString() + goal.toString());
 		addThread(t.getId(), id);
 	
 		t.start();
@@ -168,26 +174,22 @@ public class EngineManager implements java.io.Serializable {
 	
 	private void removeRunner(int id){
 		EngineRunner er=runners.get(id);
+
 		if (er==null) return;
-		synchronized (runners) {
-			runners.remove(id);
-		}
+		runners.remove(id);
+
 		int pid = er.getPid();
-		synchronized (threads) {
-			threads.remove(pid);
-		}
+
+		threads.remove(pid);
+
 	}
 	
 	private void addRunner(EngineRunner er, int id){
-		synchronized (runners){
-			runners.put(id, er);
-		}
+		runners.put(id, er);
 	}
 	
 	private void addThread(long pid, int id){
-		synchronized (threads){
-			threads.put((int) pid, id);
-		}
+		threads.put((int) pid, id);
 	}
 	
 	void cut() {
@@ -219,7 +221,7 @@ public class EngineManager implements java.io.Serializable {
             return solve(query, 0);
         }
         
-	public synchronized SolveInfo solve(Term query, double maxTimeSeconds) {
+	public SolveInfo solve(Term query, double maxTimeSeconds) {
 		this.clearSinfoSetOf();
 		er1.setGoal(query);
 		
@@ -233,15 +235,11 @@ public class EngineManager implements java.io.Serializable {
 	public void solveEnd() {
 		er1.solveEnd();
 		if(!runners.isEmpty()){
-			java.util.Enumeration<EngineRunner> ers=runners.elements();
-			while (ers.hasMoreElements()) {
-				EngineRunner current=ers.nextElement();
-				current.solveEnd();		
+			for (EngineRunner e : runners.values()) {
+				e.solveEnd();
 			}
-			runners=new Hashtable<>();
-			threads=new Hashtable<>();
-			queues =new Hashtable<>();
-			locks = new Hashtable<>();
+			queues.clear();
+			locks.clear();
 			id = 0;
 		}
 	}
@@ -249,19 +247,17 @@ public class EngineManager implements java.io.Serializable {
 	public void solveHalt() {
 		er1.solveHalt();
 		if(!runners.isEmpty()){
-			java.util.Enumeration<EngineRunner> ers=runners.elements();
-			while (ers.hasMoreElements()) {
-				EngineRunner current=ers.nextElement();
-				current.solveHalt();		
+			for (EngineRunner e : runners.values()) {
+				e.solveHalt();
 			}
 		}
 	}
 	
-	public synchronized SolveInfo solveNext() throws NoMoreSolutionException {
+	public SolveInfo solveNext() throws NoMoreSolutionException {
             return solveNext(0);
         }
         
-        public synchronized SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
+        public SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
 		return er1.solveNext(maxTimeSec);
 	}
 	
@@ -278,21 +274,16 @@ public class EngineManager implements java.io.Serializable {
 	
 	private EngineRunner findRunner (int id){
 		if(!runners.containsKey(id)) return null;
-		synchronized(runners){
-			return runners.get(id);
-		}
+		return runners.get(id);
 	}
 	
 	private EngineRunner findRunner(){
 		int pid = (int) Thread.currentThread().getId();
-		if(!threads.containsKey(pid))
+		int id = threads.getIfAbsent(pid, -1);
+		if (id == -1)
 			return er1;
-		synchronized(threads){
-			synchronized(runners){
-				int id = threads.get(pid);
-				return runners.get(id);
-			}
-		}	
+
+		return runners.get(id);
 	}
 	
 	//Ritorna l'identificativo del thread corrente

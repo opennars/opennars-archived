@@ -33,7 +33,7 @@ public class BooleanChallenge implements Reaction {
     final float freqThresh = 0.25f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
     private final double complete;
     boolean failOnError = false; //exit on the first logical error
-    private boolean correctFeedback = false;
+    private boolean correctFeedback = true;
     boolean ignoreCorrectProvided = false; //if true, scores will only be updated if the answer is was not provided or if it was incorrect (provided or not provided)
     float confThreshold = 0.5f; //confidence threshold for being counted as an answer
     float inputConf = 0.95f;

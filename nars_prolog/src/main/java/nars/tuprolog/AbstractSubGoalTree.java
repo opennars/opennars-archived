@@ -1,7 +1,7 @@
 package nars.tuprolog;
 
 
-public abstract class AbstractSubGoalTree {
+public interface AbstractSubGoalTree {
     
     public abstract boolean isLeaf();
     

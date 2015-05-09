@@ -14,16 +14,22 @@ import java.io.PrintStream;
  */
 public class NARTuprolog extends NARProlog implements OutputListener, WarningListener, TheoryListener, QueryListener {
     
-    public final Prolog prolog;
+    public Prolog prolog;
     
     public NARTuprolog(NAR n)  {
         super(n);
-        this.prolog = new Prolog();
 
-        prolog.addOutputListener(this);
-        prolog.addTheoryListener(this);
-        prolog.addWarningListener(this);
-        prolog.addQueryListener(this);
+        try {
+            prolog = new Prolog("nars.tuprolog.lib.BasicLibrary");
+            prolog.addOutputListener(this);
+            prolog.addTheoryListener(this);
+            prolog.addWarningListener(this);
+            prolog.addQueryListener(this);
+        } catch (InvalidLibraryException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
 
 
     }
@@ -43,10 +49,10 @@ public class NARTuprolog extends NARProlog implements OutputListener, WarningLis
         return prolog.solve(s, time);
     }
 
-    public NARTuprolog loadBasicLibrary() throws InvalidLibraryException {
-        prolog.loadLibrary(new BasicLibrary());
-        return this;
-    }
+//    public NARTuprolog loadBasicLibrary() throws InvalidLibraryException {
+//        prolog.loadLibrary(new BasicLibrary());
+//        return this;
+//    }
     
     public NARTuprolog loadNAL() throws InvalidTheoryException {
     /*    addTheory(getNALTheory());

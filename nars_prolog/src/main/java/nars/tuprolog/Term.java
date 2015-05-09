@@ -17,6 +17,7 @@
  */
 package nars.tuprolog;
 
+import jdk.nashorn.internal.objects.Global;
 import nars.tuprolog.util.OneWayList;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ import java.util.*;
  * @see Var
  * @see  Number
  */
-public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/ Serializable {
+public abstract class Term extends SubGoalElement implements Comparable<Term>, /*nars.nal.term.Term,*/ Serializable {
 	private static final long serialVersionUID = 1L;
 
     // true and false constants
@@ -115,11 +116,11 @@ public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/
      * 
      * If the variables has been already resolved, no renaming is done.
      */
-    public Term resolveTerm() {
+    @Deprecated public Term resolveTerm() {
         resolveTerm(System.currentTimeMillis());
         return this;
     }
-    
+
     
     /**
      * gets a engine's copy of this term.
@@ -221,6 +222,11 @@ public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/
         Var.free(v2);
     	return false;
     }
+
+    @Override
+    public Term getValue() {
+        return this;
+    }
     
     
     /**
@@ -232,18 +238,22 @@ public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/
      *
      * @return true if the term is unifiable with this one
      */
-    public boolean match(Term t) {
-        resolveTerm();
-        t.resolveTerm();
-        List<Var> v1 = new ArrayList<>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
-        List<Var> v2 = new ArrayList<>(); /* Reviewed by: Paolo Contessi (was: ArrayList()) */
+    public boolean match(Term t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
+        v1.clear(); v2.clear();
+
+        resolveTerm(time);
+        t.resolveTerm(time);
+
         boolean ok = unify(v1,v2,t);
         Var.free(v1);
         Var.free(v2);
         return ok;
     }
-    
-    
+
+    @Deprecated public boolean match(Term t) {
+        return match(t, System.currentTimeMillis(), new ArrayList(), new ArrayList());
+    }
+
     /**
      * Tries to unify two terms, given a demonstration context
      * identified by the mark integer.
