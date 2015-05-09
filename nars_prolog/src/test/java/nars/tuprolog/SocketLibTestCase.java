@@ -20,7 +20,7 @@ public class SocketLibTestCase {
 	@Before
 	public void before() throws InvalidLibraryException, MalformedGoalException, NoSolutionException, UnknownVarException {
 		try {
-			engine = new Prolog();
+			engine = new DefaultProlog();
 			engine.loadLibrary("nars.tuprolog.lib.SocketLibrary");
 			engine.loadLibrary("nars.tuprolog.lib.ThreadLibrary");
 		} catch (InvalidLibraryException e) {

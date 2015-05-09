@@ -41,7 +41,7 @@ public class TestEvent {
 
     public static void main(String[] args) throws Exception {
     
-        Prolog engine = new Prolog(new String[]{});
+        Prolog engine = new DefaultProlog(new String[]{});
         
         MyListener l = new MyListener();
         engine.addTheoryListener(l);

@@ -19,7 +19,7 @@ public class JavaLibraryTestCase extends TestCase {
 	String paths = null;
 
 	public JavaLibraryTestCase() throws InvalidLibraryException {
-		engine = new Prolog();
+		engine = new DefaultProlog();
 	}
 
 	public void testGetPrimitives() {
@@ -49,7 +49,7 @@ public class JavaLibraryTestCase extends TestCase {
 	}
 
 	public void testDynamicObjectsRetrival() throws PrologException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.tuprolog.lib.JavaLibrary");
 		String theory = "demo(C) :- \n" +
 				"java_object('nars.tuprolog.TestCounter', [], C), \n" +

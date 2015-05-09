@@ -5,17 +5,17 @@
 
 package nars.tuprolog.lib;
 
+import com.sun.xml.internal.ws.api.server.AbstractServerAsyncTransport;
 import nars.tuprolog.*;
-
-
+import org.apache.commons.math3.analysis.function.Abs;
 
 
 @SuppressWarnings("serial")
-public class ThreadLibrary extends Library<ConcurrentEngineManager> {
+public class ThreadLibrary extends Library<DefaultProlog> {
 
-	protected ConcurrentEngineManager engineManager;
+	protected DefaultProlog engineManager;
 	
-	public void setEngine(Prolog en) {	
+	public void setEngine(DefaultProlog en) {
         engine = en;
         engineManager = en;
 	}

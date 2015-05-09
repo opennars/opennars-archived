@@ -26,7 +26,7 @@ public class TestBug {
 			"can_do(Y).\n"+
 		"').";
 		
-		new Prolog().solve(goal);
+		new DefaultProlog().solve(goal);
 		
 		String st =
 		"p(X).				\n"+
@@ -35,7 +35,7 @@ public class TestBug {
 		"	append([a,b],L1,L2).	\n";
 		
 		
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		engine.addSpyListener(new SpyListener(){ 
 			public void onSpy(SpyEvent e){
 				System.out.println(e);

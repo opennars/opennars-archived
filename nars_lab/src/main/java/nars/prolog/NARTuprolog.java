@@ -12,7 +12,7 @@ import java.io.PrintStream;
 /**
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
  */
-public class NARTuprolog extends Prolog implements NARProlog, OutputListener, WarningListener, TheoryListener, QueryListener {
+public class NARTuprolog extends DefaultProlog implements NARProlog, OutputListener, WarningListener, TheoryListener, QueryListener {
     
     @Deprecated final public Prolog prolog = this;
     private final NAR nar;

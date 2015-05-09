@@ -13,7 +13,8 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("serial")
-public abstract class ConcurrentEngineManager extends AbstractEngineManager implements java.io.Serializable {
+/** Prolog core with multithreaded concurrency */
+public class DefaultProlog extends Prolog  {
 
     protected MutableIntObjectMap<EngineRunner> runners;    //key: id; obj: runner
     protected MutableIntIntMap threads;    //key: pid; obj: id
@@ -24,13 +25,24 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
     private Map<String, TermQueue> queues = new HashMap();
     private Map<String, ReentrantLock> locks = new HashMap();
 
-    public ConcurrentEngineManager(boolean spy, boolean warning) {
-        super(spy, warning);
+    public DefaultProlog() throws InvalidLibraryException {
+        this("nars.tuprolog.lib.BasicLibrary","nars.tuprolog.lib.ISOLibrary", "nars.tuprolog.lib.IOLibrary", "nars.tuprolog.lib.JavaLibrary");
+    }
 
+    protected DefaultProlog(String... libs) throws InvalidLibraryException {
+        super(libs);
+
+        setSpy(false);
+        setWarning(true);
         runners = new IntObjectHashMap().asSynchronized();
         threads = new IntIntHashMap().asSynchronized();
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        er1 = new EngineRunner(rootID, this);
+    }
 
     public synchronized boolean threadCreate(Term threadID, Term goal) {
         id += 1;
@@ -266,8 +278,22 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
     }
 
 
+
+    /**
+     * Gets next solution
+     *
+     * @return the result of the demonstration
+     * @throws NoMoreSolutionException if no more solutions are present
+     * @see SolveInfo
+     **/
     public SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
-        return er1.solveNext(maxTimeSec);
+        if (hasOpenAlternatives()) {
+            SolveInfo sinfo = er1.solveNext(maxTimeSec);
+            QueryEvent ev = new QueryEvent(this, sinfo);
+            notifyNewQueryResultAvailable(ev);
+            return sinfo;
+        } else
+            throw new NoMoreSolutionException();
     }
 
 

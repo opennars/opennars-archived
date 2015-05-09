@@ -23,34 +23,34 @@ abstract public class AbstractEngineManager implements IProlog {
     private boolean exception;
 
     /**/
-    private ArrayList<OutputListener> outputListeners;
+    private final ArrayList<OutputListener> outputListeners;
     /* listeners registrated for virtual machine internal events */
-    private ArrayList<SpyListener> spyListeners;
+    private final ArrayList<SpyListener> spyListeners;
     /* listeners registrated for virtual machine state change events */
-    private ArrayList<WarningListener> warningListeners;
+    private final ArrayList<WarningListener> warningListeners;
     /*Castagna 06/2011*/
 	/* listeners registrated for virtual machine state exception events */
-    private ArrayList<ExceptionListener> exceptionListeners;
+    private final ArrayList<ExceptionListener> exceptionListeners;
 	/**/
 
     /* listeners to theory events */
-    private ArrayList<TheoryListener> theoryListeners;
+    private final ArrayList<TheoryListener> theoryListeners;
     /* listeners to library events */
-    private ArrayList<LibraryListener> libraryListeners;
+    private final ArrayList<LibraryListener> libraryListeners;
     /* listeners to query events */
-    private ArrayList<QueryListener> queryListeners;
+    private final ArrayList<QueryListener> queryListeners;
 
-    public AbstractEngineManager(boolean spy, boolean warning) {
+    public AbstractEngineManager() {
+
         outputListeners = new ArrayList<>();
         spyListeners = new ArrayList<>();
         warningListeners = new ArrayList<>();
 		/*Castagna 06/2011*/
         exceptionListeners = new ArrayList<>();
 		/**/
-        this.spy = spy;
-        this.warning = warning;
-		/*Castagna 06/2011*/
-        exception = true;
+        this.spy = false;
+        this.warning = true;
+        this.exception = true;
 		/**/
         theoryListeners = new ArrayList<>();
         queryListeners = new ArrayList<>();
@@ -67,7 +67,7 @@ abstract public class AbstractEngineManager implements IProlog {
         return solve(query, 0);
     }
 
-    protected abstract SolveInfo solve(Term query, double maxTimeSeconds);
+    public abstract SolveInfo solve(Term query, double maxTimeSeconds);
 
     abstract public void solveHalt();
 
@@ -114,7 +114,7 @@ abstract public class AbstractEngineManager implements IProlog {
     /**
      * Gets the component managing flags
      */
-    abstract public FlagManager getFlagManager();
+    abstract public Flags getFlags();
 
 
     /**

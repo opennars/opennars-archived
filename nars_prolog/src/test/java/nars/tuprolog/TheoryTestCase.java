@@ -16,7 +16,7 @@ public class TheoryTestCase extends TestCase {
 		Term[] otherClauseList = new Term[] {new Struct("a"), new Struct("b"), new Struct("c")};
 		Theory theory = new Theory(new Struct(clauseList));
 		theory.append(new Theory(new Struct(otherClauseList)));
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		engine.setTheory(theory);
 		assertTrue((engine.solve("p.")).isSuccess());
 		assertTrue((engine.solve("b.")).isSuccess());

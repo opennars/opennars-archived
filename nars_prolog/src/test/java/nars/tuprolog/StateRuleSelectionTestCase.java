@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 public class StateRuleSelectionTestCase extends TestCase {
 	
 	public void testUnknownPredicateInQuery() throws MalformedGoalException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestWarningListener warningListener = new TestWarningListener();
 		engine.addWarningListener(warningListener);
 		String query = "p(X).";
@@ -15,7 +15,7 @@ public class StateRuleSelectionTestCase extends TestCase {
 	}
 	
 	public void testUnknownPredicateInTheory() throws InvalidTheoryException, MalformedGoalException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestWarningListener warningListener = new TestWarningListener();
 		engine.addWarningListener(warningListener);
 		String theory = "p(X) :- a, b. \nb.";

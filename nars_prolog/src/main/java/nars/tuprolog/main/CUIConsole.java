@@ -25,7 +25,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
         }
         
 
-        engine = new Prolog();
+        engine = new DefaultProlog();
         /**
          * Added the method setExecution to conform
          * the operation of CUIConsole as that of JavaIDE

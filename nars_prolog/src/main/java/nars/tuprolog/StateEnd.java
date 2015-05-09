@@ -149,7 +149,7 @@ public class StateEnd extends State {
 
             AbstractEngineManager p = null;
             try {
-                p = new Prolog(new String[] { });
+                p = new DefaultProlog(new String[] { });
             } catch (InvalidLibraryException e1) {
                 e1.printStackTrace();
                 return;

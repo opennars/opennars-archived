@@ -8,7 +8,7 @@ public class TheoriesTestCase extends TestCase {
 
 	public void testUnknownDirective() throws InvalidTheoryException, InvalidLibraryException {
 		String theory = ":- unidentified_directive(unknown_argument).";
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestWarningListener warningListener = new TestWarningListener();
 		engine.addWarningListener(warningListener);
 		engine.setTheory(new Theory(theory));
@@ -18,7 +18,7 @@ public class TheoriesTestCase extends TestCase {
 
 	public void testFailedDirective() throws InvalidTheoryException, InvalidLibraryException {
 		String theory = ":- load_library('UnknownLibrary').";
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestWarningListener warningListener = new TestWarningListener();
 		engine.addWarningListener(warningListener);
 		engine.setTheory(new Theory(theory));
@@ -27,14 +27,14 @@ public class TheoriesTestCase extends TestCase {
 	}
 
 	public void testAssertNotBacktrackable() throws PrologException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		SolveInfo firstSolution = engine.solve("assertz(a(z)).");
 		assertTrue(firstSolution.isSuccess());
 		assertFalse(firstSolution.hasOpenAlternatives());
 	}
 
 	public void testAbolish() throws PrologException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		String theory = "test(A, B) :- A is 1+2, B is 2+3.";
 		engine.setTheory(new Theory(theory));
 		Theories manager = engine.getTheories();
@@ -49,7 +49,7 @@ public class TheoriesTestCase extends TestCase {
 	}
 
 	public void testAbolish2() throws InvalidTheoryException, MalformedGoalException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		engine.setTheory(new Theory("fact(new).\n" +
 									"fact(other).\n"));
 
@@ -61,7 +61,7 @@ public class TheoriesTestCase extends TestCase {
 	
 //	// Based on the bugs 65 and 66 on sourceforge
 //	public void testRetractall() throws MalformedGoalException, NoSolutionException, NoMoreSolutionException, InvalidLibraryException {
-//		Prolog engine = new Prolog();
+//		Prolog engine = new DefaultProlog();
 //                engine.loadLibrary(new BasicLibrary());
 //
 //		SolveInfo info = engine.solve("assert(takes(s1,c2)), assert(takes(s1,c3)).");
@@ -86,7 +86,7 @@ public class TheoriesTestCase extends TestCase {
 	// empty list
 	
 	public void testRetract() throws InvalidTheoryException, MalformedGoalException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestOutputListener listener = new TestOutputListener();
 		engine.addOutputListener(listener);
 		engine.setTheory(new Theory("insect(ant). insect(bee)."));

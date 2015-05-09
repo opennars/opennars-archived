@@ -1,6 +1,7 @@
 package nars.prolog;
 
 import nars.nal.term.Term;
+import nars.tuprolog.DefaultProlog;
 import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.lib.BasicLibrary;
@@ -25,7 +26,7 @@ public class PrologTheoryUtility {
             prologInterpreter = context.prologs.get(prologInterpreterKey);
         }
         else {
-            prologInterpreter = new Prolog();
+            prologInterpreter = new DefaultProlog();
             
             try {
                 prologInterpreter.loadLibrary(new BasicLibrary());

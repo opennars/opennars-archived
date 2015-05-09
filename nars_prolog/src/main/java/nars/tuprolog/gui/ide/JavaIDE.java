@@ -17,6 +17,7 @@
  */
 package nars.tuprolog.gui.ide;
 
+import nars.tuprolog.DefaultProlog;
 import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.event.OutputEvent;
@@ -52,7 +53,7 @@ public class JavaIDE
 
     public JavaIDE() throws InvalidLibraryException {
         super("tuProlog IDE");
-        engine = new Prolog();
+        engine = new DefaultProlog();
         initComponents();
     }
 

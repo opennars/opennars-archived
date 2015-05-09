@@ -53,7 +53,7 @@ public class Agent {
      */
     public Agent(String theory) throws InvalidLibraryException {
         theoryText=theory;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     
@@ -63,7 +63,7 @@ public class Agent {
     public Agent(String theory,String goal) throws InvalidLibraryException {
         theoryText=theory;
         goalText=goal;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     
@@ -73,7 +73,7 @@ public class Agent {
      */
     public Agent(InputStream is) throws InvalidLibraryException {
         theoryInputStream=is;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     
@@ -84,7 +84,7 @@ public class Agent {
     public Agent(InputStream is,String goal) throws InvalidLibraryException {
         theoryInputStream=is;
         goalText=goal;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     

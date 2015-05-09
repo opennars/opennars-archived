@@ -22,7 +22,7 @@ public class ThreadLibraryTestCase {
 	@Before
 	public void before() {
 		try {
-			engine = new Prolog();
+			engine = new DefaultProlog();
 			engine.loadLibrary("nars.tuprolog.lib.ThreadLibrary");
 		} catch (InvalidLibraryException e) {
 			e.printStackTrace();

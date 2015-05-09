@@ -8,7 +8,7 @@ import nars.tuprolog.event.SpyListener;
 public class PrologTestCase extends TestCase {
 	
 	public void testEngineInitialization() throws InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		assertEquals(String.join(",",engine.getCurrentLibraries()), 4, engine.getCurrentLibraries().length);
 		assertNotNull(engine.getLibrary("nars.tuprolog.lib.BasicLibrary"));
 		assertNotNull(engine.getLibrary("nars.tuprolog.lib.ISOLibrary"));
@@ -17,13 +17,13 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testLoadLibraryAsString() throws InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		engine.loadLibrary("nars.tuprolog.StringLibrary");
 		assertNotNull(engine.getLibrary("nars.tuprolog.StringLibrary"));
 	}
 	
 	public void testLoadLibraryAsObject() throws InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		Library stringLibrary = new StringLibrary();
 		engine.loadLibrary(stringLibrary);
 		assertNotNull(engine.getLibrary("nars.tuprolog.StringLibrary"));
@@ -33,12 +33,12 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testGetLibraryWithName() throws InvalidLibraryException {
-		Prolog engine = new Prolog(new String[] {"nars.tuprolog.TestLibrary"});
+		Prolog engine = new DefaultProlog(new String[] {"nars.tuprolog.TestLibrary"});
 		assertNotNull(engine.getLibrary("TestLibraryName"));
 	}
 	
 	public void testUnloadLibraryAfterLoadingTheory() throws Exception {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		assertNotNull(engine.getLibrary("nars.tuprolog.lib.IOLibrary"));
 		Theory t = new Theory("a(1).\na(2).\n");
 		engine.setTheory(t);
@@ -47,7 +47,7 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testAddTheory() throws InvalidTheoryException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		Theory t = new Theory("test :- notx existing(s).");
 		try {
 			engine.addTheory(t);
@@ -58,7 +58,7 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testSpyListenerManagement() throws InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		SpyListener listener1 = new SpyListener() {
 			public void onSpy(SpyEvent e) {}
 		};
@@ -71,7 +71,7 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testLibraryListener() throws InvalidLibraryException {
-		Prolog engine = new Prolog(new String[]{});
+		Prolog engine = new DefaultProlog(new String[]{});
 		engine.loadLibrary("nars.tuprolog.lib.BasicLibrary");
 		engine.loadLibrary("nars.tuprolog.lib.IOLibrary");
 		TestPrologEventAdapter a = new TestPrologEventAdapter();
@@ -83,7 +83,7 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testTheoryListener() throws InvalidTheoryException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestPrologEventAdapter a = new TestPrologEventAdapter();
 		engine.addTheoryListener(a);
 		Theory t = new Theory("a(1).\na(2).\n");
@@ -97,7 +97,7 @@ public class PrologTestCase extends TestCase {
 	}
 	
 	public void testQueryListener() throws Exception {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestPrologEventAdapter a = new TestPrologEventAdapter();
 		engine.addQueryListener(a);
 		engine.setTheory(new Theory("a(1).\na(2).\n"));

@@ -26,7 +26,7 @@ public class ISOIOLibraryTestCase {
 	{
 		try
 		{	
-			engine = new Prolog(new String[] {
+			engine = new DefaultProlog(new String[] {
 					"nars.tuprolog.lib.BasicLibrary",
 					"nars.tuprolog.lib.IOLibrary",
 			"nars.tuprolog.lib.ISOIOLibrary"});

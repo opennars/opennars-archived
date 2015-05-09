@@ -2,6 +2,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.nal.term.Term;
+import nars.tuprolog.DefaultProlog;
 import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.Prolog;
 
@@ -47,7 +48,7 @@ public class PrologContext {
     public Prolog getProlog(Term o) throws InvalidLibraryException {
         Prolog exist = prologs.get(o);
         if (exist!=null) return exist;
-        exist = new Prolog();
+        exist = new DefaultProlog();
         prologs.put(o, exist);
         return exist;
     }

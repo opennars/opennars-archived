@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * 
  * @author Alex Benini
  */
-class FlagManager {
+class Flags {
 
     /* flag list */
     private final ArrayList<Flag> flags;
@@ -34,7 +34,7 @@ class FlagManager {
 	 */
     protected final AbstractEngineManager mediator;
 
-    FlagManager(AbstractEngineManager vm) {
+    Flags(AbstractEngineManager vm) {
         mediator = vm;
         flags = new ArrayList<>();
     }

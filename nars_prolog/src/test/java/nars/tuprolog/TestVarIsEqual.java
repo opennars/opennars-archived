@@ -18,7 +18,7 @@ public class TestVarIsEqual extends TestCase {
   
   protected void setUp() throws Exception {
     super.setUp();
-    core = new Prolog();
+    core = new DefaultProlog();
     core.addOutputListener(sysoutListener);
   }
   

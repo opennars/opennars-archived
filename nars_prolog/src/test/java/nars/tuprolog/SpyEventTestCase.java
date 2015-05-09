@@ -7,7 +7,7 @@ public class SpyEventTestCase extends TestCase {
 	
 	public void testToString() throws InvalidLibraryException {
 		String msg = "testConstruction";
-		SpyEvent e = new SpyEvent(new Prolog(), msg);
+		SpyEvent e = new SpyEvent(new DefaultProlog(), msg);
 		assertEquals(msg, e.toString());
 	}
 

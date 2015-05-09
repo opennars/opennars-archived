@@ -19,7 +19,7 @@ public class IOLibraryTestCase extends TestCase {
 	}
 	
 	public void testTab1() throws MalformedGoalException, InvalidLibraryException {
-		Prolog engine = new Prolog();
+		Prolog engine = new DefaultProlog();
 		TestOutputListener l = new TestOutputListener();
 		engine.addOutputListener(l);
 		engine.solve("tab(5).");

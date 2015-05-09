@@ -24,7 +24,7 @@ public class TestStop {
 
 	public static void main(String[] args) throws Exception {
 		
-		Prolog core = new Prolog();
+		Prolog core = new DefaultProlog();
 		
 		Theory th = new Theory(
 			"rec(X):- current_thread <- sleep(X), X1 is X + 100, rec(X1).\n"

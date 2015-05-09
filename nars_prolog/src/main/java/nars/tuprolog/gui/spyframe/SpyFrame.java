@@ -150,7 +150,7 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener {
         setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         //END of the visible stuff
-        prolog = new Prolog();
+        prolog = new DefaultProlog();
         prolog.setTheory(theory);
         prolog.addSpyListener(this);
         prolog.setSpy(true);

@@ -38,7 +38,7 @@ public class BuiltIn extends Library {
 	private final AbstractEngineManager engineManager;
 	private final Theories theories;
 	private final Libraries libraries;
-	private final FlagManager flagManager;
+	private final Flags flagManager;
 	private final Primitives primitives;
 	private final Operators operatorManager;
 
@@ -48,7 +48,7 @@ public class BuiltIn extends Library {
 		engineManager = mediator;
 		theories = mediator.getTheories();
 		libraries = mediator.getLibraries();
-		flagManager = mediator.getFlagManager();
+		flagManager = mediator.getFlags();
 		primitives = mediator.getPrimitives();
 		operatorManager = mediator.getOperators();
 	}

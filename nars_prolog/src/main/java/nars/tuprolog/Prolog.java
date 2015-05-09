@@ -28,7 +28,7 @@ import java.util.*;
  * The Prolog class represents a tuProlog engine.
  */
 @SuppressWarnings("serial")
-public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
+abstract public class Prolog extends AbstractEngineManager implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 
 
     /*  manager of current theory */
@@ -36,26 +36,13 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
     /*  component managing primitive  */
     private Primitives primitives;
     /* component managing operators */
-    private Operators opManager;
+    private Operators operators;
     /* component managing flags */
-    private FlagManager flagManager;
+    private Flags flags;
     /* component managing libraries */
     private Libraries libraries;
 
 
-
-
-
-
-    /**
-     * Builds a prolog engine with default libraries loaded.
-     * <p>
-     * The default libraries are BasicLibrary, ISOLibrary,
-     * IOLibrary, and  JavaLibrary
-     */
-    public Prolog() throws InvalidLibraryException {
-        this("nars.tuprolog.lib.BasicLibrary","nars.tuprolog.lib.ISOLibrary", "nars.tuprolog.lib.IOLibrary", "nars.tuprolog.lib.JavaLibrary");
-    }
 
 
     /**
@@ -65,7 +52,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * @param libs the (class) name of the libraries to be loaded
      */
     public Prolog(String... libs) throws InvalidLibraryException {
-        this(false, true);
+        super();
         if (libs != null) {
             for (int i = 0; i < libs.length; i++) {
                 loadLibrary(libs[i]);
@@ -74,27 +61,13 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
     }
 
 
-    /**
-     * Initialize basic engine structures.
-     *
-     * @param spy     spying activated
-     * @param warning warning activated
-     */
-    private Prolog(boolean spy, boolean warning) {
-        super(spy, warning);
-    }
-
-
     protected void init() {
-        flagManager = new FlagManager(this);
+        flags = new Flags(this);
+        operators = new Operators();
         libraries = new Libraries(this);
-        opManager = new Operators();
         primitives = new Primitives(this);
         theories = new Theories(this);
 
-        //config managers
-
-        er1 = new EngineRunner(rootID, this);
     }
 
 
@@ -102,8 +75,8 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
     /**
      * Gets the component managing flags
      */
-    @Override public FlagManager getFlagManager() {
-        return flagManager;
+    @Override public Flags getFlags() {
+        return flags;
     }
 
     /**
@@ -132,7 +105,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * Gets the component managing operators
      */
     @Override public Operators getOperators() {
-        return opManager;
+        return operators;
     }
 
 
@@ -169,7 +142,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      **/
     public SolveInfo solve(String st, double time) throws MalformedGoalException {
         try {
-            Parser p = new Parser(opManager, st);
+            Parser p = new Parser(operators, st);
             Term t = p.nextTerm(true);
             return solve(t, time);
         } catch (Exception ex) {
@@ -181,22 +154,6 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
         return solve(st, 0);
     }
 
-    /**
-     * Gets next solution
-     *
-     * @return the result of the demonstration
-     * @throws NoMoreSolutionException if no more solutions are present
-     * @see SolveInfo
-     **/
-    public SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException {
-        if (hasOpenAlternatives()) {
-            SolveInfo sinfo = super.solveNext(maxTimeSec);
-            QueryEvent ev = new QueryEvent(this, sinfo);
-            notifyNewQueryResultAvailable(ev);
-            return sinfo;
-        } else
-            throw new NoMoreSolutionException();
-    }
 
     public SolveInfo solveNext() throws NoMoreSolutionException {
         return solveNext(0);
@@ -249,7 +206,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * @return the string representing the term
      */
     public String toString(Term term) {        //no syn
-        return (term.toStringAsArgY(opManager, Operators.OP_HIGH));
+        return (term.toStringAsArgY(operators, Operators.OP_HIGH));
     }
 
 
@@ -257,7 +214,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * Defines a new flag
      */
     public boolean defineFlag(String name, Struct valueList, Term defValue, boolean modifiable, String libName) {
-        return flagManager.defineFlag(name, valueList, defValue, modifiable, libName);
+        return flags.defineFlag(name, valueList, defValue, modifiable, libName);
     }
 
 
