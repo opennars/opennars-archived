@@ -113,6 +113,7 @@ public class ClauseStore {
      */
     private void reunify(List<Var> varsToReunify, List<Term> saveUnifications) {
         int size = varsToReunify.size();
+        //TODO dont use ListIterator instances here: just a simple for loop on an ArrayList
         ListIterator<Var> it1 = varsToReunify.listIterator(size);
         ListIterator<Term> it2 = saveUnifications.listIterator(size);
         // Only the first occurrence of a variable gets its binding saved;

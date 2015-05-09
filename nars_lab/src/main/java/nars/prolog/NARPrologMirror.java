@@ -1,6 +1,6 @@
 package nars.prolog;
 
-import com.google.common.base.Joiner;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Events;
 import nars.Events.*;
 import nars.Global;
@@ -28,8 +28,6 @@ import nars.tuprolog.*;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.google.common.collect.Iterators.toArray;
-
 /**
  * Causes a NARProlog to mirror certain activity of a NAR.  It generates
  * prolog terms from NARS beliefs, and answers NARS questions with the results
@@ -41,12 +39,15 @@ public class NARPrologMirror extends AbstractMirror {
     public final NAR nar;
     public final NARTuprolog prolog;
 
-    Theory axioms;
+
 
     private float trueThreshold = 0.80f;
     private float falseThreshold = 0.20f;
     private float confidenceThreshold;
     private final Map<Sentence, nars.tuprolog.Term> beliefs = new HashMap();
+
+    //counter of how many beliefs support the term. added and removed for each belief
+    private final ObjectIntHashMap<Term> beliefCount = new ObjectIntHashMap<>();
 
     private boolean eternalJudgments = true;
     private boolean presentJudgments = false;
@@ -75,7 +76,7 @@ public class NARPrologMirror extends AbstractMirror {
     /**
      * max # answers returned in response to a question
      */
-    int maxAnswers = 32;
+    int maxAnswers = 256;
 
     boolean reportAssumptions = false;
     boolean reportForgets = false;
@@ -101,24 +102,58 @@ public class NARPrologMirror extends AbstractMirror {
         this.confidenceThreshold = minConfidence;
         this.prolog = new NARTuprolog(nar);
         this.forgetCyclePeriod = nar.memory.duration() / 2;
-        this.maxSolveTime = 10.0f * 1e-3f;
+
+        this.maxSolveTime = 50.0f * 1e-3f;
         this.minSolveTime = maxSolveTime / 2f;
 
-        //HACK
+//        this.maxSolveTime = 0;
+//        this.minSolveTime = 0;
+
         List<String> l = initAxioms();
-        String axiomString = Joiner.on(" \n").join(l);
-        try {
-            nars.tuprolog.Term[] ax = toArray(new Theory(axiomString + '\n').iterator(prolog.prolog), nars.tuprolog.Term.class);
-//            nars.tuprolog.Term[] ax = Lists.transform(l, x -> new Struct(x)).toArray(new nars.tuprolog.Term[l.size()]);
-            axioms = new Theory(ax);
-            prolog.setTheory(axioms);
-        } catch (InvalidTheoryException e) {
-            e.printStackTrace();
-            System.exit(1);
+        for (String axiom : l) {
+            Struct clause = (Struct) new Parser(axiom).nextTerm(true);
+            addTheory(clause);
         }
+//        String axiomString = Joiner.on(" \n").join(l);
+//        try {
+//            nars.tuprolog.Term[] ax = toArray(new Theory(axiomString + '\n').iterator(prolog.prolog), nars.tuprolog.Term.class);
+////            nars.tuprolog.Term[] ax = Lists.transform(l, x -> new Struct(x)).toArray(new nars.tuprolog.Term[l.size()]);
+//            //axioms = new Theory(ax);
+//            //prolog.setTheory(axioms);
+//        } catch (InvalidTheoryException e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
 
 
         setTemporalMode(eternalJudgments, presentJudgments);
+    }
+
+    public ClauseInfo retractFact(Struct fact) {
+        return prolog.prolog.getTheoryManager().retract(fact);
+    }
+
+    public boolean assertFact(Struct fact) {
+        try {
+            boolean b = prolog.prolog.getTheoryManager().assertA(fact, true, null, true);
+            System.err.println("Prolog fact: " + fact+ " (" + b +")");
+            return b;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean addTheory(Struct clause) {
+        try {
+            SolveInfo s = prolog.prolog.addTheory(clause);
+            System.err.println("Prolog theory: " + clause + " (" + s +")");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
@@ -168,33 +203,48 @@ public class NARPrologMirror extends AbstractMirror {
         nars.tuprolog.Term removed;
         if ((removed = beliefs.remove(belief)) != null) {
 
-            if (!apply("retract", removed))
-                throw new RuntimeException("Could not retract: " + belief + " === " + removed);
+            if (beliefCount.addToValue(belief.getTerm(), -1) == 0) {
+                if (!apply("retract", removed))
+                    throw new RuntimeException("Could not retract: " + belief + " === " + removed);
 
-            beliefsChanged();
+                beliefsChanged();
 
-            if (reportForgets) {
-                System.err.println("Prolog forget: " + belief);
+                if (reportForgets) {
+                    System.err.println("Prolog forget: " + belief);
+                }
+
             }
+
 
             return true;
         }
         return false;
     }
 
-    public boolean apply(String functor, String term) {
+    public boolean apply(String functor, String term) throws NoMoreSolutionException, NoSolutionException, InvalidTheoryException {
         return apply(functor, new Parser(term).nextTerm(true));
     }
 
-    public boolean apply(String functor, nars.tuprolog.Term removed) {
+    public boolean apply(String functor, nars.tuprolog.Term removed)  {
         Struct r = new Struct(functor,removed);
         r.resolveTerm();
-        SolveInfo solution = solve(r);
-        return solution.isSuccess();
+        System.out.println("Prolog apply: " + r);
+        try {
+            SolveInfo solution = solve(r);
+            if (solution==null) return false;
+            return solution.isSuccess();
+        }
+        catch (Exception e) {
+            e.printStackTrace();;
+        }
+        return false;
     }
 
-    public SolveInfo solve(Struct r) {
-        return prolog.prolog.solve(r);
+    public SolveInfo solve(Struct r) throws NoMoreSolutionException, NoSolutionException, InvalidTheoryException {
+        return solve(r, 0, x -> {
+            System.err.println(x);
+        });
+
     }
 
     protected void updateBeliefs() {
@@ -232,7 +282,7 @@ public class NARPrologMirror extends AbstractMirror {
             Concept c = (Concept) arg[0];
             Task task = (Task) arg[1];
             add(task);
-        } else if ((channel == IN.class) || (channel == OUT.class)) {
+        } else if ((channel == IN.class) || (channel == OUT.class) || (channel == Answer.class)) {
             Object o = arg[0];
             if (o instanceof Task) {
                 Task task = (Task) o;
@@ -280,13 +330,13 @@ public class NARPrologMirror extends AbstractMirror {
             processBelief(s, task, true);
         } else if (s.isQuestion()) {
 
-            //System.err.println("question: " + s);
+
             onQuestion(s);
 
             float priority = task.getPriority();
             float solveTime = ((maxSolveTime - minSolveTime) * priority) + minSolveTime;
 
-            if (beliefs.containsKey(s)) {
+            if (beliefCount.containsKey(s.getTerm())) {
                 //TODO search for opposite belief
 
                 //already determined it to be true
@@ -296,13 +346,19 @@ public class NARPrologMirror extends AbstractMirror {
 
             try {
                 Struct qh = newQuestion(s);
+
                 if (qh != null) {
+
+                    System.err.println("Prolog asked: " + s + " === " + qh);
+
                     solve(qh, solveTime, solution -> {
 
                         try {
                             Term n = nterm(solution);
-                            if (n != null)
-                                answer(task, n, solution);
+                            if (n != null && (n instanceof Compound)) {
+                                if (matchingSolution(s.getTerm(), (Compound)n))
+                                    answer(task, n, solution);
+                            }
                             else
                                 onUnanswerable(solution);
                         } catch (Exception e) {
@@ -329,6 +385,16 @@ public class NARPrologMirror extends AbstractMirror {
 
     }
 
+    private boolean matchingSolution(Compound a, Compound b) {
+        if (a.hasVar()) {
+            //handle variables
+        }
+        else {
+            return a.equals(b);
+        }
+        return false;
+    }
+
     public SolveInfo solve(Struct qh, float solveTime, Consumer<nars.tuprolog.Term> withSolution) throws NoMoreSolutionException, NoSolutionException, InvalidTheoryException {
         return solve(qh, solveTime, withSolution, maxAnswers);
     }
@@ -352,8 +418,6 @@ public class NARPrologMirror extends AbstractMirror {
                 if (solution == null)
                     break;
 
-                System.out.println(si.toString());
-
                 if (lastSolution != null && solution.equals(lastSolution))
                     continue;
 
@@ -373,21 +437,23 @@ public class NARPrologMirror extends AbstractMirror {
             while ((answers++) < maxAnswers);
         }
         catch (NoSolutionException nse) {
-            return null;
+            si = null;
+        }
+        finally {
+            prolog.prolog.solveEnd();
         }
 
-        prolog.prolog.solveEnd();
 
         return si;
 
     }
 
     protected void onUnrecognizable(Sentence s) {
-        //System.err.println(this + " unable to express question in Prolog: " + s);
+        System.err.println(this + " unable to express question in Prolog: " + s);
     }
 
     protected void onUnanswerable(nars.tuprolog.Term solution) {
-        //System.err.println(this + " unable to answer solution: " + solution);
+        System.err.println(this + " unable to answer solution: " + solution);
 
     }
 
@@ -396,7 +462,7 @@ public class NARPrologMirror extends AbstractMirror {
         Truth tv = s.truth;
         if (believable(tv)) {
 
-            boolean exists = beliefs.containsKey(s.term);
+            boolean exists = beliefs.containsKey(s);
             if ((addOrRemove) && (exists))
                 return;
             else if ((!addOrRemove) && (!exists))
@@ -413,13 +479,18 @@ public class NARPrologMirror extends AbstractMirror {
                     if (addOrRemove) {
                         if (beliefs.putIfAbsent(s, th) == null) {
 
-                            if (!apply("assert", th))
-                                throw new RuntimeException("Could not assert: " + s+ " === " + th);
+                            if (beliefCount.addToValue(s.getTerm(), 1) == 1) {
 
-                            beliefsChanged();
+                                if (reportAssumptions)
+                                    System.err.println("Prolog assume: " + th + " | " + s);
 
-                            if (reportAssumptions)
-                                System.err.println("Prolog assume: " + th + " | " + s);
+                                if (!assertFact(th))
+                                    throw new RuntimeException("Could not assert: " + s + " === " + th);
+
+                                beliefsChanged();
+
+                            }
+
                         }
                     } else {
                         forget(s);
@@ -458,10 +529,14 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     Struct newQuestion(final Sentence question) {
-        nars.tuprolog.Term s = pterm(question.term);
-        if (s!=null)
+        Struct s = (Struct)pterm(question.term);
+        s.anonymize();
+
+        if (s!=null) {
             s.resolveTerm();
-        return (Struct) s;
+            return  s;
+        }
+        return null;
     }
 
     //NOT yet working
@@ -610,31 +685,31 @@ public class NARPrologMirror extends AbstractMirror {
             }
             if (arity == 1) {
                 switch (predicate) {
-                    case "negation":
-                        return Negation.make(nterm(s.getArg(0)));
+                    case "not":
+                        return Negation.make(nterm(s.getTerms(0)));
 //                    default:
 //                        throw new RuntimeException("Unknown 1-arity nars predicate: " + predicate);
                 }
             }
             switch (predicate) {
                 case "product":
-                    Term[] a = nterm(s.getArg());
+                    Term[] a = nterm(s.getTerms());
                     if (a != null) return Product.make(a);
                     else return null;
                 case "setint":
-                    Term[] b = nterm(s.getArg());
+                    Term[] b = nterm(s.getTerms());
                     if (b != null) return SetInt.make(b);
                     else return null;
                 case "setext":
-                    Term[] c = nterm(s.getArg());
+                    Term[] c = nterm(s.getTerms());
                     if (c != null) return SetExt.make(c);
                     else return null;
 
             }
 
             if (arity == 2) {
-                Term a = nterm(s.getArg(0));
-                Term b = nterm(s.getArg(1));
+                Term a = nterm(s.getTerms(0));
+                Term b = nterm(s.getTerms(1));
                 if ((a != null) && (b != null)) {
                     switch (predicate) {
                         case "inheritance":
@@ -736,26 +811,29 @@ public class NARPrologMirror extends AbstractMirror {
 
     public List<String> initAxioms() {
         List<String> l = new ArrayList();
-        l.add("inheritance(A, C) :- inheritance(A,B),inheritance(B,C).");
-        l.add("similarity(A, B) :- inheritance(A,B),inheritance(B,A).");
-        l.add("implication(A, C) :- implication(A,B),implication(B,C).");
-        l.add("similarity(A, B) :- similarity(B,A).");
-        l.add("not(similar(A, B)) :- not(inheritance(A,B)),inheritance(B,A).");
-        l.add("equivalence(A, B) :- equivalence(B,A).");
+
+        l.add("inheritance(A, C) :- inheritance(A, B), inheritance(B,C).");
+        //l.add("inheritance(A, C) :- inheritance(A,B),inheritance(B,C).");
+        //l.add("similarity(A, B) :- inheritance(A,B),inheritance(B,A).");
+        //l.add("inheritance(A,B),inheritance(B,A) :- similarity(A, B).");
+        //l.add("implication(A, C) :- implication(A,B),implication(B,C).");
+        //l.add("similarity(A, B) :- similarity(B,A).");
+        //l.add("not(similar(A, B)) :- not(inheritance(A,B)),inheritance(B,A).");
+        //l.add("equivalence(A, B) :- equivalence(B,A).");
 
 
         //l.add("similarity(A, B) :- equivalence(A,B).");
         //l.add("not(equivalence(A, B)) :- not(similar(A,B)).");
 
-        l.add("A :- negation(negation(A)).");
-        l.add("not(A) :- negation(A).");
-        l.add("connected(A,B) :- product(A, B).");
-        l.add("connected(A,B) :- similarity(A, B).");
-        l.add("connected(A,B) :- equivalence(A, B).");
-        l.add("connected(A,B) :- conjunction(A, B).");
-        l.add("connected(A,B) :- setint(A, B).");
-        l.add("connected(A,B) :- setext(A, B).");
-        l.add("connected(B,A) :- connected(A,B).");
+        //l.add("A :- negation(negation(A)).");
+
+        //        l.add("connected(A,B) :- product(A, B).");
+//        l.add("connected(A,B) :- similarity(A, B).");
+//        l.add("connected(A,B) :- equivalence(A, B).");
+//        l.add("connected(A,B) :- conjunction(A, B).");
+//        l.add("connected(A,B) :- setint(A, B).");
+//        l.add("connected(A,B) :- setext(A, B).");
+//        l.add("connected(B,A) :- connected(A,B).");
         l.add("[A] :- product(A).");
         l.add("[A,B] :- product(A,B).");
         l.add("[A,B,C] :- product(A,B,C).");

@@ -6,12 +6,11 @@ package nars.prolog;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.LibraryInput;
-import nars.io.NALPerformance;
+import nars.io.TextOutput;
+import nars.model.impl.Default;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.term.Term;
-import nars.model.impl.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -28,8 +27,8 @@ public class NARPrologMirrorTest {
     
     @Test
     public void testMultistep() throws Exception {
-        boolean prolog = true;
-        //boolean showOutput = false;
+
+
         Global.DEBUG = true;
 
         NAR nar = new NAR( new Default().setInternalExperience(null) );
@@ -58,36 +57,46 @@ public class NARPrologMirrorTest {
             
             
         };        
-        
-        
-        //nal1.multistep.nal
-        NALPerformance nts = new NALPerformance(nar, LibraryInput.get(nar, "other/nars_multistep_2.nal").getSource()) {
-//            
-//            
-//            @Override
-//            public NAR newNAR() {
+
+
+        TextOutput.out(nar);
+
+        int n  = 16;
+        for (int i = 0; i < n; i++) {
+            int j = n - i;
+            nar.input("<x" + (j-1) + " --> x" + (j) + ">.");
+        }
+        nar.input("<x1 --> x" + (n) + ">?");
+        nar.run(n*2);
+
+//        //nal1.multistep.nal
+//        NALPerformance nts = new NALPerformance(nar, LibraryInput.get(nar, "other/nars_multistep_2.nal").getSource()) {
+////
+////
+////            @Override
+////            public NAR newNAR() {
+////
+////                Term aInhd;
+////                try {
+////                    aInhd = new Narsese(nar).parseTerm("<a --> d>");
+////                } catch (Narsese.InvalidInputException ex) {
+////                    assertTrue(false);
+////                    return null;
+////                }
+////
+////                if (prolog) {
+////
+////                }
+////
+////                return nar;
+////            }
+////
 //
-//                Term aInhd;
-//                try {
-//                    aInhd = new Narsese(nar).parseTerm("<a --> d>");
-//                } catch (Narsese.InvalidInputException ex) {
-//                    assertTrue(false);
-//                    return null;
-//                }
-//                
-//                if (prolog) {
-//
-//                }
-//                
-//                return nar;
-//            }
-//          
-            
-        };
+//        };
 
         
         
-        nts.run(3500);
+
         
         assertTrue(prologAnswered);
         

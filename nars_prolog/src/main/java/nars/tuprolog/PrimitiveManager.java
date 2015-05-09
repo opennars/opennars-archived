@@ -145,11 +145,11 @@ public class PrimitiveManager /*Castagna 06/2011*/implements IPrimitiveManager/*
         //------------------------------------------
         if (name.equals(",") || name.equals("':-'") || name.equals(":-")) {
             for (int c = 0; c < arity; c++) {
-                identify( t.getArg(c), PrimitiveInfo.PREDICATE);
+                identify( t.getTerms(c), PrimitiveInfo.PREDICATE);
             }
         } else {
             for (int c = 0; c < arity; c++) {
-                identify( t.getArg(c), PrimitiveInfo.FUNCTOR);
+                identify( t.getTerms(c), PrimitiveInfo.FUNCTOR);
             }                        
         }
         //------------------------------------------

@@ -136,7 +136,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 			}
 
 			/* Retrieves first argument and checks type */
-			Term t = g.getArg(0).getTerm();
+			Term t = g.getTerms(0).getTerm();
 			if(t instanceof Var){
 				/*
 				 * if first argument is an unbounded variable,
@@ -218,7 +218,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 				return;
 			}
 
-			Term t = g.getArg(0).getTerm();
+			Term t = g.getTerms(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.insertAsShared(ci, first);
 				constantCompClausesIndex.insertAsShared(ci, first);
@@ -259,7 +259,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 				return;
 			}
 
-			Term t = g.getArg(0).getTerm();
+			Term t = g.getTerms(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.removeShared(ci);
 				constantCompClausesIndex.removeShared(ci);

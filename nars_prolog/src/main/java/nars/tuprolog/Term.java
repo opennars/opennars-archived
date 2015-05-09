@@ -177,24 +177,29 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * gets a copy for result.
      */
     abstract public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap);
-    
+
+
+    public boolean unify(final Prolog mediator, final Term t1) {
+        return unify(mediator, t1, new ArrayList(), new ArrayList());
+    }
     /**
      * Try to unify two terms
      * @param mediator have the reference of EngineManager
      * @param t1 the term to unify
      * @return true if the term is unifiable with this one
      */
-    public boolean unify(final Prolog mediator, final Term t1) {
+    public boolean unify(final Prolog mediator, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
         EngineManager engine = mediator.getEngineManager();
         resolveTerm();
         t1.resolveTerm();
-        List<Var> v1 = new ArrayList<>();
-        List<Var> v2 = new ArrayList<>(); 
+
+        v1.clear(); v2.clear();
         boolean ok = unify(v1,v2,t1);
         if (ok) {
             ExecutionContext ec = engine.getCurrentContext();
             if (ec != null) {
-                int id = (engine.getEnv()==null)? Var.PROGRESSIVE : engine.getEnv().nDemoSteps;
+                Engine env = engine.getEnv();
+                int id = (env==null)? Var.PROGRESSIVE : env.nDemoSteps;
                 // Update trailingVars
                 ec.trailingVars = new OneWayList<>(v1,ec.trailingVars);
                 // Renaming after unify because its utility regards not the engine but the user

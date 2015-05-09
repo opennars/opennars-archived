@@ -137,10 +137,11 @@ public class Engine /*Castagna 06/2011*/ implements IEngine/**/ {
         return choicePointSelector;
     }
 
+    final LinkedHashMap<Var, Var> goalMap = new LinkedHashMap<>();
     void prepareGoal() {
-        LinkedHashMap<Var, Var> goalVars = new LinkedHashMap<>();
-        startGoal = (Struct) (query).copyGoal(goalVars, 0);
-        this.goalVars = goalVars.values();
+        goalMap.clear();
+        startGoal = (Struct) (query).copyGoal(goalMap, 0);
+        this.goalVars = goalMap.values();
     }
 
 	//    void cut() {

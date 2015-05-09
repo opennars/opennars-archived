@@ -1,11 +1,11 @@
 package nars.prolog;
 
+import nars.Events;
 import nars.NAR;
 import nars.io.TextOutput;
 import nars.model.impl.Default;
 import nars.tuprolog.*;
 import nars.tuprolog.event.*;
-import nars.tuprolog.lib.BasicLibrary;
 
 import java.io.PrintStream;
 
@@ -77,7 +77,10 @@ public class NARTuprolog extends NARProlog implements OutputListener, WarningLis
     
     @Override
     public void onWarning(WarningEvent e) {
-        nar.emit(Prolog.class, e.getMsg() + ", from " + e.getSource());
+        if (nar.memory.event.isActive(Events.ERR.class))
+            nar.emit(Events.ERR.class, e.getMsg() + ", from " + e.getSource());
+        else
+            System.err.println(e.getMsg() + " from " + e.getSource());
     }
 
     @Override

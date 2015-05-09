@@ -97,12 +97,12 @@ public class ISOIOLibrary extends Library{
                                         for(int k = 0; k< option.getArity();k++){
                                             if(((Struct)alias).getArity()>1){
                                                 for(int z = 0;z<((Struct)alias).getArity();z++){
-                                                    if((((Struct)alias).getArg(z)).equals(option.getArg(k))){
+                                                    if((((Struct)alias).getTerms(z)).equals(option.getTerms(k))){
                                                         throw PrologError.permission_error(engine.getEngineManager(), "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                                     }
                                                 }
                                             }
-                                            else if(alias.equals(option.getArg(k))){
+                                            else if(alias.equals(option.getTerms(k))){
                                                 throw PrologError.permission_error(engine.getEngineManager(), "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                             }
                                         }
@@ -118,12 +118,12 @@ public class ISOIOLibrary extends Library{
                                         for(int k = 0; k< option.getArity();k++){
                                             if(((Struct)alias).getArity()>1){
                                                 for(int z = 0;z<((Struct)alias).getArity();z++){
-                                                    if((((Struct)alias).getArg(z)).equals(option.getArg(k))){
+                                                    if((((Struct)alias).getTerms(z)).equals(option.getTerms(k))){
                                                         throw PrologError.permission_error(engine.getEngineManager(), "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                                     }
                                                 }
                                             }
-                                            else if(alias.equals(option.getArg(k))){
+                                            else if(alias.equals(option.getTerms(k))){
                                                 throw PrologError.permission_error(engine.getEngineManager(), "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                             }
                                         }
@@ -134,17 +134,17 @@ public class ISOIOLibrary extends Library{
                             if(arity > 1){
                                 Term[] arrayTerm = new Term[arity];
                                 for(int k = 0; k<arity; k++){
-                                    arrayTerm[k] = option.getArg(k);
+                                    arrayTerm[k] = option.getTerms(k);
                                 }
                                 properties.put(option.getName(),new Struct(".",arrayTerm));
                             }
                             else{
-                                properties.put(option.getName(),option.getArg(0));
+                                properties.put(option.getName(),option.getTerms(0));
                             }
                         }
                         else{
                             Struct value = null;
-                            value =(Struct) option.getArg(0);
+                            value =(Struct) option.getTerms(0);
                             properties.put(option.getName(),value);
                         }
                     }
@@ -340,7 +340,7 @@ public class ISOIOLibrary extends Library{
                     }
                     option = (Struct)obj;
                     if(option.getName().equals("force")){
-                        Struct closeOptionValue = (Struct)option.getArg(0); 
+                        Struct closeOptionValue = (Struct)option.getTerms(0);
                         force = closeOptionValue.getName().equals("true");
                     }
                     else{
@@ -502,7 +502,7 @@ public class ISOIOLibrary extends Library{
         String propertyName = prop.getName();
         Struct propertyValue = null;
         if(!propertyName.equals("input") && !propertyName.equals("output")){
-            propertyValue = (Struct)prop.getArg(0);
+            propertyValue = (Struct)prop.getTerms(0);
         }
         List<Struct> resultList = new ArrayList<>(); //object generico perche' sono sia inputStream che outputStream
             
@@ -533,7 +533,7 @@ public class ISOIOLibrary extends Library{
                                 }
                             }
                             for(int i = 0; i<arity; i++){
-                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getArg(i))){
+                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getTerms(i))){
                                     resultList.add(new Struct(currentElement.getKey().toString()));
                                     break;
                                 }
@@ -558,7 +558,7 @@ public class ISOIOLibrary extends Library{
                                 }
                             }
                             for(int i = 0; i<arity; i++){
-                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getArg(i))){
+                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getTerms(i))){
                                     resultList.add(new Struct(currentElement.getKey().toString()));
                                     break;
                                 }
@@ -1494,17 +1494,17 @@ public class ISOIOLibrary extends Library{
                 if(option.getName().equals("variables")){
                     variables = new Struct();
                     variables = (Struct) Term.createTerm(vars.toString());
-                    unify(option.getArg(0),variables);
+                    unify(option.getTerms(0),variables);
                 }
                 else if(option.getName().equals("variable_name")){
                     variable_names = new Struct();
                     variable_names = (Struct)Term.createTerm(associations_table.toString());
-                    unify(option.getArg(0),variable_names);
+                    unify(option.getTerms(0),variable_names);
                 }
                 else if(option.getName().equals("singletons")){
                     singletons = new Struct();
                     singletons = (Struct)Term.createTerm(singl.toString());
-                    unify(option.getArg(0),singletons);
+                    unify(option.getTerms(0),singletons);
                 }
             }
             
@@ -1532,7 +1532,7 @@ public class ISOIOLibrary extends Library{
         else{
             Struct term_struct = (Struct)t.getTerm();
             for(int i = 0;i<term_struct.getArity();i++){
-                analize_term(variables,term_struct.getArg(i));
+                analize_term(variables,term_struct.getTerms(i));
             }
         }
     }
@@ -1580,13 +1580,13 @@ public class ISOIOLibrary extends Library{
                     }
                     writeOption = (Struct)obj;
                     if(writeOption.getName().equals("quoted")){
-                        quoted = ((Struct) writeOption.getArg(0)).getName().equals("true");
+                        quoted = ((Struct) writeOption.getTerms(0)).getName().equals("true");
                     }
                     else if(writeOption.getName().equals("ignore_ops")){
-                        ignore_ops = ((Struct) writeOption.getArg(0)).getName().equals("true");
+                        ignore_ops = ((Struct) writeOption.getTerms(0)).getName().equals("true");
                     }
                     else if(writeOption.getName().equals("numbervars")){
-                        numbervars = ((Struct) writeOption.getArg(0)).getName().equals("true");
+                        numbervars = ((Struct) writeOption.getTerms(0)).getName().equals("true");
                     }
                     else{
                         throw PrologError.domain_error(engine.getEngineManager(), 3, "write_options", writeOptionsList.getTerm());
@@ -1707,12 +1707,12 @@ public class ISOIOLibrary extends Library{
         for(int i = 0; i<arity; i++){
             if(i > 0 && flagOp==0)
                 result += ",";
-            Term arg = term.getArg(i);
+            Term arg = term.getTerms(i);
             if(arg instanceof Number){
                 if(term.getName().contains("$VAR")){
                 //sono nel tipo $VAR
                     if(numbervars == true){
-                        Int argNumber = (Int)term.getArg(i);
+                        Int argNumber = (Int)term.getTerms(i);
                         int res = argNumber.intValue() % 26;
                         int div = argNumber.intValue()/26;
                         Character ch = 'A';
@@ -1824,30 +1824,30 @@ public class ISOIOLibrary extends Library{
                 if(i > 0){
                     result+=",";
                 }
-                if(term.getArg(i).isList() && !(term.getArg(i).isEmptyList())){
-                    result += print_list((Struct)term.getArg(i),options);
+                if(term.getTerms(i).isList() && !(term.getTerms(i).isEmptyList())){
+                    result += print_list((Struct)term.getTerms(i),options);
                 }
                 else{
-                    result += term.getArg(i);
+                    result += term.getTerms(i);
                 }
             }
             return result + ')';
         }
         else{
             for(int i = 0; i<term.getArity(); i++){
-                if(i > 0 && !(term.getArg(i).isEmptyList())){
+                if(i > 0 && !(term.getTerms(i).isEmptyList())){
                     result+=",";
                 }
-                if((term.getArg(i)).isCompound() && !(term.getArg(i).isList())){
-                    result += create_string(options,(Struct)term.getArg(i));
+                if((term.getTerms(i)).isCompound() && !(term.getTerms(i).isList())){
+                    result += create_string(options,(Struct)term.getTerms(i));
                 }
                 else{
                     //costruito cosi' per un problema di rappresentazione delle []
-                    if((term.getArg(i).isList()) && !(term.getArg(i).isEmptyList()))
-                        result+=print_list((Struct)term.getArg(i),options);
+                    if((term.getTerms(i).isList()) && !(term.getTerms(i).isEmptyList()))
+                        result+=print_list((Struct)term.getTerms(i),options);
                     else{
-                        if(!(term.getArg(i).isEmptyList()))
-                            result+= term.getArg(i).toString();
+                        if(!(term.getTerms(i).isEmptyList()))
+                            result+= term.getTerms(i).toString();
                     }
                         
                 }
@@ -2022,7 +2022,7 @@ public class ISOIOLibrary extends Library{
                     //della struttura che contiene tutti gli alias.
                     if(arity > 1){
                         for(int k = 0; k< alias.getArity();k++){
-                            if((alias.getArg(k)).equals(stream_or_alias)){
+                            if((alias.getTerms(k)).equals(stream_or_alias)){
                                 result = currentElement.getKey();
                                 flag =1;
                                 break;
@@ -2090,7 +2090,7 @@ public class ISOIOLibrary extends Library{
                     //della struttura che contiene tutti gli alias.
                     if(arity > 1){
                         for(int k = 0; k< alias.getArity();k++){
-                            if((alias.getArg(k)).equals(stream_or_alias)){
+                            if((alias.getTerms(k)).equals(stream_or_alias)){
                                 result = currentElement.getKey();
                                 flag =1;
                                 break;

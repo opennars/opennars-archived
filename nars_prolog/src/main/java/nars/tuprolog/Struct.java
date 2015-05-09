@@ -19,7 +19,6 @@ package nars.tuprolog;
 
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
-import jdk.nashorn.internal.objects.Global;
 
 import java.util.*;
 
@@ -189,11 +188,28 @@ public class Struct extends Term {
             throw new InvalidTermException("The functor of a Struct cannot be null");
         if (name_.length() == 0 && arity_ > 0)
             throw new InvalidTermException("The functor of a non-atom Struct cannot be an empty string");
-        name = name_;
         arity = arity_;
         if (arity > 0) {
             arg = new Term[arity];
         }
+        setName(name_);
+    }
+
+
+    //TEMPORARY
+    public void anonymize() {
+        //find the first atomic term and replace it with a variable name
+        int a = getArity();
+        if (a == 2) {
+            if (getTerm(0).isAtom()) {
+                Struct s = ((Struct)getTerm(0));
+                setTerm(0, new Var("IS" + s.getName()));
+            }
+        }
+    }
+
+    public void setName(String name_) {
+        name = name_;
         predicateIndicator = getPredicateString(name, arity);
         resolved = false;
     }
@@ -228,7 +244,7 @@ public class Struct extends Term {
         return name;
     }
 
-    public Term[] getArg() {
+    public Term[] getTerms() {
         return arg;
     }
     
@@ -239,7 +255,7 @@ public class Struct extends Term {
      *
      * No bound check is done
      */
-    public Term getArg(final int index) {
+    public Term getTerms(final int index) {
         return arg[index];
     }
     
@@ -248,11 +264,11 @@ public class Struct extends Term {
      *
      * (Only for internal service)
      */
-    void setArg(final int index, final Term argument) {
+    void setTerm(final int index, final Term argument) {
         arg[index] = argument;
     }
     
-    void setArg(final Term[] newArgs) {
+    void setTerm(final Term[] newArgs) {
         this.arity = newArgs.length;
         this.arg = newArgs;
     }
@@ -261,7 +277,7 @@ public class Struct extends Term {
      * Gets the i-th element of this structure
      *
      * No bound check is done. It is equivalent to
-     * <code>getArg(index).getTerm()</code>
+     * <code>getTerm(index).getTerm()</code>
      */
     public Term getTerm(final int index) {
             if (!(arg[index] instanceof Var))
@@ -336,7 +352,7 @@ public class Struct extends Term {
      * @param name name of the structure 
      * @return the argument or null if not found
      */
-    public Struct getArg(final String name) {
+    public Struct getTerms(final String name) {
         if (arity == 0) {
             return null;
         }
@@ -353,7 +369,7 @@ public class Struct extends Term {
         for (int i=0; i<arg.length; i++) {
             if (arg[i] instanceof Struct) {
                 Struct s = (Struct)arg[i];
-                Struct sol = s.getArg(name);
+                Struct sol = s.getTerms(name);
                 if (sol!=null) {
                     return sol;
                 }

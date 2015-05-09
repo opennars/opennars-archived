@@ -27,7 +27,7 @@ import nars.tuprolog.gui.ide.JavaIDE;
  * @version    1.0 - Friday 20th December, 2002
  */
 
-public class GUILauncher {
+public class TuprologSwing {
 
     /**
      * Get the version number of the J2SE this program is running on.
@@ -75,7 +75,7 @@ public class GUILauncher {
      * this program is running on.
      */
     public static void main(String[] args) {
-        GUILauncher launcher = new GUILauncher();
+        TuprologSwing launcher = new TuprologSwing();
         // Get J2SE version
         String version = System.getProperty("java.version");
         int versionNumber = launcher.getVersionNumber(version);

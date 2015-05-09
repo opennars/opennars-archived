@@ -46,7 +46,7 @@ public class TermPanel extends JPanel implements ActionListener{
         int n=struct.getArity();
         node.kids=new Node[n];
         for(int i=0; i<n; i++)
-          node.kids[i]=makeTreeFrom(struct.getArg(i));
+          node.kids[i]=makeTreeFrom(struct.getTerms(i));
       }
       return node;
     }

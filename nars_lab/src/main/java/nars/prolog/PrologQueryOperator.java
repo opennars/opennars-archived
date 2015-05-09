@@ -424,7 +424,7 @@ public class PrologQueryOperator extends Operator {
         if( term instanceof Struct ) {
             Struct s = (Struct)term;
             for (int i = 0; i < s.getArity(); i++) {
-                nars.tuprolog.Term iterationTerm = s.getArg(i);
+                nars.tuprolog.Term iterationTerm = s.getTerms(i);
                 nars.tuprolog.Var result = getVariableByNameRecursive(iterationTerm, name);
                
                 if( result != null ) {
@@ -469,9 +469,9 @@ public class PrologQueryOperator extends Operator {
                 throw new RuntimeException("Compound must have two or zero arguments!");
             }
            
-            result.add(currentCompundTerm.getArg(0));
+            result.add(currentCompundTerm.getTerms(0));
            
-            nars.tuprolog.Term arg2 = currentCompundTerm.getArg(1);
+            nars.tuprolog.Term arg2 = currentCompundTerm.getTerms(1);
             
             if (arg2.isAtom()) {
                 Struct atomTerm = (Struct)arg2;

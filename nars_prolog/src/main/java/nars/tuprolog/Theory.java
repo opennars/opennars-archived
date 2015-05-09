@@ -82,7 +82,8 @@ public class Theory implements Serializable, PrologTermIterator {
      */
     public Theory(Struct clauseList) throws InvalidTheoryException {
         if (clauseList==null || !clauseList.isList()) {
-            throw new InvalidTheoryException();
+            clauseList = new Struct(new Term[] { clauseList } ); //wrap as list
+            //throw new InvalidTheoryException();
         }
         this.clauseList = clauseList;
     }
@@ -122,9 +123,9 @@ public class Theory implements Serializable, PrologTermIterator {
                 clauseList = otherClauseList;
             else {
                 Struct p = clauseList, q;
-                while (!(q = (Struct) p.getArg(1)).isEmptyList())
+                while (!(q = (Struct) p.getTerms(1)).isEmptyList())
                     p = q;
-                p.setArg(1, otherClauseList);
+                p.setTerm(1, otherClauseList);
             }
         } else if (!isTextual() && th.isTextual()) {
             theory = theory + '\n' + th;

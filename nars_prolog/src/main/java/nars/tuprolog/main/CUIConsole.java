@@ -1,4 +1,4 @@
-package nars.tuprolog.gui.ide;
+package nars.tuprolog.main;
 
 import nars.tuprolog.*;
 import nars.tuprolog.event.*;

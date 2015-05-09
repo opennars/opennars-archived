@@ -119,6 +119,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
     void warn(String message) {
         mediator.warn(message);
     }
+    public boolean isWarning() { return mediator.isWarning(); }
     
     void exception(String message) {
         mediator.exception(message);

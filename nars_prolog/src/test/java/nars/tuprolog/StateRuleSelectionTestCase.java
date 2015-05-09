@@ -11,7 +11,7 @@ public class StateRuleSelectionTestCase extends TestCase {
 		String query = "p(X).";
 		engine.solve(query);
 		assertTrue(warningListener.warning.indexOf("p/1") > 0);
-		assertTrue(warningListener.warning.indexOf("is unknown") > 0);
+		assertTrue(warningListener.warning.indexOf("unknown") > 0);
 	}
 	
 	public void testUnknownPredicateInTheory() throws InvalidTheoryException, MalformedGoalException {
@@ -23,7 +23,7 @@ public class StateRuleSelectionTestCase extends TestCase {
 		String query = "p(X).";
 		engine.solve(query);
 		assertTrue(warningListener.warning.indexOf("a/0") > 0);
-		assertTrue(warningListener.warning.indexOf("is unknown") > 0);
+		assertTrue(warningListener.warning.indexOf("unknown") > 0);
 	}
 
 }

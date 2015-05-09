@@ -22,6 +22,7 @@ import nars.tuprolog.util.Tools;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -103,7 +104,7 @@ public class BuiltIn extends Library {
 			 {
 				 for(int i=0; i<(((Struct) arg0).toList().listSize())-1; i++)
 				 {
-					 Term argi=((Struct) arg0).getArg(i);
+					 Term argi=((Struct) arg0).getTerms(i);
 					 if (!(argi instanceof Struct) )
 					 {
 						 if (argi instanceof Var)
@@ -129,7 +130,7 @@ public class BuiltIn extends Library {
 			 {
 				 for(int i=0; i<(((Struct) arg0).toList().listSize())-1; i++)
 				 {
-					 Term argi=((Struct) arg0).getArg(i);
+					 Term argi=((Struct) arg0).getTerms(i);
 					 if (!(argi instanceof Struct) )
 					 {
 						 if (argi instanceof Var)
@@ -179,7 +180,7 @@ public class BuiltIn extends Library {
 		 if (!(arg0 instanceof Struct) || !arg0.isGround()) 
 			 throw PrologError.type_error(engineManager, 1, "predicate_indicator", arg0);
 		 
-		 if( ((Struct)arg0).getArg(0).toString().equals("abolish") )
+		 if( ((Struct)arg0).getTerms(0).toString().equals("abolish") )
 			 throw PrologError.permission_error(engineManager, "modify", "static_procedure", arg0, new Struct(""));
 		 
 		 return theoryManager.abolish((Struct) arg0);
@@ -354,11 +355,11 @@ public class BuiltIn extends Library {
 			 String pi = s.getPredicateIndicator();
 			 if (pi.equals(";/2") || pi.equals(",/2") || pi.equals("->/2")) {
 				 for (int i = 0; i < s.getArity(); i++) {
-					 Term t = s.getArg(i);
+					 Term t = s.getTerms(i);
 					 Term arg = convertTermToGoal(t);
 					 if (arg == null)
 						 return null;
-					 s.setArg(i, arg);
+					 s.setTerm(i, arg);
 				 }
 			 }
 		 }
@@ -477,10 +478,12 @@ public class BuiltIn extends Library {
 		 } catch (RuntimeException e) {
 
 		 }
+		 ArrayList<Var> v1 = new ArrayList(), v2 = new ArrayList();
+		 long now = System.currentTimeMillis();
 		 java.util.Iterator<ClauseInfo> it = l.iterator();
 		 while (it.hasNext()) {
 			 ClauseInfo b = it.next();
-			 if (match(arg0, b.getHead())) {
+			 if (match(arg0, b.getHead(), now, v1, v2)) {
 				 b.getClause().resolveTerm();
 				 ((Struct) arg1).append(b.getClause());
 			 }

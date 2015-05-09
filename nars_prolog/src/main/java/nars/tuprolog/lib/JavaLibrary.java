@@ -484,7 +484,7 @@ public class JavaLibrary extends Library {
                     if (id.getArity() == 1 && id.getName().equals("class")) {
                         try {
                             String clName = Tools
-                                    .removeApices(id.getArg(0).toString());
+                                    .removeApices(id.getTerms(0).toString());
                             Class<?> cl = Class.forName(clName, true, dynamicLoader);
 
 //							Method m = cl.getMethod(methodName, args.getTypes());
@@ -701,7 +701,7 @@ public class JavaLibrary extends Library {
 //            	String[] listOfPaths = null;
                 // Case: class(className)
                 if (((Struct) objId).getArity() == 1) {
-                    clName = Tools.removeApices(((Struct) objId).getArg(0).toString());
+                    clName = Tools.removeApices(((Struct) objId).getTerms(0).toString());
                 }
 
                 /*
@@ -731,7 +731,7 @@ public class JavaLibrary extends Library {
                                         + " not found in class "
                                         + Tools
                                         .removeApices(((Struct) objId)
-                                                .getArg(0).toString()));
+                                                .getTerms(0).toString()));
                         return false;
                     }
                     /*
@@ -808,7 +808,7 @@ public class JavaLibrary extends Library {
                 // Case: class(className)
                 if (((Struct) objId).getArity() == 1) {
                     clName = Tools.removeApices(((Struct) objId)
-                            .getArg(0).toString());
+                            .getTerms(0).toString());
                 }
                 /*
                  * Deprecated in 2.8, see the manual.
@@ -838,7 +838,7 @@ public class JavaLibrary extends Library {
                                         + " not found in class "
                                         + Tools
                                         .removeApices(((Struct) objId)
-                                                .getArg(0).toString()));
+                                                .getTerms(0).toString()));
                         return false;
                     }
                     /*

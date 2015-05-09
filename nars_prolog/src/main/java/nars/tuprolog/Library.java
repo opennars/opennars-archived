@@ -124,10 +124,10 @@ public abstract class Library implements Serializable, IPrimitives {
      * The runtime (demonstration) context currently used by the engine
      * is deployed and altered.
      */
-    protected boolean match(Term a0,Term a1) {
-        return engine.match(a0,a1);
+    protected boolean match(Term a0,Term a1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {
+        return engine.match(a0,a1,now,v1,v2);
     }
-    
+
     
     /**
      * Evaluates an expression. Returns null value if the argument

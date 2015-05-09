@@ -227,13 +227,13 @@ public class BooleanChallenge implements Reaction {
                 if (n != null) {
                     boolean correct = false;
                     switch (pred.toString()) {
-                        case "and":
+                        case "and2b":
                             correct = evalAnd(n);
                             break;
-                        case "or":
+                        case "or2b":
                             correct = evalOr(n);
                             break;
-                        case "xor":
+                        case "xor2b":
                             correct = evalXor(n);
                             break;
                         //case "not": correct = evalNot(n); break;
@@ -412,16 +412,16 @@ public class BooleanChallenge implements Reaction {
         boolean allowNegation = XORShiftRandom.global.nextBoolean();
         switch (XORShiftRandom.global.nextInt(3)) {
             case 0:
-                op = "and";
+                op = "and2b";
                 correct = a & b;
                 break;
             case 1:
-                op = "or";
+                op = "or2b";
                 correct = a | b;
                 break;
             case 2:
             default:
-                op = "xor";
+                op = "xor2b";
                 correct = a ^ b;
                 break;
         }

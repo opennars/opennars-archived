@@ -21,10 +21,10 @@ public class JavaMapStoreFactory //implements ClauseStoreFactory
 				try
 				{
 					JavaLibrary jl = (JavaLibrary)prolog.getLibraryManager().getLibrary("alice.tuprolog.lib.JavaLibrary");
-					Term mapTerm = s.getArg(0).getTerm();
+					Term mapTerm = s.getTerms(0).getTerm();
 					Object obj = jl.getRegisteredDynamicObject((Struct)mapTerm);
 					if (obj instanceof java.util.Map)
-						return new MapEntriesStore(prolog, (java.util.Map<?,?>)obj, s.getArg(1), s.getArg(2), varList, jl);					
+						return new MapEntriesStore(prolog, (java.util.Map<?,?>)obj, s.getTerms(1), s.getTerms(2), varList, jl);
 				}
 				catch (Exception ex) 
 				{ 

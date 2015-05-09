@@ -169,7 +169,7 @@ public boolean udp_receive(Term Socket, Term Data, Struct AddressFrom,
 	LinkedList<Term> list = StructToList(Options);
 	for (Term t : list) { // Explore options list
 		if (((Struct) t).getName().equals("timeout")) { // If a timeout has been specified
-			int time = Integer.parseInt(((Struct) t).getArg(0).toString());
+			int time = Integer.parseInt(((Struct) t).getTerms(0).toString());
 			try {
 				s.setSoTimeout(time);
 			} catch (SocketException e) {
@@ -178,7 +178,7 @@ public boolean udp_receive(Term Socket, Term Data, Struct AddressFrom,
 			}
 		}
 		if(((Struct) t).getName().equals("size")){//if a datagram size has been specified
-			int size=Integer.parseInt(((Struct) t).getArg(0).toString());
+			int size=Integer.parseInt(((Struct) t).getTerms(0).toString());
 			packet.setLength(size);
 		}
 	}
@@ -217,7 +217,7 @@ public boolean tcp_socket_server_open_3(Struct Address, Term Socket, Struct Opti
 	LinkedList<Term> list = StructToList(Options); 			// Convert Options Struct to a LinkedList
 	for (Term t : list) { 									// Explore Options list
 		if (((Struct) t).getName().equals("backlog")) { 	// If a backlog has been specified
-			backlog = Integer.parseInt(((Struct) t).getArg(0).toString());
+			backlog = Integer.parseInt(((Struct) t).getTerms(0).toString());
 		}
 	}
 
@@ -410,7 +410,7 @@ public boolean read_from_socket_3(Term Socket, Term Msg, Struct Options) throws 
 		LinkedList<Term> list = StructToList(Options); // Convert Options Struct to a LinkedList
 		for (Term t : list) { // Explore options list
 			if (((Struct) t).getName().equals("timeout")) { // If a timeout has been specified
-				int time = Integer.parseInt(((Struct) t).getArg(0).toString());
+				int time = Integer.parseInt(((Struct) t).getTerms(0).toString());
 				try {
 					sock.setSoTimeout(time); // Set socket timeout
 				} catch (SocketException e) {
@@ -488,7 +488,7 @@ public boolean aread_from_socket_2(Term Socket, Struct Options) throws PrologErr
 		LinkedList<Term> list = StructToList(Options); // Convert Options Struct to a LinkedList
 		for (Term t : list) { // Explore options list
 			if (((Struct) t).getName().equals("timeout")) { // If a timeout has been specified
-				int time = Integer.parseInt(((Struct) t).getArg(0).toString());
+				int time = Integer.parseInt(((Struct) t).getTerms(0).toString());
 				try {
 					sock.setSoTimeout(time); // Set socket timeout
 				} catch (SocketException e) {
@@ -518,10 +518,10 @@ private LinkedList<Term> StructToList(Struct s) {
 	temp = s;
 	while (true) {
 		if (((Struct) temp).getName().equals(".")) {
-			list.add(((Struct) temp).getArg(0));
+			list.add(((Struct) temp).getTerms(0));
 		} else
 			break;
-		temp = ((Struct) temp).getArg(1);
+		temp = ((Struct) temp).getTerms(1);
 
 	}
 	return list;

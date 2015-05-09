@@ -2,6 +2,7 @@ package nars.tuprolog;
 
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class TermQueue {
@@ -34,6 +35,8 @@ public class TermQueue {
 		boolean found=false;
 		Term msg=null;
 		Iterator<Term> it=queue.iterator();
+		ArrayList<Var> v1 = new ArrayList();
+		ArrayList<Var> v2 = new ArrayList();
 		while (!found){
 			if (it.hasNext()){
 				msg=it.next();
@@ -41,10 +44,10 @@ public class TermQueue {
 			else{
 				return false;
 			}
-			found=engine.unify(t,msg);
+			found=engine.unify(t,msg,v1,v2);
 		}
 		if (remove) {
-			queue.remove(msg);
+			it.remove();
 		}
 		return true;
 	}

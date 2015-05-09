@@ -1410,8 +1410,8 @@ public class BasicLibrary extends Library {
         Struct result = new Struct();
         for (java.util.Iterator<? extends Term> it = list.listIterator(); it.hasNext();) {
             Struct element = (Struct) it.next();
-            Term w = element.getArg(0);
-            Term t = element.getArg(1);
+            Term w = element.getTerms(0);
+            Term t = element.getTerms(1);
             if (unify(witness, w))
                 result.append(t);
         }
@@ -1452,8 +1452,8 @@ public class BasicLibrary extends Library {
         for (java.util.Iterator<? extends Term> it = list.listIterator(); it.hasNext();) {
             Struct element = (Struct) it.next();
             //System.out.println("termine wtList "+element);
-            Term w = element.getArg(0);
-            Term t = element.getArg(1);
+            Term w = element.getTerms(0);
+            Term t = element.getTerms(1);
             //System.out.println("termine W wtList "+w);
             //System.out.println("termine T wtList "+t);
             if (unify(witness, w)){
@@ -1486,7 +1486,7 @@ public class BasicLibrary extends Library {
         Struct result = new Struct();
         for (java.util.Iterator<? extends Term> it = list.listIterator(); it.hasNext();) {
             Struct element = (Struct) it.next();
-            Term w = element.getArg(0);
+            Term w = element.getTerms(0);
             if (!unify(witness, w))
                 result.append(element);
         }

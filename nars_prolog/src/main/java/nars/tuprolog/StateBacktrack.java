@@ -47,7 +47,8 @@ public class StateBacktrack extends State {
             Struct goal = e.currentContext.currentGoal;
             // COMMENTED OUT BY ED ON JAN 25, 2011
             // DE-COMMENTED BY ED ON JAN 28, 2011
-            c.warn("The predicate " + goal.getPredicateIndicator() + " is unknown.");
+            if (c.isWarning())
+                c.warn("Unknown predicate " + goal.getPredicateIndicator());
             return;
         }
         e.currentAlternative = curChoice;

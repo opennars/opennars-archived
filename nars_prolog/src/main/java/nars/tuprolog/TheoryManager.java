@@ -50,7 +50,7 @@ public class TheoryManager implements Serializable {
     private ClauseDatabase retractDBase;
     private Prolog engine;
     private PrimitiveManager primitiveManager;
-    private Stack<Term> startGoalStack;
+    private Deque<Term> startGoalStack;
     //Theory lastConsultedTheory;
 
     public void initialize(Prolog vm) {
@@ -65,35 +65,40 @@ public class TheoryManager implements Serializable {
     /**
      * inserting of a clause at the head of the dbase
      */
-    public synchronized void assertA(Struct clause, boolean dyn, String libName, boolean backtrackable) {
+    public synchronized boolean assertA(Struct clause, boolean dyn, String libName, boolean backtrackable) {
         ClauseInfo d = new ClauseInfo(toClause(clause), libName);
         String key = d.getHead().getPredicateIndicator();
         if (dyn) {
             dynamicDBase.addFirst(key, d);
             if (staticDBase.containsKey(key)) {
                 engine.warn("A static predicate with signature " + key + " has been overriden.");
+                return false;
             }
         } else
             staticDBase.addFirst(key, d);
         if (engine.isSpy())
             engine.spy("INSERTA: " + d.getClause() + '\n');
+        return true;
     }
 
     /**
      * inserting of a clause at the end of the dbase
      */
-    public synchronized void assertZ(final Struct clause, final boolean dyn, final String libName, final boolean backtrackable) {
+    public synchronized boolean assertZ(final Struct clause, final boolean dyn, final String libName, final boolean backtrackable) {
         ClauseInfo d = new ClauseInfo(toClause(clause), libName);
         String key = d.getHead().getPredicateIndicator();
         if (dyn) {
             dynamicDBase.addLast(key, d);
             if (staticDBase.containsKey(key)) {
                 engine.warn("A static predicate with signature " + key + " has been overriden.");
+                return false;
             }
+            return true;
         } else
             staticDBase.addLast(key, d);
         if (engine.isSpy())
             engine.spy("INSERTZ: " + d.getClause() + '\n');
+        return true;
     }
 
     /**
@@ -101,7 +106,7 @@ public class TheoryManager implements Serializable {
      */
     public synchronized ClauseInfo retract(Struct cl) {
         Struct clause = toClause(cl);
-        Struct struct = ((Struct) clause.getArg(0));
+        Struct struct = ((Struct) clause.getTerms(0));
         FamilyClausesList family = dynamicDBase.get(struct.getPredicateIndicator());
         ExecutionContext ctx = engine.getEngineManager().getCurrentContext();
 
@@ -111,15 +116,16 @@ public class TheoryManager implements Serializable {
 		 * sara' la retract da questo db a restituire il risultato
 		 */
         FamilyClausesList familyQuery;
-        if (!retractDBase.containsKey("ctxId " + ctx.getId())) {
+        String ctxID = "ctxId " + ctx.getId();
+        if (!retractDBase.containsKey(ctxID)) {
             familyQuery = new FamilyClausesList();
             for (int i = 0; i < family.size(); i++) {
                 familyQuery.add(family.get(i));
             }
             //familyQuery.addAll(family);
-            retractDBase.put("ctxId " + ctx.getId(), familyQuery);
+            retractDBase.put(ctxID, familyQuery);
         } else {
-            familyQuery = retractDBase.get("ctxId " + ctx.getId());
+            familyQuery = retractDBase.get(ctxID);
         }
 
         if (familyQuery == null)
@@ -156,8 +162,8 @@ public class TheoryManager implements Serializable {
         if (!pi.getName().equals("/"))
             throw new IllegalArgumentException(pi + " has not the valid predicate name. Espected '/' but was " + pi.getName());
 
-        String arg0 = Tools.removeApices(pi.getArg(0).toString());
-        String arg1 = Tools.removeApices(pi.getArg(1).toString());
+        String arg0 = Tools.removeApices(pi.getTerms(0).toString());
+        String arg1 = Tools.removeApices(pi.getTerms(1).toString());
         String key = arg0 + '/' + arg1;
         List<ClauseInfo> abolished = dynamicDBase.abolish(key); /* Reviewed by Paolo Contessi: LinkedList -> List */
         if (abolished != null)
@@ -207,7 +213,7 @@ public class TheoryManager implements Serializable {
     }
 
     public void consult(final Struct theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-        startGoalStack = new Stack<>();
+        startGoalStack = new ArrayDeque<>();
         try {
             if (!runDirective(theory))
                 assertZ(theory, dynamicTheory, libName, true);
@@ -217,7 +223,7 @@ public class TheoryManager implements Serializable {
     }
 
     public void consult(final Iterator<? extends Term> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
-        startGoalStack = new Stack<>();
+        startGoalStack = new ArrayDeque<>();
         int clause = 1;
             /**/
         // iterate and assert all clauses in theory
@@ -314,10 +320,12 @@ public class TheoryManager implements Serializable {
 
     public synchronized SolveInfo solveTheoryGoal() {
         Struct s = null;
-        while (!startGoalStack.empty()) {
+        while (!startGoalStack.isEmpty()) {
+
+            Term popped = startGoalStack.pop();
             s = (s == null) ?
-                    (Struct) startGoalStack.pop() :
-                    new Struct(",", startGoalStack.pop(), s);
+                    (Struct) popped :
+                    new Struct(",", popped, s);
         }
         if (s != null) {
             try {
@@ -378,5 +386,6 @@ public class TheoryManager implements Serializable {
     public void clearRetractDB() {
         this.retractDBase = new ClauseDatabase();
     }
+
 
 }

@@ -550,8 +550,8 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @param t1 second term to be unified
 	 * @return true if the unification was successful
 	 */
-	public boolean match(Term t0, Term t1) {	//no syn
-		return t0.match(t1);
+	public boolean match(Term t0, Term t1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {	//no syn
+		return t0.match(t1, now, v1, v2);
 	}
 
 	/**
@@ -562,7 +562,10 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @return true if the unification was successful
 	 */
 	public boolean unify(Term t0, Term t1) {	//no syn
-		return t0.unify(this,t1);
+		return unify(t0, t1, new ArrayList(), new ArrayList());
+	}
+	public boolean unify(Term t0, Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
+		return t0.unify(this,t1,v1, v2);
 	}
 
 	/**
