@@ -47,21 +47,26 @@ public class PrologTheoryStringOperator extends Operator {
         String theoryName = args[1].name().toString(); // ASK< correct? >
         String theoryContent = PrologQueryOperator.getStringOfTerm(args[2]);
         
-        // NOTE< throws exception, we just don't catch it and let nars handle it >
-        Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
-        
-        // TODO< map somehow the theory name to the theory itself and reload if overwritten >
-        // NOTE< theoryName is not used >
-        // NOTE< theory is not cached >
+
         try {
+            // NOTE< throws exception, we just don't catch it and let nars handle it >
+            Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
+
+            // TODO< map somehow the theory name to the theory itself and reload if overwritten >
+            // NOTE< theoryName is not used >
+            // NOTE< theory is not cached >
+
             prologInterpreter.addTheory(new Theory(theoryContent));
+
+            nar.memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryContent );
         }
-        catch (InvalidTheoryException exception) {
+        catch (Exception exception) {
             // TODO< report error >
+            exception.printStackTrace();
             return null;
         }
         
-        nar.memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryContent );
+
 
         return null;
     }

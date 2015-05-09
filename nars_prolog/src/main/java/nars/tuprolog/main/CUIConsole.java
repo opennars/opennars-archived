@@ -17,7 +17,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
     static final String incipit =
         "tuProlog system - release " + Prolog.getVersion() + '\n';
        
-    public CUIConsole(String[] args){
+    public CUIConsole(String[] args) throws InvalidLibraryException {
 
         if (args.length>1){
             System.err.println("args: { theory file }");
@@ -174,7 +174,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
 	}
 	/**/
 	
-    public static void main(String[] args){
+    public static void main(String[] args) throws InvalidLibraryException {
         new Thread(new CUIConsole(args)).start();
     }
 }

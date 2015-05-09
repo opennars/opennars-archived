@@ -4,17 +4,17 @@ import junit.framework.TestCase;
 
 public class StateRuleSelectionTestCase extends TestCase {
 	
-	public void testUnknownPredicateInQuery() throws MalformedGoalException {
+	public void testUnknownPredicateInQuery() throws MalformedGoalException, InvalidLibraryException {
 		Prolog engine = new Prolog();
 		TestWarningListener warningListener = new TestWarningListener();
 		engine.addWarningListener(warningListener);
 		String query = "p(X).";
 		engine.solve(query);
 		assertTrue(warningListener.warning.indexOf("p/1") > 0);
-		assertTrue(warningListener.warning.indexOf("unknown") > 0);
+		assertTrue(warningListener.warning.indexOf("Unknown") > 0);
 	}
 	
-	public void testUnknownPredicateInTheory() throws InvalidTheoryException, MalformedGoalException {
+	public void testUnknownPredicateInTheory() throws InvalidTheoryException, MalformedGoalException, InvalidLibraryException {
 		Prolog engine = new Prolog();
 		TestWarningListener warningListener = new TestWarningListener();
 		engine.addWarningListener(warningListener);
@@ -23,7 +23,7 @@ public class StateRuleSelectionTestCase extends TestCase {
 		String query = "p(X).";
 		engine.solve(query);
 		assertTrue(warningListener.warning.indexOf("a/0") > 0);
-		assertTrue(warningListener.warning.indexOf("unknown") > 0);
+		assertTrue(warningListener.warning.indexOf("Unknown") > 0);
 	}
 
 }

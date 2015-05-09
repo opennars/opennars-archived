@@ -13,11 +13,15 @@ import java.util.Map;
 
 public class JavaLibraryTestCase extends TestCase {
 	String theory = null;
-	Prolog engine = new Prolog();
+	Prolog engine;
 	SolveInfo info = null;
 	String result = null;
 	String paths = null;
-	
+
+	public JavaLibraryTestCase() throws InvalidLibraryException {
+		engine = new Prolog();
+	}
+
 	public void testGetPrimitives() {
 		Library library = new JavaLibrary();
 		IntObjectHashMap<List<PrimitiveInfo>> primitives = library.getPrimitives();

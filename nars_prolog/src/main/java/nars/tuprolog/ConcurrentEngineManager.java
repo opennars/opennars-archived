@@ -5,6 +5,9 @@ package nars.tuprolog;
 
 import com.gs.collections.api.map.primitive.MutableIntIntMap;
 import com.gs.collections.api.map.primitive.MutableIntObjectMap;
+import com.gs.collections.impl.map.mutable.primitive.IntIntHashMap;
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import nars.tuprolog.event.QueryEvent;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,6 +26,9 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
 
     public ConcurrentEngineManager(boolean spy, boolean warning) {
         super(spy, warning);
+
+        runners = new IntObjectHashMap().asSynchronized();
+        threads = new IntIntHashMap().asSynchronized();
     }
 
 
@@ -207,16 +213,34 @@ public abstract class ConcurrentEngineManager extends AbstractEngineManager impl
 
     }
 
-    @Override
+
+    /**
+     * Solves a query
+     *
+     * @param g the term representing the goal to be demonstrated
+     * @return the result of the demonstration
+     * @see SolveInfo
+     **/
     public SolveInfo solve(Term query, double maxTimeSeconds) {
+        //System.out.println("ENGINE SOLVE #0: "+g);
+        if (query == null) return null;
+
         this.clearSinfoSetOf();
         er1.setGoal(query);
 
-        SolveInfo s = er1.solve(maxTimeSeconds);
+        SolveInfo sinfo = er1.solve(maxTimeSeconds);
         //System.out.println("ENGINE MAN solve(Term) risultato: "+s);
-        return s;
 
         //return er1.solve();
+
+        notifyNewQueryResultAvailable(new QueryEvent(this, sinfo));
+
+        return sinfo;
+
+    }
+
+    public SolveInfo solve(Term g) {
+        return solve(g, 0);
     }
 
     @Override

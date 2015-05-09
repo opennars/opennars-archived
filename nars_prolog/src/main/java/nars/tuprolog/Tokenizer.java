@@ -147,6 +147,26 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
         // and it is also not possible to use StreamTokenizer#whitespaceChars for ' '
     }
 
+    static public String readStringFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+        byte[] byteChunk = new byte[4096];
+
+        try {
+            int n;
+
+            while ( (n = inputStream.read(byteChunk)) > 0 ) {
+                byteOutputStream.write(byteChunk, 0, n);
+            }
+        }
+        finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+
+        return byteOutputStream.toString();
+    }
+
     /**
      * reads next available token
      */

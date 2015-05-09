@@ -11,7 +11,7 @@ public class TheoryTestCase extends TestCase {
 		assertEquals(theory.toString(), new Theory(after).toString());
 	}
 	
-	public void testAppendClauseLists() throws InvalidTheoryException, MalformedGoalException {
+	public void testAppendClauseLists() throws InvalidTheoryException, MalformedGoalException, InvalidLibraryException {
 		Term[] clauseList = new Term[] {new Struct("p"), new Struct("q"), new Struct("r")};
 		Term[] otherClauseList = new Term[] {new Struct("a"), new Struct("b"), new Struct("c")};
 		Theory theory = new Theory(new Struct(clauseList));

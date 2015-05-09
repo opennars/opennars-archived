@@ -55,33 +55,8 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
      * The default libraries are BasicLibrary, ISOLibrary,
      * IOLibrary, and  JavaLibrary
      */
-    public Prolog() {
-        this(false, true);
-        try {
-            loadLibrary("nars.tuprolog.lib.BasicLibrary");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        try {
-            loadLibrary("nars.tuprolog.lib.ISOLibrary");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            loadLibrary("nars.tuprolog.lib.IOLibrary");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            if (System.getProperty("java.vm.name").equals("IKVM.NET"))
-                loadLibrary("OOLibrary.OOLibrary, OOLibrary");
-            else
-                loadLibrary("nars.tuprolog.lib.JavaLibrary");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public Prolog() throws InvalidLibraryException {
+        this("nars.tuprolog.lib.BasicLibrary","nars.tuprolog.lib.ISOLibrary", "nars.tuprolog.lib.IOLibrary", "nars.tuprolog.lib.JavaLibrary");
     }
 
 
@@ -112,7 +87,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
     }
 
 
-    protected void initializeManagers() {
+    protected void init() {
         flagManager = new FlagManager();
         libraryManager = new LibraryManager();
         opManager = new OperatorManager();
@@ -123,8 +98,6 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
         libraryManager.initialize(this);
         flagManager.initialize(this);
         primitiveManager.initialize(this);
-        runners = new IntObjectHashMap().asSynchronized();
-        threads = new IntIntHashMap().asSynchronized();
 
         er1 = new EngineRunner(rootID);
         er1.initialize(this);
@@ -191,28 +164,7 @@ public class Prolog extends ConcurrentEngineManager implements /*Castagna 06/201
 
     // solve interface
 
-    /**
-     * Solves a query
-     *
-     * @param g the term representing the goal to be demonstrated
-     * @return the result of the demonstration
-     * @see SolveInfo
-     **/
-    public SolveInfo solve(Term g, double maxTimeSeconds) {
-        //System.out.println("ENGINE SOLVE #0: "+g);
-        if (g == null) return null;
 
-        SolveInfo sinfo = super.solve(g, maxTimeSeconds);
-
-        notifyNewQueryResultAvailable(new QueryEvent(this, sinfo));
-
-        return sinfo;
-
-    }
-
-    public SolveInfo solve(Term g) {
-        return solve(g, 0);
-    }
 
     /**
      * Solves a query

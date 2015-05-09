@@ -17,6 +17,7 @@
  */
 package nars.tuprolog.gui;
 
+import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.gui.ide.JavaIDE;
 
 /**
@@ -64,7 +65,7 @@ public class TuprologSwing {
     /**
      * Launch a GUI suitable for the Java2 platform.
      */
-    private void launchJavaGUI() {
+    private void launchJavaGUI() throws InvalidLibraryException {
         JavaIDE ide = new JavaIDE();
         //ide.pack();
         ide.setVisible(true);
@@ -74,7 +75,7 @@ public class TuprologSwing {
      * Choose which GUI to launch based on the subversion number of the J2SE
      * this program is running on.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidLibraryException {
         TuprologSwing launcher = new TuprologSwing();
         // Get J2SE version
         String version = System.getProperty("java.version");

@@ -3,6 +3,7 @@ package nars.prolog;
 import nars.NAR;
 import nars.io.TextOutput;
 import nars.model.impl.Default;
+import nars.tuprolog.InvalidLibraryException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class NARPrologTest {
     }
 
     @Test
-    public void testFact() {
+    public void testFact() throws InvalidLibraryException {
 
         n.input("fact(<x --> y>)!");
         n.run(5);

@@ -2,6 +2,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.nal.term.Term;
+import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.Prolog;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class PrologContext {
     }
 
     /** creates a prolog if it doesnt exist */
-    public Prolog getProlog(Term o) {
+    public Prolog getProlog(Term o) throws InvalidLibraryException {
         Prolog exist = prologs.get(o);
         if (exist!=null) return exist;
         exist = new Prolog();

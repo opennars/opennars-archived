@@ -17,6 +17,7 @@
  */
 package nars.tuprolog.event;
 
+import nars.tuprolog.AbstractEngineManager;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.SolveInfo;
 
@@ -31,7 +32,7 @@ public class QueryEvent extends PrologEvent {
 
    private final SolveInfo info;
     
-    public QueryEvent(Prolog source, SolveInfo info){
+    public QueryEvent(AbstractEngineManager source, SolveInfo info){
         super(source);
         this.info=info;
     }

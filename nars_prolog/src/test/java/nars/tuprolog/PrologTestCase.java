@@ -7,7 +7,7 @@ import nars.tuprolog.event.SpyListener;
 
 public class PrologTestCase extends TestCase {
 	
-	public void testEngineInitialization() {
+	public void testEngineInitialization() throws InvalidLibraryException {
 		Prolog engine = new Prolog();
 		assertEquals(String.join(",",engine.getCurrentLibraries()), 4, engine.getCurrentLibraries().length);
 		assertNotNull(engine.getLibrary("nars.tuprolog.lib.BasicLibrary"));
@@ -46,7 +46,7 @@ public class PrologTestCase extends TestCase {
 		assertNull(engine.getLibrary("nars.tuprolog.lib.IOLibrary"));
 	}
 	
-	public void testAddTheory() throws InvalidTheoryException {
+	public void testAddTheory() throws InvalidTheoryException, InvalidLibraryException {
 		Prolog engine = new Prolog();
 		Theory t = new Theory("test :- notx existing(s).");
 		try {
@@ -57,7 +57,7 @@ public class PrologTestCase extends TestCase {
 		}
 	}
 	
-	public void testSpyListenerManagement() {
+	public void testSpyListenerManagement() throws InvalidLibraryException {
 		Prolog engine = new Prolog();
 		SpyListener listener1 = new SpyListener() {
 			public void onSpy(SpyEvent e) {}
@@ -82,7 +82,7 @@ public class PrologTestCase extends TestCase {
 		assertEquals("nars.tuprolog.lib.JavaLibrary", a.firstMessage);
 	}
 	
-	public void testTheoryListener() throws InvalidTheoryException {
+	public void testTheoryListener() throws InvalidTheoryException, InvalidLibraryException {
 		Prolog engine = new Prolog();
 		TestPrologEventAdapter a = new TestPrologEventAdapter();
 		engine.addTheoryListener(a);

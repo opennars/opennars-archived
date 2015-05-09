@@ -55,12 +55,12 @@ abstract public class AbstractEngineManager {
         queryListeners = new ArrayList<>();
         libraryListeners = new ArrayList<>();
         absolutePathList = new ArrayList<>();
-        initializeManagers();
+        init();
 
 
     }
 
-    abstract protected void initializeManagers();
+    abstract protected void init();
 
     public synchronized SolveInfo solve(Term query) {
         return solve(query, 0);
@@ -842,4 +842,6 @@ abstract public class AbstractEngineManager {
     public abstract String getSetOfSolution();
 
     public abstract void setSetOfSolution(String s);
+
+
 }

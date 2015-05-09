@@ -60,7 +60,7 @@ final public class Operator implements Serializable {
             return ((Operator)obj).name.equals(name);
         }
         else if (obj instanceof String) {
-            return ((String)obj).equals(name);
+            return obj.equals(name);
         }
         return false;
     }

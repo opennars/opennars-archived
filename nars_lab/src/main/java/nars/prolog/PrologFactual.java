@@ -3,10 +3,7 @@ package nars.prolog;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.TermFunction;
 import nars.nal.term.Term;
-import nars.tuprolog.NoMoreSolutionException;
-import nars.tuprolog.Prolog;
-import nars.tuprolog.SolveInfo;
-import nars.tuprolog.Struct;
+import nars.tuprolog.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +28,13 @@ public class PrologFactual extends TermFunction {
 
     @Override
     public Object function(Term[] x) {
-        Prolog p = context.getProlog(null); //default
+        Prolog p = null; //default
+        try {
+            p = context.getProlog(null);
+        } catch (InvalidLibraryException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         nars.tuprolog.Term factTerm = NARPrologMirror.pterm(x[0]).resolveTerm();
 

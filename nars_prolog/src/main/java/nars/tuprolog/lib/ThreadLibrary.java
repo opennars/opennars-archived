@@ -17,7 +17,7 @@ public class ThreadLibrary extends Library<ConcurrentEngineManager> {
 	
 	public void setEngine(Prolog en) {	
         engine = en;
-        engineManager = (ConcurrentEngineManager) en;
+        engineManager = en;
 	}
 	
 	//Tenta di unificare a t l'identificativo del thread corrente

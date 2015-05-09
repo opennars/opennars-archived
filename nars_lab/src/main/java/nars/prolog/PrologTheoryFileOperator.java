@@ -1,13 +1,10 @@
 package nars.prolog;
 
-import nars.Utilities;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.tuprolog.InvalidTheoryException;
-import nars.tuprolog.Prolog;
-import nars.tuprolog.Theory;
+import nars.tuprolog.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,8 +44,14 @@ public class PrologTheoryFileOperator extends Operator {
         String theoryPath = PrologQueryOperator.getStringOfTerm(args[2]);
         
         // NOTE< throws exception, we just don't catch it and let nars handle it >
-        Prolog prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
-        
+        Prolog prologInterpreter = null;
+        try {
+            prologInterpreter = PrologTheoryUtility.getOrCreatePrologContext(prologInterpreterKey, context);
+        } catch (InvalidLibraryException e) {
+            e.printStackTrace();
+            return null;
+        }
+
         // assignment because of java happyness
         AtomicBoolean theoryInCache = new AtomicBoolean(false);
         
@@ -72,7 +75,7 @@ public class PrologTheoryFileOperator extends Operator {
             }
             
             try {
-                theoryContent = Utilities.readStringFromInputStream(theoryFile);
+                theoryContent = Tokenizer.readStringFromInputStream(theoryFile);
             }
             catch (IOException exception) {
                 // TODO< report error >

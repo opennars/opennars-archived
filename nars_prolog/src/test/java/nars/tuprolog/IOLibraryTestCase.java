@@ -18,7 +18,7 @@ public class IOLibraryTestCase extends TestCase {
 		assertEquals(0, primitives.get(PrimitiveInfo.FUNCTOR).size());
 	}
 	
-	public void testTab1() throws MalformedGoalException {
+	public void testTab1() throws MalformedGoalException, InvalidLibraryException {
 		Prolog engine = new Prolog();
 		TestOutputListener l = new TestOutputListener();
 		engine.addOutputListener(l);

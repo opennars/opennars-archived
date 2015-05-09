@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 public class SolveInfoTestCase extends TestCase {
 
-	public void testGetSubsequentQuery() {
+	public void testGetSubsequentQuery() throws InvalidLibraryException {
 		Prolog engine = new Prolog();
 		Term query = new Struct("is", new Var("X"), new Struct("+", new Int(1), new Int(2)));
 		SolveInfo result = engine.solve(query);

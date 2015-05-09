@@ -17,7 +17,7 @@ public class PrologTheoryUtility {
     }
     
     // throws LibraryLoadingFailedException
-    static public Prolog getOrCreatePrologContext(Term prologInterpreterKey, PrologContext context) {
+    static public Prolog getOrCreatePrologContext(Term prologInterpreterKey, PrologContext context) throws InvalidLibraryException {
         Prolog prologInterpreter;
         
         boolean prologInterpreterKnown = context.prologs.containsKey(prologInterpreterKey);

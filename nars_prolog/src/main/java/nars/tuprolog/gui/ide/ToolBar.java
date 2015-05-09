@@ -209,7 +209,7 @@ public class ToolBar extends JPanel
                 Term rich = engine.termSolve(consoleManager.getGoal());
                 try {
 					new SpyFrame(theory, rich);
-				} catch (InvalidTheoryException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -6,6 +6,7 @@ import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.InvalidTheoryException;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.Struct;
@@ -28,7 +29,13 @@ public class PrologFact extends Operator {
     @Override
     protected List<Task> execute(Operation operation, Term[] args) {
 
-        Prolog p = context.getProlog(null); //default
+        Prolog p = null; //default
+        try {
+            p = context.getProlog(null);
+        } catch (InvalidLibraryException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         Sentence s = operation.getTask().sentence;
         if (s.punctuation == Symbols.GOAL) {
