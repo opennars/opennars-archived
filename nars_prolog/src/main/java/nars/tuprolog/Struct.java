@@ -196,16 +196,10 @@ public class Struct extends Term {
     }
 
 
-    //TEMPORARY
-    public void anonymize() {
-        //find the first atomic term and replace it with a variable name
-        int a = getArity();
-        if (a == 2) {
-            if (getTerm(0).isAtom()) {
-                Struct s = ((Struct)getTerm(0));
-                setTerm(0, new Var("IS" + s.getName()));
-            }
-        }
+
+    public void replaceSubtermWithVariable(int subterm) {
+        Struct s = ((Struct)getTerm(subterm));
+        setTerm(subterm, new Var("X"));
     }
 
     public void setName(String name_) {

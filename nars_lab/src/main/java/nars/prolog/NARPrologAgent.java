@@ -1,10 +1,11 @@
 package nars.prolog;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
-import nars.Events;
 import nars.Events.*;
 import nars.Global;
 import nars.NAR;
+import nars.budget.Budget;
+import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
@@ -24,21 +25,18 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.*;
 import nars.nal.term.Term;
 import nars.tuprolog.*;
+import nars.tuprolog.event.TheoryEvent;
+import nars.util.event.Reaction;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * Causes a NARProlog to mirror certain activity of a NAR.  It generates
- * prolog terms from NARS beliefs, and answers NARS questions with the results
- * of a prolog solution (converted to NARS terms), which are input to NARS memory
- * with the hope that this is sooner than NARS can solve it by itself.
+ * Tuprolog reasoner adapted to use NAR as its data structures (where possible).
  */
-public class NARPrologMirror extends AbstractMirror {
+public class NARPrologAgent extends NARTuprolog implements Reaction {
 
     public final NAR nar;
-    public final NARTuprolog prolog;
-
 
 
     private float trueThreshold = 0.90f;
@@ -85,59 +83,57 @@ public class NARPrologMirror extends AbstractMirror {
 
 
     public static final Class[] telepathicEvents = {
-            Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class,
-            Events.ConceptQuestionAdd.class,
+            ConceptBeliefAdd.class, ConceptBeliefRemove.class,
+            ConceptQuestionAdd.class,
             IN.class, OUT.class, Answer.class
     };
 
     public static final Class[] inputOutputEvents = {IN.class, OUT.class};
-    private InputMode inputMode = InputMode.DirectProcess;
+    private AbstractMirror.InputMode inputMode = AbstractMirror.InputMode.DirectProcess;
 
     //serial #'s
     static long nextQueryID = 0;
     static long variableContext = 0;
 
-    public NARPrologMirror(NAR nar, float minConfidence, float answerConfidence, boolean telepathic, boolean eternalJudgments, boolean presentJudgments) throws InvalidLibraryException {
-        super(nar, true, telepathic ? telepathicEvents : inputOutputEvents);
+    public NARPrologAgent(NAR nar, float minConfidence, float answerConfidence, boolean eternalJudgments, boolean presentJudgments) throws InvalidLibraryException {
+        super(nar);
+
         this.nar = nar;
         this.confidenceThreshold = minConfidence;
         this.answerConfidence = answerConfidence;
-        this.prolog = new NARTuprolog(nar);
+
         this.forgetCyclePeriod = nar.memory.duration() / 2;
 
         this.maxSolveTime = 70.0f * 1e-3f;
         this.minSolveTime = 20f * 1e-3f;
 
-//        this.maxSolveTime = 0;
-//        this.minSolveTime = 0;
 
-        List<String> l = initAxioms();
-        for (String axiom : l) {
-            Struct clause = (Struct) new Parser(axiom).nextTerm(true);
-            addTheory(clause);
+        try {
+            addTheory(initAxioms());
+        } catch (InvalidTheoryException e) {
+            e.printStackTrace();
         }
-//        String axiomString = Joiner.on(" \n").join(l);
-//        try {
-//            nars.tuprolog.Term[] ax = toArray(new Theory(axiomString + '\n').iterator(prolog.prolog), nars.tuprolog.Term.class);
-////            nars.tuprolog.Term[] ax = Lists.transform(l, x -> new Struct(x)).toArray(new nars.tuprolog.Term[l.size()]);
-//            //axioms = new Theory(ax);
-//            //prolog.setTheory(axioms);
-//        } catch (InvalidTheoryException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-
 
         setTemporalMode(eternalJudgments, presentJudgments);
+
+        nar.on(this, telepathicEvents);
+
+    }
+
+    private void addTheory(List<String> t) throws InvalidTheoryException {
+        for (String s : t) {
+            Struct clause = (Struct) new Parser(s).nextTerm(true);
+            addTheory(clause);
+        }
     }
 
     public ClauseInfo retractFact(Struct fact) {
-        return prolog.prolog.getTheoryManager().retract(fact);
+        return getTheoryManager().retract(fact);
     }
 
     public boolean assertFact(Struct fact) {
         try {
-            boolean b = prolog.prolog.getTheoryManager().assertA(fact, true, null, true);
+            boolean b = getTheoryManager().assertA(fact, true, null, true);
             return b;
         }
         catch (Exception e) {
@@ -146,24 +142,21 @@ public class NARPrologMirror extends AbstractMirror {
         return false;
     }
 
-    public boolean addTheory(Struct clause) {
-        try {
-            SolveInfo s = prolog.prolog.addTheory(clause);
-            System.err.println("Prolog theory: " + clause + " (" + s +")");
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+
+    public SolveInfo addTheory(final Struct clause) throws InvalidTheoryException {	//no syn
+
+        theoryManager.consult(clause, true, null);
+        SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
+
+        System.err.println("Prolog theory: " + clause + " (" + theoryGoal +")");
+
+        TheoryEvent ev = new TheoryEvent(this, null, null);
+        this.notifyChangedTheory(ev);
+        return theoryGoal;
     }
 
 
-    public NARPrologMirror setInputMode(InputMode i) {
-        this.inputMode = i;
-        return this;
-    }
-
-    public NARPrologMirror setTemporalMode(boolean eternalJudgments, boolean presentJudgments) {
+    protected NARPrologAgent setTemporalMode(boolean eternalJudgments, boolean presentJudgments) {
         this.eternalJudgments = eternalJudgments;
         this.presentJudgments = presentJudgments;
         return this;
@@ -279,7 +272,7 @@ public class NARPrologMirror extends AbstractMirror {
         } else if (channel == ConceptBeliefRemove.class) {
             Concept c = (Concept) arg[0];
             remove(c, (Sentence) arg[1]);
-        } else if (channel == Events.ConceptQuestionAdd.class) {
+        } else if (channel == ConceptQuestionAdd.class) {
             Concept c = (Concept) arg[0];
             Task task = (Task) arg[1];
             add(task);
@@ -373,7 +366,7 @@ public class NARPrologMirror extends AbstractMirror {
             } catch (NoSolutionException nse) {
                 //no solution, ok
             } catch (InvalidTermException nse) {
-                nar.emit(NARPrologMirror.class, s + " : not supported yet");
+                nar.emit(NARPrologAgent.class, s + " : not supported yet");
                 nse.printStackTrace();
             } catch (Exception ex) {
                 nar.emit(ERR.class, ex.toString());
@@ -402,7 +395,7 @@ public class NARPrologMirror extends AbstractMirror {
         //System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");
 
 
-        SolveInfo si = prolog.query(qh, solveTime);
+        SolveInfo si = query(qh, solveTime);
 
 
         int answers = 0;
@@ -427,7 +420,7 @@ public class NARPrologMirror extends AbstractMirror {
                 withSolution.accept(solution);
 
                 try {
-                    si = prolog.prolog.solveNext(solveTime);
+                    si = solveNext(solveTime);
                 }
                 catch (NoMoreSolutionException e) {
                     break;
@@ -444,7 +437,7 @@ public class NARPrologMirror extends AbstractMirror {
             si = null;
         }
         finally {
-            prolog.prolog.solveEnd();
+            solveEnd();
         }
 
 
@@ -800,6 +793,32 @@ public class NARPrologMirror extends AbstractMirror {
         return t;
     }
 
+    public boolean input(Sentence s, AbstractMirror.InputMode mode, Task parent) {
+        if (mode == AbstractMirror.InputMode.Perceive) {
+            nar.input(s);
+            return true;
+        }
+        else if ((mode == AbstractMirror.InputMode.InputTask)|| (mode == AbstractMirror.InputMode.DirectProcess)) {
+
+            Task t = new Task(s, Budget.newDefault(s, nar.memory), parent  );
+
+            //System.err.println("  " + t);
+
+            if (mode == AbstractMirror.InputMode.InputTask)
+                nar.memory.input(t);
+            else if (mode == AbstractMirror.InputMode.DirectProcess)
+                DirectProcess.run(nar.memory, t);
+
+            return true;
+
+        }
+        else if (mode == AbstractMirror.InputMode.Concept) {
+            throw new RuntimeException("unimpl yet");
+        }
+        return false;
+    }
+
+
     /*
     public static class NARStruct extends Struct {
         
@@ -868,7 +887,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     public Theory getBeliefsTheory() throws InvalidTheoryException {
-        return prolog.prolog.getDynamicTheoryCopy();
+        return getDynamicTheoryCopy();
     }
 
     protected void onQuestion(Sentence s) {

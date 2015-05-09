@@ -12,25 +12,22 @@ import java.io.PrintStream;
 /**
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
  */
-public class NARTuprolog extends NARProlog implements OutputListener, WarningListener, TheoryListener, QueryListener {
+public class NARTuprolog extends Prolog implements NARProlog, OutputListener, WarningListener, TheoryListener, QueryListener {
     
-    public Prolog prolog;
-    
-    public NARTuprolog(NAR n)  {
-        super(n);
+    @Deprecated final public Prolog prolog = this;
+    private final NAR nar;
 
-        try {
-            prolog = new Prolog("nars.tuprolog.lib.BasicLibrary");
-            prolog.addOutputListener(this);
-            prolog.addTheoryListener(this);
-            prolog.addWarningListener(this);
-            prolog.addQueryListener(this);
-        } catch (InvalidLibraryException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+    public NARTuprolog(NAR n) throws InvalidLibraryException {
+        super("nars.tuprolog.lib.BasicLibrary");
 
 
+        addOutputListener(this);
+        addTheoryListener(this);
+        addWarningListener(this);
+        addQueryListener(this);
+
+
+        this.nar = n;
 
     }
 

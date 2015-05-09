@@ -36,9 +36,9 @@ abstract public class AbstractMirror extends NARReaction {
         InputTask,
 
         /** instance an ImmediateProcess and run it immediately */
-        ImmediateProcess,
+        DirectProcess,
 
-        /** insert the sentence directly into a concept, attempt to create the concept if one does not exist */
+        InputMode, /** insert the sentence directly into a concept, attempt to create the concept if one does not exist */
         Concept
     }
     
@@ -47,7 +47,7 @@ abstract public class AbstractMirror extends NARReaction {
             nar.input(s);
             return true;
         }
-        else if ((mode == InputMode.InputTask)|| (mode == InputMode.ImmediateProcess)) {
+        else if ((mode == InputMode.InputTask)|| (mode == InputMode.DirectProcess)) {
 
             Task t = new Task(s, Budget.newDefault(s, nar.memory), parent  );
 
@@ -55,7 +55,7 @@ abstract public class AbstractMirror extends NARReaction {
 
             if (mode == InputMode.InputTask)
                 nar.memory.input(t);
-            else if (mode == InputMode.ImmediateProcess)
+            else if (mode == InputMode.DirectProcess)
                 DirectProcess.run(nar.memory, t);
 
             return true;

@@ -13,6 +13,8 @@ import nars.nal.nal4.Product;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
+import nars.tuprolog.InvalidLibraryException;
+import nars.tuprolog.InvalidTheoryException;
 import nars.util.event.Reaction;
 import objenome.util.random.XORShiftRandom;
 
@@ -38,12 +40,12 @@ public class BooleanChallenge implements Reaction {
     float confThreshold = 0.5f; //confidence threshold for being counted as an answer
     float inputConf = 0.95f;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidTheoryException, InvalidLibraryException {
         Global.DEBUG = true;
-        NAR n = new NAR(new Default(4048, 4, 3).setInternalExperience(null));
+        NAR n = new NAR(new Default(1024, 4, 3).setInternalExperience(null));
 
         //NAR n = new NAR(new Discretinuous());
-        NARPrologMirror pl = new NARPrologMirror(n, 0.90f, true, true, false);
+        NARPrologMirror pl = new NARPrologMirror(n, 0.9f, 0.25f, true, true, false);
         pl.setReportAnswers(true);
         pl.setReportAssumptions(true);
         //NAR n = new CurveBagNARBuilder().build();
@@ -51,8 +53,10 @@ public class BooleanChallenge implements Reaction {
         //new TraceWriter(n, System.out);
         //new TextOutput(n, System.out);
 
-        new BooleanChallenge(n, 2, 10550, 0.5f).getScore();
+        new BooleanChallenge(n, 2, 10550, 0.25f).getScore();
 
+
+        System.out.println(pl.getBeliefsTheory());
 
         /*
         n.memory.getQuestionConcepts().forEach(x -> {
@@ -341,6 +345,9 @@ public class BooleanChallenge implements Reaction {
         a += "b0} <=> number>";
         nar.believe(a, inputConf);
 
+        nar.believe("<{even,odd} <-> parity>");
+        nar.believe("<{a0,b0,b2} <-> even>");
+        nar.believe("<{a1,b1,b3} <-> odd>");
         nar.believe("<b0 <-> (*,a0,a0)>");
         nar.believe("<b1 <-> (*,a0,a1)>");
         nar.believe("<b2 <-> (*,a1,a0)>");

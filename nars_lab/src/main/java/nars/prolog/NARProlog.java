@@ -12,16 +12,11 @@ import java.io.PrintStream;
 /**
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
  */
-abstract public class NARProlog {
-    
-    public final NAR nar;
+public interface NARProlog {
     
 
+
     
-    public NARProlog(NAR n)  {
-        super();
-        this.nar = n;                     
-    }
 
     abstract public void setTheory(Theory t) throws InvalidTheoryException;
 

@@ -11,23 +11,9 @@ import java.util.List;
  */
 public class NARPrologStructuralInference {
 
-    NAR n = new NAR(new Default());
-    public final NARPrologMirror pl = new NARPrologMirror(n, 0.90f, true, true, false) {
-        @Override
-        public List<String> initAxioms() {
-            List<String> l = super.initAxioms();
-            l.add("rdf(S,P,O) :- inheritance(product(S,O),P).");
 
 
-            //https://www.cpp.edu/~jrfisher/www/prolog_tutorial/2_15.html
-            l.add("path(A,B,Path) :- travel(A,B,[A],Q),reverse(Q,Path).");
-            l.add("travel(A,B,P,[B|P]) :- connected(A,B).");
-            l.add("travel(A,B,Visited,Path) :- connected(A,C),C \\== B,\\+member(C,Visited),travel(C,B,[C|Visited],Path).");
-            return l;
-        }
-    };
-
-    public static void main(String[] args) throws MalformedGoalException, NoSolutionException, NoMoreSolutionException, InvalidTheoryException {
+    public static void main(String[] args) throws MalformedGoalException, NoSolutionException, NoMoreSolutionException, InvalidTheoryException, InvalidLibraryException {
         NARPrologStructuralInference p = new NARPrologStructuralInference();
         p.solve("subject(X)");
         p.solve("[A,B]");
@@ -40,11 +26,27 @@ public class NARPrologStructuralInference {
         p.solve("not(X)");
         p.solve("is(inheritance(this, truthy),true)");
         p.solve("inheritance(this, truthy)=true");
-        p.pl.apply("assert", "itis(something).");
+        //p.pl.apply("assert", "itis(something).");
         p.solve("is(itis(something),true)");
     }
 
-    public NARPrologStructuralInference() {
+    public NARPrologStructuralInference() throws InvalidLibraryException {
+
+        NAR n = new NAR(new Default());
+        final NARPrologMirror pl = new NARPrologMirror(n, 0.90f, 0.9f, true, true, false) {
+            @Override
+            public List<String> initAxioms() {
+                List<String> l = super.initAxioms();
+                l.add("rdf(S,P,O) :- inheritance(product(S,O),P).");
+
+
+                //https://www.cpp.edu/~jrfisher/www/prolog_tutorial/2_15.html
+                l.add("path(A,B,Path) :- travel(A,B,[A],Q),reverse(Q,Path).");
+                l.add("travel(A,B,P,[B|P]) :- connected(A,B).");
+                l.add("travel(A,B,Visited,Path) :- connected(A,C),C \\== B,\\+member(C,Visited),travel(C,B,[C|Visited],Path).");
+                return l;
+            }
+        };
 
         pl.setReportAnswers(true);
         pl.setReportAssumptions(true);
@@ -84,16 +86,16 @@ public class NARPrologStructuralInference {
     public void solve(String s) {
 
 
-        try {
-            boolean x = pl.solve(s, 0.05f, t -> {
-                System.out.println(s + " ==== " + t);
-            });
-            if (!x) {
-                System.out.println(s + " ==== NO SOLUTION");
-            }
-        } catch (InvalidTheoryException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            boolean x = pl.solve(s, 0.05f, t -> {
+//                System.out.println(s + " ==== " + t);
+//            });
+//            if (!x) {
+//                System.out.println(s + " ==== NO SOLUTION");
+//            }
+//        } catch (InvalidTheoryException e) {
+//            e.printStackTrace();
+//        }
 
 
     }

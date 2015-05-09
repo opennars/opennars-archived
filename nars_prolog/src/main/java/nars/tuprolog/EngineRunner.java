@@ -341,7 +341,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
      *
      * @return true if open alternatives are present
      */
-    boolean hasOpenAlternatives() {
+    public boolean hasOpenAlternatives() {
         if (sinfo==null) return false;
         return sinfo.hasOpenAlternatives();
     }
@@ -352,7 +352,7 @@ public class EngineRunner implements java.io.Serializable, Runnable{
      * 
      * @return true if the demonstration was stopped
      */
-    boolean isHalted() {
+    public boolean isHalted() {
         if (sinfo==null) return false;
         return sinfo.isHalted();
     }

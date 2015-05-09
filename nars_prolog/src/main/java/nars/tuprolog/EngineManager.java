@@ -201,12 +201,12 @@ public class EngineManager implements java.io.Serializable {
 		return runner.getCurrentContext();
 	}
 	
-	boolean hasOpenAlternatives() {
+	public boolean hasOpenAlternatives() {
 		EngineRunner runner = findRunner();
 		return runner.hasOpenAlternatives();
 	}
 
-	boolean isHalted() {
+	public boolean isHalted() {
 		EngineRunner runner =findRunner();
 		return runner.isHalted();
 	}
@@ -217,7 +217,7 @@ public class EngineManager implements java.io.Serializable {
 		
 	}
 	
-        public synchronized SolveInfo solve(Term query) {
+    public synchronized SolveInfo solve(Term query) {
             return solve(query, 0);
         }
         
