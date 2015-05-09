@@ -147,7 +147,7 @@ public class StateEnd extends State {
             Boolean findSamePredicateIndicator = false;
             Object[] a = (e.goalVars).toArray();
 
-            AbstractEngineManager p = null;
+            Prolog p = null;
             try {
                 p = new DefaultProlog(new String[] { });
             } catch (InvalidLibraryException e1) {

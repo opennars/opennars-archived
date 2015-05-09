@@ -17,7 +17,6 @@
  */
 package nars.tuprolog.event;
 
-import nars.tuprolog.AbstractEngineManager;
 import nars.tuprolog.Prolog;
 
 /**
@@ -32,7 +31,7 @@ public class LibraryEvent extends PrologEvent {
 
     private String libName;
     
-    public LibraryEvent(AbstractEngineManager source, String libName){
+    public LibraryEvent(Prolog source, String libName){
         super(source);
         this.libName = libName; 
     }

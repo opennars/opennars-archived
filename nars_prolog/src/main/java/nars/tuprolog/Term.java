@@ -178,7 +178,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
     abstract public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap);
 
 
-    public boolean unify(final AbstractEngineManager mediator, final Term t1) {
+    public boolean unify(final Prolog mediator, final Term t1) {
         return unify(mediator, t1, new ArrayList(), new ArrayList());
     }
     /**
@@ -187,7 +187,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * @param t1 the term to unify
      * @return true if the term is unifiable with this one
      */
-    public boolean unify(final AbstractEngineManager engine, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
+    public boolean unify(final Prolog engine, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
         resolveTerm();
         t1.resolveTerm();
 

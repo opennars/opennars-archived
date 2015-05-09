@@ -35,14 +35,14 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class BuiltIn extends Library {
 
-	private final AbstractEngineManager engineManager;
+	private final Prolog engineManager;
 	private final Theories theories;
 	private final Libraries libraries;
 	private final Flags flagManager;
 	private final Primitives primitives;
 	private final Operators operatorManager;
 
-	public BuiltIn(AbstractEngineManager mediator) {
+	public BuiltIn(Prolog mediator) {
 		super();
 		setEngine(mediator);
 		engineManager = mediator;

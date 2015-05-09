@@ -21,9 +21,7 @@ import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -45,7 +43,7 @@ import java.util.Map;
  * <p>
  */
 @SuppressWarnings("serial")
-public abstract class Library<E extends AbstractEngineManager> implements Serializable, IPrimitives {
+public abstract class Library<E extends Prolog> implements Serializable, IPrimitives {
     
     /**
 	 * prolog core which loaded the library

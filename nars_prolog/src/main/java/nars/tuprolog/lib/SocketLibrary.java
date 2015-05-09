@@ -604,12 +604,12 @@ public boolean getAddress_2(Term sock, Term addr) throws PrologError {
  */
 private class ThreadReader extends Thread {
 	private Socket socket;				// Socket associated to the Reader
-	private AbstractEngineManager mainEngine;
+	private Prolog mainEngine;
 	private boolean assertA;			// Should it use assertA or assertZ?
 	private volatile boolean started;	// True if the thread is already waiting on a socket
 	private Semaphore sem;
 
-	protected ThreadReader(Socket socket, AbstractEngineManager mainEngine) {
+	protected ThreadReader(Socket socket, Prolog mainEngine) {
 		this.socket = socket;
 		this.mainEngine = mainEngine;
 		assertA = true;					// assertA by default

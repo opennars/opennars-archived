@@ -48,12 +48,12 @@ public class Theories implements Serializable {
     private final ClauseDatabase dynamicDBase;
     private final ClauseDatabase staticDBase;
     private final ClauseDatabase retractDBase;
-    private final AbstractEngineManager engine;
+    private final Prolog engine;
     private final Primitives primitives;
     private final Deque<Term> startGoalStack = new ArrayDeque();
     //Theory lastConsultedTheory;
 
-    public Theories(AbstractEngineManager vm) {
+    public Theories(Prolog vm) {
         engine = vm;
         dynamicDBase = new ClauseDatabase();
         staticDBase = new ClauseDatabase();

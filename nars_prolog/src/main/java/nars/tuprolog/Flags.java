@@ -32,9 +32,9 @@ class Flags {
     /**
 	 * mediator owner of the manager
 	 */
-    protected final AbstractEngineManager mediator;
+    protected final Prolog mediator;
 
-    Flags(AbstractEngineManager vm) {
+    Flags(Prolog vm) {
         mediator = vm;
         flags = new ArrayList<>();
     }

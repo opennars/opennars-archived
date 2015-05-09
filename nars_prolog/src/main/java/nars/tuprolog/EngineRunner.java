@@ -22,7 +22,7 @@ public class EngineRunner implements java.io.Serializable, Runnable {
     private Theories theories;
     private Primitives primitives;
     private Libraries libraries;
-    private AbstractEngineManager  engineManager;
+    private Prolog engineManager;
 
 
 
@@ -74,7 +74,7 @@ public class EngineRunner implements java.io.Serializable, Runnable {
     public static final int TRUE_CP = 2;
 
 
-    public EngineRunner(int id, AbstractEngineManager vm) {
+    public EngineRunner(int id, Prolog vm) {
         /* Istanzio gli stati */
         INIT = new StateInit(this);
         GOAL_EVALUATION = new StateGoalEvaluation(this);
@@ -504,7 +504,7 @@ public class EngineRunner implements java.io.Serializable, Runnable {
         this.bagOfBag = l;
     }
 
-    public AbstractEngineManager  getEngineMan() {
+    public Prolog getEngineMan() {
         return this.engineManager;
     }
 

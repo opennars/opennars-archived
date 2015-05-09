@@ -28,7 +28,7 @@ public class Libraries
 	private final ArrayList<Library> libraries = new ArrayList();
 
 	/*  */
-	private final AbstractEngineManager prolog;
+	private final Prolog prolog;
 	private final Map<String, URL> externals = new HashMap();
 
 	/**
@@ -43,7 +43,7 @@ public class Libraries
 	/**
 	 * Config this Manager
 	 */
-	public Libraries(AbstractEngineManager vm)
+	public Libraries(Prolog vm)
 	{
 		this.prolog = vm;
 	}

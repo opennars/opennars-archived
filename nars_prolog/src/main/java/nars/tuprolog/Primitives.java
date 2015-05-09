@@ -30,12 +30,12 @@ import java.util.*;
  */
 public class Primitives /*Castagna 06/2011*/implements IPrimitives/**/{
     
-    private Map<nars.tuprolog.IPrimitives,List<PrimitiveInfo>> libHashMap;
-    private Map<String,PrimitiveInfo> directiveHashMap;
-    private Map<String,PrimitiveInfo> predicateHashMap;
-    private Map<String,PrimitiveInfo> functorHashMap;
+    private final Map<nars.tuprolog.IPrimitives,List<PrimitiveInfo>> libHashMap;
+    private final Map<String,PrimitiveInfo> directiveHashMap;
+    private final Map<String,PrimitiveInfo> predicateHashMap;
+    private final Map<String,PrimitiveInfo> functorHashMap;
 
-    public Primitives(AbstractEngineManager vm, boolean concurrent) {
+    public Primitives(Prolog vm, boolean concurrent) {
         if (concurrent) {
             libHashMap        = Collections.synchronizedMap(new IdentityHashMap<>());
             directiveHashMap  = Collections.synchronizedMap(new HashMap<>());
@@ -51,7 +51,7 @@ public class Primitives /*Castagna 06/2011*/implements IPrimitives/**/{
 
         createPrimitiveInfo(new BuiltIn(vm));
     }
-    public Primitives(AbstractEngineManager vm)     {
+    public Primitives(Prolog vm)     {
         this(vm, false);
     }
     

@@ -17,7 +17,6 @@
  */
 package nars.tuprolog.event;
 
-import nars.tuprolog.AbstractEngineManager;
 import nars.tuprolog.Prolog;
 
 /**
@@ -31,7 +30,7 @@ public abstract class PrologEvent extends java.util.EventObject {
 
     private final long when;
     
-    public PrologEvent(AbstractEngineManager source){
+    public PrologEvent(Prolog source){
         super(source);
         when = System.currentTimeMillis();
     }
