@@ -7,7 +7,6 @@ package nars.util.graph.experimental;
 import com.google.common.base.Objects;
 import nars.Events;
 import nars.Events.ConceptForget;
-import nars.Events.ConceptNew;
 import nars.Global;
 import nars.NAR;
 import nars.util.event.EventEmitter;

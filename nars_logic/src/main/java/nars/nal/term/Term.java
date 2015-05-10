@@ -28,7 +28,9 @@ import nars.nal.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 
-public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed {
+import java.io.Serializable;
+
+public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed, Serializable {
 
 
     default Term getTerm() {
@@ -39,15 +41,14 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
 
     public short getComplexity();
 
-    public void recurseTerms(final TermVisitor v, Term parent);
+    public void recurseSubterms(final TermVisitor v, Term parent);
 
-    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
+    default public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) { }
 
-    public int containedTemporalRelations();
+    default public int containedTemporalRelations() { return 0; }
 
-
-    default public void recurseTerms(final TermVisitor v) {
-        recurseTerms(v, null);
+    default public void recurseSubterms(final TermVisitor v) {
+        recurseSubterms(v, null);
     }
 
 
@@ -58,7 +59,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
      */
     public boolean isConstant();
 
-    public boolean isNormalized();
+    default public boolean isNormalized() { return false; }
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
     default public Term normalized() {
@@ -67,6 +68,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
 
 
     public boolean containsTerm(final Term target);
+
     public boolean containsTermRecursivelyOrEquals(final Term target);
 
     @Deprecated default public Term ensureNormalized(String role) {
@@ -91,12 +93,6 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     /** deep clone, creating clones of all subterms recursively */
     public Term cloneDeep();
 
-    /**
-     * Whether this compound term contains any variable term
-     *
-     * @return Whether the name contains a variable
-     */
-    public boolean hasVar();
 
     default public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
@@ -114,12 +110,18 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         throw new RuntimeException("Invalid variable type: " + type);
     }
 
+    /**
+     * Whether this compound term contains any variable term
+     *
+     * @return Whether the name contains a variable
+     */
+    default public boolean hasVar() { return false; }
 
-    public boolean hasVarIndep();
+    default public boolean hasVarIndep() { return false; }
 
-    public boolean hasVarDep();
+    default public boolean hasVarDep() { return false; }
 
-    public boolean hasVarQuery();
+    default public boolean hasVarQuery() { return false; }
 
     default public boolean equalsType(final Term t) {
         return Terms.equalType(this, t);
@@ -129,7 +131,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         final byte[] a = name();
         final byte[] b = t.name();
         if (a == b) return true;
-        return (hashCode() == t.hashCode() && equals2(a, b));
+        return equals2(a, b);
     }
 
     /** ordinary array equals comparison with some conditions removed */

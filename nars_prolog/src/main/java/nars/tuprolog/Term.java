@@ -28,16 +28,47 @@ import java.util.*;
  * @see Var
  * @see  Number
  */
-public abstract class Term extends SubGoalElement implements Comparable<Term>, Serializable {
-	private static final long serialVersionUID = 1L;
+public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
+
 
     // true and false constants
     public static final Term TRUE  = new Struct("true");
-    public static final Term FALSE = new Struct("false");    
-    
-    // checking type and properties of the Term
-    
-    
+    public static final Term FALSE = new Struct("false");
+
+
+
+
+
+    Term clone();
+
+    @Override
+    abstract public String toString();
+
+    @Override
+    abstract public int hashCode();
+
+    /*@Override
+    public int compareTo(Term o) {
+        return toString().compareTo(o.toString());
+    }*/
+
+    /**
+     * Tests for the equality of two object terms
+     *
+     * The comparison follows the same semantic of
+     * the isEqual method.
+     *
+     */
+    /*@Override
+    default public boolean equals(final Object t) {
+        if (!(t instanceof Term))
+            return false;
+        return isEqual((Term) t);
+    }*/
+    abstract public boolean equals(final Object t);
+
+
+
     /** is this term a null term?*/
     public abstract boolean isEmptyList();
     
@@ -59,19 +90,6 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
     public abstract boolean isGround();
 
 
-
-    /**
-     * Tests for the equality of two object terms
-     *
-     * The comparison follows the same semantic of
-     * the isEqual method.
-     *
-     */
-    public boolean equals(final Object t) {
-        if (!(t instanceof Term))
-            return false;
-        return isEqual((Term) t);
-    }
 
 
     
@@ -115,7 +133,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      * 
      * If the variables has been already resolved, no renaming is done.
      */
-    @Deprecated public Term resolveTerm() {
+    default public Term resolveTerm() {
         resolveTerm(System.currentTimeMillis());
         return this;
     }
@@ -125,15 +143,17 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      * gets a engine's copy of this term.
      * @param idExecCtx Execution Context identified
      */
-    public Term copyGoal(Map<Var,Var> vars, int idExecCtx) {
+    default public Term copyGoal(Map<Var,Var> vars, int idExecCtx) {
         return copy(vars,idExecCtx);
     }
-    
-    
+
+
+
+
     /**
      * gets a copy of this term for the output
      */
-    public Term copyResult(Collection<Var> goalVars, List<Var> resultVars) {
+    default public Term copyResult(Collection<Var> goalVars, List<Var> resultVars) {
         IdentityHashMap<Var,Var> originals = new IdentityHashMap<>();
         for (Var key: goalVars) {
             Var clone = new Var();
@@ -144,22 +164,6 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
         }
         return copy(originals,new IdentityHashMap<>());
     }
-
-
-    @Override
-    public Term clone() {
-        /** shouldnt need cloned */
-        return this;
-    }
-
-
-
-    @Override
-    abstract public String toString();
-
-    @Override
-    abstract public int hashCode();
-
 
 
 
@@ -178,7 +182,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
     abstract public Term copy(Map<Var,Var> vMap, Map<Term,Var> substMap);
 
 
-    public boolean unify(final Prolog mediator, final Term t1) {
+    default public boolean unify(final Prolog mediator, final Term t1) {
         return unify(mediator, t1, new ArrayList(), new ArrayList());
     }
     /**
@@ -187,7 +191,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      * @param t1 the term to unify
      * @return true if the term is unifiable with this one
      */
-    public boolean unify(final Prolog engine, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
+    default public boolean unify(final Prolog engine, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
         resolveTerm();
         t1.resolveTerm();
 
@@ -227,7 +231,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
     }
 
     @Override
-    public Term getValue() {
+    default public Term getValue() {
         return this;
     }
     
@@ -241,7 +245,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      *
      * @return true if the term is unifiable with this one
      */
-    public boolean match(Term t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
+    default public boolean match(Term t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
         v1.clear(); v2.clear();
 
         resolveTerm(time);
@@ -253,7 +257,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
         return ok;
     }
 
-    @Deprecated public boolean match(Term t) {
+    default public boolean match(Term t) {
         return match(t, System.currentTimeMillis(), new ArrayList(), new ArrayList());
     }
 
@@ -306,7 +310,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      * Gets the string representation of this term
      * as an X argument of an operate, considering the associative property.
      */
-    String toStringAsArgX(Operators op,int prio) {
+    default String toStringAsArgX(Operators op,int prio) {
         return toStringAsArg(op,prio,true);
     }
     
@@ -314,7 +318,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      * Gets the string representation of this term
      * as an Y argument of an operate, considering the associative property.
      */
-    String toStringAsArgY(Operators op,int prio) {
+    default String toStringAsArgY(Operators op,int prio) {
         return toStringAsArg(op,prio,false);
     }
     
@@ -325,7 +329,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      *  If the boolean argument is true, then the term must be considered
      *  as X arg, otherwise as Y arg (referring to prolog associative rules)
      */
-    String toStringAsArg(Operators op,int prio,boolean x) {
+    default String toStringAsArg(Operators op,int prio,boolean x) {
         return toString();
     }
     
@@ -340,7 +344,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
      * <li>else G is T</li>
      * </ul>
      */
-    public Term iteratedGoalTerm() {
+    default public Term iteratedGoalTerm() {
         return this;
     }
     
@@ -352,8 +356,5 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, S
 	public abstract void accept(TermVisitor tv);
     /**/
 
-    @Override
-    public int compareTo(Term o) {
-        return toString().compareTo(o.toString());
-    }
+
 }

@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.LevelBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;

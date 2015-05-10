@@ -22,12 +22,15 @@ public class NARTheoryAdapter implements Clauses {
 
     @Override
     public void addFirst(String key, Clause d) {
-        System.err.println(this + " addFirst(" + key + " " + d);
+        System.out.println(key + " " + d);
+        //System.err.println(this + " addFirst(" + key + " " + d);
     }
 
     @Override
     public void addLast(String key, Clause d) {
-        System.err.println(this + " addLast(" + key + " " + d);
+        System.out.println(key + " " + d);
+
+        //System.err.println(this + " addLast(" + key + " " + d);
     }
 
     @Override

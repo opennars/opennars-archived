@@ -20,7 +20,6 @@
  */
 package nars.nal;
 
-import com.google.common.primitives.Floats;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;

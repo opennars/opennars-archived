@@ -1,6 +1,5 @@
 package nars.model.cycle;
 
-import nars.Events;
 import nars.Memory;
 import nars.Global;
 import nars.budget.BudgetFunctions;

@@ -35,7 +35,7 @@ public class WarningEvent extends EventObject {
 
     public WarningEvent(Object source,String msg_){
         super(source);
-        msg=msg_ + " " + Arrays.toString( Thread.currentThread().getStackTrace() );
+        msg=msg_; // + " " + Arrays.toString( Thread.currentThread().getStackTrace() );
     }
 
     public String getMsg(){

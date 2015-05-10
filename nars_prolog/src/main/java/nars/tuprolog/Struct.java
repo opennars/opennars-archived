@@ -19,6 +19,7 @@ package nars.tuprolog;
 
 
 import com.gs.collections.impl.map.mutable.UnifiedMap;
+import nars.nal.NALOperator;
 
 import java.util.*;
 
@@ -26,8 +27,8 @@ import java.util.*;
  * Struct class represents both compound prolog term
  * and atom term (considered as 0-arity compound).
  */
-public class Struct extends Term {
-	private static final long serialVersionUID = 1L;
+public class Struct implements Term {
+
     
     /**
 	 * name of the structure
@@ -337,7 +338,37 @@ public class Struct extends Term {
     public Term getTerm() {
         return this;
     }
-    
+
+    @Override
+    public NALOperator operator() {
+        return null;
+    }
+
+    @Override
+    public short getComplexity() {
+        return 0;
+    }
+
+    @Override
+    public void recurseSubterms(nars.nal.term.TermVisitor v, nars.nal.term.Term parent) {
+
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
+    public boolean containsTerm(nars.nal.term.Term target) {
+        return false;
+    }
+
+    @Override
+    public boolean containsTermRecursivelyOrEquals(nars.nal.term.Term target) {
+        return false;
+    }
+
     //
     
     /**
@@ -748,7 +779,17 @@ public class Struct extends Term {
     public static final String atomEscape(final CharSequence n) {
         return "\'" + n + '\'';
     }
-    
+
+    @Override
+    public Term clone() {
+        return this;
+    }
+
+    @Override
+    public nars.nal.term.Term cloneDeep() {
+        return this;
+    }
+
     /**
      * Gets the string representation of this structure
      *
@@ -841,8 +882,8 @@ public class Struct extends Term {
             //    return arg[0]+","+((Struct)arg[1]).toString0_bracket();
         }
     }
-    
-    private String toStringAsList(Operators op) {
+
+    public  String toStringAsList(Operators op) {
         Term h = arg[0];
         Term t = arg[1].getTerm();
         if (t.isList()) {
@@ -856,7 +897,7 @@ public class Struct extends Term {
         }
     }
     
-    String toStringAsArg(Operators op,int prio,boolean x) {
+    public String toStringAsArg(Operators op,int prio,boolean x) {
         int      p = 0;
         String   v = "";
         
@@ -954,7 +995,8 @@ public class Struct extends Term {
             Term goal = getTerm(1);
             return goal.iteratedGoalTerm();
         } else
-            return super.iteratedGoalTerm();
+            return this;
+            //return super.iteratedGoalTerm();
     }
     
     /*Castagna 06/2011*/
@@ -962,6 +1004,16 @@ public class Struct extends Term {
 	public void accept(TermVisitor tv) {
 		tv.visit(this);
 	}
+
+    @Override
+    public int compareTo(nars.nal.term.Term o) {
+        return 0;
+    }
+
+    @Override
+    public byte[] name() {
+        return new byte[0];
+    }
     /**/
 
 

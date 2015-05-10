@@ -10,8 +10,8 @@ import nars.Events.OUT;
 import nars.NAR;
 import nars.NARSeed;
 import nars.event.NARReaction;
-import nars.narsese.InvalidInputException;
 import nars.nal.term.Term;
+import nars.narsese.InvalidInputException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

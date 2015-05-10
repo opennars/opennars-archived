@@ -65,7 +65,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import static nars.nal.concept.Concept.*;
-import static nars.nal.concept.Concept.State.New;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept

@@ -6,8 +6,6 @@ import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /** uses a predefined set of terms that will be mapped */
 abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {

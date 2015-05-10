@@ -121,6 +121,11 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
     }
 
     @Override
+    public void warn(String m) {
+        super.warn(m);
+    }
+
+    @Override
     public Clauses getDynamicTheory() {
         return new NARTheoryAdapter(nar);
     }
@@ -274,10 +279,10 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
         if (channel == ConceptBeliefAdd.class) {
             Concept c = (Concept) arg[0];
             Task task = (Task) arg[1];
-            add(task);
+            //add(task);
         } else if (channel == ConceptBeliefRemove.class) {
             Concept c = (Concept) arg[0];
-            remove(c, (Sentence) arg[1]);
+            //remove(c, (Sentence) arg[1]);
         } else if (channel == ConceptQuestionAdd.class) {
             Concept c = (Concept) arg[0];
             Task task = (Task) arg[1];

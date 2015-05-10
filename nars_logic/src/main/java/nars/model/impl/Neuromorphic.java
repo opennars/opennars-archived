@@ -2,7 +2,6 @@ package nars.model.impl;
 
 import nars.Memory;
 import nars.NAR;
-import nars.NARSeed;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.bag.impl.experimental.DelayBag;

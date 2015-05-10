@@ -192,7 +192,7 @@ public class Atom implements Term {
         return TemporalRules.ORDER_NONE;
     }
 
-    public void recurseTerms(final TermVisitor v, Term parent) {
+    public void recurseSubterms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
     }
 

@@ -152,7 +152,7 @@ public class Clause {
     SubGoalTree getBody() {
         return body;
     }    
-    
+
     String getLibraryName() {
         return libName;
     }
@@ -212,14 +212,15 @@ public class Clause {
     public String toString() {
         // default prio: xfx
         String st=indentPredicates(clause.getTerms(1));
-        return( clause.getTerms(0).toString() + " :-\n\t"+st+".\n");
+        //return ( clause.getTerms(0).toString() + " :- "+st+".\n");
+        return ( clause.getTerms(0).toString() + " :- "+clause.getTerms(1)+".\n");
     }
     
     static private String indentPredicates(Term t) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")){
-                return co.getTerms(0).toString()+",\n\t"+indentPredicates(co.getTerms(1));
+                return co.getTerms(0).toString()+", \t"+indentPredicates(co.getTerms(1));
             } else {
                 return t.toString();
             }

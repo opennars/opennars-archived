@@ -263,11 +263,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     @Override
     abstract public boolean equals(final Object that);
 
-    public void recurseTerms(final TermVisitor v, Term parent) {
+    public void recurseSubterms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
         if (this instanceof Compound) {
             for (Term t : ((Compound)this).term) {
-                t.recurseTerms(v, this);
+                t.recurseSubterms(v, this);
             }
         }
     }

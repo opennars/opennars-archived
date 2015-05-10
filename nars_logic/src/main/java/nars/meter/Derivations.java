@@ -7,10 +7,7 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.ConceptProcess;
-import nars.nal.NAL;
-import nars.nal.Sentence;
-import nars.nal.Task;
+import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
@@ -298,8 +295,9 @@ public class Derivations extends DirectedMultigraph {
     }
 
     public static String genericLiteral(Term c, Map<Term, Integer> unique) {
-        c.recurseTerms(new TermVisitor() {
-            @Override public void visit(Term t, Term superterm) {
+        c.recurseSubterms(new TermVisitor() {
+            @Override
+            public void visit(Term t, Term superterm) {
                 if (t instanceof Atom) {
                     if (!unique.containsKey(t))
                         unique.put(t, unique.size());

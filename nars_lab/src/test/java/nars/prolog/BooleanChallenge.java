@@ -4,7 +4,6 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Events.OUT;
 import nars.Global;
 import nars.NAR;
-import nars.io.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
@@ -306,7 +305,7 @@ public class BooleanChallenge implements Reaction {
         int[] x = new int[count];
 
         //extract all numbers from the product recursively, depth first
-        p.recurseTerms((t, parent) -> {
+        p.recurseSubterms((t, parent) -> {
             String ts = t.toString();
             if (!ts.startsWith("b")) return; //b prefix
             ts = ts.toString().substring(1);

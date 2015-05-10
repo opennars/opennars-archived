@@ -8,7 +8,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /** inputs the perceived data directly as unipolar frequency data

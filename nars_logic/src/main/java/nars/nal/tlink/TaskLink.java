@@ -29,10 +29,6 @@ import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.data.CircularArrayList;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
-
 /**
  * Reference to a Task.
  * <p>

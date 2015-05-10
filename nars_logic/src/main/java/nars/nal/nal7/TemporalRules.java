@@ -38,7 +38,6 @@ import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.op.mental.Mental;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
