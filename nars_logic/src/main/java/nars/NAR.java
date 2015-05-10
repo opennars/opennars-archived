@@ -255,6 +255,7 @@ public class NAR implements Runnable {
 
 
 
+
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
         return ask(termString, '?');
@@ -286,12 +287,16 @@ public class NAR implements Runnable {
         return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
     }
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+        Term t = narsese.parseCompoundTerm(beliefTerm);
+        return believe(pri, dur, t, occurrenceTime, freq, conf);
+    }
+    public Task believe(float pri, float dur, Term beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         final Task t;
         final Truth tv;
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompoundTerm(beliefTerm),
+                                beliefTerm,
                                 Symbols.JUDGMENT,
                                 tv = new Truth(freq, conf),
                                 new Stamp(memory, time(), occurrenceTime)),

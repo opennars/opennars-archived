@@ -192,14 +192,7 @@ public class Double extends PNum {
     }
 
  
-    @Override
-    public int compareTo(final Term o) {
-        if (o instanceof PNum) {
-            return java.lang.Double.compare(value, ((PNum)o).doubleValue());
-        }
-        else
-            return -1;
-    }
+
 
     @Override
     public int hashCode() {

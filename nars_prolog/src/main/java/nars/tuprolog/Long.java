@@ -189,17 +189,6 @@ public class Long extends PNum {
         return java.lang.Long.toString(value);
     }
 
-    /**
-     * @author Paolo Contessi
-     */
-    @Override
-    public int compareTo(Term o) {
-        if (o instanceof PNum)
-            return (new java.lang.Long(value)).compareTo(((PNum)o).longValue());
-        else
-            return -1;
-    }
-
 
     @Override
     public int hashCode() {

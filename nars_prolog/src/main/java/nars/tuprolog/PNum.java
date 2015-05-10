@@ -231,4 +231,18 @@ public abstract class PNum implements PTerm {
         return this;
     }
 
+    public int compareTo(nars.nal.term.Term o) {
+        if (o instanceof PNum)
+            return java.lang.Double.compare(doubleValue(), ((PNum) o).doubleValue());
+        return Integer.compare(hashCode(), o.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object t) {
+        if (t instanceof PTerm) {
+            return isEqual((PTerm)t);
+        } else {
+            return false;
+        }
+    }
 }

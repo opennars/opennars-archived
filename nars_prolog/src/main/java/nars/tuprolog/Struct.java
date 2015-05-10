@@ -991,6 +991,10 @@ public class Struct implements PTerm {
     }
 
 
-
-
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PTerm)
+            return isEqual((PTerm)obj);
+        return false;
+    }
 }

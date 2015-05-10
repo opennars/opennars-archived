@@ -2,6 +2,7 @@ package nars.prolog;
 
 import com.google.common.collect.Iterators;
 import nars.NAR;
+import nars.nal.stamp.Stamp;
 import nars.tuprolog.Clause;
 import nars.tuprolog.ClauseIndex;
 import nars.tuprolog.Clauses;
@@ -23,13 +24,14 @@ public class NARTheoryAdapter implements Clauses {
     @Override
     public void addFirst(String key, Clause d) {
         System.out.println(key + " " + d);
-        //System.err.println(this + " addFirst(" + key + " " + d);
+        if (d!=null && d.getClause()!=null)
+            nar.believe(0.5f, 0.25f, d.getClause(), Stamp.ETERNAL, 1f, 0.9f);
+
     }
 
     @Override
     public void addLast(String key, Clause d) {
-        System.out.println(key + " " + d);
-
+        addFirst(key, d);
         //System.err.println(this + " addLast(" + key + " " + d);
     }
 

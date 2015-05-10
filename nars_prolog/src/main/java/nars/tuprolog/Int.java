@@ -181,10 +181,6 @@ public class Int extends PNum {
         }
     }
 
-    @Override
-    public int hashCode() {
-        return value;
-    }
 
 
     @Override
@@ -197,11 +193,6 @@ public class Int extends PNum {
     }
 
 
-    public int compareTo(nars.nal.term.Term o) {
-        if (o instanceof Int)
-            return Integer.compare(value, ((Int)o).intValue());
-        else
-            return -1;
-    }
+
     
 }

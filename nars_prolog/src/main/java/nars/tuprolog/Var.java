@@ -586,8 +586,8 @@ public class Var implements PTerm {
 
     @Override
     public boolean equals(Object t) {
-        if (t instanceof Var)
-            return name().equals(((Var)t).name());
+        if (t instanceof PTerm)
+            return isEqual((PTerm)t);
         return false;
     }
 

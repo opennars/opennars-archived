@@ -137,23 +137,23 @@ public class Clause {
         }
         return (clause.toString());
     }
-    
-   
-    Struct getClause() {
+
+
+    public Struct getClause() {
         return clause;
     }
-    
-   
-    Struct getHead() {
+
+
+    public Struct getHead() {
         return head;
     }    
     
     
-    SubGoalTree getBody() {
+    public SubGoalTree getBody() {
         return body;
-    }    
+    }
 
-    String getLibraryName() {
+    public String getLibraryName() {
         return libName;
     }
     
