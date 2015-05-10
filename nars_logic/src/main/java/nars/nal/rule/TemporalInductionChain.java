@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.nal.term.Statement.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
 * Created by me on 2/7/15.

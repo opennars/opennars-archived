@@ -15,17 +15,20 @@ import java.util.Iterator;
  */
 public class NARTheoryAdapter implements Clauses {
 
-    private final NAR nar;
 
-    public NARTheoryAdapter(NAR n) {
-        this.nar = n;
+    private final NARPrologAgent agent;
+
+    public NARTheoryAdapter(NARPrologAgent n) {
+        this.agent = n;
     }
+
+    public NAR getNAR() { return agent.nar; }
 
     @Override
     public void addFirst(String key, Clause d) {
         System.out.println(key + " " + d);
         if (d!=null && d.getClause()!=null)
-            nar.believe(0.5f, 0.25f, d.getClause(), Stamp.ETERNAL, 1f, 0.9f);
+            getNAR().believe(0.5f, 0.25f, d.getClause(), Stamp.ETERNAL, 1f, 0.9f);
 
     }
 

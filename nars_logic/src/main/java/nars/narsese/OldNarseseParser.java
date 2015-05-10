@@ -446,7 +446,7 @@ import static nars.nal.nal8.Operation.make;
                 }
                 else {
                     //void "()" arguments, default to (SELF)
-                    a = Terms.EmptyTermArray;
+                    a = Statement.Terms.EmptyTermArray;
                 }                                                            
                 
                 Operation o = Operation.make(operator, a, self);

@@ -1,8 +1,8 @@
 package nars.nal.nal3;
 
 import nars.Global;
-import nars.nal.Terms;
 import nars.nal.term.DefaultCompound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 /**
@@ -22,7 +22,7 @@ abstract public class AbstractSetN extends DefaultCompound implements SetTension
         if (arg.length == 0)
             throw new RuntimeException("0-arg empty set");
         
-        if (Global.DEBUG) { Terms.verifySortedAndUnique(arg, true); }
+        if (Global.DEBUG) { Statement.Terms.verifySortedAndUnique(arg, true); }
         
         init(arg);
     }

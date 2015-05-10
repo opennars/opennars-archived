@@ -22,7 +22,6 @@ import nars.narsese.InvalidInputException;
 import nars.nal.NALOperator;
 import nars.nal.term.Statement;
 import nars.nal.Task;
-import nars.nal.Terms;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
@@ -86,11 +85,11 @@ public class TermTest {
         Term b = n.term("b");
         Term c = n.term("c");
 
-        assertEquals(3, Terms.toSortedSetArray(a, b, c).length);
-        assertEquals(2, Terms.toSortedSetArray(a, b, b).length);
-        assertEquals(1, Terms.toSortedSetArray(a, a).length);
-        assertEquals(1, Terms.toSortedSetArray(a).length);
-        assertEquals("correct natural ordering", a, Terms.toSortedSetArray(a, b)[0]);
+        assertEquals(3, Statement.Terms.toSortedSetArray(a, b, c).length);
+        assertEquals(2, Statement.Terms.toSortedSetArray(a, b, b).length);
+        assertEquals(1, Statement.Terms.toSortedSetArray(a, a).length);
+        assertEquals(1, Statement.Terms.toSortedSetArray(a).length);
+        assertEquals("correct natural ordering", a, Statement.Terms.toSortedSetArray(a, b)[0]);
     }    
     
     @Test

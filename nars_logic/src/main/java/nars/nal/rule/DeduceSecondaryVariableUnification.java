@@ -20,8 +20,8 @@ import nars.nal.tlink.TermLink;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static nars.nal.Terms.reduceUntilLayer2;
-import static nars.nal.Terms.unwrapNegation;
+import static nars.nal.term.Statement.Terms.reduceUntilLayer2;
+import static nars.nal.term.Statement.Terms.unwrapNegation;
 import static nars.nal.TruthFunctions.*;
 
 /**

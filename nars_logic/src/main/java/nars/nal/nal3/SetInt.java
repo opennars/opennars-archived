@@ -1,7 +1,7 @@
 package nars.nal.nal3;
 
-import nars.nal.Terms;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ public interface SetInt extends SetTensional {
 
 
     public static Compound make(Term... t) {
-        t = Terms.toSortedSetArray(t);
+        t = Statement.Terms.toSortedSetArray(t);
         switch (t.length) {
             case 0: return null;
             case 1: return new SetInt1(t[0]);

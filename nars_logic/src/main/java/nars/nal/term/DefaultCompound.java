@@ -5,7 +5,7 @@ import nars.util.data.Utf8;
 import java.util.Arrays;
 
 /** implementation of a compound which generates and stores its name as a CharSequence, which is used for equality and hash*/
-abstract public class DefaultCompound extends Compound {
+abstract public class DefaultCompound extends BaseCompound {
 
     byte[] name = null;
     int hash = 0;

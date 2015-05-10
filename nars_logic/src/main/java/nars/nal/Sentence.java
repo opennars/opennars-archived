@@ -664,7 +664,8 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      * returns true if the term is invalid for use as sentence content term
      * */
     public static final boolean invalidSentenceTerm(final Term t) {
-        if ((t == null) || (!(t instanceof Compound))) { //(t instanceof Interval) || (t instanceof Variable)
+        //if ((t == null) || (!(t instanceof Compound))) { //(t instanceof Interval) || (t instanceof Variable)
+        if ((t == null) || (t.getComplexity() == 1 /* exclude atomic terms */)) { //(t instanceof Interval) || (t instanceof Variable)
             return true;
         }
 

@@ -547,7 +547,7 @@ public class RuleTables {
      * @param nal Reference to the memory
      */
     public static boolean compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
-        if (Terms.equalType(taskTerm, beliefTerm)) {
+        if (Statement.Terms.equalType(taskTerm, beliefTerm)) {
             if (taskTerm.size() >= beliefTerm.size()) {
                 return compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
             } else if (taskTerm.size() < beliefTerm.size()) {
@@ -575,7 +575,7 @@ public class RuleTables {
         Term component = compound.term[index];
         
         Task task = nal.getCurrentTask();
-        if (Terms.equalType(component, statement, true)) {
+        if (Statement.Terms.equalType(component, statement, true)) {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 Term[] u = new Term[] { compound, statement };
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {

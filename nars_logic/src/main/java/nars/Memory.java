@@ -48,10 +48,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operator;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
+import nars.nal.term.*;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
@@ -661,7 +658,7 @@ public class Memory implements Serializable {
             t.mulPriority( inputPriorityFactor );
 
 
-        if (!Terms.levelValid(t.sentence, nal())) {
+        if (!Statement.Terms.levelValid(t.sentence, nal())) {
             removed(t, "Insufficient NAL level");
             return false;
         }

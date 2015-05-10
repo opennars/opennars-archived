@@ -115,7 +115,7 @@ public final class StructuralRules {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
 
-        if (!Terms.equalType(subj, pred)) {
+        if (!Statement.Terms.equalType(subj, pred)) {
             return;
         }
         

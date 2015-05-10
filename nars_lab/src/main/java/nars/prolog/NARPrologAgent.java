@@ -127,7 +127,7 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
 
     @Override
     public Clauses getDynamicTheory() {
-        return new NARTheoryAdapter(nar);
+        return new NARTheoryAdapter(this);
     }
 
 

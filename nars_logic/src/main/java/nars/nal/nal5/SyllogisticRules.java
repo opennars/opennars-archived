@@ -31,7 +31,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
-import static nars.nal.Terms.reduceComponents;
+import static nars.nal.term.Statement.Terms.reduceComponents;
 import static nars.nal.nal7.TemporalRules.*;
 
 
@@ -160,7 +160,7 @@ public final class SyllogisticRules {
                 Statement.make(taskContent, term2, term1, reverseOrder(order)), 
                     truth2, budget2, stamp, false, false);
         nal.doublePremiseTask(
-                Terms.makeSymStatement(taskContent, term1, term2, order),
+                Statement.Terms.makeSymStatement(taskContent, term1, term2, order),
                     truth3, budget3, stamp, false, false);
         
     }
@@ -291,9 +291,9 @@ public final class SyllogisticRules {
 
         final Compound content;
         if ((side == 0) && term.equals(subject)) {
-            content = Terms.compoundOrNull(predicate);
+            content = Statement.Terms.compoundOrNull(predicate);
         } else if ((side == 1) && term.equals(predicate)) {
-            content = Terms.compoundOrNull(subject);
+            content = Statement.Terms.compoundOrNull(subject);
         } else
             return;
 
@@ -421,7 +421,7 @@ public final class SyllogisticRules {
         final Conjunction oldCondition = (Conjunction) subj;
 
         
-        int index2 = Terms.indexOf(oldCondition.term,commonComponent);
+        int index2 = Statement.Terms.indexOf(oldCondition.term, commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
         } else {
@@ -429,7 +429,7 @@ public final class SyllogisticRules {
             boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
             premise1 = (Implication) u[0]; premise2 = u[1];
             
-            if (!match && (Terms.equalType(commonComponent, oldCondition, true))) {
+            if (!match && (Statement.Terms.equalType(commonComponent, oldCondition, true))) {
             
                 Compound compoundCommonComponent = ((Compound) commonComponent);
                 
@@ -585,7 +585,7 @@ public final class SyllogisticRules {
         boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
         premise1 = (Equivalence) u[0]; premise2 = u[1];
         
-        if (!match && (Terms.equalType(commonComponent, oldCondition))) {
+        if (!match && (Statement.Terms.equalType(commonComponent, oldCondition))) {
             u = new Term[] { premise1, premise2 };
             match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u);
             premise1 = (Equivalence) u[0]; premise2 = u[1];

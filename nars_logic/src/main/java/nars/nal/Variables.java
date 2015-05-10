@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.Global;
 import nars.Symbols;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.nal1.Inheritance;
@@ -87,7 +88,7 @@ public class Variables {
                 }
                 return true;
             }
-        } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && (Terms.equalType(term1, term2, true))) {
+        } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && (Statement.Terms.equalType(term1, term2, true))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
             if (cTerm1.size() != cTerm2.size()) {

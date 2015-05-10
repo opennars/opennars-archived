@@ -3,7 +3,7 @@ package nars.nal.term;
 import java.util.Arrays;
 
 /** an optimized compound implementation for use when only 1 subterm */
-abstract public class Compound2 extends Compound {
+abstract public class Compound2 extends BaseCompound {
 
     private int hash = 0;
     private byte[] name = null;
@@ -20,7 +20,7 @@ abstract public class Compound2 extends Compound {
     }
 
     @Override
-    protected void init(Term[] term) {
+    public void init(Term[] term) {
         super.init(term);
 
         if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()

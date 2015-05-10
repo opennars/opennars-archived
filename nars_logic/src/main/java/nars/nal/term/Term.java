@@ -25,7 +25,6 @@ import nars.Memory;
 import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Named;
-import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 
 import java.io.Serializable;
@@ -124,7 +123,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     default public boolean hasVarQuery() { return false; }
 
     default public boolean equalsType(final Term t) {
-        return Terms.equalType(this, t);
+        return Statement.Terms.equalType(this, t);
     }
 
     default public boolean equalsName(final Term t) {

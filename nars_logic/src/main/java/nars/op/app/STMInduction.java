@@ -14,7 +14,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.nal.term.Statement.Terms.equalSubTermsInRespectToImageAndProduct;
 import static nars.op.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
 
 /**

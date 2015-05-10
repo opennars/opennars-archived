@@ -23,8 +23,8 @@ package nars.nal.nal3;
 import com.google.common.collect.ObjectArrays;
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class IntersectionInt extends Intersect {
     private IntersectionInt(final Term[] arg) {
         super( arg );
         
-        if (Global.DEBUG) { Terms.verifySortedAndUnique(arg, false); }
+        if (Global.DEBUG) { Statement.Terms.verifySortedAndUnique(arg, false); }
         
         init(arg);
     }
@@ -84,7 +84,7 @@ public class IntersectionInt extends Intersect {
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set intersection
-            TreeSet<Term> set = Terms.toSortedSet(((Compound) term1).term);
+            TreeSet<Term> set = Statement.Terms.toSortedSet(((Compound) term1).term);
             
             set.retainAll(((Compound) term2).asTermList());
             
@@ -120,7 +120,7 @@ public class IntersectionInt extends Intersect {
     }
 
     public static Term make(Term[] t) {
-        t = Terms.toSortedSetArray(t);
+        t = Statement.Terms.toSortedSetArray(t);
         switch (t.length) {
             case 0: return null;
             case 1: return t[0];

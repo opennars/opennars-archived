@@ -43,7 +43,7 @@ import nars.nal.term.Variable;
 
 import java.util.Map;
 
-import static nars.nal.Terms.reduceComponents;
+import static nars.nal.term.Statement.Terms.reduceComponents;
 import static nars.nal.TruthFunctions.*;
 
 /**
@@ -83,7 +83,7 @@ public final class CompositionalRules {
 
         final Sentence taskBelief = nal.getCurrentTask().sentence;
 
-        if ((!taskBelief.isJudgment()) || (!Terms.equalType(taskContent, beliefContent))) {
+        if ((!taskBelief.isJudgment()) || (!Statement.Terms.equalType(taskContent, beliefContent))) {
             return;
         }
 
@@ -306,7 +306,7 @@ public final class CompositionalRules {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
-        Compound content = Terms.compoundOrNull(reduceComponents(compound, component, nal.memory));
+        Compound content = Statement.Terms.compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null) {
             return false;
         }
@@ -543,7 +543,7 @@ public final class CompositionalRules {
 
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Compound content = Terms.compoundOrNull(Implication.makeTerm(state1, state2));
+        Compound content = Statement.Terms.compoundOrNull(Implication.makeTerm(state1, state2));
         if (content == null) {
             return;
         }
@@ -568,7 +568,7 @@ public final class CompositionalRules {
         nal.doublePremiseTask(content, truth, budget, stamp, false, false);
 
         {
-            Compound ct = Terms.compoundOrNull(Implication.makeTerm(state2, state1));
+            Compound ct = Statement.Terms.compoundOrNull(Implication.makeTerm(state2, state1));
             if (ct != null) {
                 truth = induction(truthB, truthT);
                 budget = BudgetFunctions.compoundForward(truth, ct, nal);
@@ -577,7 +577,7 @@ public final class CompositionalRules {
         }
 
         {
-            Compound ct = Terms.compoundOrNull(Equivalence.makeTerm(state1, state2));
+            Compound ct = Statement.Terms.compoundOrNull(Equivalence.makeTerm(state1, state2));
             if (ct != null) {
                 truth = comparison(truthT, truthB);
                 budget = BudgetFunctions.compoundForward(truth, ct, nal);
@@ -596,7 +596,7 @@ public final class CompositionalRules {
         if ((state1 == null) || (state2 == null))
             return;
 
-        Compound ct = Terms.compoundOrNull(Conjunction.make(state1, state2));
+        Compound ct = Statement.Terms.compoundOrNull(Conjunction.make(state1, state2));
         if (ct != null) {
             truth = intersection(truthT, truthB);
             budget = BudgetFunctions.compoundForward(truth, ct, nal);
@@ -620,7 +620,7 @@ public final class CompositionalRules {
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
 
-        if (!taskSentence.isJudgment() || (!Terms.equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {
+        if (!taskSentence.isJudgment() || (!Statement.Terms.equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {
             return false;
         }
 
@@ -649,12 +649,12 @@ public final class CompositionalRules {
         {
 
 
-            Term content = Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
+            Term content = Statement.Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
             if (content != null) {
 
                 substitute.put(commonTerm1, varDep2);
 
-                Compound ct = Terms.compoundOrNull(((Compound) content).applySubstitute(substitute));
+                Compound ct = Statement.Terms.compoundOrNull(((Compound) content).applySubstitute(substitute));
                 if (ct != null) {
                     Truth truth = intersection(taskSentence.truth, belief.truth);
                     Budget budget = BudgetFunctions.forward(truth, nal);
@@ -676,10 +676,10 @@ public final class CompositionalRules {
             }
 
 
-            Compound content = Terms.compoundOrNull(Implication.makeTerm(premise1, oldCompound));
+            Compound content = Statement.Terms.compoundOrNull(Implication.makeTerm(premise1, oldCompound));
             if (content != null) {
 
-                Compound ct = Terms.compoundOrNull(((Compound) content).applySubstituteToCompound(substitute));
+                Compound ct = Statement.Terms.compoundOrNull(((Compound) content).applySubstituteToCompound(substitute));
 
                 Truth truth;
 

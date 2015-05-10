@@ -22,8 +22,8 @@ package nars.nal.nal5;
 
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.nal7.TemporalRules;
 
@@ -168,7 +168,7 @@ public class Conjunction extends Junction {
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
 
-        if (Global.DEBUG) {  Terms.verifyNonNull(argList);}
+        if (Global.DEBUG) {  Statement.Terms.verifyNonNull(argList);}
         
         if (argList.length == 0) {
             return null;
@@ -186,7 +186,7 @@ public class Conjunction extends Junction {
             //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
             //return null;
         } else {
-            Term[] a = Terms.toSortedSetArray(argList);
+            Term[] a = Statement.Terms.toSortedSetArray(argList);
             if (a.length == 1) return a[0];
             return new Conjunction(a, temporalOrder);
         }

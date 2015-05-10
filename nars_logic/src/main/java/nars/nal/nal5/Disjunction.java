@@ -22,8 +22,8 @@ package nars.nal.nal5;
 
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import java.util.Collections;
@@ -42,7 +42,7 @@ public class Disjunction extends Junction {
     private Disjunction(final Term[] arg) {
         super(arg);
         
-        if (Global.DEBUG) { Terms.verifySortedAndUnique(arg, false);         }
+        if (Global.DEBUG) { Statement.Terms.verifySortedAndUnique(arg, false);         }
         
         init(arg);
     }
@@ -109,7 +109,7 @@ public class Disjunction extends Junction {
             return make(t[0], t[1]);
         }
 
-        t = Terms.toSortedSetArray(t);
+        t = Statement.Terms.toSortedSetArray(t);
 
         if (t.length == 1) {
             // special case: single component

@@ -12,7 +12,7 @@ import nars.nal.tlink.TermLink;
 
 import java.util.Set;
 
-import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.nal.term.Statement.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
 * Patrick's new version which 'restores the special reasoning context'

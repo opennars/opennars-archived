@@ -9,13 +9,13 @@ import nars.Events;
 import nars.Events.ConceptForget;
 import nars.Global;
 import nars.NAR;
+import nars.nal.term.Statement;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Terms;
 import nars.nal.concept.Concept;
 import nars.nal.nal4.Image;
 import nars.nal.term.Compound;
@@ -57,7 +57,7 @@ public class Idea implements Iterable<Concept> {
             }            
             else {
                 //key = sorted set of subterms
-                return Terms.toSortedSet(ct.term).toString();
+                return Statement.Terms.toSortedSet(ct.term).toString();
             }
         }
         else {
