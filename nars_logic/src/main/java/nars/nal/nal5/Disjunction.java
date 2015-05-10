@@ -29,6 +29,9 @@ import nars.nal.term.Term;
 import java.util.Collections;
 import java.util.List;
 
+import static nars.nal.term.Compound.toSortedSetArray;
+import static nars.nal.term.Compound.verifySortedAndUnique;
+
 /** 
  * A disjunction of Statements.
  */
@@ -42,7 +45,7 @@ public class Disjunction extends Junction {
     private Disjunction(final Term[] arg) {
         super(arg);
         
-        if (Global.DEBUG) { Statement.Terms.verifySortedAndUnique(arg, false);         }
+        if (Global.DEBUG) { verifySortedAndUnique(arg, false);         }
         
         init(arg);
     }
@@ -74,10 +77,10 @@ public class Disjunction extends Junction {
         if (term1 instanceof Disjunction) {
             Compound ct1 = ((Compound) term1);
             List<Term> l = Global.newArrayList(ct1.size());
-            Collections.addAll(l, ((Compound)term1).term);
+            Collections.addAll(l, ((Compound)term1));
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                Collections.addAll(l, ((Compound)term2).term);
+                Collections.addAll(l, ((Compound)term2));
             }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -88,7 +91,7 @@ public class Disjunction extends Junction {
             Compound ct2 = ((Compound) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             List<Term> l = Global.newArrayList(ct2.size());
-            Collections.addAll(l, ct2.term);
+            Collections.addAll(l, ct2);
             l.add(term1);
             return make(l);
         } else {
@@ -109,7 +112,7 @@ public class Disjunction extends Junction {
             return make(t[0], t[1]);
         }
 
-        t = Statement.Terms.toSortedSetArray(t);
+        t = toSortedSetArray(t);
 
         if (t.length == 1) {
             // special case: single component

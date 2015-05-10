@@ -104,7 +104,7 @@ public class BuiltIn extends Library {
 			 {
 				 for(int i=0; i<(((Struct) arg0).toList().listSize())-1; i++)
 				 {
-					 PTerm argi=((Struct) arg0).getTerms(i);
+					 PTerm argi=((Struct) arg0).getTermX(i);
 					 if (!(argi instanceof Struct) )
 					 {
 						 if (argi instanceof Var)
@@ -130,7 +130,7 @@ public class BuiltIn extends Library {
 			 {
 				 for(int i=0; i<(((Struct) arg0).toList().listSize())-1; i++)
 				 {
-					 PTerm argi=((Struct) arg0).getTerms(i);
+					 PTerm argi=((Struct) arg0).getTermX(i);
 					 if (!(argi instanceof Struct) )
 					 {
 						 if (argi instanceof Var)
@@ -180,7 +180,7 @@ public class BuiltIn extends Library {
 		 if (!(arg0 instanceof Struct) || !arg0.isGround()) 
 			 throw PrologError.type_error(engineManager, 1, "predicate_indicator", arg0);
 		 
-		 if( ((Struct)arg0).getTerms(0).toString().equals("abolish") )
+		 if( ((Struct)arg0).getTermX(0).toString().equals("abolish") )
 			 throw PrologError.permission_error(engineManager, "modify", "static_procedure", arg0, new Struct(""));
 		 
 		 return theories.remove((Struct) arg0);
@@ -354,8 +354,8 @@ public class BuiltIn extends Library {
 			 Struct s = (Struct) term;
 			 String pi = s.getPredicateIndicator();
 			 if (pi.equals(";/2") || pi.equals(",/2") || pi.equals("->/2")) {
-				 for (int i = 0; i < s.getArity(); i++) {
-					 PTerm t = s.getTerms(i);
+				 for (int i = 0; i < s.size(); i++) {
+					 PTerm t = s.getTermX(i);
 					 PTerm arg = convertTermToGoal(t);
 					 if (arg == null)
 						 return null;

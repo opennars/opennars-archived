@@ -62,7 +62,7 @@ public class StructTestCase extends TestCase {
 		assertTrue(list.isEmptyList());
 		assertEquals(0, list.listSize());
 		assertEquals("[]", list.getName());
-		assertEquals(0, list.getArity());
+		assertEquals(0, list.size());
 	}
 
 	/** Another correct method of building an empty list */
@@ -71,7 +71,7 @@ public class StructTestCase extends TestCase {
 		assertTrue(emptyList.isList());
 		assertTrue(emptyList.isEmptyList());
 		assertEquals("[]", emptyList.getName());
-		assertEquals(0, emptyList.getArity());
+		assertEquals(0, emptyList.size());
 		assertEquals(0, emptyList.listSize());
 	}
 	
@@ -81,7 +81,7 @@ public class StructTestCase extends TestCase {
 		assertFalse(notAnEmptyList.isList());
 		assertFalse(notAnEmptyList.isEmptyList());
 		assertEquals(".", notAnEmptyList.getName());
-		assertEquals(0, notAnEmptyList.getArity());
+		assertEquals(0, notAnEmptyList.size());
 	}
 	
 	/** Use dotted structs to build lists with content */
@@ -90,7 +90,7 @@ public class StructTestCase extends TestCase {
 		assertTrue(notAnEmptyList.isList());
 		assertFalse(notAnEmptyList.isEmptyList());
 		assertEquals(".", notAnEmptyList.getName());
-		assertEquals(2, notAnEmptyList.getArity());
+		assertEquals(2, notAnEmptyList.size());
 	}
 	
 	public void testListFromArgumentArray() {

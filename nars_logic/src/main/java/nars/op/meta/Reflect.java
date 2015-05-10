@@ -52,8 +52,8 @@ public class Reflect extends TermFunction {
     public static Term sop(Statement s, Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
     }
-    public static Term sop(String operatorName, Term... t) {
-        Term[] m = new Term[t.length];
+    public static Term sop(String operatorName, Compound t) {
+        Term[] m = new Term[t.size()];
         int i = 0;
         for (Term x : t)
             m[i++] = getMetaTerm(x);
@@ -69,7 +69,7 @@ public class Reflect extends TermFunction {
         switch (t.operator()) {
             case INHERITANCE: return sop((Inheritance)t, "inheritance");
             case SIMILARITY:  return sop((Similarity)t, "similarity");
-            default: return sop(t.operator().toString(), t.term);                
+            default: return sop(t.operator().toString(), t);
         }
         
     }

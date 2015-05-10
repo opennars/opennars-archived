@@ -687,7 +687,7 @@ public class NARPrologMirror extends AbstractMirror {
 
         if (term instanceof Struct) {
             Struct s = (Struct) term;
-            int arity = s.getArity();
+            int arity = s.size();
             String predicate = s.getName();
             if (arity == 0) {
                 return Atom.get(unpescape(predicate));
@@ -695,7 +695,7 @@ public class NARPrologMirror extends AbstractMirror {
             if (arity == 1) {
                 switch (predicate) {
                     case "not":
-                        return Negation.make(nterm(s.getTerms(0)));
+                        return Negation.make(nterm(s.getTermX(0)));
 //                    default:
 //                        throw new RuntimeException("Unknown 1-arity nars predicate: " + predicate);
                 }
@@ -717,8 +717,8 @@ public class NARPrologMirror extends AbstractMirror {
             }
 
             if (arity == 2) {
-                Term a = nterm(s.getTerms(0));
-                Term b = nterm(s.getTerms(1));
+                Term a = nterm(s.getTermX(0));
+                Term b = nterm(s.getTermX(1));
                 if ((a != null) && (b != null)) {
                     switch (predicate) {
                         case "inheritance":

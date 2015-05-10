@@ -44,14 +44,15 @@ public class TransformTask extends ConceptFireTask {
             if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
                 inh = content;
             } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
-                inh = content.term[indices[0]];
+                inh = content.getTerm(indices[0]);
             } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
-                Term component = content.term[indices[0]];
+                Term component = content.getTerm(indices[0]);
                 if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
 
-                    Term[] cterms = ((Compound) component).term;
-                    if (indices[1] < cterms.length-1)
-                        inh = cterms[indices[1]];
+                    Compound cc = (Compound)component;
+                    //Term[] cterms = ((Compound) component).term;
+                    if (indices[1] < cc.size()-1)
+                        inh = cc.getTerm(indices[1]);
                     else
                         return true;
 
@@ -104,11 +105,11 @@ public class TransformTask extends ConceptFireTask {
             return;
         Compound comp = (Compound)compT;
 
-        if (comp.term.length <= index) {
+        if (comp.size() <= index) {
             throw new RuntimeException("Invalid term index: " + index + ", term=" + comp + ", indices="  + Arrays.toString(indices));
         }
 
-        Term cti = comp.term[index];
+        Term cti = comp.getTerm(index);
 
         if (comp instanceof Product) {
             if (side == 0) {
@@ -146,10 +147,10 @@ public class TransformTask extends ConceptFireTask {
         if (indices.length == 2) {
             content = newInh;
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
-            content = Statement.make((Statement) oldContent, oldContent.term[0], newInh, oldContent.getTemporalOrder());
+            content = Statement.make((Statement) oldContent, oldContent.getTerm(0), newInh, oldContent.getTemporalOrder());
         } else {
             Term[] componentList;
-            Term condition = oldContent.term[0];
+            Term condition = oldContent.getTerm(0);
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
                 componentList = ((Compound) condition).cloneVariableTermsDeep(); //cloneTerms();
                 componentList[indices[1]] = newInh;

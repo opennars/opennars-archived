@@ -1,5 +1,7 @@
 package nars.op.data;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.nal3.SetTensional;
@@ -28,13 +30,13 @@ abstract public class Flat extends TermFunction {
     @Override
     public Term function(Term[] x) {
         List<Term> l = new ArrayList();
-        collect(x, l);
+        collect(Lists.newArrayList(x), l);
         return result(l);
     }
-    public static List<Term> collect(Term[] x, List<Term> l) {
+    public static List<Term> collect(Iterable<Term> x, List<Term> l) {
         for (Term a : x) {
             if ((a instanceof Product) || (a instanceof SetTensional) || (a instanceof Conjunction)) {
-                collect( ((Compound)a).term, l);
+                collect( ((Compound)a), l);
             }
             else
                 l.add(a);

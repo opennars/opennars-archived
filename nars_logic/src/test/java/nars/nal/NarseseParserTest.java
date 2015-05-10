@@ -112,9 +112,9 @@ public class NarseseParserTest {
 
     protected void testProductABC(Product p) throws InvalidInputException {
         assertEquals(p.toString() + " should have 3 sub-terms", 3, p.size());
-        assertEquals("a", p.term[0].toString());
-        assertEquals("b", p.term[1].toString());
-        assertEquals("c", p.term[2].toString());
+        assertEquals("a", p.getTerm(0).toString());
+        assertEquals("b", p.getTerm(1).toString());
+        assertEquals("c", p.getTerm(2).toString());
     }
 
     @Test public void testFailureOfMultipleDistinctInfixOperators() {
@@ -163,7 +163,7 @@ public class NarseseParserTest {
         Intersect t = term("(x & y)");
         assertEquals(NALOperator.INTERSECTION_EXT, t.operator());
         assertEquals(2, t.size());
-        assertEquals("x", t.term[0].toString());
+        assertEquals("x", t.getTerm(0).toString());
         assertEquals("y", t.term[1].toString());
 
         IntersectionInt a = term("(x | y)");
@@ -178,7 +178,7 @@ public class NarseseParserTest {
         assertEquals(NALOperator.CONJUNCTION, c.operator());
         assertEquals(2, c.size());
         assertEquals(5, c.getComplexity());
-        assertEquals(NALOperator.INHERITANCE, c.term[1].operator());
+        assertEquals(NALOperator.INHERITANCE, c.getTerm(1).operator());
     }
 
 
@@ -307,17 +307,17 @@ public class NarseseParserTest {
         Compound xInt = term("[x]");
         assertEquals(NALOperator.SET_INT_OPENER, xInt.operator());
         assertEquals(1, xInt.size());
-        assertEquals("x", xInt.term[0].toString());
+        assertEquals("x", xInt.getTerm(0).toString());
 
         Compound xExt = term("{x}");
         assertEquals(NALOperator.SET_EXT_OPENER, xExt.operator());
         assertEquals(1, xExt.size());
-        assertEquals("x", xExt.term[0].toString());
+        assertEquals("x", xExt.getTerm(0).toString());
 
         Compound abInt = term("[a,b]");
         assertEquals(2, abInt.size());
-        assertEquals("a", abInt.term[0].toString());
-        assertEquals("b", abInt.term[1].toString());
+        assertEquals("a", abInt.getTerm(0).toString());
+        assertEquals("b", abInt.getTerm(1).toString());
 
         assertEquals(abInt, term("[ a,b]"));
         assertEquals(abInt, term("[a,b ]"));

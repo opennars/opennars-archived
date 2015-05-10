@@ -160,7 +160,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
     }
 
     void recurseTermComponents(NARGraph g, Compound c, int level) {
-        for (Term b : c.term) {
+        for (Term b : c) {
             //addVertex(g,b);
 
             if (!includeTermContent) {

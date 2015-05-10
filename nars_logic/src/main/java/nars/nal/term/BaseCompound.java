@@ -2,11 +2,13 @@ package nars.nal.term;
 
 import com.google.common.collect.Iterators;
 import nars.Global;
-import nars.Memory;
+import nars.nal.nal3.Intersect;
 import nars.nal.nal7.TemporalRules;
 import nars.util.data.Utf8;
 
 import java.util.*;
+
+import static nars.nal.term.Compound.containsAny;
 
 /**
  * Default implementation for Compound subclasses.
@@ -56,6 +58,10 @@ abstract public class BaseCompound implements Compound {
 
     }
 
+    @Override public Term[] getTerms() {
+        return term;
+    }
+
     @Override
     public Term getTerm(int subterm) {
         return term[subterm];
@@ -63,7 +69,31 @@ abstract public class BaseCompound implements Compound {
 
     @Override
     public Compound normalized() {
-        return cloneNormalized();
+        if (!hasVar()) return (Compound) this;
+        if (isNormalized()) return (Compound) this;
+
+
+        VariableNormalization vn = new VariableNormalization(this);
+        Compound result = vn.getResult();
+        if (result == null) return null;
+
+        if (vn.hasRenamed()) {
+            result.invalidate();
+        }
+
+        result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
+
+
+//        if (!valid(result)) {
+////                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
+////                ntc.printStackTrace();
+////                throw ntc;
+//            return null;
+//        }
+
+
+        return (Compound)result;
+
     }
 
     @Override
@@ -98,41 +128,6 @@ abstract public class BaseCompound implements Compound {
 
     }
 
-    /**
-     * Normalizes if contain variables which need to be finalized for use in a Sentence
-     * May return null if the resulting compound term is invalid
-     */
-    public <T extends Compound> T cloneNormalized() {
-        if (!hasVar()) return (T) this;
-        if (isNormalized()) return (T) this;
-
-
-        VariableNormalization vn = new VariableNormalization(this);
-        BaseCompound result = vn.getResult();
-        if (result == null) return null;
-
-        if (vn.hasRenamed()) {
-            result.invalidate();
-        }
-
-        result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
-
-
-//        if (!valid(result)) {
-////                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
-////                ntc.printStackTrace();
-////                throw ntc;
-//            return null;
-//        }
-
-
-        return (T)result;
-
-    }
-
-    @Override public boolean subjectOrPredicateIsIndependentVar() {
-        return false;
-    }
 
 
     @Override
@@ -214,7 +209,7 @@ abstract public class BaseCompound implements Compound {
     }
 
     /**
-     * get the number of term
+     * get the number of subterms
      *
      * @return the size of the component list
      */
@@ -253,12 +248,9 @@ abstract public class BaseCompound implements Compound {
      * NOT TESTED YET
      */
     public boolean containsAnyTermsOf(final Collection<Term> c) {
-        return Statement.Terms.containsAny(term, c);
+        return containsAny(term, c);
     }
 
-    final public void addTermsTo(final Collection<Term> c) {
-        Collections.addAll(c, term);
-    }
 
     @Override
     public boolean isNormalized() {
@@ -267,7 +259,8 @@ abstract public class BaseCompound implements Compound {
 
 
 
-    protected void setNormalized() {
+    @Override
+    public void setNormalized() {
         this.normalized = true;
     }
 
@@ -311,46 +304,12 @@ abstract public class BaseCompound implements Compound {
 
     abstract public byte[] nameCached();
 
-    /**
-     * Clone the component list
-     *
-     * @return The cloned component list
-     */
-    public Term[] cloneTerms(final Term... additional) {
-        return Compound.cloneTermsAppend(term, additional);
-    }
 
 
-    /**
-     * Cloned array of Terms, except for one or more Terms.
-     *
-     * @param toRemove
-     * @return the cloned array with the missing terms removed, OR null if no terms were actually removed when requireModification=true
-     */
-    public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
-        //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
 
-        List<Term> l = asTermList();
-        boolean removed = false;
 
-        for (final Term t : toRemove) {
-            if (l.remove(t))
-                removed = true;
-        }
-        if ((!removed) && (requireModification))
-            return null;
 
-        return l.toArray(new Term[l.size()]);
-    }
 
-    /**
-     * creates a new ArrayList for terms
-     */
-    public List<Term> asTermList() {
-        List<Term> l = new ArrayList(term.length);
-        addTermsTo(l);
-        return l;
-    }
 
     /**
      * forced deep clone of terms
@@ -362,53 +321,14 @@ abstract public class BaseCompound implements Compound {
         return l;
     }
 
-
-    /** clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step */
-    protected BaseCompound cloneVariablesDeep() {
-        return (BaseCompound) clone(cloneVariableTermsDeep());
+    public void addTermsTo(final Collection<Term> c) {
+        Collections.addAll(c, this);
     }
 
-    public Term[] cloneVariableTermsDeep() {
-        Term[] l = new Term[term.length];
-        for (int i = 0; i < l.length; i++) {
-            Term t = term[i];
-
-            if ((!(t instanceof Variable)) && (t.hasVar())) {
-                t = t.cloneDeep();
-            }
-
-            //else it is an atomic term or a compoundterm with no variables, so use as-is:
-            l[i] = t;
-        }
-        return l;
-    }
-
-    protected void transformVariableTermsDeep(VariableTransform variableTransform) {
-        transformVariableTermsDeep(variableTransform, 0);
-    }
-
-    protected void transformVariableTermsDeep(VariableTransform variableTransform, int depth) {
-        for (int i = 0; i < term.length; i++) {
-            Term t = term[i];
-
-            if (t.hasVar()) {
-                if (t instanceof Compound) {
-                    ((BaseCompound)t).transformVariableTermsDeep(variableTransform);
-                } else if (t instanceof Variable) {  /* it's a variable */
-                    term[i] = variableTransform.apply(this, (Variable)t, depth+1);
-                }
-            }
-        }
-    }
-
-    /**
-     * forced deep clone of terms
-     */
-    public ArrayList<Term> cloneTermsListDeep() {
-        ArrayList<Term> l = new ArrayList(term.length);
-        for (final Term t : term)
-            l.add(t.clone());
-        return l;
+    @Override
+    public Term replaceTerm(int index, Term t) {
+        term[index] = t;
+        return this;
     }
 
     /**
@@ -419,7 +339,7 @@ abstract public class BaseCompound implements Compound {
      */
     @Override
     public boolean containsTerm(final Term t) {
-        return Statement.Terms.contains(term, t);
+        return Compound.contains(term, t);
     }
 
     /**
@@ -463,52 +383,8 @@ abstract public class BaseCompound implements Compound {
         return false;
     }
 
-    /**
-     * true if equal operate and all terms contained
-     */
-    public boolean containsAllTermsOf(final Term t) {
-        if (Statement.Terms.equalType(this, t)) {
-            return Statement.Terms.containsAll(term, ((BaseCompound) t).term);
-        } else {
-            return Statement.Terms.contains(term, t);
-        }
-    }
-
-    /**
-     * Try to replace a component in a compound at a given index by another one
-     *
-     * @param index The location of replacement
-     * @param t     The new component
-     * @return The new compound
-     */
-    public Term setComponent(final int index, final Term t) {
 
 
-
-        final boolean e = (t!=null) && Statement.Terms.equalType(this, t, true, true);
-
-        //if the subterm is alredy equivalent, just return this instance because it will be equivalent
-        if (t != null && (e) && (term[index].equals(t)))
-            return this;
-
-        List<Term> list = asTermList();//Deep();
-
-        list.remove(index);
-
-        if (t != null) {
-            if (!e) {
-                list.add(index, t);
-            } else {
-                //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
-                Term[] tt = ((BaseCompound) t).term;
-                for (int i = 0; i < tt.length; i++) {
-                    list.add(index + i, tt[i]);
-                }
-            }
-        }
-
-        return Memory.term(this, list);
-    }
 
     public static class VariableNormalization implements VariableTransform {
 
@@ -536,10 +412,10 @@ abstract public class BaseCompound implements Compound {
 
         Map<VariableID, Variable> rename = Global.newHashMap();
 
-        final BaseCompound result;
+        final Compound result;
         boolean renamed = false;
 
-        public VariableNormalization(BaseCompound target) {
+        public VariableNormalization(Compound target) {
             this.result = target.cloneVariablesDeep();
             if (this.result!=null)
                 this.result.transformVariableTermsDeep(this);
@@ -571,9 +447,10 @@ abstract public class BaseCompound implements Compound {
             return renamed;
         }
 
-        public BaseCompound getResult() {
+        public Compound getResult() {
             return result;
         }
     }
 
+    abstract public BaseCompound clone();
 }

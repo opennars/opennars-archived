@@ -300,12 +300,12 @@ public class PrologQueryOperator extends Operator {
         if (term instanceof nars.tuprolog.Struct) {
             nars.tuprolog.Struct termAsStruct = (nars.tuprolog.Struct)term;
             
-            PTerm[] replacedArguments = new PTerm[termAsStruct.getArity()];
+            PTerm[] replacedArguments = new PTerm[termAsStruct.size()];
             
             int childrenI;
             
             // iterate over childrens
-            for (childrenI = 0; childrenI < termAsStruct.getArity(); childrenI++) {
+            for (childrenI = 0; childrenI < termAsStruct.size(); childrenI++) {
                 replacedArguments[childrenI] = replaceBoundVariablesOfPrologTermRecursive(termAsStruct.getTerm(childrenI), variableInfos);
             }
             
@@ -362,12 +362,12 @@ public class PrologQueryOperator extends Operator {
             Struct structTerm = (Struct)prologTerm;
 
             // check if it is a string (has arity 0) or a list/struct (arity == 2 because lists are composed out of 2 tuples)
-            if (structTerm.getArity() == 0) {
+            if (structTerm.size() == 0) {
                 String variableAsString = structTerm.getName();
 
                 return Atom.get('"' + variableAsString + '"');
             }
-            else if (structTerm.getArity() == 2 && structTerm.getName().equals(".")) {
+            else if (structTerm.size() == 2 && structTerm.getName().equals(".")) {
                 // convert the result array to a nars thingy
                 ArrayList<PTerm> structAsList = convertChainedStructToList(structTerm);
                 
@@ -423,8 +423,8 @@ public class PrologQueryOperator extends Operator {
     static private nars.tuprolog.Var getVariableByNameRecursive(PTerm term, String name) {
         if( term instanceof Struct ) {
             Struct s = (Struct)term;
-            for (int i = 0; i < s.getArity(); i++) {
-                PTerm iterationTerm = s.getTerms(i);
+            for (int i = 0; i < s.size(); i++) {
+                PTerm iterationTerm = s.getTermX(i);
                 nars.tuprolog.Var result = getVariableByNameRecursive(iterationTerm, name);
                
                 if( result != null ) {
@@ -461,17 +461,17 @@ public class PrologQueryOperator extends Operator {
         Struct currentCompundTerm = structTerm;
        
         for(;;) {
-            if( currentCompundTerm.getArity() == 0 ) {
+            if( currentCompundTerm.size() == 0 ) {
                 // end is reached
                 break;
             }
-            else if( currentCompundTerm.getArity() != 2 ) {
+            else if( currentCompundTerm.size() != 2 ) {
                 throw new RuntimeException("Compound must have two or zero arguments!");
             }
            
-            result.add(currentCompundTerm.getTerms(0));
+            result.add(currentCompundTerm.getTermX(0));
            
-            PTerm arg2 = currentCompundTerm.getTerms(1);
+            PTerm arg2 = currentCompundTerm.getTermX(1);
             
             if (arg2.isAtom()) {
                 Struct atomTerm = (Struct)arg2;

@@ -1,6 +1,7 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
+import nars.nal.term.BaseCompound;
 import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
@@ -19,7 +20,7 @@ public class SetExt1 extends Compound1 implements SetExt, SetTensional {
     }
 
     @Override
-    public Term clone() {
+    public BaseCompound clone() {
         return new SetExt1(the());
     }
 

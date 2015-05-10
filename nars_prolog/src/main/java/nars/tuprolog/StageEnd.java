@@ -70,9 +70,9 @@ public class StageEnd extends Stage {
 
     private PTerm solve(PTerm a1, Object[] a, PTerm initGoalBag) {
         //System.out.println("ENTRO NEL SOLVE a1 "+a1+" initGoalBag "+initGoalBag);
-        while (a1 instanceof Struct && ((Struct) a1).getArity() > 0) {
+        while (a1 instanceof Struct && ((Struct) a1).size() > 0) {
             //System.out.println("substituteVarGoalBO --- a1 "+a1);
-            PTerm a10 = ((Struct) a1).getTerms(0);
+            PTerm a10 = ((Struct) a1).getTermX(0);
             if (a10 instanceof Var) {
                 //System.out.println("substituteVarGoalBO --- a10 var name  "+((Var)a10).getName()+" original name "+((Var)a10).getOriginalName());
                 //System.out.println("substituteVarGoalBO faccio findvar e sostisuisco a1 pos 0 "+a1);
@@ -81,7 +81,7 @@ public class StageEnd extends Stage {
                 //((Struct)initGoalBag).setArg(1,a1);
             } else if (a10 instanceof Struct) {
                 PTerm a100;
-                a100 = ((Struct) a10).getTerms(0);
+                a100 = ((Struct) a10).getTermX(0);
                 //System.out.println("substituteVarGoalBO --- a10 Struct name  "+a10);
                 //System.out.println("substituteVarGoalBO --- a10 faccio solve di "+a100+" a1 "+a1);
                 a10 = solve(a100, a, a10);
@@ -89,8 +89,8 @@ public class StageEnd extends Stage {
                 //((Struct)initGoalBag).setArg(1,a1);
             }
             PTerm a11 = null;
-            if (((Struct) a1).getArity() > 1)
-                a11 = ((Struct) a1).getTerms(1);
+            if (((Struct) a1).size() > 1)
+                a11 = ((Struct) a1).getTermX(1);
             a1 = a11;
         }
         if (a1 instanceof Var) {
@@ -169,24 +169,24 @@ public class StageEnd extends Stage {
 
 
             if (((Struct) query).getName().equals(";")) {
-                Struct query_temp = (Struct) ((Struct) query).getTerms(0);
+                Struct query_temp = (Struct) ((Struct) query).getTermX(0);
                 if (query_temp.getName().equals("setof") && setOfCounter == 0) {
                     query = query_temp;
                     this.setOfCounter++;
                 } else {
-                    query_temp = (Struct) ((Struct) query).getTerms(1);
+                    query_temp = (Struct) ((Struct) query).getTermX(1);
                     if (query_temp.getName().equals("setof"))
                         query = query_temp;
                 }
             }
 
-            if (((Struct) query).getArity() > 2 && ((Struct) query).getTerms(2) instanceof Struct) { //casi in cui ci potrebbe essere problema di soluzione
+            if (((Struct) query).size() > 2 && ((Struct) query).getTermX(2) instanceof Struct) { //casi in cui ci potrebbe essere problema di soluzione
                 //System.out.println("STATE END relinkvar(): trovata struct in initBag "+((Var)initBag).getLink());
                 while (tgoal instanceof Var && ((Var) tgoal).getLink() != null) {
                     tgoal = ((Var) tgoal).getLink();
                     //System.out.println("STATE END relinkvar(): scorro goal "+tgoal);
                     if (tgoal instanceof Struct) {
-                        tgoal = ((Struct) tgoal).getTerms(1);
+                        tgoal = ((Struct) tgoal).getTermX(1);
                         //System.out.println("STATE END relinkvar(): trovata struct con arg 1 "+tgoal);
 
                         if (p.unify(tgoal, ((Var) initBag).getLink())) { //In realtˆ sembra che giˆ qui non unifichi
@@ -208,8 +208,8 @@ public class StageEnd extends Stage {
                         //scorro initBagGoal e sostituisco i suoi nomi con i nomi delle variabili goal
                         if ((find && initGoalBag instanceof Struct) || (findSamePredicateIndicator && initGoalBag instanceof Struct)) {
                             //System.out.println("substituteVarGoalBO --- initGoalBag "+initGoalBag);
-                            PTerm a0 = ((Struct) initGoalBag).getTerms(0);
-                            PTerm a1 = ((Struct) initGoalBag).getTerms(1);
+                            PTerm a0 = ((Struct) initGoalBag).getTermX(0);
+                            PTerm a1 = ((Struct) initGoalBag).getTermX(1);
                             if (a0 instanceof Var) {
                                 PTerm link = a0;
 //		    					System.out.println("substituteVarGoalBO --- a0  var name  "+((Var)a0).getName()+" original name "+((Var)a0).getOriginalName()+" tlink "+((Var)a0).getLink());
@@ -229,10 +229,10 @@ public class StageEnd extends Stage {
                     //System.out.println("Creo una lista a partire dalla struttura di initGoalBag ");
                     ArrayList<PTerm> initGoalBagList = new ArrayList<>();
                     Struct initGoalBagTemp = (Struct) initGoalBag;
-                    while (initGoalBagTemp.getArity() > 0) {
-                        PTerm t1 = initGoalBagTemp.getTerms(0);
+                    while (initGoalBagTemp.size() > 0) {
+                        PTerm t1 = initGoalBagTemp.getTermX(0);
                         initGoalBagList.add(t1);
-                        PTerm t2 = initGoalBagTemp.getTerms(1);
+                        PTerm t2 = initGoalBagTemp.getTermX(1);
                         if (t2 instanceof Struct) {
                             initGoalBagTemp = (Struct) t2;
                         }
@@ -322,10 +322,10 @@ public class StageEnd extends Stage {
                     //System.out.println("Creo una lista a partire dalla struttura di initBag ");//serve per unificare
                     ArrayList<PTerm> initBagList = new ArrayList<>();
                     Struct initBagTemp = (Struct) ((Var) initBag).getLink();
-                    while (initBagTemp.getArity() > 0) {
-                        PTerm t0 = initBagTemp.getTerms(0);
+                    while (initBagTemp.size() > 0) {
+                        PTerm t0 = initBagTemp.getTermX(0);
                         initBagList.add(t0);
-                        PTerm t2 = initBagTemp.getTerms(1);
+                        PTerm t2 = initBagTemp.getTermX(1);
                         if (t2 instanceof Struct) {
                             initBagTemp = (Struct) t2;
                         }
@@ -602,7 +602,7 @@ public class StageEnd extends Stage {
             if (v.getLink() instanceof Var)
                 v = (Var) v.getLink();
             else if (v.getLink() instanceof Struct)
-                v = (Var) ((Struct) v.getLink()).getTerms(0);
+                v = (Var) ((Struct) v.getLink()).getTermX(0);
             else break;
         }
         return v;
@@ -633,10 +633,10 @@ public class StageEnd extends Stage {
                     //devo prendere l'i_esimo elemento della lista quindi scorro
                     //System.out.println("*** devo prendere l'i_esimo elemento della lista quindi scorro");
                     while (i > 0) {
-                        if (s.getTerms(1) instanceof Struct) {
-                            s = (Struct) s.getTerms(1);
-                        } else if (s.getTerms(1) instanceof Var) {
-                            vStruct = ((Var) s.getTerms(1));
+                        if (s.getTermX(1) instanceof Struct) {
+                            s = (Struct) s.getTermX(1);
+                        } else if (s.getTermX(1) instanceof Var) {
+                            vStruct = ((Var) s.getTermX(1));
                             if (vStruct.getLink() != null) {
                                 i--;
                                 v = vStruct;
@@ -646,7 +646,7 @@ public class StageEnd extends Stage {
                         }
                         i--;
                     }
-                    vStruct = ((Var) s.getTerms(0));
+                    vStruct = ((Var) s.getTermX(0));
                     break;
                 } else break;
             }
@@ -669,10 +669,10 @@ public class StageEnd extends Stage {
                 //System.out.println("+++devo prendere l'i_esimo elemento della lista quindi scorro");
                 while (i > 0) {
                     //System.out.println("+++ s "+s.getArg(1));
-                    if (s.getTerms(1) instanceof Struct)
-                        s = (Struct) s.getTerms(1);
-                    else if (s.getTerms(1) instanceof Var) {
-                        v = (Var) s.getTerms(1);
+                    if (s.getTermX(1) instanceof Struct)
+                        s = (Struct) s.getTermX(1);
+                    else if (s.getTermX(1) instanceof Var) {
+                        v = (Var) s.getTermX(1);
                         s = ((Struct) v.getLink());
                     }
                     i--;
@@ -687,12 +687,12 @@ public class StageEnd extends Stage {
 
     public List<String> findVar(Struct s, List<String> l) {
 
-        if (s.getArity() > 0) {
-            ArrayList<String> allVar = new ArrayList<>(s.getArity());
-            PTerm t = s.getTerms(0);
+        if (s.size() > 0) {
+            ArrayList<String> allVar = new ArrayList<>(s.size());
+            PTerm t = s.getTermX(0);
             PTerm tt;
-            if (s.getArity() > 1) {
-                tt = s.getTerms(1);
+            if (s.size() > 1) {
+                tt = s.getTermX(1);
                 //System.out.println("---Termine "+t+" e termine "+tt);
                 if (tt instanceof Var) {
                     allVar.add(((Var) tt).getName());
@@ -714,11 +714,11 @@ public class StageEnd extends Stage {
     }
 
     public Struct substituteVar(Struct s, ArrayList<String> lSol, ArrayList<String> lgoal) {
-        PTerm t = s.getTerms(0);
+        PTerm t = s.getTermX(0);
         //System.out.println("STATE END Substitute var ---Termine "+t);
         PTerm tt = null;
-        if (s.getArity() > 1)
-            tt = s.getTerms(1);
+        if (s.size() > 1)
+            tt = s.getTermX(1);
         //System.out.println("Substitute var ---Termine "+t+" e termine "+tt);
         if (tt != null && tt instanceof Var) {
             int index = lSol.indexOf(((Var) tt).getName());
@@ -729,7 +729,7 @@ public class StageEnd extends Stage {
                 //System.out.println("Substitute var ---Indice di t in lSol "+index1);
                 s.setTerm(0, new Var(lgoal.get(index1)));
             }
-            if (t instanceof Struct && ((Struct) t).getArity() > 0) {
+            if (t instanceof Struct && ((Struct) t).size() > 0) {
                 //System.out.println("Substitute var-------Trovata struct t "+t);
                 //System.out.println("Substitute var-------Trovata struct t arity "+((Struct)t).getArity());
                 Struct s1 = substituteVar((Struct) t, lSol, lgoal);

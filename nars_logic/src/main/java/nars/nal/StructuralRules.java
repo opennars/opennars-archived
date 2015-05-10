@@ -131,8 +131,8 @@ public final class StructuralRules {
             return;
         }
         
-        Term t1 = sub.term[index];
-        Term t2 = pre.term[index];
+        Term t1 = sub.getTerm(index);
+        Term t2 = pre.getTerm(index);
         Statement content;
         int order = statement.getTemporalOrder();
         if (switchOrder(sub, (short) index)) {
@@ -180,7 +180,7 @@ public final class StructuralRules {
         if (!nal.getCurrentTask().sentence.isJudgment()) {
             return;     // forward logic only
         }
-        Term component = compound.term[index];
+        Term component = compound.getTerm(index);
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
@@ -233,7 +233,7 @@ public final class StructuralRules {
 //            return;
 //        }
 
-        Term component = compound.term[index];
+        Term component = compound.getTerm(index);
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();

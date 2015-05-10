@@ -141,8 +141,8 @@ public class Atom implements Term {
      * if it's necessary and possible.
      *  does not modify this term
      * */
-    public Term normalized() {
-        return this;
+    public <T extends Term> T normalized() {
+        return (T) this;
     }
 
     public Term cloneDeep() {

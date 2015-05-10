@@ -168,7 +168,7 @@ public class Conjunction extends Junction {
      */
     final public static Term make(final Term[] argList, final int temporalOrder) {
 
-        if (Global.DEBUG) {  Statement.Terms.verifyNonNull(argList);}
+        if (Global.DEBUG) {  Compound.verifyNonNull(argList);}
         
         if (argList.length == 0) {
             return null;
@@ -186,7 +186,7 @@ public class Conjunction extends Junction {
             //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
             //return null;
         } else {
-            Term[] a = Statement.Terms.toSortedSetArray(argList);
+            Term[] a = Compound.toSortedSetArray(argList);
             if (a.length == 1) return a[0];
             return new Conjunction(a, temporalOrder);
         }
@@ -240,10 +240,10 @@ public class Conjunction extends Junction {
             if (term1 instanceof Conjunction) {
                 Compound ct1 = ((Compound) term1);
                 final List<Term> set = Global.newArrayList(ct1.size() + 1);
-                Collections.addAll(set, ct1.term);
+                Collections.addAll(set, ct1);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                    Collections.addAll(set, ((Compound) term2).term);
+                    Collections.addAll(set, ((Compound) term2));
                 }
                 else {
                     // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -253,7 +253,7 @@ public class Conjunction extends Junction {
             } else if (term2 instanceof Conjunction) {
                 Compound ct2 = ((Compound) term2);
                 final List<Term> set = Global.newArrayList(ct2.size() + 1);
-                Collections.addAll(set, ct2.term);
+                Collections.addAll(set, ct2);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
                 return make(set, temporalOrder);
             } else {
@@ -289,7 +289,10 @@ public class Conjunction extends Junction {
             Compound cterm2 = (Compound) term2;
             components = new Term[((Compound) term2).size() + 1];
             components[0] = term1;
-            arraycopy(cterm2.term, 0, components, 1, cterm2.size());
+            //copy cterm2 in entirity, shifted up to index=1
+            for (int j = 0; j < cterm2.size(); j++) {
+                components[j+1] = cterm2.getTerm(j);
+            }
         } else {
             components = new Term[] { term1, term2 };
         }

@@ -18,12 +18,13 @@ public interface SetInt extends SetTensional {
 
 
     public static Compound make(Term... t) {
-        t = Statement.Terms.toSortedSetArray(t);
+        t = Compound.toSortedSetArray(t);
         switch (t.length) {
             case 0: return null;
             case 1: return new SetInt1(t[0]);
             default: return new SetIntN(t);
         }
     }
+
 
 }

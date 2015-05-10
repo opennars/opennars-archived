@@ -43,10 +43,10 @@ public class TermFrame extends JFrame implements ActionListener{
       } else if(term instanceof Struct){
         Struct struct=(Struct)term;
         node.text=struct.getName();
-        int n=struct.getArity();
+        int n=struct.size();
         node.kids=new Node[n];
         for(int i=0; i<n; i++)
-          node.kids[i]=makeTreeFrom(struct.getTerms(i));
+          node.kids[i]=makeTreeFrom(struct.getTermX(i));
       }
       return node;
     }

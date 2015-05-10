@@ -66,9 +66,9 @@ public class TextsTest {
         else if (term instanceof Compound) {
             Compound ct = (Compound)term;
             
-            Rope[] tt = new Rope[ct.term.length];
+            Rope[] tt = new Rope[ct.size()];
             int i = 0;
-            for (final Term t : ct.term) {
+            for (final Term t : ct) {
                 tt[i++] = Rope.cat(String.valueOf(Symbols.ARGUMENT_SEPARATOR), toString(t));
             }
             

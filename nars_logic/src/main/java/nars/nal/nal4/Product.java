@@ -103,9 +103,12 @@ public class Product extends DefaultCompound {
 
 
     @Override
-    public Object first() {
+    public Term first() {
         return term[0];
     }
 
-
+    @Override
+    public boolean isList() {
+        return true;
+    }
 }

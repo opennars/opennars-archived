@@ -94,15 +94,15 @@ public class ISOIOLibrary extends Library{
                                 for(Map.Entry<String, PTerm> currentElement2 : currentElement.getValue().entrySet()){
                                     if(currentElement2.getKey().equals("alias")){
                                         PTerm alias = currentElement2.getValue();
-                                        for(int k = 0; k< option.getArity();k++){
-                                            if(((Struct)alias).getArity()>1){
-                                                for(int z = 0;z<((Struct)alias).getArity();z++){
-                                                    if((((Struct)alias).getTerms(z)).equals(option.getTerms(k))){
+                                        for(int k = 0; k< option.size();k++){
+                                            if(((Struct)alias).size()>1){
+                                                for(int z = 0;z<((Struct)alias).size();z++){
+                                                    if((((Struct)alias).getTermX(z)).equals(option.getTermX(k))){
                                                         throw PrologError.permission_error(engine, "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                                     }
                                                 }
                                             }
-                                            else if(alias.equals(option.getTerms(k))){
+                                            else if(alias.equals(option.getTermX(k))){
                                                 throw PrologError.permission_error(engine, "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                             }
                                         }
@@ -115,36 +115,36 @@ public class ISOIOLibrary extends Library{
                                 for(Map.Entry<String, PTerm> currentElement2 : currentElement.getValue().entrySet()){
                                     if(currentElement2.getKey().equals("alias")){
                                         PTerm alias = currentElement2.getValue();
-                                        for(int k = 0; k< option.getArity();k++){
-                                            if(((Struct)alias).getArity()>1){
-                                                for(int z = 0;z<((Struct)alias).getArity();z++){
-                                                    if((((Struct)alias).getTerms(z)).equals(option.getTerms(k))){
+                                        for(int k = 0; k< option.size();k++){
+                                            if(((Struct)alias).size()>1){
+                                                for(int z = 0;z<((Struct)alias).size();z++){
+                                                    if((((Struct)alias).getTermX(z)).equals(option.getTermX(k))){
                                                         throw PrologError.permission_error(engine, "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                                     }
                                                 }
                                             }
-                                            else if(alias.equals(option.getTerms(k))){
+                                            else if(alias.equals(option.getTermX(k))){
                                                 throw PrologError.permission_error(engine, "open", "source_sink", alias, new Struct("Alias is already associated with an open stream."));
                                             }
                                         }
                                     }
                                 }
                             }
-                            int arity = option.getArity();
+                            int arity = option.size();
                             if(arity > 1){
                                 PTerm[] arrayTerm = new PTerm[arity];
                                 for(int k = 0; k<arity; k++){
-                                    arrayTerm[k] = option.getTerms(k);
+                                    arrayTerm[k] = option.getTermX(k);
                                 }
                                 properties.put(option.getName(),new Struct(".",arrayTerm));
                             }
                             else{
-                                properties.put(option.getName(),option.getTerms(0));
+                                properties.put(option.getName(),option.getTermX(0));
                             }
                         }
                         else{
                             Struct value = null;
-                            value =(Struct) option.getTerms(0);
+                            value =(Struct) option.getTermX(0);
                             properties.put(option.getName(),value);
                         }
                     }
@@ -340,7 +340,7 @@ public class ISOIOLibrary extends Library{
                     }
                     option = (Struct)obj;
                     if(option.getName().equals("force")){
-                        Struct closeOptionValue = (Struct)option.getTerms(0);
+                        Struct closeOptionValue = (Struct)option.getTermX(0);
                         force = closeOptionValue.getName().equals("true");
                     }
                     else{
@@ -502,7 +502,7 @@ public class ISOIOLibrary extends Library{
         String propertyName = prop.getName();
         Struct propertyValue = null;
         if(!propertyName.equals("input") && !propertyName.equals("output")){
-            propertyValue = (Struct)prop.getTerms(0);
+            propertyValue = (Struct)prop.getTermX(0);
         }
         List<Struct> resultList = new ArrayList<>(); //object generico perche' sono sia inputStream che outputStream
             
@@ -525,7 +525,7 @@ public class ISOIOLibrary extends Library{
                 for(Map.Entry<String, PTerm> currentElement2 : currentElement.getValue().entrySet()){
                     if(currentElement2.getKey().equals(propertyName)){
                         if(propertyName.equals("alias")){
-                            int arity = ((Struct)currentElement2.getValue()).getArity();
+                            int arity = ((Struct)currentElement2.getValue()).size();
                             if(arity == 0){
                                 if(propertyValue.equals(currentElement2.getValue())){
                                     resultList.add(new Struct(currentElement.getKey().toString()));
@@ -533,7 +533,7 @@ public class ISOIOLibrary extends Library{
                                 }
                             }
                             for(int i = 0; i<arity; i++){
-                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getTerms(i))){
+                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getTermX(i))){
                                     resultList.add(new Struct(currentElement.getKey().toString()));
                                     break;
                                 }
@@ -550,7 +550,7 @@ public class ISOIOLibrary extends Library{
                 for(Map.Entry<String, PTerm> currentElement2 : currentElement.getValue().entrySet()){
                     if(currentElement2.getKey().equals(propertyName)){
                         if(propertyName.equals("alias")){
-                                int arity = ((Struct)currentElement2.getValue()).getArity();
+                                int arity = ((Struct)currentElement2.getValue()).size();
                             if(arity == 0){
                                 if(propertyValue.equals(currentElement2.getValue())){
                                     resultList.add(new Struct(currentElement.getKey().toString()));
@@ -558,7 +558,7 @@ public class ISOIOLibrary extends Library{
                                 }
                             }
                             for(int i = 0; i<arity; i++){
-                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getTerms(i))){
+                                if(propertyValue.equals(((Struct)currentElement2.getValue()).getTermX(i))){
                                     resultList.add(new Struct(currentElement.getKey().toString()));
                                     break;
                                 }
@@ -1494,17 +1494,17 @@ public class ISOIOLibrary extends Library{
                 if(option.getName().equals("variables")){
                     variables = new Struct();
                     variables = (Struct) PTerm.createTerm(vars.toString());
-                    unify(option.getTerms(0),variables);
+                    unify(option.getTermX(0),variables);
                 }
                 else if(option.getName().equals("variable_name")){
                     variable_names = new Struct();
                     variable_names = (Struct) PTerm.createTerm(associations_table.toString());
-                    unify(option.getTerms(0),variable_names);
+                    unify(option.getTermX(0),variable_names);
                 }
                 else if(option.getName().equals("singletons")){
                     singletons = new Struct();
                     singletons = (Struct) PTerm.createTerm(singl.toString());
-                    unify(option.getTerms(0),singletons);
+                    unify(option.getTermX(0),singletons);
                 }
             }
             
@@ -1531,8 +1531,8 @@ public class ISOIOLibrary extends Library{
         }
         else{
             Struct term_struct = (Struct)t.getTerm();
-            for(int i = 0;i<term_struct.getArity();i++){
-                analize_term(variables,term_struct.getTerms(i));
+            for(int i = 0;i<term_struct.size();i++){
+                analize_term(variables,term_struct.getTermX(i));
             }
         }
     }
@@ -1580,13 +1580,13 @@ public class ISOIOLibrary extends Library{
                     }
                     writeOption = (Struct)obj;
                     if(writeOption.getName().equals("quoted")){
-                        quoted = ((Struct) writeOption.getTerms(0)).getName().equals("true");
+                        quoted = ((Struct) writeOption.getTermX(0)).getName().equals("true");
                     }
                     else if(writeOption.getName().equals("ignore_ops")){
-                        ignore_ops = ((Struct) writeOption.getTerms(0)).getName().equals("true");
+                        ignore_ops = ((Struct) writeOption.getTermX(0)).getName().equals("true");
                     }
                     else if(writeOption.getName().equals("numbervars")){
-                        numbervars = ((Struct) writeOption.getTerms(0)).getName().equals("true");
+                        numbervars = ((Struct) writeOption.getTermX(0)).getName().equals("true");
                     }
                     else{
                         throw PrologError.domain_error(engine, 3, "write_options", writeOptionsList.getTerm());
@@ -1703,16 +1703,16 @@ public class ISOIOLibrary extends Library{
             result+=term.getName()+ '(';
         }
         
-        int arity = term.getArity();
+        int arity = term.size();
         for(int i = 0; i<arity; i++){
             if(i > 0 && flagOp==0)
                 result += ",";
-            PTerm arg = term.getTerms(i);
+            PTerm arg = term.getTermX(i);
             if(arg instanceof PNum){
                 if(term.getName().contains("$VAR")){
                 //sono nel tipo $VAR
                     if(numbervars == true){
-                        Int argNumber = (Int)term.getTerms(i);
+                        Int argNumber = (Int)term.getTermX(i);
                         int res = argNumber.intValue() % 26;
                         int div = argNumber.intValue()/26;
                         Character ch = 'A';
@@ -1820,34 +1820,34 @@ public class ISOIOLibrary extends Library{
         
         if(ignore_ops == true){
             result= '\'' +term.getName()+ '\'' +" (";
-            for(int i = 0; i<term.getArity(); i++){
+            for(int i = 0; i<term.size(); i++){
                 if(i > 0){
                     result+=",";
                 }
-                if(term.getTerms(i).isList() && !(term.getTerms(i).isEmptyList())){
-                    result += print_list((Struct)term.getTerms(i),options);
+                if(term.getTermX(i).isList() && !(term.getTermX(i).isEmptyList())){
+                    result += print_list((Struct)term.getTermX(i),options);
                 }
                 else{
-                    result += term.getTerms(i);
+                    result += term.getTermX(i);
                 }
             }
             return result + ')';
         }
         else{
-            for(int i = 0; i<term.getArity(); i++){
-                if(i > 0 && !(term.getTerms(i).isEmptyList())){
+            for(int i = 0; i<term.size(); i++){
+                if(i > 0 && !(term.getTermX(i).isEmptyList())){
                     result+=",";
                 }
-                if((term.getTerms(i)).isCompound() && !(term.getTerms(i).isList())){
-                    result += create_string(options,(Struct)term.getTerms(i));
+                if((term.getTermX(i)).isCompound() && !(term.getTermX(i).isList())){
+                    result += create_string(options,(Struct)term.getTermX(i));
                 }
                 else{
                     //costruito cosi' per un problema di rappresentazione delle []
-                    if((term.getTerms(i).isList()) && !(term.getTerms(i).isEmptyList()))
-                        result+=print_list((Struct)term.getTerms(i),options);
+                    if((term.getTermX(i).isList()) && !(term.getTermX(i).isEmptyList()))
+                        result+=print_list((Struct)term.getTermX(i),options);
                     else{
-                        if(!(term.getTerms(i).isEmptyList()))
-                            result+= term.getTerms(i).toString();
+                        if(!(term.getTermX(i).isEmptyList()))
+                            result+= term.getTermX(i).toString();
                     }
                         
                 }
@@ -2017,12 +2017,12 @@ public class ISOIOLibrary extends Library{
                 //se mi viene passato un alias lo cerco e restituisco lo stream associato.
                 else if(currentElement2.getKey().equals("alias")){ 
                         Struct alias = (Struct)currentElement2.getValue();
-                    int arity = alias.getArity();
+                    int arity = alias.size();
                     //Ci posso essere anche piu' di un alias associti a quello stream, percio' devo controllare l'arita'
                     //della struttura che contiene tutti gli alias.
                     if(arity > 1){
-                        for(int k = 0; k< alias.getArity();k++){
-                            if((alias.getTerms(k)).equals(stream_or_alias)){
+                        for(int k = 0; k< alias.size();k++){
+                            if((alias.getTermX(k)).equals(stream_or_alias)){
                                 result = currentElement.getKey();
                                 flag =1;
                                 break;
@@ -2085,12 +2085,12 @@ public class ISOIOLibrary extends Library{
                 //se mi viene passato un alias lo cerco e restituisco lo stream associato.
                 else if(currentElement2.getKey().equals("alias")){ 
                         Struct alias = (Struct)currentElement2.getValue();
-                    int arity = alias.getArity();
+                    int arity = alias.size();
                     //Ci posso essere anche piu' di un alias associti a quello stream, percio' devo controllare l'arita'
                     //della struttura che contiene tutti gli alias.
                     if(arity > 1){
-                        for(int k = 0; k< alias.getArity();k++){
-                            if((alias.getTerms(k)).equals(stream_or_alias)){
+                        for(int k = 0; k< alias.size();k++){
+                            if((alias.getTermX(k)).equals(stream_or_alias)){
                                 result = currentElement.getKey();
                                 flag =1;
                                 break;

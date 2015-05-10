@@ -26,7 +26,7 @@ public class StageException extends Stage {
     }
 
     private void prologError(Engine.State e) {
-        PTerm errorTerm = e.currentContext.currentGoal.getTerms(0);
+        PTerm errorTerm = e.currentContext.currentGoal.getTermX(0);
         e.currentContext = e.currentContext.fatherCtx;
         if (e.currentContext == null) {
             // passo nello stato HALT se l?errore non pu? essere gestito (sono
@@ -39,7 +39,7 @@ public class StageException extends Stage {
             // subgoal catch/3 il cui secondo argomento unifica con l?argomento
             // dell?eccezione lanciata
             if (e.currentContext.currentGoal.match(catchTerm)
-                    && e.currentContext.currentGoal.getTerms(1).match(errorTerm)) {
+                    && e.currentContext.currentGoal.getTermX(1).match(errorTerm)) {
                 // ho identificato l?ExecutionContext con il corretto subgoal
                 // catch/3
 
@@ -50,7 +50,7 @@ public class StageException extends Stage {
                 // catch/3
                 List<Var> unifiedVars = e.currentContext.trailingVars
                         .getHead();
-                e.currentContext.currentGoal.getTerms(1).unify(unifiedVars,
+                e.currentContext.currentGoal.getTermX(1).unify(unifiedVars,
                         unifiedVars, errorTerm);
 
                 // inserisco il gestore dell?errore in testa alla lista dei
@@ -59,7 +59,7 @@ public class StageException extends Stage {
                 // l?esecuzione, mantenendo le sostituzioni effettuate durante
                 // il processo di unificazione tra l?argomento di throw/1 e il
                 // secondo argomento di catch/3
-                PTerm handlerTerm = e.currentContext.currentGoal.getTerms(2);
+                PTerm handlerTerm = e.currentContext.currentGoal.getTermX(2);
                 PTerm curHandlerTerm = handlerTerm.getTerm();
                 if (!(curHandlerTerm instanceof Struct)) {
                     e.nextState = c.END_FALSE;
@@ -96,7 +96,7 @@ public class StageException extends Stage {
     }
 
     private void javaException(Engine.State e) {
-        PTerm exceptionTerm = e.currentContext.currentGoal.getTerms(0);
+        PTerm exceptionTerm = e.currentContext.currentGoal.getTermX(0);
         e.currentContext = e.currentContext.fatherCtx;
         if (e.currentContext == null) {
             // passo nello stato HALT se l?errore non pu? essere gestito (sono
@@ -109,7 +109,7 @@ public class StageException extends Stage {
             // subgoal java_catch/3 che abbia un catcher unificabile con
             // l'argomento dell'eccezione lanciata
             if (e.currentContext.currentGoal.match(javaCatchTerm)
-                    && javaMatch(e.currentContext.currentGoal.getTerms(1),
+                    && javaMatch(e.currentContext.currentGoal.getTermX(1),
                             exceptionTerm)) {
                 // ho identificato l?ExecutionContext con il corretto subgoal
                 // java_catch/3
@@ -122,7 +122,7 @@ public class StageException extends Stage {
                 List<Var> unifiedVars = e.currentContext.trailingVars
                         .getHead();
                 PTerm handlerTerm = javaUnify(e.currentContext.currentGoal
-                        .getTerms(1), exceptionTerm, unifiedVars);
+                        .getTermX(1), exceptionTerm, unifiedVars);
                 if (handlerTerm == null) {
                     e.nextState = c.END_FALSE;
                     return;
@@ -138,7 +138,7 @@ public class StageException extends Stage {
                     e.nextState = c.END_FALSE;
                     return;
                 }
-                PTerm finallyTerm = e.currentContext.currentGoal.getTerms(2);
+                PTerm finallyTerm = e.currentContext.currentGoal.getTermX(2);
                 PTerm curFinallyTerm = finallyTerm.getTerm();
                 // verifico se c'? il blocco finally
                 boolean isFinally = true;
@@ -210,9 +210,9 @@ public class StageException extends Stage {
             Struct element = (Struct) nextTerm;
             if (!element.getName().equals(","))
                 continue;
-            if (element.getArity() != 2)
+            if (element.size() != 2)
                 continue;
-            if (element.getTerms(0).match(exceptionTerm)) {
+            if (element.getTermX(0).match(exceptionTerm)) {
                 return true;
             }
         }
@@ -231,12 +231,12 @@ public class StageException extends Stage {
             Struct element = (Struct) nextTerm;
             if (!element.getName().equals(","))
                 continue;
-            if (element.getArity() != 2)
+            if (element.size() != 2)
                 continue;
-            if (element.getTerms(0).match(exceptionTerm)) {
-                element.getTerms(0)
+            if (element.getTermX(0).match(exceptionTerm)) {
+                element.getTermX(0)
                         .unify(unifiedVars, unifiedVars, exceptionTerm);
-                return element.getTerms(1);
+                return element.getTermX(1);
             }
         }
         return null;

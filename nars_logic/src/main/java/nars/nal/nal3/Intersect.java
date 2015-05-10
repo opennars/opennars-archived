@@ -21,4 +21,6 @@ abstract public class Intersect extends DefaultCompound {
         return true;
     }
 
+    abstract public Intersect clone();
+
 }

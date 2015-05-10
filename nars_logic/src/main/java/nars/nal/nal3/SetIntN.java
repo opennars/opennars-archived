@@ -21,6 +21,7 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
+import nars.nal.term.BaseCompound;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
@@ -53,8 +54,8 @@ public class SetIntN extends AbstractSetN implements SetInt {
      * @return A new object, to be casted into a SetInt
      */
     @Override
-    public Compound clone() {
-        return SetInt.make(term);
+    public BaseCompound clone() {
+        return (BaseCompound)SetInt.make(getTerms());
     }
 
     @Override public Compound clone(Term[] replaced) {

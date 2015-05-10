@@ -363,7 +363,7 @@ public class Var implements PTerm {
      * @param vl TODO
      */
     private boolean occurCheck(final List<Var> vl, final Struct t) {
-        int arity = t.getArity();
+        int arity = t.size();
         for (int c = 0; c < arity; c++) {
             PTerm at = t.getTerm(c);
             if (at instanceof Struct) {
@@ -599,5 +599,10 @@ public class Var implements PTerm {
     @Override
     public short getComplexity() {
         return 1;
+    }
+
+    @Override
+    public void recurseSubterms(nars.nal.term.TermVisitor v, Term parent) {
+        //do nothing
     }
 }

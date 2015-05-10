@@ -16,17 +16,17 @@ public class JavaCollectionStoreFactory //implements ClauseStoreFactory
 		if (goal instanceof Struct)
 		{
 			Struct s = (Struct)goal;
-			if (s.getName().equals("collection_item") && s.getArity() == 2)
+			if (s.getName().equals("collection_item") && s.size() == 2)
 			{
 				try
 				{
 					JavaLibrary jl = (JavaLibrary)prolog.getLibraries().getLibrary("alice.tuprolog.lib.JavaLibrary");
-					PTerm collectionTerm = s.getTerms(0).getTerm();
+					PTerm collectionTerm = s.getTermX(0).getTerm();
 					Object obj = jl.getRegisteredDynamicObject((Struct)collectionTerm);
 					if (obj instanceof java.util.Collection)
 						return new CollectionItemsStore(prolog, 
 													    (java.util.Collection<?>)obj, 
-													    s.getTerms(1),
+													    s.getTermX(1),
 													    varList, 
 													    jl);				
 				}

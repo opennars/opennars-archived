@@ -60,7 +60,7 @@ public class Clause {
     public Clause(Struct clause_, String lib) {
         clause = clause_;
         head = extractHead(clause);
-        body = extractBody(clause.getTerms(1));
+        body = extractBody(clause.getTermX(1));
         libName = lib;
     }
 
@@ -73,7 +73,7 @@ public class Clause {
      * Gets a clause from a generic Term
      */
     private Struct extractHead(Struct clause) {
-        return (Struct)clause.getTerms(0);
+        return (Struct)clause.getTermX(0);
     }
     
     /**
@@ -87,13 +87,13 @@ public class Clause {
     
     private static void extractBody(SubGoalTree parent, PTerm body) {
         while (body instanceof Struct && ((Struct)body).getName().equals(",")) {
-            PTerm t = ((Struct)body).getTerms(0);
+            PTerm t = ((Struct)body).getTermX(0);
             if (t instanceof Struct && ((Struct)t).getName().equals(",")) {
                 extractBody(parent.addChild(),t);
             } else {
                 parent.addChild(t);
             }
-            body = ((Struct)body).getTerms(1);
+            body = ((Struct)body).getTermX(1);
         }
         parent.addChild(body);
     }
@@ -107,8 +107,8 @@ public class Clause {
     public String toString(Operators op) {
         int p;
         if ((p = op.opPrio(":-","xfx")) >= Operators.OP_LOW) {
-            String st=indentPredicatesAsArgX(clause.getTerms(1),op,p);
-            String head = clause.getTerms(0).toStringAsArgX(op,p);
+            String st=indentPredicatesAsArgX(clause.getTermX(1),op,p);
+            String head = clause.getTermX(0).toStringAsArgX(op,p);
             if (st.equals("true")) {
                 return head +".\n";
             } else {
@@ -117,8 +117,8 @@ public class Clause {
         }
         
         if ((p = op.opPrio(":-","yfx")) >= Operators.OP_LOW) {
-            String st=indentPredicatesAsArgX(clause.getTerms(1),op,p);
-            String head = clause.getTerms(0).toStringAsArgY(op,p);
+            String st=indentPredicatesAsArgX(clause.getTermX(1),op,p);
+            String head = clause.getTermX(0).toStringAsArgY(op,p);
             if (st.equals("true")) {
                 return head +".\n";
             } else {
@@ -127,8 +127,8 @@ public class Clause {
         }
         
         if ((p = op.opPrio(":-","xfy")) >= Operators.OP_LOW) {
-            String st=indentPredicatesAsArgY(clause.getTerms(1),op,p);
-            String head = clause.getTerms(0).toStringAsArgX(op,p);
+            String st=indentPredicatesAsArgY(clause.getTermX(1),op,p);
+            String head = clause.getTermX(0).toStringAsArgX(op,p);
             if (st.equals("true")) {
                 return head +".\n";
             } else {
@@ -211,16 +211,16 @@ public class Clause {
      */
     public String toString() {
         // default prio: xfx
-        String st=indentPredicates(clause.getTerms(1));
+        String st=indentPredicates(clause.getTermX(1));
         //return ( clause.getTerms(0).toString() + " :- "+st+".\n");
-        return ( clause.getTerms(0).toString() + " :- "+clause.getTerms(1)+".\n");
+        return ( clause.getTermX(0).toString() + " :- "+clause.getTermX(1)+".\n");
     }
     
     static private String indentPredicates(PTerm t) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")){
-                return co.getTerms(0).toString()+", \t"+indentPredicates(co.getTerms(1));
+                return co.getTermX(0).toString()+", \t"+indentPredicates(co.getTermX(1));
             } else {
                 return t.toString();
             }
@@ -265,9 +265,9 @@ public class Clause {
             if (co.getName().equals(",")) {
                int prio = op.opPrio(",","xfy");
                StringBuilder sb = new StringBuilder(prio >= p ? "(" : "");
-               sb.append(co.getTerms(0).toStringAsArgX(op,prio));
+               sb.append(co.getTermX(0).toStringAsArgX(op,prio));
                sb.append(",\n\t");
-               sb.append(indentPredicatesAsArgY(co.getTerms(1),op,prio));
+               sb.append(indentPredicatesAsArgY(co.getTermX(1),op,prio));
                if (prio >= p) sb.append(')');
 
                return sb.toString();
@@ -286,9 +286,9 @@ public class Clause {
             if (co.getName().equals(",")) {
                int prio = op.opPrio(",","xfy");
                StringBuilder sb = new StringBuilder(prio > p ? "(" : "");
-               sb.append(co.getTerms(0).toStringAsArgX(op,prio));
+               sb.append(co.getTermX(0).toStringAsArgX(op,prio));
                sb.append(",\n\t");
-               sb.append(indentPredicatesAsArgY(co.getTerms(1),op,prio));
+               sb.append(indentPredicatesAsArgY(co.getTermX(1),op,prio));
                if (prio > p) sb.append(')');
 
                return sb.toString();

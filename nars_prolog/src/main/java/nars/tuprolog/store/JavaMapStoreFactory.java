@@ -16,15 +16,15 @@ public class JavaMapStoreFactory //implements ClauseStoreFactory
 		if (goal instanceof Struct)
 		{
 			Struct s = (Struct)goal;
-			if (s.getName().equals("map_entry") && s.getArity() == 3)
+			if (s.getName().equals("map_entry") && s.size() == 3)
 			{
 				try
 				{
 					JavaLibrary jl = (JavaLibrary)prolog.getLibraries().getLibrary("alice.tuprolog.lib.JavaLibrary");
-					PTerm mapTerm = s.getTerms(0).getTerm();
+					PTerm mapTerm = s.getTermX(0).getTerm();
 					Object obj = jl.getRegisteredDynamicObject((Struct)mapTerm);
 					if (obj instanceof java.util.Map)
-						return new MapEntriesStore(prolog, (java.util.Map<?,?>)obj, s.getTerms(1), s.getTerms(2), varList, jl);
+						return new MapEntriesStore(prolog, (java.util.Map<?,?>)obj, s.getTermX(1), s.getTermX(2), varList, jl);
 				}
 				catch (Exception ex) 
 				{ 

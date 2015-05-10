@@ -488,7 +488,7 @@ public class RuleTables {
         
         Compound condition = (Compound) conditional.getSubject();
         
-        Term component = condition.term[index];
+        Term component = condition.getTerm(index);
         Term component2 = null;
         if (statement instanceof Inheritance) {
             component2 = statement;
@@ -530,8 +530,9 @@ public class RuleTables {
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                if (compound.term[0] instanceof Compound)
-                    return StructuralRules.transformNegation((Compound)compound.term[0], nal);
+                Term cf = compound.first();
+                if (cf instanceof Compound)
+                    return StructuralRules.transformNegation((Compound)cf, nal);
             } else {
                 return StructuralRules.transformNegation(compound, nal);
             }
@@ -569,10 +570,10 @@ public class RuleTables {
      */
     public static void compoundAndStatement(Compound compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {
         
-        if(index>=compound.term.length) {
-            throw new RuntimeException(index + " index out of bounds for compound " + compound + "( " + compound.getClass() + " = " + Arrays.toString(compound.term) + ") in compoundAndStatement with statement=" + statement);
+        if(index>=compound.size()) {
+            throw new RuntimeException(index + " index out of bounds for compound " + compound + "( " + compound.getClass() + " = " + (compound) + ") in compoundAndStatement with statement=" + statement);
         }
-        Term component = compound.term[index];
+        Term component = compound.getTerm(index);
         
         Task task = nal.getCurrentTask();
         if (Statement.Terms.equalType(component, statement, true)) {

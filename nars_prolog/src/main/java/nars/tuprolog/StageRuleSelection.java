@@ -87,7 +87,7 @@ public class StageRuleSelection extends Stage {
             int depth = alternative.executionContext.depth;
             ec.choicePointAfterCut = choicePoint.prevChoicePointContext;
             Struct currentGoal = choicePoint.executionContext.currentGoal;
-            while (currentGoal.getName().equals(";") && currentGoal.getArity() == 2) {
+            while (currentGoal.getName().equals(";") && currentGoal.size() == 2) {
                 if (choicePoint.prevChoicePointContext != null) {
                     int distance = depth - choicePoint.prevChoicePointContext.executionContext.depth;
                     while (distance == 0 && choicePoint.prevChoicePointContext != null) {

@@ -391,8 +391,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         }
 
         
-       @Override  protected void init(Term[] components) {
-        }    
+
     }
     
     public Cause newImplicationEdge(final Term source, final Term target, Item i, final Sentence parent) {

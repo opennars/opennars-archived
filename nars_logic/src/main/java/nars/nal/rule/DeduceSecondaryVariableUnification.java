@@ -193,10 +193,10 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((Compound) first).term;
+
             Term secterm_unwrap = unwrapNegation(secterm);
 
-            for (final Term T1 : components_level1) {
+            for (final Term T1 : (Compound)first) {
                 Term T1_unwrap = unwrapNegation(T1);
                 Values.clear(); //we are only interested in first variables
 
@@ -230,9 +230,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 }
 
                 if (T1_unwrap instanceof Compound) {
-                    Term[] components_level2 = ((Compound) T1_unwrap).term;
 
-                    for (final Term T2 : components_level2) {
+                    for (final Term T2 : ((Compound) T1_unwrap)) {
                         Term T2_unwrap = unwrapNegation(T2);
 
                         Values.clear(); //we are only interested in first variables

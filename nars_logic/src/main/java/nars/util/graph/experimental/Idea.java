@@ -24,6 +24,8 @@ import nars.nal.term.Termed;
 
 import java.util.*;
 
+import static nars.nal.term.Compound.toSortedSet;
+
 /**
  *each of those rows can be a representation of something like a 'multiconcept' or 'aggregated concept' which combines concept data from related concepts
 and tasks where the only differ by the top-level operate, tense, freq, conf,etc
@@ -46,7 +48,7 @@ public class Idea implements Iterable<Concept> {
             
             if (!ct.isCommutative()) {
                 //if not commutative (order matters): key = list of subterms
-                String s = Arrays.toString(ct.term).replaceFirst("\\[", "(");
+                String s = ct.toString(); //Arrays.toString(ct.term).replaceFirst("\\[", "(");
                 
                 if (ct instanceof Image) {
                     int index = ((Image)ct).relationIndex;
@@ -57,7 +59,7 @@ public class Idea implements Iterable<Concept> {
             }            
             else {
                 //key = sorted set of subterms
-                return Statement.Terms.toSortedSet(ct.term).toString();
+                return toSortedSet(ct).toString();
             }
         }
         else {
@@ -99,7 +101,7 @@ public class Idea implements Iterable<Concept> {
     public int getArity() {        
         Term sampleTerm = getSampleTerm();
         if (sampleTerm instanceof Compound) {
-            return ((Compound)sampleTerm).term.length;
+            return ((Compound)sampleTerm).size();
         }
         return 1;
     }

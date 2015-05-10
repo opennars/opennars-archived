@@ -264,7 +264,7 @@ public class Operation extends Inheritance {
             Term[] r = new Term[ct.size()];
             boolean modified = false;
             int j = 0;
-            for (final Term w : ct.term) {
+            for (final Term w : ct) {
                 Term v = evaluate(m, w);
                 if ((v!=null) && (v!=w)) {
                     r[j] = v;
@@ -285,7 +285,7 @@ public class Operation extends Inheritance {
 
     /** produces a cloned instance with the replaced args + additional terms in a new argument product */
     public Operation cloneWithArguments(Term[] args, Term... additional) {
-        return (Operation)setComponent(0, Product.make(args, additional));
+        return (Operation) setTermInClone(0, Product.make(args, additional));
     }
 
     /** returns a reference to the raw arguments as contained by the Product subject of this operation */

@@ -18,26 +18,21 @@ package nars.core;
 
 import nars.Global;
 import nars.NAR;
-import nars.narsese.InvalidInputException;
+import nars.model.impl.Default;
 import nars.nal.NALOperator;
-import nars.nal.term.Statement;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.model.impl.Default;
+import nars.nal.term.*;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 
 import java.util.TreeSet;
 
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -85,11 +80,11 @@ public class TermTest {
         Term b = n.term("b");
         Term c = n.term("c");
 
-        assertEquals(3, Statement.Terms.toSortedSetArray(a, b, c).length);
-        assertEquals(2, Statement.Terms.toSortedSetArray(a, b, b).length);
-        assertEquals(1, Statement.Terms.toSortedSetArray(a, a).length);
-        assertEquals(1, Statement.Terms.toSortedSetArray(a).length);
-        assertEquals("correct natural ordering", a, Statement.Terms.toSortedSetArray(a, b)[0]);
+        assertEquals(3, Compound.toSortedSetArray(a, b, c).length);
+        assertEquals(2, Compound.toSortedSetArray(a, b, b).length);
+        assertEquals(1, Compound.toSortedSetArray(a, a).length);
+        assertEquals(1, Compound.toSortedSetArray(a).length);
+        assertEquals("correct natural ordering", a, Compound.toSortedSetArray(a, b)[0]);
     }    
     
     @Test
@@ -164,7 +159,7 @@ public class TermTest {
        Compound cterm2 = ((Compound)term2);
 
        //test subterms
-       assertTrue(cterm1.term[0].equals(cterm2.term[0])); //'a'
+       assertTrue(cterm1.getTerm(0).equals(cterm2.getTerm(0))); //'a'
 
     }
     
@@ -267,8 +262,8 @@ public class TermTest {
             Compound forced = (Compound) n.term("<a --> b>");
             assertTrue(true);
             
-            forced.term[0] = subj;
-            forced.term[1] = pred;
+            forced.replaceTerm(0, subj);
+            forced.replaceTerm(1, pred);
             forced.invalidate();
             
             assertEquals(t, forced.toString());
@@ -327,7 +322,7 @@ public class TermTest {
         NAR n = new NAR(new Default());
         n.input(term + ".");
         n.run(1);
-        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).term).nameCached());
+        assertNull("term name string was internally generated although it need not have been", ((BaseCompound) n.concept(term).term).nameCached());
     }
 
     @Test public void avoidsNameConstructionUnlessOutputInheritance() {

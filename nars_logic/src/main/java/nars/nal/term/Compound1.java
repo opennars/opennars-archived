@@ -1,7 +1,7 @@
 package nars.nal.term;
 
 /** an optimized compound implementation for use when only 1 subterm */
-abstract public class Compound1 extends Compound {
+abstract public class Compound1 extends BaseCompound {
 
     byte[] name = null;
     int hash;
@@ -32,7 +32,7 @@ abstract public class Compound1 extends Compound {
 
 
     @Override
-    protected void init(Term[] term) {
+    public void init(Term[] term) {
         super.init(term);
 
         if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()

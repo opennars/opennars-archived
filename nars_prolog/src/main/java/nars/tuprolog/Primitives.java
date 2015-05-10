@@ -141,16 +141,16 @@ public class Primitives /*Castagna 06/2011*/implements IPrimitives/**/{
         }
         Struct t = (Struct) term;
         
-        int arity = t.getArity();
+        int arity = t.size();
         String name = t.getName();
         //------------------------------------------
         if (name.equals(",") || name.equals("':-'") || name.equals(":-")) {
             for (int c = 0; c < arity; c++) {
-                identify( t.getTerms(c), PrimitiveInfo.PREDICATE);
+                identify( t.getTermX(c), PrimitiveInfo.PREDICATE);
             }
         } else {
             for (int c = 0; c < arity; c++) {
-                identify( t.getTerms(c), PrimitiveInfo.FUNCTOR);
+                identify( t.getTermX(c), PrimitiveInfo.FUNCTOR);
             }                        
         }
         //------------------------------------------

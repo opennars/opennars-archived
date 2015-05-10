@@ -28,6 +28,7 @@ abstract public class Image extends DefaultCompound {
         init(components);
     }
 
+    abstract public Image clone();
 
 //    @Override
 //    public boolean equals2(final CompoundTerm other) {

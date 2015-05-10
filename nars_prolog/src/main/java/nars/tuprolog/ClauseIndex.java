@@ -131,12 +131,12 @@ public class ClauseIndex extends ArrayList<Clause> {
 			 * If no arguments no optimization can be applied
 			 * (and probably no optimization is needed)
 			 */
-			if(g.getArity() == 0){
+			if(g.size() == 0){
 				return iterator();
 			}
 
 			/* Retrieves first argument and checks type */
-			PTerm t = g.getTerms(0).getTerm();
+			PTerm t = g.getTermX(0).getTerm();
 			if(t instanceof Var){
 				/*
 				 * if first argument is an unbounded variable,
@@ -203,7 +203,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 		 * A list can be an empty list, or a Struct with name equals to "."
 		 * and arity equals to 2.
 		 */
-		return t.isEmptyList() || (t.getName().equals(".") && t.getArity() == 2);
+		return t.isEmptyList() || (t.getName().equals(".") && t.size() == 2);
 
 	}
 
@@ -214,11 +214,11 @@ public class ClauseIndex extends ArrayList<Clause> {
 		if(clause instanceof Struct){
 			Struct g = (Struct) clause.getTerm();
 
-			if(g.getArity() == 0){
+			if(g.size() == 0){
 				return;
 			}
 
-			PTerm t = g.getTerms(0).getTerm();
+			PTerm t = g.getTermX(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.insertAsShared(ci, first);
 				constantCompClausesIndex.insertAsShared(ci, first);
@@ -255,11 +255,11 @@ public class ClauseIndex extends ArrayList<Clause> {
 		if(clause instanceof Struct){
 			Struct g = (Struct) clause.getTerm();
 
-			if(g.getArity() == 0){
+			if(g.size() == 0){
 				return;
 			}
 
-			PTerm t = g.getTerms(0).getTerm();
+			PTerm t = g.getTermX(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.removeShared(ci);
 				constantCompClausesIndex.removeShared(ci);

@@ -21,13 +21,17 @@
 package nars.nal.term;
 
 
+import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Named;
+import nars.nal.Sentence;
 import nars.nal.nal7.TemporalRules;
+import nars.util.data.sorted.SortedList;
 
 import java.io.Serializable;
+import java.util.*;
 
 public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed, Serializable {
 
@@ -39,6 +43,14 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     public NALOperator operator();
 
     public short getComplexity();
+
+    default public boolean isAtom() {
+        return (getComplexity()==1);
+    }
+
+    default public boolean isEmpty() {
+        return getComplexity() == 0;
+    }
 
     public void recurseSubterms(final TermVisitor v, Term parent);
 
@@ -61,8 +73,8 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     default public boolean isNormalized() { return false; }
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
-    default public Term normalized() {
-        return this;
+    default public <T extends Term> T normalized() {
+        return (T)this;
     }
 
 
@@ -79,7 +91,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         return this;
     }
 
-
+    default public boolean isList() { return false; }
 
     default public boolean isExecutable(final Memory mem) {
         return false;
@@ -151,6 +163,36 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
 
         return true;
     }
+
+
+
+
+    public static boolean levelValid(Term t, int nal) {
+        NALOperator o = t.operator();
+        int minLevel = o.level;
+        if (minLevel > 0) {
+            if (nal < minLevel)
+                return false;
+        }
+        if (t instanceof Compound) {
+            Compound tt= (Compound)t;
+            int sz = tt.size();
+            for (int j = 0; j < sz; j++) {
+                if (!levelValid(tt.getTerm(j), nal))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean levelValid(Sentence sentence, int nal) {
+        if (nal >= 8) return true;
+
+        Term t = sentence.getTerm();
+        if (!sentence.isEternal() && nal < 7) return false;
+        return levelValid(t, nal);
+    }
+
 
 }
 

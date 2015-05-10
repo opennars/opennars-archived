@@ -46,12 +46,12 @@ class ClausesFilter {
             Struct g = (Struct) goal.getTerm();
 
             /* If no arguments no optimization can be applied */
-            if(g.getArity() < 2){
+            if(g.size() < 2){
                 return returnAllClauses(familyClauses);
             }
 
             /* Retrieves first argument and checks type */
-            PTerm t = g.getTerms(1).getTerm();
+            PTerm t = g.getTermX(1).getTerm();
             if(t instanceof Var){
                 /* 
                  * if first argument is an unbounded variable,
@@ -99,7 +99,7 @@ class ClausesFilter {
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            PTerm arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTermX(0).getTerm();
 
             if((arg instanceof Var) ||
                     (arg instanceof PNum && arg.isEqual(t))){
@@ -127,7 +127,7 @@ class ClausesFilter {
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            PTerm arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTermX(0).getTerm();
 
             if(arg instanceof Var ||
                     ((Struct) arg).getPredicateIndicator().equals(predIndicator)){
@@ -153,7 +153,7 @@ class ClausesFilter {
          */
         if(t instanceof Struct){
             Struct s = (Struct) t;
-            return s.isEmptyList() || (s.getName().equals(".") && s.getArity() == 2);
+            return s.isEmptyList() || (s.getName().equals(".") && s.size() == 2);
         }
 
         return false;
@@ -170,7 +170,7 @@ class ClausesFilter {
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            PTerm arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTermX(0).getTerm();
 
             if(arg instanceof Var || isAList(arg)){
                 OneWayList<Clause> l = new OneWayList<>(clause, null);
@@ -197,7 +197,7 @@ class ClausesFilter {
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            PTerm arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTermX(0).getTerm();
 
             if(arg instanceof Var || arg.isAtomic()){
                 OneWayList<Clause> l = new OneWayList<>(clause, null);

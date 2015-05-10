@@ -93,7 +93,7 @@ public class Inheritance extends Statement {
         boolean predicateOperator = predicate instanceof Operator;
 
         if (subjectProduct && predicateOperator) {
-            return Operation.make((Operator) predicate, ((Compound) subject).term);
+            return Operation.make((Operator) predicate, ((Compound) subject).getTerms());
         } else {            
             return new Inheritance(subject, predicate);
         }

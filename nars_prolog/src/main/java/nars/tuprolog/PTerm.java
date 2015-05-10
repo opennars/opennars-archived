@@ -17,6 +17,7 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
 import nars.tuprolog.util.OneWayList;
 import nars.util.data.Utf8;
 
@@ -269,7 +270,11 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      * @param varsUnifiedArg2 Vars unified in term t
      */
     public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, PTerm t);
-    
+
+    /** default handler to disable unification with non-PTerm */
+    default public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
+        return false;
+    }
     
     /**
      * Static service to create a Term from a string.
@@ -369,10 +374,6 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
     /**/
 
 
-    @Override
-    default public void recurseSubterms(nars.nal.term.TermVisitor v, nars.nal.term.Term parent) {
-        //TODO
-    }
 
     @Override
     default public boolean isConstant() {

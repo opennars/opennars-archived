@@ -39,22 +39,6 @@ abstract public class DefaultCompound extends BaseCompound {
         return false;
     }
 
-    @Override
-    public int compareSubterms(final Compound otherCompoundOfEqualType) {
-        DefaultCompound o = ((DefaultCompound) otherCompoundOfEqualType);
-        int h = Integer.compare(hashCode(), o.hashCode());
-        if (h == 0) {
-            byte[] n1 = name();
-            byte[] n2 = o.name();
-            int c = Utf8.compare(n1, n2);
-            if ((c == 0) && (n1!=n2)) {
-                //equal string, ensure that the same byte[] instance is shared to accelerate equality comparison
-                share(o);
-            }
-            return c;
-        }
-        return h;
-    }
 
     protected void share(DefaultCompound equivalent) {
         super.share(equivalent);

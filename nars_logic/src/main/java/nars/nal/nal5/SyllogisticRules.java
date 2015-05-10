@@ -291,9 +291,9 @@ public final class SyllogisticRules {
 
         final Compound content;
         if ((side == 0) && term.equals(subject)) {
-            content = Statement.Terms.compoundOrNull(predicate);
+            content = Compound.compoundOrNull(predicate);
         } else if ((side == 1) && term.equals(predicate)) {
-            content = Statement.Terms.compoundOrNull(subject);
+            content = Compound.compoundOrNull(subject);
         } else
             return;
 
@@ -421,7 +421,7 @@ public final class SyllogisticRules {
         final Conjunction oldCondition = (Conjunction) subj;
 
         
-        int index2 = Statement.Terms.indexOf(oldCondition.term, commonComponent);
+        int index2 = Compound.indexOf(oldCondition.term, commonComponent);
         if (index2 >= 0) {
             index = (short) index2;
         } else {
@@ -433,11 +433,11 @@ public final class SyllogisticRules {
             
                 Compound compoundCommonComponent = ((Compound) commonComponent);
                 
-                if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index)) { // assumption: { was missing
+                if ((oldCondition.term.length > index) && (compoundCommonComponent.size() > index)) { // assumption: { was missing
                     u = new Term[] { premise1, premise2 };
                     match = Variables.unify(Symbols.VAR_INDEPENDENT, 
                             oldCondition.term[index], 
-                            compoundCommonComponent.term[index], 
+                            compoundCommonComponent.getTerm(index),
                             u);
                     premise1 = (Implication) u[0]; premise2 = u[1];
                 }
@@ -463,7 +463,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = oldCondition.setComponent(index, newComponent);
+            newCondition = oldCondition.setTermInClone(index, newComponent);
         }
         final Term content;
         
@@ -474,10 +474,10 @@ public final class SyllogisticRules {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
                  delta = ((Interval) newCondition).cycles(duration);
-             } else if ((newCondition instanceof Conjunction) && (((Compound) newCondition).term[0] instanceof Interval)) {
-                 Interval interval = (Interval) ((Compound) newCondition).term[0];
+             } else if ((newCondition instanceof Conjunction) && (((Compound) newCondition).getTerm(0) instanceof Interval)) {
+                 Interval interval = (Interval) ((Compound) newCondition).getTerm(0);
                  delta = interval.cycles(duration);
-                 newCondition = ((Compound)newCondition).setComponent(0, null);
+                 newCondition = ((Compound)newCondition).setTermInClone(0, null);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              } else {
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
@@ -587,7 +587,7 @@ public final class SyllogisticRules {
         
         if (!match && (Statement.Terms.equalType(commonComponent, oldCondition))) {
             u = new Term[] { premise1, premise2 };
-            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u);
+            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).getTerm(index), u);
             premise1 = (Equivalence) u[0]; premise2 = u[1];
         }
         if (!match) {
@@ -609,7 +609,7 @@ public final class SyllogisticRules {
         if (oldCondition.equals(commonComponent)) {
             newCondition = null;
         } else {
-            newCondition = oldCondition.setComponent(index, newComponent);
+            newCondition = oldCondition.setTermInClone(index, newComponent);
         }
         final Compound content;
         if (newCondition != null) {

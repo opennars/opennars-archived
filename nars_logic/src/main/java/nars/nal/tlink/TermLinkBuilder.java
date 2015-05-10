@@ -76,11 +76,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         boolean tImplication = (t instanceof Implication);
 
 
-        for (short i = 0; i < t.term.length; ) {
-            Term ti = t.term[i].normalized();
+        int sz = size();
+        for (short i = 0; i < sz; ) {
+            Term ti = t.getTerm(i).normalized();
 
             if (ti == null) {
-                throw new RuntimeException("prepareComponentLinks: " + t.term[i] + " normalized to null in superterm " + t);
+                throw new RuntimeException("prepareComponentLinks: " + ti + " normalized to null in superterm " + t);
             }
 
             if (ti.isConstant()) {
@@ -95,9 +96,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                 boolean t1ProductOrImage = (ti instanceof Product) || (ti instanceof Image);
 
-                final short tiSize = (short)cti.term.length;
+                final short tiSize = (short)cti.size();
                 for (short j = 0; j < tiSize; ) {
-                    Term tj = cti.term[j].normalized();
+                    Term tj = cti.getTerm(j).normalized();
 
                     if (tj.isConstant()) {
                         TermLinkTemplate a;
@@ -117,9 +118,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                     if ((tj instanceof Product) || (tj instanceof Image)) {
                         Compound ctj = (Compound)tj;
 
-                        final short tjSize = (short) ctj.term.length;
+                        final short tjSize = (short) ctj.size();
                         for (short k = 0; k < tjSize; ) {
-                            final Term tk = ctj.term[k].normalized();
+                            final Term tk = ctj.getTerm(k).normalized();
 
                             if (tk.isConstant()) {
                                 TermLinkTemplate b;

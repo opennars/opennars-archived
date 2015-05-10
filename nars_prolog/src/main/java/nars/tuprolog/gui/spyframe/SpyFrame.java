@@ -65,7 +65,7 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener {
                         }
                     }
                     if (":-".equals(name))
-                        sub.add(0, i + 1 < levels ? eclist.get(i + 1).getCurrentGoal() : s.getTerms(0));
+                        sub.add(0, i + 1 < levels ? eclist.get(i + 1).getCurrentGoal() : s.getTermX(0));
                     else if (",".equals(name)) name = " ";//don't want to build the ,-tree
                     else name = null;//indicates that we have a normal compound
                     int pos = sub.indexOf(ec.getCurrentGoal());

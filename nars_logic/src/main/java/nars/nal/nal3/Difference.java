@@ -11,4 +11,7 @@ abstract public class Difference extends DefaultCompound {
     public Difference(Term[] arg) {
         super(arg);
     }
+
+
+    abstract public Difference clone();
 }

@@ -420,8 +420,8 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
                 Struct sel = (Struct) objId;
-                if (sel.getName().equals(".") && sel.getArity() == 2
-                        && method.getArity() == 1) {
+                if (sel.getName().equals(".") && sel.size() == 2
+                        && method.size() == 1) {
                     if (methodName.equals("set")) {
                         return java_set(sel.getTerm(0), sel.getTerm(1), method
                                 .getTerm(0));
@@ -481,10 +481,10 @@ public class JavaLibrary extends Library {
                 if (objId.isCompound()) {
                     Struct id = (Struct) objId;
 
-                    if (id.getArity() == 1 && id.getName().equals("class")) {
+                    if (id.size() == 1 && id.getName().equals("class")) {
                         try {
                             String clName = Tools
-                                    .removeApices(id.getTerms(0).toString());
+                                    .removeApices(id.getTermX(0).toString());
                             Class<?> cl = Class.forName(clName, true, dynamicLoader);
 
 //							Method m = cl.getMethod(methodName, args.getTypes());
@@ -700,8 +700,8 @@ public class JavaLibrary extends Library {
                 String clName = null;
 //            	String[] listOfPaths = null;
                 // Case: class(className)
-                if (((Struct) objId).getArity() == 1) {
-                    clName = Tools.removeApices(((Struct) objId).getTerms(0).toString());
+                if (((Struct) objId).size() == 1) {
+                    clName = Tools.removeApices(((Struct) objId).getTermX(0).toString());
                 }
 
                 /*
@@ -731,7 +731,7 @@ public class JavaLibrary extends Library {
                                         + " not found in class "
                                         + Tools
                                         .removeApices(((Struct) objId)
-                                                .getTerms(0).toString()));
+                                                .getTermX(0).toString()));
                         return false;
                     }
                     /*
@@ -806,9 +806,9 @@ public class JavaLibrary extends Library {
                 String clName = null;
 //            	String[] listOfPaths = null;
                 // Case: class(className)
-                if (((Struct) objId).getArity() == 1) {
+                if (((Struct) objId).size() == 1) {
                     clName = Tools.removeApices(((Struct) objId)
-                            .getTerms(0).toString());
+                            .getTermX(0).toString());
                 }
                 /*
                  * Deprecated in 2.8, see the manual.
@@ -838,7 +838,7 @@ public class JavaLibrary extends Library {
                                         + " not found in class "
                                         + Tools
                                         .removeApices(((Struct) objId)
-                                                .getTerms(0).toString()));
+                                                .getTermX(0).toString()));
                         return false;
                     }
                     /*
@@ -1183,9 +1183,9 @@ public class JavaLibrary extends Library {
      * creation of method signature from prolog data
      */
     private Signature parseArg(Struct method) {
-        Object[] values = new Object[method.getArity()];
-        Class<?>[] types = new Class[method.getArity()];
-        for (int i = 0; i < method.getArity(); i++) {
+        Object[] values = new Object[method.size()];
+        Class<?>[] types = new Class[method.size()];
+        for (int i = 0; i < method.size(); i++) {
             if (!parse_arg(values, types, i, method.getTerm(i))) {
                 return null;
             }

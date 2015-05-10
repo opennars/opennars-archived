@@ -123,7 +123,7 @@ public class Theory implements Serializable, PrologTermIterator {
                 clauseList = otherClauseList;
             else {
                 Struct p = clauseList, q;
-                while (!(q = (Struct) p.getTerms(1)).isEmptyList())
+                while (!(q = (Struct) p.getTermX(1)).isEmptyList())
                     p = q;
                 p.setTerm(1, otherClauseList);
             }

@@ -62,6 +62,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import static nars.nal.concept.Concept.*;
+import static nars.nal.term.Term.levelValid;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -447,7 +448,7 @@ public class Memory implements Serializable {
      */
     public Concept concept(Term t) {
         if (!t.isNormalized()) {
-            t = ((Compound)t).cloneNormalized();
+            t = ((Compound)t).normalized();
             if (t == null) return null;
         }
         return concepts.concept(t);
@@ -658,7 +659,7 @@ public class Memory implements Serializable {
             t.mulPriority( inputPriorityFactor );
 
 
-        if (!Statement.Terms.levelValid(t.sentence, nal())) {
+        if (!levelValid(t.sentence, nal())) {
             removed(t, "Insufficient NAL level");
             return false;
         }

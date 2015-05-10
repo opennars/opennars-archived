@@ -20,9 +20,13 @@
  */
 package nars.nal.term;
 
+import com.google.common.collect.Iterables;
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.nal.NALOperator;
+import nars.util.data.Utf8;
+import nars.util.data.sorted.SortedList;
 import nars.util.utf8.ByteBuf;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -31,6 +35,9 @@ import java.util.*;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
+import static nars.nal.term.Compound.contains;
+import static nars.nal.term.Compound.containsAll;
+import static nars.nal.term.Compound.toSortedSetArray;
 
 /** a compound term */
 public interface Compound extends Term, Iterable<Term>, IPair {
@@ -121,29 +128,67 @@ public interface Compound extends Term, Iterable<Term>, IPair {
 //        return n.toString();
     }
 
+
+    /**
+     * Clone the component list
+     *
+     * @return The cloned component list
+     */
+    default public Term[] cloneTerms(final Term... additional) {
+        return Compound.cloneTermsAppend(this, additional);
+    }
+
+    /** by default, creates a collection for the subterms.
+     * however a subclass which stores terms as an array may provide
+     * a reference to the copy, in other words, getting a
+     * cloned copy is not guaranteed here.    */
+    default public Term[] getTerms() {
+        return Iterables.toArray(this, Term.class);
+    }
+
+    /** clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step */
+    default public Compound cloneVariablesDeep() {
+        return (Compound) clone(cloneVariableTermsDeep());
+    }
+
+    default public Term[] cloneVariableTermsDeep() {
+        Term[] l = new Term[size()];
+        for (int i = 0; i < l.length; i++) {
+            Term t = getTerm(i);
+
+            if ((!(t instanceof Variable)) && (t.hasVar())) {
+                t = t.cloneDeep();
+            }
+
+            //else it is an atomic term or a compoundterm with no variables, so use as-is:
+            l[i] = t;
+        }
+        return l;
+    }
+
     /**
      * Deep clone an array list of terms
      *
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static Term[] cloneTermsAppend(final Term[] original, final Term[] additional) {
+    public static Term[] cloneTermsAppend(final Compound original, final Term[] additional) {
         if (original == null) {
             return null;
         }
 
-        int L = original.length + additional.length;
+        int L = original.size() + additional.length;
         if (L == 0)
-            return original;
+            return original.getTerms();
 
         //TODO apply preventUnnecessaryDeepCopy to more cases
 
         final Term[] arr = new Term[L];
 
         int j = 0;
-        Term[] srcArray = original;
+        Term[] srcArray = original.getTerms();
         for (int i = 0; i < L; i++) {
-            if (i == original.length) {
+            if (i == srcArray.length) {
                 srcArray = additional;
                 j = 0;
             }
@@ -175,8 +220,13 @@ public interface Compound extends Term, Iterable<Term>, IPair {
     Term getTerm(int subterm);
 
     /** returns the normalized form of this compound, or this compound itself if it doesn't need normalized */
-    default public Compound normalized() {
-        return this;
+    default public <T extends Term> T normalized() {
+        return (T)this;
+    }
+
+    /** sets whether the term is normalized. if a term will always be normalized this function will not be called */
+    default void setNormalized() {
+
     }
 
 
@@ -189,8 +239,8 @@ public interface Compound extends Term, Iterable<Term>, IPair {
     void share(Compound equivalent);
 
 
-    /** compares only the contents of the subterms; assume that the other term is of the same operator type */
-    abstract public int compareSubterms(final Compound otherCompoundOfEqualType);
+
+
 
     @Override
     abstract public boolean equals(final Object that);
@@ -216,6 +266,24 @@ public interface Compound extends Term, Iterable<Term>, IPair {
             }
         }
     }
+
+
+    /** compares only the contents of the subterms; assume that the other term is of the same operator type */   default public int compareSubterms(final Compound otherCompoundOfEqualType) {
+        DefaultCompound o = ((DefaultCompound) otherCompoundOfEqualType);
+        int h = Integer.compare(hashCode(), o.hashCode());
+        if (h == 0) {
+            byte[] n1 = name();
+            byte[] n2 = o.name();
+            int c = Utf8.compare(n1, n2);
+            if ((c == 0) && (n1!=n2)) {
+                //equal string, ensure that the same byte[] instance is shared to accelerate equality comparison
+                share(o);
+            }
+            return c;
+        }
+        return h;
+    }
+
 
     /** extracts a subterm provided by the index tuple
      *  returns null if specified subterm does not exist
@@ -254,7 +322,6 @@ public interface Compound extends Term, Iterable<Term>, IPair {
     } */
 
 
-    boolean subjectOrPredicateIsIndependentVar();
 
     /**
      * call after changing Term[] contents: recalculates variables and complexity
@@ -328,7 +395,16 @@ public interface Compound extends Term, Iterable<Term>, IPair {
      */
     public int size();
 
-
+    /**
+     * true if equal operate and all terms contained
+     */
+    default public boolean containsAllTermsOf(final Term t) {
+        if (Statement.Terms.equalType(this, t)) {
+            return containsAll(this, ((BaseCompound) t).term);
+        } else {
+            return contains(this, t);
+        }
+    }
 
 
     default public boolean isConstant() {
@@ -525,10 +601,50 @@ public interface Compound extends Term, Iterable<Term>, IPair {
 //    }
 
 
-    default public Object first() {
+    default public Term first() {
         return getTerm(0);
     }
 
+
+
+    default public void addTermsTo(final Collection<Term> c) {
+        Iterables.addAll(c, this);
+    }
+
+    /**
+     * creates a new ArrayList of the subterms
+     */
+    default public List<Term> asTermList() {
+        List<Term> l = new ArrayList(size());
+        addTermsTo(l);
+        return l;
+    }
+
+    /**
+     * Cloned array of Terms, except for one or more Terms.
+     *
+     * @param toRemove
+     * @return the cloned array with the missing terms removed, OR null if no terms were actually removed when requireModification=true
+     */
+    default public Term[] cloneTermsExcept(final boolean requireModification, final Iterable<Term> toRemove) {
+        //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
+
+        List<Term> l = asTermList();
+        boolean removed = false;
+
+        for (final Term t : toRemove) {
+            if (l.remove(t))
+                removed = true;
+        }
+        if ((!removed) && (requireModification))
+            return null;
+
+        return l.toArray(new Term[l.size()]);
+    }
+
+    default public Term[] cloneTermsExceptTerm(final boolean requireModification, Term termToRemove) {
+        return cloneTermsExcept(requireModification, Collections.singleton(termToRemove));
+    }
 
 
     /**
@@ -578,7 +694,299 @@ public interface Compound extends Term, Iterable<Term>, IPair {
         }
     }
 
+    //TODO move this to a utility method
+    public static <T> int indexOf(final T[] array, final T v) {
+        int i = 0;
+        for (final T e : array) {
+            if (v.equals(e)) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
 
+    /** compres a set of terms (assumed to be unique) with another set to find if their
+     * contents match. they can be in different order and still match.  this is useful for
+     * comparing whether compound terms in which order doesn't matter (ex: conjunction)
+     * are equivalent.
+     */
+    public static <T> boolean containsAll(final T[] container, final T[] content) {
+        for (final T x : content) {
+            if (!contains(container, x))
+                return false;
+        }
+        return true;
+    }
+    public static <T> boolean containsAll(Compound container, final T[] content) {
+        for (final T x : content)
+            if (!contains((Iterable)container, x))
+                return false;
+
+        return true;
+    }
+
+    /** a contains any of b  NOT TESTED YET */
+    public static boolean containsAny(final Term[] a, final Collection<Term> b) {
+        for (final Term bx : b)
+            if (contains(a, bx))
+                return true;
+
+        for (final Term ax : a)
+            if (ax instanceof Compound)
+                if (containsAny(((BaseCompound)ax).term, b)) //TODO write for other Compound types
+                    return true;
+
+        return false;
+    }
+
+    public static <T> boolean contains(final T[] container, final T v) {
+        for (final T e : container)
+            if (v.equals(e))
+                return true;
+        return false;
+    }
+
+    public static <T> boolean contains(Iterable<T> container, final T v) {
+        for (final T e : container)
+            if (v.equals(e))
+                return true;
+        return false;
+    }
+
+    public static boolean equals(final Term[] a, final Term[] b) {
+        if (a.length!=b.length) return false;
+        for (int i = 0; i < a.length; i++) {
+            if (!a[i].equals(b[i]))
+                return false;
+        }
+        return true;
+    }
+
+    public static void verifyNonNull(Collection t) {
+        for (Object o : t)
+            if (o == null)
+                throw new RuntimeException("Element null in: " + t);
+    }
+
+    public static void verifyNonNull(Term... t) {
+        for (Object o : t)
+            if (o == null)
+                throw new RuntimeException("Element null in: " + Arrays.toString(t));
+    }
+
+    public static Term[] verifySortedAndUnique(final Term[] arg, boolean allowSingleton) {
+        if (arg.length == 0) {
+            throw new RuntimeException("Needs >0 components");
+        }
+        if (!allowSingleton && (arg.length == 1)) {
+            throw new RuntimeException("Needs >1 components: " + Arrays.toString(arg));
+        }
+        Term[] s = toSortedSetArray(arg);
+        if (arg.length!=s.length) {
+            throw new RuntimeException("Contains duplicates: " + Arrays.toString(arg));
+        }
+        int j = 0;
+        for (Term t : s) {
+            if (!t.equals(arg[j++]))
+                throw new RuntimeException("Un-ordered: " + Arrays.toString(arg) + " , correct order=" + Arrays.toString(s));
+        }
+        return s;
+    }
+
+    /**
+     * comparison that will match constant terms, allowing variables to match regardless
+     * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
+     */
+    public static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {
+        Compound bCompound = (b instanceof Compound) ? ((Compound)b) : null;
+        for (Term a : term) {
+            if (a.equals(b)) return true;
+
+            if ((a instanceof Compound) && (bCompound!=null))  {
+                if (((BaseCompound)a).equalsVariablesAsWildcards(bCompound))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
+    /** true if any of the terms contains a variable */
+    public static boolean containsVariables(Term... args) {
+        for (Term t : args) {
+            if (t.hasVar())
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean containsAll(Term[] sat, Term ta, Term[] sbt, Term tb) {
+        //temporary set for fast containment check
+        Set<Term> componentsA = Global.newHashSet(sat.length + 1);
+        componentsA.add(ta);
+        Collections.addAll(componentsA, sat);
+
+        //test A contains B
+        if (!componentsA.contains(tb))
+            return false;
+        for (Term bComponent : sbt)
+            if (!componentsA.contains(bComponent))
+                return false;
+
+        return true;
+    }
+
+
+    public static Compound compoundOrNull(Term t) {
+        if (t instanceof Compound) return (Compound)t;
+        return null;
+    }
+
+
+    public static Term[] reverse(Term[] arg) {
+        int l = arg.length;
+        Term[] r = new Term[l];
+        for (int i = 0; i < l; i++) {
+            r[i] = arg[l - i - 1];
+        }
+        return r;
+    }
+
+
+    public static TreeSet<Term> toSortedSet(final Term... arg) {
+        //use toSortedSetArray where possible
+        TreeSet<Term> t = new TreeSet();
+        Collections.addAll(t, arg);
+        return t;
+    }
+    public static TreeSet<Term> toSortedSet(final Iterable<Term> arg) {
+        //use toSortedSetArray where possible
+        TreeSet<Term> t = new TreeSet();
+        Iterables.addAll(t, arg);
+        return t;
+    }
+
+
+    default public void transformVariableTermsDeep(VariableTransform variableTransform) {
+        transformVariableTermsDeep(variableTransform, 0);
+    }
+
+    default public void transformVariableTermsDeep(VariableTransform variableTransform, int depth) {
+        for (int i = 0; i < size(); i++) {
+            Term t = getTerm(i);
+
+            if (t.hasVar()) {
+                if (t instanceof Compound) {
+                    ((Compound)t).transformVariableTermsDeep(variableTransform);
+                } else if (t instanceof Variable) {  /* it's a variable */
+                    replaceTerm(i, variableTransform.apply(this, (Variable) t, depth + 1));
+                }
+            }
+        }
+    }
+
+    /**
+     * forced deep clone of terms
+     */
+    default public ArrayList<Term> cloneTermsListDeep() {
+        ArrayList<Term> l = new ArrayList(size());
+        for (final Term t : this)
+            l.add(t.clone());
+        return l;
+    }
+
+    /** dangerously replaces a subterm. returns the same instance being modified.
+     * use with caution */
+    Term replaceTerm(final int index, final Term t);
+
+
+    /**
+     * Try to replace a component in a compound at a given index by another one
+     * If results in different subterms, the result is cloned into a new compound
+     *
+     * @param index The location of replacement
+     * @param t     The new component
+     * @return The new compound
+     */
+    default public Term setTermInClone(final int index, final Term t) {
+
+
+
+        final boolean e = (t!=null) && Statement.Terms.equalType(this, t, true, true);
+
+        //if the subterm is alredy equivalent, just return this instance because it will be equivalent
+        if (t != null && (e) && (getTerm(index).equals(t)))
+            return this;
+
+        List<Term> list = asTermList();//Deep();
+
+        list.remove(index);
+
+        if (t != null) {
+            if (!e) {
+                list.add(index, t);
+            } else {
+                //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
+                Compound tt = (Compound)t;
+                for (int i = 0; i < tt.size(); i++) {
+                    list.add(index + i, tt.getTerm(i));
+                }
+            }
+        }
+
+        return Memory.term(this, list);
+    }
+
+
+    final static Term[] EmptyTermArray=new Term[0];
+
+    public static Term[] toSortedSetArray(final Term... arg) {
+        switch (arg.length) {
+            case 0: return EmptyTermArray;
+            case 1: return new Term[] { arg[0] };
+            case 2:
+                Term a = arg[0];
+                Term b = arg[1];
+                int c = a.compareTo(b);
+
+                if (Global.DEBUG) {
+                    //verify consistency of compareTo() and equals()
+                    boolean equal = a.equals(b);
+                    if ((equal && (c!=0)) || (!equal && (c==0))) {
+                        throw new RuntimeException("invalid order (" + c + "): " + a + " = " + b);
+                    }
+                }
+
+                if (c < 0) return new Term[] { a, b };
+                else if (c > 0) return new Term[] { b, a };
+                else if (c == 0) return new Term[] { a }; //equal
+
+        }
+
+        //TODO fast sorted array for arg.length == 3
+
+        //terms > 2:
+
+        SortedList<Term> s = new SortedList(arg.length);
+        s.setAllowDuplicate(false);
+
+        Collections.addAll(s, arg);
+
+        return s.toArray(new Term[s.size()] );
+
+            /*
+            TreeSet<Term> s = toSortedSet(arg);
+            //toArray didnt seem to work, but it might. in the meantime:
+            Term[] n = new Term[s.size()];
+            int j = 0;
+            for (Term x : s) {
+                n[j++] = x;
+            }
+            return n;
+            */
+    }
+}
 
 
 //    @Deprecated public static class UnableToCloneException extends RuntimeException {
@@ -601,7 +1009,7 @@ public interface Compound extends Term, Iterable<Term>, IPair {
 //    }
 
 
-}
+
 
 
 //    /** performs a deep comparison of the term structure which should have the same result as normal equals(), but slower */

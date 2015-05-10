@@ -106,7 +106,7 @@ public class Theories implements Serializable {
      */
     public synchronized Clause retract(Struct cl) {
         Struct clause = toClause(cl);
-        Struct struct = ((Struct) clause.getTerms(0));
+        Struct struct = ((Struct) clause.getTermX(0));
         ClauseIndex family = dynamicDBase.get(struct.getPredicateIndicator());
         ExecutionContext ctx = engine.getCurrentContext();
 
@@ -157,13 +157,13 @@ public class Theories implements Serializable {
      * predicate indicator passed as a parameter
      */
     public synchronized boolean remove(Struct pi) {
-        if (!(pi instanceof Struct) || !pi.isGround() || !(pi.getArity() == 2))
+        if (!(pi instanceof Struct) || !pi.isGround() || !(pi.size() == 2))
             throw new IllegalArgumentException(pi + " is not a valid Struct");
         if (!pi.getName().equals("/"))
             throw new IllegalArgumentException(pi + " has not the valid predicate name. Espected '/' but was " + pi.getName());
 
-        String arg0 = Tools.removeApices(pi.getTerms(0).toString());
-        String arg1 = Tools.removeApices(pi.getTerms(1).toString());
+        String arg0 = Tools.removeApices(pi.getTermX(0).toString());
+        String arg1 = Tools.removeApices(pi.getTermX(1).toString());
         String key = arg0 + '/' + arg1;
         List<Clause> abolished = dynamicDBase.remove(key); /* Reviewed by Paolo Contessi: LinkedList -> List */
         if (abolished != null)
@@ -277,7 +277,7 @@ public class Theories implements Serializable {
 
 
     private boolean runDirective(final Struct c) {
-        if (c.getArity() != 1)
+        if (c.size() != 1)
             return false;
         PTerm t = c.getTerm(0);
         if (!(t instanceof Struct))

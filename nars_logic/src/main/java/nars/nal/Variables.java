@@ -104,7 +104,7 @@ public class Variables {
             }
             for (int i = 0; i < cTerm1.size(); i++) {
                 Term t1 = list[i];
-                Term t2 = cTerm2.term[i];
+                Term t2 = cTerm2.getTerm(i);
                 if (!findSubstitute(type, t1, t2, map)) {
                     return false;
                 }

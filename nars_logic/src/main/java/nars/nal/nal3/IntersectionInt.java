@@ -45,7 +45,7 @@ public class IntersectionInt extends Intersect {
     private IntersectionInt(final Term[] arg) {
         super( arg );
         
-        if (Global.DEBUG) { Statement.Terms.verifySortedAndUnique(arg, false); }
+        if (Global.DEBUG) { Compound.verifySortedAndUnique(arg, false); }
         
         init(arg);
     }
@@ -78,13 +78,13 @@ public class IntersectionInt extends Intersect {
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set union
             Term[] both = ObjectArrays.concat(
-                    ((Compound) term1).term,
-                    ((Compound) term2).term, Term.class);
+                    ((Compound) term1).getTerms(),
+                    ((Compound) term2).getTerms(), Term.class);
             return SetExt.make(both);
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set intersection
-            TreeSet<Term> set = Statement.Terms.toSortedSet(((Compound) term1).term);
+            TreeSet<Term> set = Compound.toSortedSet((Compound) term1);
             
             set.retainAll(((Compound) term2).asTermList());
             
@@ -120,7 +120,7 @@ public class IntersectionInt extends Intersect {
     }
 
     public static Term make(Term[] t) {
-        t = Statement.Terms.toSortedSetArray(t);
+        t = Compound.toSortedSetArray(t);
         switch (t.length) {
             case 0: return null;
             case 1: return t[0];
