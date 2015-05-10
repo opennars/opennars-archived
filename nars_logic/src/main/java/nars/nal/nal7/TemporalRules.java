@@ -506,7 +506,9 @@ public class TemporalRules {
                 if (s1.punctuation == Symbols.JUDGMENT) { //necessary check?
 
                     Concept S1_State_C = nal.memory.concept(s1.term);
-                    if (S1_State_C != null && S1_State_C.hasGoals()) {
+                    if(S1_State_C != null && S1_State_C.hasGoals() &&
+                            !(((Statement)belief.term).getPredicate() instanceof Operation)) {
+
                         Task strongest_desire = S1_State_C.goals.get(0);
                         Truth T = TruthFunctions.abduction(belief.truth, strongest_desire.sentence.truth);
                         //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
