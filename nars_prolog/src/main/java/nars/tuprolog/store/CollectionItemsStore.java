@@ -14,7 +14,7 @@ public class CollectionItemsStore extends ClauseStore
 {
 	private Struct collection;
 	private Iterator iter;
-	private Term current;
+	private PTerm current;
 	private JavaLibrary lib;
 	private Prolog engine;
 	
@@ -33,7 +33,7 @@ public class CollectionItemsStore extends ClauseStore
 		}
 	}
 	
-	public CollectionItemsStore(Prolog engine, Collection C, Term goal, List vars, JavaLibrary lib)	{
+	public CollectionItemsStore(Prolog engine, Collection C, PTerm goal, List vars, JavaLibrary lib)	{
         super(goal, vars);
 		iter = C.iterator();
 		this.lib = lib;
@@ -51,7 +51,7 @@ public class CollectionItemsStore extends ClauseStore
 			return null;
 		Var.free(vars);
 		CollectionItemClause result = new CollectionItemClause(new Struct(
-				"collection_item", new Term[] {collection, current} ));
+				"collection_item", new PTerm[] {collection, current} ));
 		nextCompatible();
 		return result;
 	}

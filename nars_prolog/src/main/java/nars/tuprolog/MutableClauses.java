@@ -17,10 +17,8 @@
  */
 package nars.tuprolog;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Customized HashMap for storing clauses in the TheoryManager
@@ -50,7 +48,7 @@ public class MutableClauses extends HashMap<String,ClauseIndex> implements Claus
 	}
 
 	@Override
-	public Iterator<Clause> getPredicates(final Term headt) {
+	public Iterator<Clause> getPredicates(final PTerm headt) {
 		ClauseIndex family = get(((Struct) headt).getPredicateIndicator());
 		if (family == null){
 			return null;

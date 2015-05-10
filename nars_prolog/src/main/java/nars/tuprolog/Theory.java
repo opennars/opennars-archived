@@ -82,23 +82,23 @@ public class Theory implements Serializable, PrologTermIterator {
      */
     public Theory(Struct clauseList) throws InvalidTheoryException {
         if (clauseList==null || !clauseList.isList()) {
-            clauseList = new Struct(new Term[] { clauseList } ); //wrap as list
+            clauseList = new Struct(new PTerm[] { clauseList } ); //wrap as list
             //throw new InvalidTheoryException();
         }
         this.clauseList = clauseList;
     }
 
-    public Theory(Term[] t) throws InvalidTheoryException {
+    public Theory(PTerm[] t) throws InvalidTheoryException {
         this(new Struct(t));
     }
 
     public static Theory parse(Prolog engine, String input) throws InvalidTheoryException {
-       Deque<Term> tc = Lists.newLinkedList(new Parser(engine.getOperators(), input));
+       Deque<PTerm> tc = Lists.newLinkedList(new Parser(engine.getOperators(), input));
        return new Theory(new Struct(".", tc));       
     }
     
     @Override
-    public Iterator<? extends nars.tuprolog.Term> iterator(Prolog engine) {
+    public Iterator<? extends PTerm> iterator(Prolog engine) {
         if (isTextual())
             return new Parser(engine.getOperators(), theory).iterator();
         else

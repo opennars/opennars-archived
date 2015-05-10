@@ -16,9 +16,9 @@ public class MapEntriesStore extends ClauseStore
 	private Iterator<?> iter;
 	private JavaLibrary jl;
 	private Prolog engine;
-	private Term key, value;
+	private PTerm key, value;
 	private List varList;
-	private Term currentKey = null, currentValue = null;
+	private PTerm currentKey = null, currentValue = null;
 	
 	void nextCompatible()
 	{
@@ -37,7 +37,7 @@ public class MapEntriesStore extends ClauseStore
 		}
 	}
 	
-	public MapEntriesStore(Prolog engine, Map map, Term key, Term value, List varList, JavaLibrary lib)
+	public MapEntriesStore(Prolog engine, Map map, PTerm key, PTerm value, List varList, JavaLibrary lib)
 	{
         super(null, varList);
 		iter = map.entrySet().iterator();
@@ -59,7 +59,7 @@ public class MapEntriesStore extends ClauseStore
 			return null;
 		Var.free(varList);
 		CollectionItemClause result = new CollectionItemClause(new Struct(
-				"map_entry", new Term[] {map, currentKey, currentValue} ));
+				"map_entry", new PTerm[] {map, currentKey, currentValue} ));
 		nextCompatible();
 		return result;
 	}

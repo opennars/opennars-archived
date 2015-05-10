@@ -6,10 +6,7 @@ import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.tuprolog.InvalidLibraryException;
-import nars.tuprolog.InvalidTheoryException;
-import nars.tuprolog.Prolog;
-import nars.tuprolog.Struct;
+import nars.tuprolog.*;
 
 import java.util.List;
 
@@ -39,7 +36,7 @@ public class PrologFact extends Operator {
 
         Sentence s = operation.getTask().sentence;
         if (s.punctuation == Symbols.GOAL) {
-            nars.tuprolog.Term factTerm = NARPrologMirror.pterm(args[0]).resolveTerm();
+            PTerm factTerm = NARPrologMirror.pterm(args[0]).resolveTerm();
 
             if (factTerm == null) return null;
 

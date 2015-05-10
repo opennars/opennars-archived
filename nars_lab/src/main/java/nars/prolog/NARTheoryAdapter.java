@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.tuprolog.Clause;
 import nars.tuprolog.ClauseIndex;
 import nars.tuprolog.Clauses;
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 
 import java.util.Iterator;
 
@@ -40,7 +40,7 @@ public class NARTheoryAdapter implements Clauses {
     }
 
     @Override
-    public Iterator<Clause> getPredicates(Term head) {
+    public Iterator<Clause> getPredicates(PTerm head) {
         System.err.println(this + " getPredicates(Term " + head);
         return null;
     }

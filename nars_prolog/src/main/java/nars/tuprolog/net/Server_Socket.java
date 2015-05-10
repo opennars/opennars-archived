@@ -1,6 +1,6 @@
 package nars.tuprolog.net;
 
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.Var;
 
 import java.net.InetAddress;
@@ -29,7 +29,7 @@ public class Server_Socket extends AbstractSocket{
 		return true;
 	}
 	
-	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
+	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, PTerm t) {
 		t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(varsUnifiedArg1, varsUnifiedArg2, this);
@@ -56,9 +56,6 @@ public class Server_Socket extends AbstractSocket{
 	public String toString(){
 		return socket.toString();
 	}
-        
-        
 
-        
 
 }

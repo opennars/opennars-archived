@@ -190,7 +190,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
     public SolveInfo solve(String st, double time) throws MalformedGoalException {
         try {
             Parser p = new Parser(operators, st);
-            Term t = p.nextTerm(true);
+            PTerm t = p.nextTerm(true);
             return solve(t, time);
         } catch (Exception ex) {
             throw new MalformedGoalException(ex.toString());
@@ -214,7 +214,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @param t1 second term to be unified
      * @return true if the unification was successful
      */
-    public boolean match(Term t0, Term t1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
+    public boolean match(PTerm t0, PTerm t1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
         return t0.match(t1, now, v1, v2);
     }
 
@@ -225,11 +225,11 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @param t1 second term to be unified
      * @return true if the unification was successful
      */
-    public boolean unify(Term t0, Term t1) {    //no syn
+    public boolean unify(PTerm t0, PTerm t1) {    //no syn
         return unify(t0, t1, new ArrayList(), new ArrayList());
     }
 
-    public boolean unify(Term t0, Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
+    public boolean unify(PTerm t0, PTerm t1, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
         return t0.unify(this, t1, v1, v2);
     }
 
@@ -238,7 +238,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      *
      * @param term term to identify
      */
-    public void identifyFunctor(Term term) {    //no syn
+    public void identifyFunctor(PTerm term) {    //no syn
         primitives.identifyFunctor(term);
     }
 
@@ -251,7 +251,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @param term the term to be represented as a string
      * @return the string representing the term
      */
-    public String toString(Term term) {        //no syn
+    public String toString(PTerm term) {        //no syn
         return (term.toStringAsArgY(operators, Operators.OP_HIGH));
     }
 
@@ -259,16 +259,16 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
     /**
      * Defines a new flag
      */
-    public boolean defineFlag(String name, Struct valueList, Term defValue, boolean modifiable, String libName) {
+    public boolean defineFlag(String name, Struct valueList, PTerm defValue, boolean modifiable, String libName) {
         return flags.defineFlag(name, valueList, defValue, modifiable, libName);
     }
 
 
-    public SolveInfo solve(Term query) {
+    public SolveInfo solve(PTerm query) {
         return solve(query, 0);
     }
 
-    public abstract SolveInfo solve(Term query, double maxTimeSeconds);
+    public abstract SolveInfo solve(PTerm query, double maxTimeSeconds);
 
     abstract public void solveHalt();
 
@@ -286,7 +286,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @return the term parsed from the string
      * @throws InvalidTermException if the string does not represent a valid term
      */
-    public Term toTerm(String st) throws InvalidTermException {    //no syn
+    public PTerm toTerm(String st) throws InvalidTermException {    //no syn
 
         return Parser.parseSingleTerm(st, getOperators());
     }
@@ -455,7 +455,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
         return addTheory(th.iterator(this));
     }
 
-    public SolveInfo addTheory(final Iterator<? extends Term> i) throws InvalidTheoryException {    //no syn
+    public SolveInfo addTheory(final Iterator<? extends PTerm> i) throws InvalidTheoryException {    //no syn
         Theory oldTh = getDynamicTheoryCopy();
         getTheories().consult(i, true, null);
         SolveInfo theoryGoal = getTheories().solveTheoryGoal();
@@ -906,41 +906,41 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
         }
     }
 
-    public Term termSolve(String st) {
+    public PTerm termSolve(String st) {
         try {
             Parser p = new Parser(getOperators(), st);
-            Term t = p.nextTerm(true);
+            PTerm t = p.nextTerm(true);
             return t;
         } catch (InvalidTermException e) {
             String s = "null";
-            Term t = Term.createTerm(s);
+            PTerm t = PTerm.createTerm(s);
             return t;
         }
     }
 
     public abstract ArrayList<String> getBagOFresString();
 
-    public abstract ArrayList<Term> getBagOFres();
+    public abstract ArrayList<PTerm> getBagOFres();
 
     public abstract void setRelinkVar(boolean b);
 
-    public abstract void setBagOFgoal(Term goal);
+    public abstract void setBagOFgoal(PTerm goal);
 
-    public abstract void setBagOFvarSet(Term varSet);
+    public abstract void setBagOFvarSet(PTerm varSet);
 
-    public abstract void setBagOFbag(Term tList);
+    public abstract void setBagOFbag(PTerm tList);
 
-    public abstract void setBagOFres(ArrayList<Term> l);
+    public abstract void setBagOFres(ArrayList<PTerm> l);
 
     public abstract void setBagOFresString(ArrayList<String> lString);
 
     public abstract boolean getRelinkVar();
 
-    public abstract Term getBagOFgoal();
+    public abstract PTerm getBagOFgoal();
 
-    public abstract Term getBagOFbag();
+    public abstract PTerm getBagOFbag();
 
-    public abstract Term getBagOFvarSet();
+    public abstract PTerm getBagOFvarSet();
 
     public abstract String getSetOfSolution();
 
@@ -950,5 +950,5 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
 
     public abstract void pushSubGoal(SubGoalTree abstractSubGoalTrees);
 
-    public abstract void identify(Term goal);
+    public abstract void identify(PTerm goal);
 }

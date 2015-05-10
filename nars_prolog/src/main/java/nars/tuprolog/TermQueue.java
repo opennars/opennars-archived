@@ -7,17 +7,17 @@ import java.util.Iterator;
 
 public class TermQueue {
 
-	private final ArrayDeque<Term> queue;
+	private final ArrayDeque<PTerm> queue;
 	
 	public TermQueue(){
 		queue=new ArrayDeque<>();
 	}
 	
-	public boolean get(Term t, Prolog engine, Engine er){
+	public boolean get(PTerm t, Prolog engine, Engine er){
 		return searchLoop(t,engine,true, true, er);
 	}
 	
-	private synchronized boolean searchLoop(Term t, Prolog engine, boolean block, boolean remove, Engine er){
+	private synchronized boolean searchLoop(PTerm t, Prolog engine, boolean block, boolean remove, Engine er){
 		boolean found=false;
 		do{
 			found=search(t,engine,remove);
@@ -31,10 +31,10 @@ public class TermQueue {
 	}
 	
 	
-	private synchronized boolean search(Term t, Prolog engine, boolean remove){
+	private synchronized boolean search(PTerm t, Prolog engine, boolean remove){
 		boolean found=false;
-		Term msg=null;
-		Iterator<Term> it=queue.iterator();
+		PTerm msg=null;
+		Iterator<PTerm> it=queue.iterator();
 		ArrayList<Var> v1 = new ArrayList();
 		ArrayList<Var> v2 = new ArrayList();
 		while (!found){
@@ -53,19 +53,19 @@ public class TermQueue {
 	}
 	
 	
-	public synchronized boolean peek(Term t, Prolog engine){
+	public synchronized boolean peek(PTerm t, Prolog engine){
 		return search(t,engine,false);
 	}
 	
-	public synchronized boolean remove (Term t, Prolog engine){
+	public synchronized boolean remove (PTerm t, Prolog engine){
 		return search(t, engine, true);
 	}
 	
-	public synchronized boolean wait (Term t, Prolog engine, Engine er){
+	public synchronized boolean wait (PTerm t, Prolog engine, Engine er){
 		return searchLoop(t,engine, true, false, er);
 	}
 	
-	public synchronized void store (Term t){
+	public synchronized void store (PTerm t){
 		queue.addLast(t);
     	notifyAll();	
 	}

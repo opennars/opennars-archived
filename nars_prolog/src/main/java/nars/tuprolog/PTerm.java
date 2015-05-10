@@ -18,34 +18,33 @@
 package nars.tuprolog;
 
 import nars.tuprolog.util.OneWayList;
+import nars.util.data.Utf8;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
- * Term class is the root abstract class for prolog data type
+ * Prolog Term interface extending NARS Term interface
+ * the root abstract class for prolog data type
+ * 
  * @see Struct
  * @see Var
- * @see  Number
+ * @see PNum
  */
-public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
+public interface PTerm extends nars.nal.term.Term, SubGoalElement {
 
 
     // true and false constants
-    public static final Term TRUE  = new Struct("true");
-    public static final Term FALSE = new Struct("false");
+    public static final PTerm TRUE  = new Struct("true");
+    public static final PTerm FALSE = new Struct("false");
 
 
 
-
-
-    Term clone();
 
     @Override
-    abstract public String toString();
+    public String toString();
 
     @Override
-    abstract public int hashCode();
+    public int hashCode();
 
     /*@Override
     public int compareTo(Term o) {
@@ -65,29 +64,29 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
             return false;
         return isEqual((Term) t);
     }*/
-    abstract public boolean equals(final Object t);
+    public boolean equals(final Object t);
 
 
 
     /** is this term a null term?*/
-    public abstract boolean isEmptyList();
+    public boolean isEmptyList();
     
     //
     
     /** is this term a constant prolog term? */
-    public abstract boolean isAtomic();
+    public boolean isAtomic();
     
     /** is this term a prolog compound term? */
-    public abstract boolean isCompound();
+    public boolean isCompound();
     
     /** is this term a prolog (alphanumeric) atom? */
-    public abstract boolean isAtom();
+    public boolean isAtom();
     
     /** is this term a prolog list? */
-    public abstract boolean isList();
+    public boolean isList();
     
     /** is this term a ground term? */
-    public abstract boolean isGround();
+    public boolean isGround();
 
 
 
@@ -98,24 +97,24 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
     /**
      * is term greater than term t?
      */
-    public abstract boolean isGreater(Term t);
-    public abstract boolean isGreaterRelink(Term t, ArrayList<String> vorder);
+    public boolean isGreater(PTerm t);
+    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder);
     
     /**
      * Tests if this term is (logically) equal to another
      */
-    public abstract boolean isEqual(Term t);
+    public boolean isEqual(PTerm t);
     
     /**
 	 * Gets the actual term referred by this Term. if the Term is a bound variable, the method gets the Term linked to the variable
 	 */
-    public abstract Term getTerm();
+    public PTerm getTerm();
     
     
     /**
      * Unlink variables inside the term
      */
-    abstract public void free();
+    public void free();
     
     
     /**
@@ -125,7 +124,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * @param count new starting time count for resolving process
      * @return the new time count, after resolving process
      */
-    abstract public long resolveTerm(long count);
+    public long resolveTerm(long count);
     
     
     /**
@@ -133,7 +132,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * 
      * If the variables has been already resolved, no renaming is done.
      */
-    default public Term resolveTerm() {
+    default public PTerm resolveTerm() {
         resolveTerm(System.currentTimeMillis());
         return this;
     }
@@ -143,7 +142,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * gets a engine's copy of this term.
      * @param idExecCtx Execution Context identified
      */
-    default public Term copyGoal(Map<Var,Var> vars, int idExecCtx) {
+    default public PTerm copyGoal(Map<Var,Var> vars, int idExecCtx) {
         return copy(vars,idExecCtx);
     }
 
@@ -153,7 +152,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
     /**
      * gets a copy of this term for the output
      */
-    default public Term copyResult(Collection<Var> goalVars, List<Var> resultVars) {
+    default public PTerm copyResult(Collection<Var> goalVars, List<Var> resultVars) {
         IdentityHashMap<Var,Var> originals = new IdentityHashMap<>();
         for (Var key: goalVars) {
             Var clone = new Var();
@@ -174,15 +173,15 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * (if empty list then no renaming)
      * @param idExecCtx Execution Context identifier
      */
-    abstract public Term copy(Map<Var,Var> vMap, int idExecCtx);
+    public PTerm copy(Map<Var,Var> vMap, int idExecCtx);
     
     /**
      * gets a copy for result.
      */
-    abstract public Term copy(Map<Var,Var> vMap, Map<Term,Var> substMap);
+    public PTerm copy(Map<Var,Var> vMap, Map<PTerm,Var> substMap);
 
 
-    default public boolean unify(final Prolog mediator, final Term t1) {
+    default public boolean unify(final Prolog mediator, final PTerm t1) {
         return unify(mediator, t1, new ArrayList(), new ArrayList());
     }
     /**
@@ -191,7 +190,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * @param t1 the term to unify
      * @return true if the term is unifiable with this one
      */
-    default public boolean unify(final Prolog engine, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
+    default public boolean unify(final Prolog engine, final PTerm t1, ArrayList<Var> v1, ArrayList<Var> v2) {
         resolveTerm();
         t1.resolveTerm();
 
@@ -231,7 +230,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
     }
 
     @Override
-    default public Term getValue() {
+    default public PTerm getValue() {
         return this;
     }
     
@@ -245,7 +244,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      *
      * @return true if the term is unifiable with this one
      */
-    default public boolean match(Term t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
+    default public boolean match(PTerm t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
         v1.clear(); v2.clear();
 
         resolveTerm(time);
@@ -257,7 +256,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
         return ok;
     }
 
-    default public boolean match(Term t) {
+    default public boolean match(PTerm t) {
         return match(t, System.currentTimeMillis(), new ArrayList(), new ArrayList());
     }
 
@@ -269,7 +268,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * @param varsUnifiedArg1 Vars unified in myself
      * @param varsUnifiedArg2 Vars unified in term t
      */
-    abstract public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t);
+    public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, PTerm t);
     
     
     /**
@@ -278,7 +277,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * @return the term represented by the string
      * @throws InvalidTermException if the string does not represent a valid term
      */
-    public static Term createTerm(final String st) {
+    public static PTerm createTerm(final String st) {
         return Parser.parseSingleTerm(st);
     }
 
@@ -290,7 +289,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * @return the term represented by the string
      * @throws InvalidTermException if the string does not represent a valid term
      */
-    public static Term createTerm(String st, Operators op) {
+    public static PTerm createTerm(String st, Operators op) {
         return Parser.parseSingleTerm(st, op);
     }
     
@@ -300,7 +299,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * Gets an iterator providing
      * a term stream from a source text
      */
-    public static java.util.Iterator<Term> getIterator(String text) {
+    public static java.util.Iterator<PTerm> getIterator(String text) {
         return new Parser(text).iterator();
     }
     
@@ -344,7 +343,7 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
      * <li>else G is T</li>
      * </ul>
      */
-    default public Term iteratedGoalTerm() {
+    default public PTerm iteratedGoalTerm() {
         return this;
     }
     
@@ -353,8 +352,43 @@ public abstract interface Term extends nars.nal.term.Term, SubGoalElement {
 	 * Visitor pattern
 	 * @param tv - Visitor
 	 */
-	public abstract void accept(TermVisitor tv);
+	public void accept(TermVisitor tv);
     /**/
 
+
+    @Override
+    default public int compareTo(nars.nal.term.Term o) {
+        return Utf8.compare(name(), o.name());
+    }
+
+    @Override
+    default public byte[] name() {
+        //TODO cache this result
+        return Utf8.toUtf8(toString());
+    }
+    /**/
+
+
+    @Override
+    default public void recurseSubterms(nars.nal.term.TermVisitor v, nars.nal.term.Term parent) {
+        //TODO
+    }
+
+    @Override
+    default public boolean isConstant() {
+        return false; //TODO
+    }
+
+    @Override
+    default public boolean containsTerm(nars.nal.term.Term target) {
+        return false; //TODO
+    }
+
+    @Override
+    default public boolean containsTermRecursivelyOrEquals(nars.nal.term.Term target) {
+        return false; //TODO
+    }
+
+    public PTerm clone();
 
 }

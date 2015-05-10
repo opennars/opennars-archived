@@ -9,5 +9,5 @@ import java.util.Iterator;
 
 
 public interface PrologTermIterator  {
-    public Iterator<? extends Term> iterator(Prolog engine);
+    public Iterator<? extends PTerm> iterator(Prolog engine);
 }

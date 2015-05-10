@@ -35,7 +35,7 @@ public class StageGoalSelection extends Stage {
      * @see alice.tuprolog.AbstractRunState#doJob()
      */
     void run(Engine.State e) {
-        Term curGoal = null;
+        PTerm curGoal = null;
         while (curGoal == null) {
             curGoal = e.currentContext.goalsToEval.fetch();
             if (curGoal==null){
@@ -49,7 +49,7 @@ public class StageGoalSelection extends Stage {
                 e.currentContext = e.currentContext.fatherCtx;
             } else {
                 // Caso di individuazione curGoal
-                Term goal_app = curGoal.getTerm();
+                PTerm goal_app = curGoal.getTerm();
                 if (!(goal_app instanceof Struct)) {
                     e.nextState = c.END_FALSE;
                     return;

@@ -3,7 +3,7 @@ package nars.tuprolog.interfaces;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.tuprolog.Operators;
 import nars.tuprolog.Parser;
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 
 public class ParserFactory {
 	
@@ -17,7 +17,7 @@ public class ParserFactory {
 	/**
      * creating a parser with default operate interpretation
      */
-    public static IParser createParser(String theory, ObjectIntHashMap<Term> mapping) {
+    public static IParser createParser(String theory, ObjectIntHashMap<PTerm> mapping) {
     	return new Parser(theory, mapping);
     }    
 	
@@ -33,7 +33,7 @@ public class ParserFactory {
      * creating a Parser specifing how to handle operators
      * and what text to parse
      */
-    public static IParser createParser(IOperators op, String theory, ObjectIntHashMap<Term>  mapping) {
+    public static IParser createParser(IOperators op, String theory, ObjectIntHashMap<PTerm>  mapping) {
     	return new Parser((Operators)op, theory, mapping);
     }
 

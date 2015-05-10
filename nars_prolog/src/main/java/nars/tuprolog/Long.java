@@ -18,6 +18,8 @@
 package nars.tuprolog;
 
 
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,7 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
-public class Long extends Number {
+public class Long extends PNum {
     
    private final long value;
     
@@ -132,19 +134,19 @@ public class Long extends Number {
      * Returns true if this integer term is grater that the term provided.
      * For number term argument, the int value is considered.
      */
-    public boolean isGreater(Term t) {
+    public boolean isGreater(PTerm t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value > ( (Number) t ).longValue();
+        if (t instanceof PNum) {
+            return value > ( (PNum) t ).longValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
     }
     
-    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
+    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value > ( (Number) t ).longValue();
+        if (t instanceof PNum) {
+            return value > ( (PNum) t ).longValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -154,10 +156,10 @@ public class Long extends Number {
      * Returns true if this integer term is equal that the term provided.
      * For number term argument, the int value is considered.
      */
-    public boolean isEqual(Term t) {
+    public boolean isEqual(PTerm t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value == ( (Number) t ).longValue();
+        if (t instanceof PNum) {
+            return value == ( (PNum) t ).longValue();
         } else {
             return false;
         }
@@ -167,17 +169,22 @@ public class Long extends Number {
      * Tries to unify a term with the provided term argument.
      * This service is to be used in demonstration context.
      */
-    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
+    public boolean unify(List<Var> vl1, List<Var> vl2, PTerm t) {
         t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(vl1, vl2, this);
-        } else if (t instanceof Number && ((Number) t).isInteger()) {
-            return value == ((Number) t).longValue();
+        } else if (t instanceof PNum && ((PNum) t).isInteger()) {
+            return value == ((PNum) t).longValue();
         } else {
             return false;
         }
     }
-    
+
+    @Override
+    public PTerm clone() {
+        return null;
+    }
+
     public String toString() {
         return java.lang.Long.toString(value);
     }
@@ -187,8 +194,8 @@ public class Long extends Number {
      */
     @Override
     public int compareTo(Term o) {
-        if (o instanceof Number)
-            return (new java.lang.Long(value)).compareTo(((Number)o).longValue());
+        if (o instanceof PNum)
+            return (new java.lang.Long(value)).compareTo(((PNum)o).longValue());
         else
             return -1;
     }
@@ -198,4 +205,5 @@ public class Long extends Number {
     public int hashCode() {
         return (int) value;
     }
+
 }

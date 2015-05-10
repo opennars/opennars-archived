@@ -17,7 +17,7 @@ public class SubGoalTree implements AbstractSubGoalTree, Iterable<AbstractSubGoa
         this.terms=terms;
     }
     
-    public void addChild(Term term) {
+    public void addChild(PTerm term) {
         terms.add(term);
     }
     

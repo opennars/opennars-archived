@@ -1,6 +1,6 @@
 package nars.nal.term;
 
-import nars.util.utf8.FastByteComparisons;
+import nars.util.data.Utf8;
 
 import java.util.Arrays;
 
@@ -46,7 +46,7 @@ abstract public class DefaultCompound extends Compound {
         if (h == 0) {
             byte[] n1 = name();
             byte[] n2 = o.name();
-            int c = FastByteComparisons.compare(n1, n2);
+            int c = Utf8.compare(n1, n2);
             if ((c == 0) && (n1!=n2)) {
                 //equal string, ensure that the same byte[] instance is shared to accelerate equality comparison
                 share(o);

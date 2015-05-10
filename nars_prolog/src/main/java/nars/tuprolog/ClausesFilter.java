@@ -41,7 +41,7 @@ class ClausesFilter {
      *                      <code>familyClauses</code>) which more probably
      *                      match with <code>goal</code>
      */
-    public static OneWayList<Clause> filterClauses(List<Clause> familyClauses, Term goal){
+    public static OneWayList<Clause> filterClauses(List<Clause> familyClauses, PTerm goal){
         if(OPTIMIZATION_ENABLED && goal instanceof Struct){
             Struct g = (Struct) goal.getTerm();
 
@@ -51,7 +51,7 @@ class ClausesFilter {
             }
 
             /* Retrieves first argument and checks type */
-            Term t = g.getTerms(1).getTerm();
+            PTerm t = g.getTerms(1).getTerm();
             if(t instanceof Var){
                 /* 
                  * if first argument is an unbounded variable,
@@ -59,9 +59,9 @@ class ClausesFilter {
                  */
                 return returnAllClauses(familyClauses);
             } else if(t.isAtomic()){
-                if(t instanceof Number){
+                if(t instanceof PNum){
                     /* selects clauses which has a numeric first argument */
-                    return selectNumeric(familyClauses, (Number) t);
+                    return selectNumeric(familyClauses, (PNum) t);
                 }
 
                 /* selects clauses which has an atomic first argument */
@@ -93,16 +93,16 @@ class ClausesFilter {
      * Returns only the clauses whose first argument is a number equal to
      * the given one (from goal's first argument)
      */
-    private static OneWayList<Clause> selectNumeric(List<Clause> familyClauses, Number t) {
+    private static OneWayList<Clause> selectNumeric(List<Clause> familyClauses, PNum t) {
         OneWayList<Clause> result = null;
         OneWayList<Clause> p = null;
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            Term arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTerms(0).getTerm();
 
             if((arg instanceof Var) ||
-                    (arg instanceof Number && arg.isEqual(t))){
+                    (arg instanceof PNum && arg.isEqual(t))){
                 OneWayList<Clause> l = new OneWayList<>(clause, null);
             
                 if(result == null){
@@ -127,7 +127,7 @@ class ClausesFilter {
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            Term arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTerms(0).getTerm();
 
             if(arg instanceof Var ||
                     ((Struct) arg).getPredicateIndicator().equals(predIndicator)){
@@ -145,7 +145,7 @@ class ClausesFilter {
         return result;
     }
 
-    private static boolean isAList(Term t) {
+    private static boolean isAList(PTerm t) {
         /*
          * Checks if a Struct is also a list.
          * A list can be an empty list, or a Struct with name equals to "."
@@ -170,7 +170,7 @@ class ClausesFilter {
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            Term arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTerms(0).getTerm();
 
             if(arg instanceof Var || isAList(arg)){
                 OneWayList<Clause> l = new OneWayList<>(clause, null);
@@ -191,13 +191,13 @@ class ClausesFilter {
      * Returns only the clauses whose first argument is a constant equals
      * to the given one (from goal's first argument)
      */
-    private static OneWayList<Clause> selectConstant(List<Clause> familyClauses, Term t) {
+    private static OneWayList<Clause> selectConstant(List<Clause> familyClauses, PTerm t) {
         OneWayList<Clause> result = null;
         OneWayList<Clause> p = null;
 
         for(Object obj : familyClauses){
             Clause clause = (Clause) obj;
-            Term arg = clause.getHead().getTerms(0).getTerm();
+            PTerm arg = clause.getHead().getTerms(0).getTerm();
 
             if(arg instanceof Var || arg.isAtomic()){
                 OneWayList<Clause> l = new OneWayList<>(clause, null);

@@ -19,7 +19,7 @@ package nars.tuprolog.lib;
 
 
 import nars.tuprolog.*;
-import nars.tuprolog.Number;
+import nars.tuprolog.PNum;
 
 /**
  * This class represents a tuProlog library providing most of the built-ins
@@ -36,7 +36,7 @@ public class ISOLibrary extends Library {
     public ISOLibrary() {
     }
 
-    public boolean atom_length_2(Term arg0, Term len) throws PrologError {
+    public boolean atom_length_2(PTerm arg0, PTerm len) throws PrologError {
         arg0 = arg0.getTerm();
         if (arg0 instanceof Var)
             throw PrologError.instantiation_error(engine, 1);
@@ -47,7 +47,7 @@ public class ISOLibrary extends Library {
         return unify(len, new Int(atom.getName().length()));
     }
 
-    public boolean atom_chars_2(Term arg0, Term arg1) throws PrologError {
+    public boolean atom_chars_2(PTerm arg0, PTerm arg1) throws PrologError {
         arg0 = arg0.getTerm();
         arg1 = arg1.getTerm();
         if (arg0 instanceof Var) {
@@ -84,7 +84,7 @@ public class ISOLibrary extends Library {
                         "atom", arg0);
             }
             String st = ((Struct) arg0).getName();
-            Term[] tlist = new Term[st.length()];
+            PTerm[] tlist = new PTerm[st.length()];
             for (int i = 0; i < st.length(); i++) {
                 tlist[i] = new Struct(new String(new char[] { st.charAt(i) }));
             }
@@ -99,7 +99,7 @@ public class ISOLibrary extends Library {
         }
     }
 
-    public boolean char_code_2(Term arg0, Term arg1) throws PrologError {
+    public boolean char_code_2(PTerm arg0, PTerm arg1) throws PrologError {
         arg0 = arg0.getTerm();
         arg1 = arg1.getTerm();
         if (arg1 instanceof Var) {
@@ -115,7 +115,7 @@ public class ISOLibrary extends Library {
                         "character", arg0);
         } else if ((arg1 instanceof Int)
                 || (arg1 instanceof nars.tuprolog.Long)) {
-            char c = (char) ((Number) arg1).intValue();
+            char c = (char) ((PNum) arg1).intValue();
             return unify(arg0, new Struct(String.valueOf(c)));
         } else
             throw PrologError.type_error(engine, 2,
@@ -126,102 +126,102 @@ public class ISOLibrary extends Library {
 
     // functors
 
-    public Term sin_1(Term val) {
-        Term val0 = null;
+    public PTerm sin_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(Math.sin(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(Math.sin(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term cos_1(Term val) {
-        Term val0 = null;
+    public PTerm cos_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(Math.cos(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(Math.cos(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term exp_1(Term val) {
-        Term val0 = null;
+    public PTerm exp_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(Math.exp(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(Math.exp(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term atan_1(Term val) {
-        Term val0 = null;
+    public PTerm atan_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(Math.atan(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(Math.atan(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term log_1(Term val) {
-        Term val0 = null;
+    public PTerm log_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(Math.log(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(Math.log(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term sqrt_1(Term val) {
-        Term val0 = null;
+    public PTerm sqrt_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(Math.sqrt(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(Math.sqrt(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term abs_1(Term val) {
-        Term val0 = null;
+    public PTerm abs_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
         if (val0 instanceof Int || val0 instanceof nars.tuprolog.Long)
-            return new nars.tuprolog.Int(Math.abs(((Number) val0).intValue()));
+            return new nars.tuprolog.Int(Math.abs(((PNum) val0).intValue()));
         if (val0 instanceof nars.tuprolog.Double
                 || val0 instanceof nars.tuprolog.Float)
-            return new nars.tuprolog.Double(Math.abs(((Number) val0)
+            return new nars.tuprolog.Double(Math.abs(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term sign_1(Term val) {
-        Term val0 = null;
+    public PTerm sign_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -229,129 +229,129 @@ public class ISOLibrary extends Library {
         }
         if (val0 instanceof Int || val0 instanceof nars.tuprolog.Long)
             return new nars.tuprolog.Double(
-                    ((Number) val0).intValue() > 0 ? 1.0 : -1.0);
+                    ((PNum) val0).intValue() > 0 ? 1.0 : -1.0);
         if (val0 instanceof nars.tuprolog.Double
                 || val0 instanceof nars.tuprolog.Float)
             return new nars.tuprolog.Double(
-                    ((Number) val0).doubleValue() > 0 ? 1.0 : -1.0);
+                    ((PNum) val0).doubleValue() > 0 ? 1.0 : -1.0);
         return null;
     }
 
-    public Term float_integer_part_1(Term val) {
-        Term val0 = null;
+    public PTerm float_integer_part_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double((long) Math.rint(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double((long) Math.rint(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term float_fractional_part_1(Term val) {
-        Term val0 = null;
+    public PTerm float_fractional_part_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number) {
-            double fl = ((Number) val0).doubleValue();
+        if (val0 instanceof PNum) {
+            double fl = ((PNum) val0).doubleValue();
             return new nars.tuprolog.Double(Math.abs(fl - Math.rint(fl)));
         }
         return null;
     }
 
-    public Term float_1(Term val) {
-        Term val0 = null;
+    public PTerm float_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Double(((Number) val0).doubleValue());
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Double(((PNum) val0).doubleValue());
         return null;
     }
 
-    public Term floor_1(Term val) {
-        Term val0 = null;
+    public PTerm floor_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new Int((int) Math.floor(((Number) val0).doubleValue()));
+        if (val0 instanceof PNum)
+            return new Int((int) Math.floor(((PNum) val0).doubleValue()));
         return null;
     }
 
-    public Term round_1(Term val) {
-        Term val0 = null;
+    public PTerm round_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new nars.tuprolog.Long(Math.round(((Number) val0)
+        if (val0 instanceof PNum)
+            return new nars.tuprolog.Long(Math.round(((PNum) val0)
                     .doubleValue()));
         return null;
     }
 
-    public Term truncate_1(Term val) {
-        Term val0 = null;
+    public PTerm truncate_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new Int((int) Math.rint(((Number) val0).doubleValue()));
+        if (val0 instanceof PNum)
+            return new Int((int) Math.rint(((PNum) val0).doubleValue()));
         return null;
     }
 
-    public Term ceiling_1(Term val) {
-        Term val0 = null;
+    public PTerm ceiling_1(PTerm val) {
+        PTerm val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number)
-            return new Int((int) Math.ceil(((Number) val0).doubleValue()));
+        if (val0 instanceof PNum)
+            return new Int((int) Math.ceil(((PNum) val0).doubleValue()));
         return null;
     }
 
-    public Term div_2(Term v0, Term v1) throws PrologError {
-        Term val0 = null;
-        Term val1 = null;
+    public PTerm div_2(PTerm v0, PTerm v1) throws PrologError {
+        PTerm val0 = null;
+        PTerm val1 = null;
         try {
             val0 = evalExpression(v0);
             val1 = evalExpression(v1);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number && val1 instanceof Number)
-            return new nars.tuprolog.Int(((Number) val0).intValue()
-                    / ((Number) val1).intValue());
+        if (val0 instanceof PNum && val1 instanceof PNum)
+            return new nars.tuprolog.Int(((PNum) val0).intValue()
+                    / ((PNum) val1).intValue());
         return null;
     }
 
-    public Term mod_2(Term v0, Term v1) throws PrologError {
-        Term val0 = null;
-        Term val1 = null;
+    public PTerm mod_2(PTerm v0, PTerm v1) throws PrologError {
+        PTerm val0 = null;
+        PTerm val1 = null;
         try {
             val0 = evalExpression(v0);
             val1 = evalExpression(v1);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number && val1 instanceof Number) {
-            int x = ((Number) val0).intValue();
-            int y = ((Number) val1).intValue();
+        if (val0 instanceof PNum && val1 instanceof PNum) {
+            int x = ((PNum) val0).intValue();
+            int y = ((PNum) val1).intValue();
             int f = new java.lang.Double(Math.floor((double) x / (double) y))
                     .intValue();
             return new Int(x - (f * y));
@@ -359,18 +359,18 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public Term rem_2(Term v0, Term v1) {
-        Term val0 = null;
-        Term val1 = null;
+    public PTerm rem_2(PTerm v0, PTerm v1) {
+        PTerm val0 = null;
+        PTerm val1 = null;
         try {
             val0 = evalExpression(v0);
             val1 = evalExpression(v1);
         } catch (Throwable e) {
 
         }
-        if (val0 instanceof Number && val1 instanceof Number) {
-            return new nars.tuprolog.Double(Math.IEEEremainder(((Number) val0)
-                    .doubleValue(), ((Number) val1).doubleValue()));
+        if (val0 instanceof PNum && val1 instanceof PNum) {
+            return new nars.tuprolog.Double(Math.IEEEremainder(((PNum) val0)
+                    .doubleValue(), ((PNum) val1).doubleValue()));
         }
         return null;
     }
@@ -457,7 +457,7 @@ public class ISOLibrary extends Library {
 
     // Java guards for Prolog predicates
 
-    public boolean sub_atom_guard_5(Term arg0, Term arg1, Term arg2, Term arg3, Term arg4)
+    public boolean sub_atom_guard_5(PTerm arg0, PTerm arg1, PTerm arg2, PTerm arg3, PTerm arg4)
             throws PrologError {
         arg0 = arg0.getTerm();
         if (!arg0.isAtom())

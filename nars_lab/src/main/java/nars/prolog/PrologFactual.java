@@ -36,7 +36,7 @@ public class PrologFactual extends TermFunction {
             return null;
         }
 
-        nars.tuprolog.Term factTerm = NARPrologMirror.pterm(x[0]).resolveTerm();
+        PTerm factTerm = NARPrologMirror.pterm(x[0]).resolveTerm();
 
         if (factTerm == null)
             return "prolog_invalid";
@@ -45,14 +45,14 @@ public class PrologFactual extends TermFunction {
             try {
                 SolveInfo si = p.solve(factTerm, solveTime);
 
-                nars.tuprolog.Term lastSolution = null;
+                PTerm lastSolution = null;
 
                 int a = 0;
                 Set<Term> answers = new HashSet();
                 do {
                     if (si == null) break;
 
-                    nars.tuprolog.Term solution = si.getSolution();
+                    PTerm solution = si.getSolution();
                     if (solution == null)
                         break;
 

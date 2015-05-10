@@ -1,7 +1,6 @@
 package nars.tuprolog;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Stores an index of clauses
@@ -22,7 +21,7 @@ public interface Clauses extends Iterable<Clause> {
 	 * @return  The stream of matching-compatible predicates, or null if there are none.
 	 * must return null if there are none, otherwise the callee doesn't know if it's empty
 	 */
-	Iterator<Clause> getPredicates(Term headt);
+	Iterator<Clause> getPredicates(PTerm headt);
 
 	/**
 	 * Retrieves the list of clauses of the requested family

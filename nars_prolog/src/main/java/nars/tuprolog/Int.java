@@ -17,6 +17,9 @@
  */
 package nars.tuprolog;
 
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +29,7 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
-public class Int extends Number {
+public class Int extends PNum {
     
     final private int      value;
     
@@ -132,18 +135,18 @@ public class Int extends Number {
      * Returns true if this integer term is grater that the term provided.
      * For number term argument, the int value is considered.
      */
-    public boolean isGreater(Term t) {
+    public boolean isGreater(PTerm t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).intValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).intValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
     }
-    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
+    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).intValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).intValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -152,10 +155,10 @@ public class Int extends Number {
     /**
      * Returns true if this integer term is equal to the term provided.
      */
-    public boolean isEqual(Term t) {
+    public boolean isEqual(PTerm t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            Number n = (Number) t;
+        if (t instanceof PNum) {
+            PNum n = (PNum) t;
             if (!n.isInteger())
                 return false;
             return (long) value == n.longValue();
@@ -167,12 +170,12 @@ public class Int extends Number {
      * Tries to unify a term with the provided term argument.
      * This service is to be used in demonstration context.
      */
-    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
+    public boolean unify(List<Var> vl1, List<Var> vl2, PTerm t) {
         t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(vl2, vl1, this);
-        } else if (t instanceof Number && ((Number) t).isInteger()) {
-            return value == ((Number) t).intValue();
+        } else if (t instanceof PNum && ((PNum) t).isInteger()) {
+            return value == ((PNum) t).intValue();
         } else {
             return false;
         }
@@ -182,16 +185,23 @@ public class Int extends Number {
     public int hashCode() {
         return value;
     }
-    
+
+
+    @Override
+    public PTerm clone() {
+        return this;
+    }
+
     public String toString() {
         return Integer.toString(value);
     }
 
-    /**
-     * @author Paolo Contessi
-     */
-    public int compareTo(Number o) {
-        return (new java.lang.Integer(value)).compareTo(o.intValue());
+
+    public int compareTo(nars.nal.term.Term o) {
+        if (o instanceof Int)
+            return Integer.compare(value, ((Int)o).intValue());
+        else
+            return -1;
     }
     
 }

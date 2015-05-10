@@ -50,7 +50,7 @@ public class Theories implements Serializable {
     private final Clauses retractDBase;
     private final Prolog engine;
     private final Primitives primitives;
-    private final Deque<Term> startGoalStack = new ArrayDeque();
+    private final Deque<PTerm> startGoalStack = new ArrayDeque();
     //Theory lastConsultedTheory;
 
     public Theories(Prolog vm, Clauses dynamic, Clauses statics) {
@@ -179,7 +179,7 @@ public class Theories implements Serializable {
      * Reviewed by Paolo Contessi: modified according to new ClauseDatabase
      * implementation
      */
-    public synchronized Iterator<Clause> find(Term headt) {
+    public synchronized Iterator<Clause> find(PTerm headt) {
         if (headt instanceof Struct) {
             //String key = ((Struct) headt).getPredicateIndicator();
             Iterator<Clause> list = dynamicDBase.getPredicates(headt);
@@ -222,13 +222,13 @@ public class Theories implements Serializable {
         }
     }
 
-    public void consult(final Iterator<? extends Term> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+    public void consult(final Iterator<? extends PTerm> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
         startGoalStack.clear();
         int clause = 1;
             /**/
         // iterate and assert all clauses in theory
         try {
-            for (Iterator<? extends Term> it = theory; it.hasNext(); ) {
+            for (Iterator<? extends PTerm> it = theory; it.hasNext(); ) {
                 clause++;
                 Struct d = (Struct) it.next();
                 if (!runDirective(d))
@@ -246,7 +246,7 @@ public class Theories implements Serializable {
     public void rebindPrimitives() {
         for (Clause d : dynamicDBase) {
             for (AbstractSubGoalTree sge : d.getBody()) {
-                Term t = ((SubGoalElement) sge).getValue();
+                PTerm t = ((SubGoalElement) sge).getValue();
                 primitives.identifyPredicate(t);
             }
         }
@@ -279,7 +279,7 @@ public class Theories implements Serializable {
     private boolean runDirective(final Struct c) {
         if (c.getArity() != 1)
             return false;
-        Term t = c.getTerm(0);
+        PTerm t = c.getTerm(0);
         if (!(t instanceof Struct))
             return false;
 
@@ -311,7 +311,7 @@ public class Theories implements Serializable {
      */
     private Struct toClause(Struct t) {        //PRIMITIVE
         // TODO bad, slow way of cloning. requires approx twice the time necessary
-        t = (Struct) Term.createTerm(t.toString(), this.engine.getOperators());
+        t = (Struct) PTerm.createTerm(t.toString(), this.engine.getOperators());
         if (!t.isClause())
             t = new Struct(":-", t, Struct.TRUE /* new Struct("true") */);
         primitives.identifyPredicate(t);
@@ -322,7 +322,7 @@ public class Theories implements Serializable {
         Struct s = null;
         while (!startGoalStack.isEmpty()) {
 
-            Term popped = startGoalStack.pop();
+            PTerm popped = startGoalStack.pop();
             s = (s == null) ?
                     (Struct) popped :
                     new Struct(",", popped, s);

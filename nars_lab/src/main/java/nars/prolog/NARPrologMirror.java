@@ -44,7 +44,7 @@ public class NARPrologMirror extends AbstractMirror {
     private float trueThreshold = 0.90f;
     private float falseThreshold = 0.10f;
     private float confidenceThreshold;
-    private final Map<Sentence, nars.tuprolog.Term> beliefs = new HashMap();
+    private final Map<Sentence, PTerm> beliefs = new HashMap();
 
     //counter of how many beliefs support the term. added and removed for each belief
     private final ObjectIntHashMap<Term> beliefCount = new ObjectIntHashMap<>();
@@ -181,7 +181,7 @@ public class NARPrologMirror extends AbstractMirror {
         this.reportAssumptions = reportAssumptions;
     }
 
-    public Map<Sentence, nars.tuprolog.Term> getBeliefs() {
+    public Map<Sentence, PTerm> getBeliefs() {
         return beliefs;
     }
 
@@ -190,7 +190,7 @@ public class NARPrologMirror extends AbstractMirror {
 
     protected boolean forget(Sentence belief) {
 
-        nars.tuprolog.Term removed;
+        PTerm removed;
         if ((removed = beliefs.remove(belief)) != null) {
 
             if (beliefCount.addToValue(belief.getTerm(), -1) == 0) {
@@ -215,7 +215,7 @@ public class NARPrologMirror extends AbstractMirror {
         return apply(functor, new Parser(term).nextTerm(true));
     }
 
-    public boolean apply(String functor, nars.tuprolog.Term removed)  {
+    public boolean apply(String functor, PTerm removed)  {
         Struct r = new Struct(functor,removed);
         r.resolveTerm();
         System.out.println("Prolog apply: " + r);
@@ -383,11 +383,11 @@ public class NARPrologMirror extends AbstractMirror {
         return false;
     }
 
-    public SolveInfo solve(Struct qh, float solveTime, Consumer<nars.tuprolog.Term> withSolution) throws NoMoreSolutionException, NoSolutionException, InvalidTheoryException {
+    public SolveInfo solve(Struct qh, float solveTime, Consumer<PTerm> withSolution) throws NoMoreSolutionException, NoSolutionException, InvalidTheoryException {
         return solve(qh, solveTime, withSolution, maxAnswers);
     }
 
-    public SolveInfo solve(Struct qh, float solveTime, Consumer<nars.tuprolog.Term> withSolution, int maxAnswers) throws InvalidTheoryException, NoSolutionException, NoMoreSolutionException {
+    public SolveInfo solve(Struct qh, float solveTime, Consumer<PTerm> withSolution, int maxAnswers) throws InvalidTheoryException, NoSolutionException, NoMoreSolutionException {
         //System.out.println("Prolog question: " + s.toString() + " | " + qh.toString() + " ? (" + Texts.n2(priority) + ")");
 
 
@@ -396,7 +396,7 @@ public class NARPrologMirror extends AbstractMirror {
 
         int answers = 0;
 
-        nars.tuprolog.Term lastSolution = null;
+        PTerm lastSolution = null;
 
         long start = System.currentTimeMillis();
 
@@ -404,7 +404,7 @@ public class NARPrologMirror extends AbstractMirror {
             do {
                 if (si == null) break;
 
-                nars.tuprolog.Term solution = si.getSolution();
+                PTerm solution = si.getSolution();
                 if (solution == null)
                     break;
 
@@ -445,7 +445,7 @@ public class NARPrologMirror extends AbstractMirror {
         System.err.println(this + " unable to express question in Prolog: " + s);
     }
 
-    protected void onUnanswerable(nars.tuprolog.Term solution) {
+    protected void onUnanswerable(PTerm solution) {
         System.err.println(this + " unable to answer solution: " + solution);
 
     }
@@ -503,7 +503,7 @@ public class NARPrologMirror extends AbstractMirror {
      */
     public static Struct newJudgmentTheory(final Sentence judgment) throws InvalidTheoryException {
 
-        nars.tuprolog.Term s;
+        PTerm s;
         /*if (judgment.truth!=null) {            
             s = pInfer(pterm(judgment.content), judgment.truth);
         }
@@ -549,11 +549,11 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     //NOT yet working
-    public Struct pInfer(nars.tuprolog.Term t, Truth tv) {
+    public Struct pInfer(PTerm t, Truth tv) {
         double freq = tv.getFrequency();
         double conf = tv.getConfidence();
-        Struct lt = new Struct(new nars.tuprolog.Term[]{t,
-                new Struct(new nars.tuprolog.Term[]{
+        Struct lt = new Struct(new PTerm[]{t,
+                new Struct(new PTerm[]{
                         new nars.tuprolog.Double(freq),
                         new nars.tuprolog.Double(conf)
                 })
@@ -562,7 +562,7 @@ public class NARPrologMirror extends AbstractMirror {
         //TODO resolveTerm
     }
 
-    public static Struct negation(nars.tuprolog.Term t) {
+    public static Struct negation(PTerm t) {
         return new Struct("not", t);
     }
 
@@ -626,27 +626,27 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     //NARS term -> Prolog term
-    public static nars.tuprolog.Term pterm(final Term term) {
+    public static PTerm pterm(final Term term) {
 
         //CharSequence s = termString(term);
         if (term instanceof Statement) {
             Statement i = (Statement) term;
             String predicate = classPredicate(i.getClass());
-            nars.tuprolog.Term subj = pterm(i.getSubject());
-            nars.tuprolog.Term obj = pterm(i.getPredicate());
+            PTerm subj = pterm(i.getSubject());
+            PTerm obj = pterm(i.getPredicate());
             if ((subj != null) && (obj != null))
                 return new Struct(predicate, subj, obj);
         } else if ((term instanceof SetTensional) || (term instanceof Product) /* conjunction */) {
             Compound s = (Compound) term;
             String predicate = classPredicate(s.getClass());
-            nars.tuprolog.Term[] args = pterms(s.term);
+            PTerm[] args = pterms(s.term);
             if (args != null)
                 return new Struct(predicate, args);
         }
         //Image...
         //Conjunction...
         else if (term instanceof Negation) {
-            nars.tuprolog.Term np = pterm(((Negation) term).term[0]);
+            PTerm np = pterm(((Negation) term).term[0]);
             if (np == null) return null;
             return new Struct("not", np);
         } else if (term.getClass().equals(Variable.class)) {
@@ -683,7 +683,7 @@ public class NARPrologMirror extends AbstractMirror {
     /**
      * Prolog term --> NARS statement
      */
-    public static Term nterm(final nars.tuprolog.Term term) {
+    public static Term nterm(final PTerm term) {
 
         if (term instanceof Struct) {
             Struct s = (Struct) term;
@@ -740,7 +740,7 @@ public class NARPrologMirror extends AbstractMirror {
             System.err.println("nterm() does not yet support translation to NARS terms of Prolog: " + term);
         } else if (term instanceof Var) {
             Var v = (Var) term;
-            nars.tuprolog.Term t = v.getTerm();
+            PTerm t = v.getTerm();
             if (t != v) {
                 //System.out.println("Bound: " + v + " + -> " + t + " " + nterm(t));
                 return nterm(t);
@@ -749,8 +749,8 @@ public class NARPrologMirror extends AbstractMirror {
                 //unbound variable, is there anything we can do with it?
                 return getVar(v);
             }
-        } else if (term instanceof nars.tuprolog.Number) {
-            nars.tuprolog.Number n = (nars.tuprolog.Number) term;
+        } else if (term instanceof PNum) {
+            PNum n = (PNum) term;
             return Atom.get('"' + String.valueOf(n.doubleValue()) + '"');
         }
 
@@ -773,7 +773,7 @@ public class NARPrologMirror extends AbstractMirror {
     /**
      * reflect a result to NARS, and remember it so that it doesn't get reprocessed here later
      */
-    public Term answer(Task question, Term t, nars.tuprolog.Term pt) {
+    public Term answer(Task question, Term t, PTerm pt) {
         if (reportAnswers)
             System.err.println("Prolog answer: " + t);
 
@@ -852,7 +852,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
 
-    public static Theory getTheory(Map<Sentence, nars.tuprolog.Term> beliefMap) throws InvalidTheoryException {
+    public static Theory getTheory(Map<Sentence, PTerm> beliefMap) throws InvalidTheoryException {
         return new Theory(new Struct(beliefMap.values().toArray(new Struct[beliefMap.size()])));
     }
 
@@ -863,8 +863,8 @@ public class NARPrologMirror extends AbstractMirror {
     protected void onQuestion(Sentence s) {
     }
 
-    public static nars.tuprolog.Term[] pterms(Term[] term) {
-        nars.tuprolog.Term[] tt = new nars.tuprolog.Term[term.length];
+    public static PTerm[] pterms(Term[] term) {
+        PTerm[] tt = new PTerm[term.length];
         int i = 0;
         for (Term x : term) {
             if ((tt[i++] = pterm(x).resolveTerm()) == null) return null;
@@ -872,22 +872,22 @@ public class NARPrologMirror extends AbstractMirror {
         return tt;
     }
 
-    public static Term[] nterm(final nars.tuprolog.Term[] term) {
+    public static Term[] nterm(final PTerm[] term) {
         Term[] tt = new Term[term.length];
         int i = 0;
-        for (nars.tuprolog.Term x : term) {
+        for (PTerm x : term) {
             if ((tt[i++] = nterm(x)) == null) return null;
         }
         return tt;
     }
 
 
-    public boolean solve(String s, float maxTime, Consumer<nars.tuprolog.Term> withSolution) throws InvalidTheoryException {
+    public boolean solve(String s, float maxTime, Consumer<PTerm> withSolution) throws InvalidTheoryException {
         return solve(s, maxTime, withSolution, maxAnswers);
     }
-    public boolean solve(String s, float maxTime, Consumer<nars.tuprolog.Term> withSolution, int maxAnswers) throws InvalidTheoryException {
+    public boolean solve(String s, float maxTime, Consumer<PTerm> withSolution, int maxAnswers) throws InvalidTheoryException {
         if (!s.endsWith(".")) s = s + '.';
-        nars.tuprolog.Term x = new Parser(s).nextTerm(true);
+        PTerm x = new Parser(s).nextTerm(true);
 
         if (x == null) return false;
 

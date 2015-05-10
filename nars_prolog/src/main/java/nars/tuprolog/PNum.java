@@ -17,6 +17,9 @@
  */
 package nars.tuprolog;
 
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
+
 import java.util.Map;
 
 /**
@@ -30,8 +33,7 @@ import java.util.Map;
  *
  * Reviewed by Paolo Contessi: implements Comparable<Number>
  */
-@SuppressWarnings("serial")
-public abstract class Number extends Term  {
+public abstract class PNum implements PTerm {
 
     /**
      *  Returns the value of the number as int
@@ -94,17 +96,17 @@ public abstract class Number extends Term  {
      * @deprecated Use <tt>instanceof alice.tuprolog.Long</tt> instead. */
     public abstract boolean isLong();
 
-    public static Number createNumber(String s) {
-        Term t = Term.createTerm(s);
-        if (t instanceof Number)
-            return (Number) t;
+    public static PNum createNumber(String s) {
+        PTerm t = PTerm.createTerm(s);
+        if (t instanceof PNum)
+            return (PNum) t;
         throw new InvalidTermException("Term " + t + " is not a number.");
     }
 
     /**
      * Gets the actual term referred by this Term.
      */
-    public Term getTerm() {
+    public PTerm getTerm() {
         return this;
     }
 
@@ -167,7 +169,7 @@ public abstract class Number extends Term  {
     /**
      * gets a copy of this term.
      */
-    public Term copy(int idExecCtx) {
+    public PTerm copy(int idExecCtx) {
         return this;
     }
 
@@ -177,14 +179,14 @@ public abstract class Number extends Term  {
      * the list argument passed contains the list of variables to be renamed
      * (if empty list then no renaming)
      */
-    public Term copy(Map<Var,Var> vMap, int idExecCtx) {
+    public PTerm copy(Map<Var,Var> vMap, int idExecCtx) {
         return this;
     }
 
     /**
      * gets a copy of the term.
      */
-    public Term copy(Map<Var,Var> vMap, Map<Term,Var> substMap) {
+    public PTerm copy(Map<Var,Var> vMap, Map<PTerm,Var> substMap) {
         return this;
     }
     
@@ -205,5 +207,28 @@ public abstract class Number extends Term  {
     public void accept(TermVisitor tv) {		 
     	tv.visit(this);		 
     }
-/**/
+
+
+
+    @Override
+    public NALOperator operator() {
+        return NALOperator.PNUM;
+    }
+
+    @Override
+    public short getComplexity() {
+        return 1;
+    }
+
+
+    @Override
+    public PTerm clone() {
+        return this;
+    }
+
+    @Override
+    public PTerm cloneDeep() {
+        return this;
+    }
+
 }

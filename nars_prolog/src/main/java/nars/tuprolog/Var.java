@@ -18,9 +18,10 @@
 package nars.tuprolog;
 
 
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
 import nars.tuprolog.net.AbstractSocket;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +30,19 @@ import java.util.Map;
  * This class represents a variable term. Variables are identified by a name
  * (which must starts with an upper case letter) or the anonymous ('_') name.
  *
- * @see Term
+ * @see PTerm
  *
  */
-public class Var extends Term {
+public class Var implements PTerm {
 
-    private static final long serialVersionUID = 1L;
     final static String ANY = "_";
+
     // the name identifying the var
+
     private String name;
     private StringBuilder completeName;     /* Reviewed by Paolo Contessi: String -> StringBuilder */
 
-    private Term link;            /* tlink is used for unification process */
+    private PTerm link;            /* tlink is used for unification process */
 
     private long timestamp;        /* timestamp is used for fix vars order */
 
@@ -136,8 +138,8 @@ public class Var extends Term {
      * with the same time identifier is found in the list, then the variable in
      * the list is returned.
      */
-    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
-        Term tt = getTerm();
+    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
+        PTerm tt = getTerm();
         if (tt == this) {
             Var v = vMap.get(this);
             if (v == null) {
@@ -154,7 +156,7 @@ public class Var extends Term {
     /**
      * Gets a copy of this variable.
      */
-    public Term copy(final Map<Var, Var> vMap, final Map<Term, Var> substMap) {
+    public PTerm copy(final Map<Var, Var> vMap, final Map<PTerm, Var> substMap) {
         Var v;
         Object temp = vMap.get(this);
         if (temp == null) {
@@ -164,7 +166,7 @@ public class Var extends Term {
         } else {
             v = (Var) temp;
         }
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t instanceof Var) {
             Object tt = substMap.putIfAbsent(t, v);
             if (tt == null) {
@@ -176,7 +178,7 @@ public class Var extends Term {
         else if (t instanceof Struct) {
             v.link = t.copy(vMap, substMap);
         }
-        else if (t instanceof Number) {
+        else if (t instanceof PNum) {
             v.link = t;
         }
         return v;
@@ -235,9 +237,9 @@ public class Var extends Term {
      * For unbound variable it is the variable itself, while for bound variable
      * it is the bound term.
      */
-    public Term getTerm() {
-        Term tt = this;
-        Term t = link;
+    public PTerm getTerm() {
+        PTerm tt = this;
+        PTerm t = link;
         while (t != null) {
             tt = t;
             if (t instanceof Var) {
@@ -249,17 +251,19 @@ public class Var extends Term {
         return tt;
     }
 
+
+
     /**
      * Gets the term which is direct referred by the variable.
      */
-    public Term getLink() {
+    public PTerm getLink() {
         return link;
     }
 
     /**
      * Set the term which is direct bound
      */
-    public void setLink(Term l) {
+    public void setLink(PTerm l) {
         link = l;
     }
 
@@ -284,7 +288,7 @@ public class Var extends Term {
     }
 
     public boolean isEmptyList() {
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -293,7 +297,7 @@ public class Var extends Term {
     }
 
     public boolean isAtomic() {
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -302,7 +306,7 @@ public class Var extends Term {
     }
 
     public boolean isCompound() {
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -311,7 +315,7 @@ public class Var extends Term {
     }
 
     public boolean isAtom() {
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -320,7 +324,7 @@ public class Var extends Term {
     }
 
     public boolean isList() {
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -329,7 +333,7 @@ public class Var extends Term {
     }
 
     public boolean isGround() {
-        Term t = getTerm();
+        PTerm t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -361,7 +365,7 @@ public class Var extends Term {
     private boolean occurCheck(final List<Var> vl, final Struct t) {
         int arity = t.getArity();
         for (int c = 0; c < arity; c++) {
-            Term at = t.getTerm(c);
+            PTerm at = t.getTerm(c);
             if (at instanceof Struct) {
                 if (occurCheck(vl, (Struct) at)) {
                     return true;
@@ -385,7 +389,7 @@ public class Var extends Term {
      * Resolve the occurence of variables in a Term
      */
     public long resolveTerm(long count) {
-        Term tt = getTerm();
+        PTerm tt = getTerm();
         if (tt != this) {
             return tt.resolveTerm(count);
         } else {
@@ -420,8 +424,8 @@ public class Var extends Term {
      * occur check is ok then it's success and a new tlink is created
      * (retractable by a code)
      */
-    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
-        Term tt = getTerm();
+    public boolean unify(List<Var> vl1, List<Var> vl2, PTerm t) {
+        PTerm tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             if (t instanceof Var) {
@@ -439,7 +443,7 @@ public class Var extends Term {
                 if (occurCheck(vl2, (Struct) t)) {
                     return false;
                 }
-            } else if (!(t instanceof Number) && !(t instanceof AbstractSocket)) {
+            } else if (!(t instanceof PNum) && !(t instanceof AbstractSocket)) {
                 return false;
             }
             link = t;
@@ -469,8 +473,8 @@ public class Var extends Term {
      }
      }
      */
-    public boolean isGreater(Term t) {
-        Term tt = getTerm();
+    public boolean isGreater(PTerm t) {
+        PTerm tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             if (!(t instanceof Var)) {
@@ -482,8 +486,8 @@ public class Var extends Term {
         }
     }
 
-    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
-        Term tt = getTerm();
+    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
+        PTerm tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             if (!(t instanceof Var)) {
@@ -499,8 +503,8 @@ public class Var extends Term {
         }
     }
 
-    public boolean isEqual(Term t) {
-        Term tt = getTerm();
+    public boolean isEqual(PTerm t) {
+        PTerm tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             return (t instanceof Var && timestamp == ((Var) t).timestamp);
@@ -513,6 +517,16 @@ public class Var extends Term {
         this.name = s;
     }
 
+    @Override
+    public PTerm clone() {
+        return new Var();
+    }
+
+    @Override
+    public Term cloneDeep() {
+        return null;
+    }
+
     /**
      * Gets the string representation of this variable.
      *
@@ -520,7 +534,7 @@ public class Var extends Term {
      */
     @Override
     public String toString() {
-        Term tt = getTerm();
+        PTerm tt = getTerm();
         if (name != null) {
             if (tt == this) {
                 return completeName.toString();
@@ -542,7 +556,7 @@ public class Var extends Term {
      *
      */
     public String toStringFlattened() {
-        Term tt = getTerm();
+        PTerm tt = getTerm();
         if (name != null) {
             if (tt == this) {
                 return completeName.toString();
@@ -570,4 +584,20 @@ public class Var extends Term {
         return getName().hashCode();
     }
 
+    @Override
+    public boolean equals(Object t) {
+        if (t instanceof Var)
+            return name().equals(((Var)t).name());
+        return false;
+    }
+
+    @Override
+    public NALOperator operator() {
+        return NALOperator.PVAR;
+    }
+
+    @Override
+    public short getComplexity() {
+        return 1;
+    }
 }

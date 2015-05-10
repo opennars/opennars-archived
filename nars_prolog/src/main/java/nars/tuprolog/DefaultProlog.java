@@ -56,7 +56,7 @@ public class DefaultProlog extends Prolog  {
     }
 
 
-    public synchronized boolean threadCreate(Term threadID, Term goal) {
+    public synchronized boolean threadCreate(PTerm threadID, PTerm goal) {
         id += 1;
 
         if (goal == null) return false;
@@ -123,29 +123,29 @@ public class DefaultProlog extends Prolog  {
         er.detach();
     }
 
-    public boolean sendMsg(int dest, Term msg) {
+    public boolean sendMsg(int dest, PTerm msg) {
         Engine er = findRunner(dest);
         if (er == null) return false;
-        Term msgcopy = msg.copy(new LinkedHashMap<>(), 0);
+        PTerm msgcopy = msg.copy(new LinkedHashMap<>(), 0);
         er.sendMsg(msgcopy);
         return true;
     }
 
-    public boolean sendMsg(String name, Term msg) {
+    public boolean sendMsg(String name, PTerm msg) {
         TermQueue queue = queues.get(name);
         if (queue == null) return false;
-        Term msgcopy = msg.copy(new LinkedHashMap<>(), 0);
+        PTerm msgcopy = msg.copy(new LinkedHashMap<>(), 0);
         queue.store(msgcopy);
         return true;
     }
 
-    public boolean getMsg(int id, Term msg) {
+    public boolean getMsg(int id, PTerm msg) {
         Engine er = findRunner(id);
         if (er == null) return false;
         return er.getMsg(msg);
     }
 
-    public boolean getMsg(String name, Term msg) {
+    public boolean getMsg(String name, PTerm msg) {
         Engine er = findRunner();
         if (er == null) return false;
         TermQueue queue = queues.get(name);
@@ -153,13 +153,13 @@ public class DefaultProlog extends Prolog  {
         return queue.get(msg, this, er);
     }
 
-    public boolean waitMsg(int id, Term msg) {
+    public boolean waitMsg(int id, PTerm msg) {
         Engine er = findRunner(id);
         if (er == null) return false;
         return er.waitMsg(msg);
     }
 
-    public boolean waitMsg(String name, Term msg) {
+    public boolean waitMsg(String name, PTerm msg) {
         Engine er = findRunner();
         if (er == null) return false;
         TermQueue queue = queues.get(name);
@@ -167,25 +167,25 @@ public class DefaultProlog extends Prolog  {
         return queue.wait(msg, this, er);
     }
 
-    public boolean peekMsg(int id, Term msg) {
+    public boolean peekMsg(int id, PTerm msg) {
         Engine er = findRunner(id);
         if (er == null) return false;
         return er.peekMsg(msg);
     }
 
-    public boolean peekMsg(String name, Term msg) {
+    public boolean peekMsg(String name, PTerm msg) {
         TermQueue queue = queues.get(name);
         if (queue == null) return false;
         return queue.peek(msg, this);
     }
 
-    public boolean removeMsg(int id, Term msg) {
+    public boolean removeMsg(int id, PTerm msg) {
         Engine er = findRunner(id);
         if (er == null) return false;
         return er.removeMsg(msg);
     }
 
-    public boolean removeMsg(String name, Term msg) {
+    public boolean removeMsg(String name, PTerm msg) {
         TermQueue queue = queues.get(name);
         if (queue == null) return false;
         return queue.remove(msg, this);
@@ -244,7 +244,7 @@ public class DefaultProlog extends Prolog  {
      * @return the result of the demonstration
      * @see SolveInfo
      **/
-    public SolveInfo solve(Term query, double maxTimeSeconds) {
+    public SolveInfo solve(PTerm query, double maxTimeSeconds) {
         //System.out.println("ENGINE SOLVE #0: "+g);
         if (query == null) return null;
 
@@ -262,7 +262,7 @@ public class DefaultProlog extends Prolog  {
 
     }
 
-    public SolveInfo solve(Term g) {
+    public SolveInfo solve(PTerm g) {
         return solve(g, 0);
     }
 
@@ -444,7 +444,7 @@ public class DefaultProlog extends Prolog  {
         return er.getEnv();
     }
 
-    @Override public void identify(Term t) {
+    @Override public void identify(PTerm t) {
         Engine er = findRunner();
         er.identify(t);
     }
@@ -459,12 +459,12 @@ public class DefaultProlog extends Prolog  {
         r.setRelinkVar(b);
     }
 
-    public ArrayList<Term> getBagOFres() {
+    public ArrayList<PTerm> getBagOFres() {
         Engine r = this.findRunner();
         return r.getBagOFres();
     }
 
-    public void setBagOFres(ArrayList<Term> l) {
+    public void setBagOFres(ArrayList<PTerm> l) {
         Engine r = this.findRunner();
         r.setBagOFres(l);
     }
@@ -479,32 +479,32 @@ public class DefaultProlog extends Prolog  {
         r.setBagOFresString(l);
     }
 
-    public Term getBagOFvarSet() {
+    public PTerm getBagOFvarSet() {
         Engine r = this.findRunner();
         return r.getBagOFvarSet();
     }
 
-    public void setBagOFvarSet(Term l) {
+    public void setBagOFvarSet(PTerm l) {
         Engine r = this.findRunner();
         r.setBagOFvarSet(l);
     }
 
-    public Term getBagOFgoal() {
+    public PTerm getBagOFgoal() {
         Engine r = this.findRunner();
         return r.getBagOFgoal();
     }
 
-    public void setBagOFgoal(Term l) {
+    public void setBagOFgoal(PTerm l) {
         Engine r = this.findRunner();
         r.setBagOFgoal(l);
     }
 
-    public Term getBagOFbag() {
+    public PTerm getBagOFbag() {
         Engine r = this.findRunner();
         return r.getBagOFBag();
     }
 
-    public void setBagOFbag(Term l) {
+    public void setBagOFbag(PTerm l) {
         Engine r = this.findRunner();
         r.setBagOFBag(l);
     }

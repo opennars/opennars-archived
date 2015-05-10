@@ -62,7 +62,17 @@ public enum NALOperator {
     /** an atomic term (includes interval and variables); this value is set if not a compound term */
     ATOM(".", 0, false),
 
-    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX), 0, false);
+    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX), 0, false),
+
+
+    //------------------- PROLOG TERM TYPES ----------------
+
+    /** Prolog variable */
+    PVAR("V", 0, false),
+    PNUM("N", 0, false)
+
+    ;
+
 
     //-----------------------------------------------------
 

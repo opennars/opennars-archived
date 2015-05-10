@@ -2,12 +2,8 @@ package nars.prolog;
 
 import nars.Events;
 import nars.NAR;
-import nars.io.TextOutput;
-import nars.model.impl.Default;
 import nars.tuprolog.*;
 import nars.tuprolog.event.*;
-
-import java.io.PrintStream;
 
 /**
  * Wraps a Prolog instance loaded with nal.pl with some utility methods
@@ -30,7 +26,7 @@ public class NARTuprolog extends DefaultProlog implements OutputListener, Warnin
     }
 
 
-    public SolveInfo query(nars.tuprolog.Term s, double time) {
+    public SolveInfo query(PTerm s, double time) {
         return this.solve(s, time);
     }
 

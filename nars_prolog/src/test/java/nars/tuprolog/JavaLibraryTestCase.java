@@ -9,7 +9,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class JavaLibraryTestCase extends TestCase {
 	String theory = null;
@@ -75,7 +74,7 @@ public class JavaLibraryTestCase extends TestCase {
         engine.setTheory(new Theory(theory));
         info = engine.solve("demo(Value).");
         assertEquals(true, info.isSuccess());
-        nars.tuprolog.Number result2 = (nars.tuprolog.Number) info.getVarValue("Value");
+        PNum result2 = (PNum) info.getVarValue("Value");
         assertEquals(2, result2.intValue());
     }
 
@@ -103,7 +102,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo_hierarchy(Res).");
 		assertEquals(false, info.isHalted());
-		nars.tuprolog.Number result2 = (nars.tuprolog.Number) info.getVarValue("Res");
+		PNum result2 = (PNum) info.getVarValue("Res");
 		assertEquals(8, result2.intValue());
 	}
 	
@@ -171,7 +170,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(info.toString(), true, info.isSuccess());
-		nars.tuprolog.Number resultInt = (nars.tuprolog.Number) info.getVarValue("Value");
+		PNum resultInt = (PNum) info.getVarValue("Value");
 		assertEquals(10, resultInt.intValue());
 
 		//Testing java_array_set and java_array_get
@@ -186,7 +185,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(true, info.isSuccess());
-		nars.tuprolog.Number resultInt2 = (nars.tuprolog.Number) info.getVarValue("Value");
+		PNum resultInt2 = (PNum) info.getVarValue("Value");
 		assertEquals(1, resultInt2.intValue());
 	}
 
@@ -204,7 +203,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(true, info.isSuccess());
-		nars.tuprolog.Number resultInt = (nars.tuprolog.Number) info.getVarValue("Value");
+		PNum resultInt = (PNum) info.getVarValue("Value");
 		assertEquals(10, resultInt.intValue());
 	}
 	

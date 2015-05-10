@@ -79,15 +79,15 @@ public class Clause {
     /**
      * Gets a clause from a generic Term
      */
-    static SubGoalTree extractBody(Term body) {
+    static SubGoalTree extractBody(PTerm body) {
         SubGoalTree r = new SubGoalTree();
         extractBody(r, body);
         return r;
     }
     
-    private static void extractBody(SubGoalTree parent, Term body) {
+    private static void extractBody(SubGoalTree parent, PTerm body) {
         while (body instanceof Struct && ((Struct)body).getName().equals(",")) {
-            Term t = ((Struct)body).getTerms(0);
+            PTerm t = ((Struct)body).getTerms(0);
             if (t instanceof Struct && ((Struct)t).getName().equals(",")) {
                 extractBody(parent.addChild(),t);
             } else {
@@ -184,7 +184,7 @@ public class Clause {
         for(AbstractSubGoalTree s: source){
             if (s.isLeaf()) {
                 SubGoalElement l = (SubGoalElement)s;
-                Term t = l.getValue().copy(map,id);
+                PTerm t = l.getValue().copy(map,id);
                 destination.addChild(t);
             } else {
                 SubGoalTree src  = (SubGoalTree)s; 
@@ -216,7 +216,7 @@ public class Clause {
         return ( clause.getTerms(0).toString() + " :- "+clause.getTerms(1)+".\n");
     }
     
-    static private String indentPredicates(Term t) {
+    static private String indentPredicates(PTerm t) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")){
@@ -259,7 +259,7 @@ public class Clause {
         }
     }*/
     
-    static private String indentPredicatesAsArgX(Term t,Operators op,int p) {
+    static private String indentPredicatesAsArgX(PTerm t,Operators op,int p) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")) {
@@ -280,7 +280,7 @@ public class Clause {
        }
     }
 
-    static private String indentPredicatesAsArgY(Term t,Operators op,int p) {
+    static private String indentPredicatesAsArgY(PTerm t,Operators op,int p) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")) {

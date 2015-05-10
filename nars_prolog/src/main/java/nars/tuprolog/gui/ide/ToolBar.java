@@ -1,8 +1,7 @@
 package nars.tuprolog.gui.ide;
 
-import nars.tuprolog.InvalidTheoryException;
 import nars.tuprolog.Prolog;
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.Theory;
 import nars.tuprolog.gui.spyframe.SpyFrame;
 
@@ -206,7 +205,7 @@ public class ToolBar extends JPanel
             {
         		ConsoleManager consoleManager = JavaIDE.getConsoleManager();
                 Theory theory = engine.getDynamicTheoryCopy();
-                Term rich = engine.termSolve(consoleManager.getGoal());
+                PTerm rich = engine.termSolve(consoleManager.getGoal());
                 try {
 					new SpyFrame(theory, rich);
 				} catch (Exception e) {

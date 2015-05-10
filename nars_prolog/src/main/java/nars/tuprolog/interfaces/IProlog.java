@@ -125,7 +125,7 @@ public interface IProlog {
 	 * @param term      the term to be represented as a string
 	 * @return the string representing the term
 	 */
-	String toString(Term term);
+	String toString(PTerm term);
 		
 	/**
 	 * Adds a listener to ouput events

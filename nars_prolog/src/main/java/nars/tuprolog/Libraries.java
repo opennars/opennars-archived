@@ -397,7 +397,7 @@ public class Libraries
 		return null;
 	}
 
-	public synchronized void onSolveBegin(Term g)
+	public synchronized void onSolveBegin(PTerm g)
 	{
 		for (Library alib : libraries)
 		{

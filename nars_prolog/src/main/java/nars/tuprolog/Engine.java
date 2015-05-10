@@ -26,17 +26,17 @@ public class Engine implements java.io.Serializable, Runnable {
 
 
     private boolean relinkVar = false;
-    private ArrayList<Term> bagOFres;
+    private ArrayList<PTerm> bagOFres;
     private ArrayList<String> bagOFresString;
-    private Term bagOFvarSet;
-    private Term bagOfgoal;
-    private Term bagOfBag;
+    private PTerm bagOFvarSet;
+    private PTerm bagOfgoal;
+    private PTerm bagOfBag;
 
     private int id;
     private int pid;
     private boolean detached;
     private boolean solving;
-    private Term query;
+    private PTerm query;
     private final TermQueue msgs;
     private final ArrayList<Boolean> next;
     private int countNext;
@@ -83,7 +83,7 @@ public class Engine implements java.io.Serializable, Runnable {
 
         //PrintStream log;
         Stage nextState;
-        Term query;
+        PTerm query;
         Struct startGoal;
         Collection<Var> goalVars;
         int nDemoSteps;
@@ -96,7 +96,7 @@ public class Engine implements java.io.Serializable, Runnable {
 
         long cyclesToCheckForTimeout = 512;
 
-        public State(Engine manager, Term query) {
+        public State(Engine manager, PTerm query) {
             this.manager = manager;
             this.nextState = manager.INIT;
             this.query = query;
@@ -167,7 +167,7 @@ public class Engine implements java.io.Serializable, Runnable {
         /*
          * Methods for spyListeners
          */
-        public Term getQuery() {
+        public PTerm getQuery() {
             return query;
         }
 
@@ -446,11 +446,11 @@ public class Engine implements java.io.Serializable, Runnable {
      * Utility functions for Finite State Machine
      */
 
-    public Iterator<Clause> find(Term t) {
+    public Iterator<Clause> find(PTerm t) {
         return theories.find(t);
     }
 
-    void identify(Term t) {
+    void identify(PTerm t) {
         primitives.identifyPredicate(t);
     }
 
@@ -526,7 +526,7 @@ public class Engine implements java.io.Serializable, Runnable {
         return sinfo;
     }
 
-    public void setGoal(Term goal) {
+    public void setGoal(PTerm goal) {
         this.query = goal;
     }
 
@@ -561,28 +561,28 @@ public class Engine implements java.io.Serializable, Runnable {
     }
 
 
-    public void sendMsg(Term t) {
+    public void sendMsg(PTerm t) {
         msgs.store(t);
     }
 
 
-    public boolean getMsg(Term t) {
+    public boolean getMsg(PTerm t) {
         msgs.get(t, engineManager, this);
         return true;
     }
 
 
-    public boolean peekMsg(Term t) {
+    public boolean peekMsg(PTerm t) {
         return msgs.peek(t, engineManager);
     }
 
 
-    public boolean removeMsg(Term t) {
+    public boolean removeMsg(PTerm t) {
         return msgs.remove(t, engineManager);
     }
 
 
-    public boolean waitMsg(Term msg) {
+    public boolean waitMsg(PTerm msg) {
         msgs.wait(msg, engineManager, this);
         return true;
     }
@@ -604,11 +604,11 @@ public class Engine implements java.io.Serializable, Runnable {
         this.relinkVar = b;
     }
 
-    public ArrayList<Term> getBagOFres() {
+    public ArrayList<PTerm> getBagOFres() {
         return this.bagOFres;
     }
 
-    public void setBagOFres(ArrayList<Term> l) {
+    public void setBagOFres(ArrayList<PTerm> l) {
         this.bagOFres = l;
     }
 
@@ -620,27 +620,27 @@ public class Engine implements java.io.Serializable, Runnable {
         this.bagOFresString = l;
     }
 
-    public Term getBagOFvarSet() {
+    public PTerm getBagOFvarSet() {
         return this.bagOFvarSet;
     }
 
-    public void setBagOFvarSet(Term l) {
+    public void setBagOFvarSet(PTerm l) {
         this.bagOFvarSet = l;
     }
 
-    public Term getBagOFgoal() {
+    public PTerm getBagOFgoal() {
         return this.bagOfgoal;
     }
 
-    public void setBagOFgoal(Term l) {
+    public void setBagOFgoal(PTerm l) {
         this.bagOfgoal = l;
     }
 
-    public Term getBagOFBag() {
+    public PTerm getBagOFBag() {
         return this.bagOfBag;
     }
 
-    public void setBagOFBag(Term l) {
+    public void setBagOFBag(PTerm l) {
         this.bagOfBag = l;
     }
 

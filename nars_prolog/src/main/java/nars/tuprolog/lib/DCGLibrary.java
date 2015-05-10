@@ -19,7 +19,7 @@ package nars.tuprolog.lib;
 
 import nars.tuprolog.Library;
 import nars.tuprolog.PrologError;
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.Var;
 
 /**
@@ -57,14 +57,14 @@ public class DCGLibrary extends Library {
 
     // Java guards for Prolog predicates
 
-    public boolean phrase_guard_2(Term arg0, Term arg1) throws PrologError {
+    public boolean phrase_guard_2(PTerm arg0, PTerm arg1) throws PrologError {
         arg0 = arg0.getTerm();
         if (arg0 instanceof Var)
             throw PrologError.instantiation_error(engine, 1);
         return true;
     }
 
-    public boolean phrase_guard_3(Term arg0, Term arg1, Term arg2) throws PrologError {
+    public boolean phrase_guard_3(PTerm arg0, PTerm arg1, PTerm arg2) throws PrologError {
         arg0 = arg0.getTerm();
         if (arg0 instanceof Var)
             throw PrologError.instantiation_error(engine, 1);

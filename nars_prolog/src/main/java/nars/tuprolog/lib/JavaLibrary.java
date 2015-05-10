@@ -18,7 +18,7 @@
 package nars.tuprolog.lib;
 
 import nars.tuprolog.*;
-import nars.tuprolog.Number;
+import nars.tuprolog.PNum;
 import nars.tuprolog.util.*;
 
 import java.io.File;
@@ -132,7 +132,7 @@ public class JavaLibrary extends Library {
         staticObjects_inverse.clear();
     }
 
-    public void onSolveBegin(Term goal) {
+    public void onSolveBegin(PTerm goal) {
         // id = 0;
         currentObjects.clear();
         currentObjects_inverse.clear();
@@ -170,7 +170,7 @@ public class JavaLibrary extends Library {
      *
      * @throws JavaException
      */
-    public boolean java_object_3(Term className, Term argl, Term id)
+    public boolean java_object_3(PTerm className, PTerm argl, PTerm id)
             throws JavaException {
         className = className.getTerm();
         Struct arg = (Struct) argl.getTerm();
@@ -184,7 +184,7 @@ public class JavaLibrary extends Library {
             // check for array type
             if (clName.endsWith("[]")) {
                 Object[] list = getArrayFromList(arg);
-                int nargs = ((Number) list[0]).intValue();
+                int nargs = ((PNum) list[0]).intValue();
                 if (java_array(clName, nargs, id)) {
                     return true;
                 } else {
@@ -289,7 +289,7 @@ public class JavaLibrary extends Library {
      *
      * @throws JavaException
      */
-    public boolean destroy_object_1(Term id) throws JavaException {
+    public boolean destroy_object_1(PTerm id) throws JavaException {
         id = id.getTerm();
         try {
             if (id.isGround()) {
@@ -307,8 +307,8 @@ public class JavaLibrary extends Library {
      *
      * @throws JavaException
      */
-    public boolean java_class_4(Term clSource, Term clName, Term clPathes,
-                                Term id) throws JavaException {
+    public boolean java_class_4(PTerm clSource, PTerm clName, PTerm clPathes,
+                                PTerm id) throws JavaException {
         Struct classSource = (Struct) clSource.getTerm();
         Struct className = (Struct) clName.getTerm();
         Struct classPathes = (Struct) clPathes.getTerm();
@@ -318,7 +318,7 @@ public class JavaLibrary extends Library {
                     .toString());
 
             String fullClassPath = fullClassName.replace('.', '/');
-            Iterator<? extends Term> it = classPathes.listIterator();
+            Iterator<? extends PTerm> it = classPathes.listIterator();
             String cp = "";
             while (it.hasNext()) {
                 if (cp.length() > 0) {
@@ -401,7 +401,7 @@ public class JavaLibrary extends Library {
      * @throws JavaException
      *
      */
-    public boolean java_call_3(Term objId, Term method_name, Term idResult)
+    public boolean java_call_3(PTerm objId, PTerm method_name, PTerm idResult)
             throws JavaException {
         objId = objId.getTerm();
         idResult = idResult.getTerm();
@@ -585,7 +585,7 @@ public class JavaLibrary extends Library {
      * @throws JavaException
      *
      */
-    public boolean set_classpath_1(Term paths) throws JavaException {
+    public boolean set_classpath_1(PTerm paths) throws JavaException {
         try {
             paths = paths.getTerm();
             if (!paths.isList()) {
@@ -611,7 +611,7 @@ public class JavaLibrary extends Library {
      * @throws JavaException
      *
      */
-    public boolean get_classpath_1(Term paths) throws JavaException {
+    public boolean get_classpath_1(PTerm paths) throws JavaException {
         try {
             paths = paths.getTerm();
             if (!(paths instanceof Var)) {
@@ -619,7 +619,7 @@ public class JavaLibrary extends Library {
             }
             URL[] urls = dynamicLoader.getURLs();
             String stringURLs = null;
-            Term pathTerm = null;
+            PTerm pathTerm = null;
             if (urls.length > 0) {
                 stringURLs = "[";
 
@@ -634,7 +634,7 @@ public class JavaLibrary extends Library {
                 stringURLs = "[]";
             }
 //        	pathTerm = orderPathList(Term.createTerm(stringURLs));
-            pathTerm = Term.createTerm(stringURLs);
+            pathTerm = PTerm.createTerm(stringURLs);
 //        	if(paths.isList())
 //          		paths = orderPathList(paths);
             return unify(paths, pathTerm);
@@ -686,7 +686,7 @@ public class JavaLibrary extends Library {
     /**
      * set the field value of an object
      */
-    private boolean java_set(Term objId, Term fieldTerm, Term what) {
+    private boolean java_set(PTerm objId, PTerm fieldTerm, PTerm what) {
         // System.out.println("SET "+objId+" "+fieldTerm+" "+what);
         what = what.getTerm();
         if (!fieldTerm.isAtom() || what instanceof Var) {
@@ -755,8 +755,8 @@ public class JavaLibrary extends Library {
 
             // first check for primitive data field
             Field field = cl.getField(fieldName);
-            if (what instanceof Number) {
-                Number wn = (Number) what;
+            if (what instanceof PNum) {
+                PNum wn = (PNum) what;
                 if (wn instanceof Int) {
                     field.setInt(obj, wn.intValue());
                 } else if (wn instanceof nars.tuprolog.Double) {
@@ -793,7 +793,7 @@ public class JavaLibrary extends Library {
     /*
      * get the value of the field
      */
-    private boolean java_get(Term objId, Term fieldTerm, Term what) {
+    private boolean java_get(PTerm objId, PTerm fieldTerm, PTerm what) {
         // System.out.println("GET "+objId+" "+fieldTerm+" "+what);
         if (!fieldTerm.isAtom()) {
             return false;
@@ -898,10 +898,10 @@ public class JavaLibrary extends Library {
         }
     }
 
-    public boolean java_array_set_primitive_3(Term obj_id, Term i, Term what)
+    public boolean java_array_set_primitive_3(PTerm obj_id, PTerm i, PTerm what)
             throws JavaException {
         Struct objId = (Struct) obj_id.getTerm();
-        Number index = (Number) i.getTerm();
+        PNum index = (PNum) i.getTerm();
         what = what.getTerm();
         // System.out.println("SET "+objId+" "+fieldTerm+" "+what);
         Object obj = null;
@@ -926,32 +926,32 @@ public class JavaLibrary extends Library {
             }
             String name = cl.toString();
             if (name.equals("class [I")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                byte v = (byte) ((Number) what).intValue();
+                byte v = (byte) ((PNum) what).intValue();
                 Array.setInt(obj, index.intValue(), v);
             } else if (name.equals("class [D")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                double v = ((Number) what).doubleValue();
+                double v = ((PNum) what).doubleValue();
                 Array.setDouble(obj, index.intValue(), v);
             } else if (name.equals("class [F")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                float v = ((Number) what).floatValue();
+                float v = ((PNum) what).floatValue();
                 Array.setFloat(obj, index.intValue(), v);
             } else if (name.equals("class [L")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                long v = ((Number) what).longValue();
+                long v = ((PNum) what).longValue();
                 Array.setFloat(obj, index.intValue(), v);
             } else if (name.equals("class [C")) {
                 String s = what.toString();
@@ -967,18 +967,18 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [B")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                int v = ((Number) what).intValue();
+                int v = ((PNum) what).intValue();
                 Array.setByte(obj, index.intValue(), (byte) v);
             } else if (name.equals("class [S")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                short v = (short) ((Number) what).intValue();
+                short v = (short) ((PNum) what).intValue();
                 Array.setShort(obj, index.intValue(), v);
             } else {
                 throw new JavaException(new Exception());
@@ -990,10 +990,10 @@ public class JavaLibrary extends Library {
         }
     }
 
-    public boolean java_array_get_primitive_3(Term obj_id, Term i, Term what)
+    public boolean java_array_get_primitive_3(PTerm obj_id, PTerm i, PTerm what)
             throws JavaException {
         Struct objId = (Struct) obj_id.getTerm();
-        Number index = (Number) i.getTerm();
+        PNum index = (PNum) i.getTerm();
         what = what.getTerm();
         // System.out.println("SET "+objId+" "+fieldTerm+" "+what);
         Object obj = null;
@@ -1018,7 +1018,7 @@ public class JavaLibrary extends Library {
             }
             String name = cl.toString();
             if (name.equals("class [I")) {
-                Term value = new nars.tuprolog.Int(Array.getInt(obj, index
+                PTerm value = new nars.tuprolog.Int(Array.getInt(obj, index
                         .intValue()));
                 if (unify(what, value)) {
                     return true;
@@ -1027,7 +1027,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [D")) {
-                Term value = new nars.tuprolog.Double(Array.getDouble(obj,
+                PTerm value = new nars.tuprolog.Double(Array.getDouble(obj,
                         index.intValue()));
                 if (unify(what, value)) {
                     return true;
@@ -1036,7 +1036,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [F")) {
-                Term value = new nars.tuprolog.Float(Array.getFloat(obj, index
+                PTerm value = new nars.tuprolog.Float(Array.getFloat(obj, index
                         .intValue()));
                 if (unify(what, value)) {
                     return true;
@@ -1045,7 +1045,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [L")) {
-                Term value = new nars.tuprolog.Long(Array.getLong(obj, index
+                PTerm value = new nars.tuprolog.Long(Array.getLong(obj, index
                         .intValue()));
                 if (unify(what, value)) {
                     return true;
@@ -1054,7 +1054,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [C")) {
-                Term value = new nars.tuprolog.Struct(Character.toString(Array.getChar(obj, index.intValue())));
+                PTerm value = new nars.tuprolog.Struct(Character.toString(Array.getChar(obj, index.intValue())));
                 if (unify(what, value)) {
                     return true;
                 } else {
@@ -1064,14 +1064,14 @@ public class JavaLibrary extends Library {
             } else if (name.equals("class [Z")) {
                 boolean b = Array.getBoolean(obj, index.intValue());
                 if (b) {
-                    if (unify(what, nars.tuprolog.Term.TRUE)) {
+                    if (unify(what, PTerm.TRUE)) {
                         return true;
                     } else {
                         throw new JavaException(new IllegalArgumentException(
                                 what.toString()));
                     }
                 } else {
-                    if (unify(what, nars.tuprolog.Term.FALSE)) {
+                    if (unify(what, PTerm.FALSE)) {
                         return true;
                     } else {
                         throw new JavaException(new IllegalArgumentException(
@@ -1079,7 +1079,7 @@ public class JavaLibrary extends Library {
                     }
                 }
             } else if (name.equals("class [B")) {
-                Term value = new nars.tuprolog.Int(Array.getByte(obj, index
+                PTerm value = new nars.tuprolog.Int(Array.getByte(obj, index
                         .intValue()));
                 if (unify(what, value)) {
                     return true;
@@ -1088,7 +1088,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [S")) {
-                Term value = new nars.tuprolog.Int(Array.getInt(obj, index
+                PTerm value = new nars.tuprolog.Int(Array.getInt(obj, index
                         .intValue()));
                 if (unify(what, value)) {
                     return true;
@@ -1106,7 +1106,7 @@ public class JavaLibrary extends Library {
 
     }
 
-    private boolean java_array(String type, int nargs, Term id) {
+    private boolean java_array(String type, int nargs, PTerm id) {
         try {
             Object array = null;
             String obtype = type.substring(0, type.length() - 2);
@@ -1170,7 +1170,7 @@ public class JavaLibrary extends Library {
      */
     private static String[] getStringArrayFromStruct(Struct list) {
         String args[] = new String[list.listSize()];
-        Iterator<? extends Term> it = list.listIterator();
+        Iterator<? extends PTerm> it = list.listIterator();
         int count = 0;
         while (it.hasNext()) {
             String path = Tools.removeApices(it.next().toString());
@@ -1197,14 +1197,14 @@ public class JavaLibrary extends Library {
         Object[] values = new Object[objs.length];
         Class<?>[] types = new Class[objs.length];
         for (int i = 0; i < objs.length; i++) {
-            if (!parse_arg(values, types, i, (Term) objs[i])) {
+            if (!parse_arg(values, types, i, (PTerm) objs[i])) {
                 return null;
             }
         }
         return new Signature(values, types);
     }
 
-    private boolean parse_arg(Object[] values, Class<?>[] types, int i, Term term) {
+    private boolean parse_arg(Object[] values, Class<?>[] types, int i, PTerm term) {
         try {
             if (term == null) {
                 values[i] = null;
@@ -1226,8 +1226,8 @@ public class JavaLibrary extends Library {
                     }
                     types[i] = values[i].getClass();
                 }
-            } else if (term instanceof Number) {
-                Number t = (Number) term;
+            } else if (term instanceof PNum) {
+                PNum t = (PNum) term;
                 if (t instanceof Int) {
                     values[i] = t.intValue();
                     types[i] = java.lang.Integer.TYPE;
@@ -1277,9 +1277,9 @@ public class JavaLibrary extends Library {
      *
      */
     private boolean parse_as(Object[] values, Class<?>[] types, int i,
-                             Term castWhat, Term castTo) {
+                             PTerm castWhat, PTerm castTo) {
         try {
-            if (!(castWhat instanceof Number)) {
+            if (!(castWhat instanceof PNum)) {
                 String castTo_name = Tools
                         .removeApices(((Struct) castTo).getName());
                 String castWhat_name = Tools.removeApices(castWhat
@@ -1373,7 +1373,7 @@ public class JavaLibrary extends Library {
                     }
                 }
             } else {
-                Number num = (Number) castWhat;
+                PNum num = (PNum) castWhat;
                 String castTo_name = ((Struct) castTo).getName();
                 if (castTo_name.equals("byte")) {
                     values[i] = (byte) num.intValue();
@@ -1408,7 +1408,7 @@ public class JavaLibrary extends Library {
     /**
      * parses return value of a method invokation
      */
-    private boolean parseResult(Term id, Object obj) {
+    private boolean parseResult(PTerm id, Object obj) {
         if (obj == null) {
             // return unify(id,Term.TRUE);
             return unify(id, new Var());
@@ -1416,9 +1416,9 @@ public class JavaLibrary extends Library {
         try {
             if (Boolean.class.isInstance(obj)) {
                 if ((Boolean) obj) {
-                    return unify(id, Term.TRUE);
+                    return unify(id, PTerm.TRUE);
                 } else {
-                    return unify(id, Term.FALSE);
+                    return unify(id, PTerm.FALSE);
                 }
             } else if (Byte.class.isInstance(obj)) {
                 return unify(id, new Int(((Byte) obj).intValue()));
@@ -1449,7 +1449,7 @@ public class JavaLibrary extends Library {
 
     private static Object[] getArrayFromList(Struct list) {
         Object args[] = new Object[list.listSize()];
-        Iterator<? extends Term> it = list.listIterator();
+        Iterator<? extends PTerm> it = list.listIterator();
         int count = 0;
         while (it.hasNext()) {
             args[count++] = it.next();
@@ -1504,7 +1504,7 @@ public class JavaLibrary extends Library {
      * @return true if the operation is successful
      * @throws JavaException if the object id is not valid
      */
-    public boolean register_1(Term id) throws JavaException {
+    public boolean register_1(PTerm id) throws JavaException {
         id = id.getTerm();
         Object obj = null;
         try {
@@ -1526,7 +1526,7 @@ public class JavaLibrary extends Library {
      * @return true if the operation is successful
      * @throws JavaException if the object id is not valid
      */
-    public boolean unregister_1(Term id) throws JavaException {
+    public boolean unregister_1(PTerm id) throws JavaException {
         id = id.getTerm();
         try {
             return unregister((Struct) id);
@@ -1688,7 +1688,7 @@ public class JavaLibrary extends Library {
      *
      * Term id can be a variable or a ground term.
      */
-    protected boolean bindDynamicObject(Term id, Object obj) {
+    protected boolean bindDynamicObject(PTerm id, Object obj) {
         // null object are considered to _ variable
         if (obj == null) {
             return unify(id, new Var());
@@ -1700,7 +1700,7 @@ public class JavaLibrary extends Library {
                 // object already referenced -> unifying terms
                 // referencing the object
                 // log("obj already registered: unify "+id+" "+aKey);
-                return unify(id, (Term) aKey);
+                return unify(id, (PTerm) aKey);
             } else {
                 // object not previously referenced
                 if (id instanceof Var) {

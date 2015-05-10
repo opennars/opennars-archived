@@ -17,7 +17,7 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class ClauseIndex extends ArrayList<Clause> {
 	
-	private FamilyClausesIndex<Number> numCompClausesIndex;
+	private FamilyClausesIndex<PNum> numCompClausesIndex;
 	private FamilyClausesIndex<String> constantCompClausesIndex;
 	private FamilyClausesIndex<String> structCompClausesIndex;
 	private LinkedList<Clause> listCompClausesList;
@@ -122,7 +122,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 	 * @param goal  The goal to be resolved
 	 * @return      The list of goal-compatible predicates
 	 */
-	public Iterator<Clause> get(Term goal){
+	public Iterator<Clause> get(PTerm goal){
 		// Gets the correct list and encapsulates it in ReadOnlyLinkedList
 		if(goal instanceof Struct){
 			Struct g = (Struct) goal.getTerm();
@@ -136,7 +136,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 			}
 
 			/* Retrieves first argument and checks type */
-			Term t = g.getTerms(0).getTerm();
+			PTerm t = g.getTerms(0).getTerm();
 			if(t instanceof Var){
 				/*
 				 * if first argument is an unbounded variable,
@@ -144,13 +144,13 @@ public class ClauseIndex extends ArrayList<Clause> {
 				 */
 				return iterator();
 			} else if(t.isAtomic()){
-				if(t instanceof Number){
+				if(t instanceof PNum){
 					/* retrieves clauses whose first argument is numeric (or Var)
 					 * and same as goal's first argument, if no clauses
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return numCompClausesIndex.get((Number) t).iterator();
+					return numCompClausesIndex.get((PNum) t).iterator();
 				} else if(t instanceof Struct){
 					/* retrieves clauses whose first argument is a constant (or Var)
 					 * and same as goal's first argument, if no clauses
@@ -210,7 +210,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 	// Updates indexes, storing informations about the last added clause
 	private void register(Clause ci, boolean first){
 		// See FamilyClausesList.get(Term): same concept
-		Term clause = ci.getHead();
+		PTerm clause = ci.getHead();
 		if(clause instanceof Struct){
 			Struct g = (Struct) clause.getTerm();
 
@@ -218,7 +218,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 				return;
 			}
 
-			Term t = g.getTerms(0).getTerm();
+			PTerm t = g.getTerms(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.insertAsShared(ci, first);
 				constantCompClausesIndex.insertAsShared(ci, first);
@@ -230,8 +230,8 @@ public class ClauseIndex extends ArrayList<Clause> {
 					listCompClausesList.addLast(ci);
 				}
 			} else if(t.isAtomic()){
-				if(t instanceof Number){
-					numCompClausesIndex.insert((Number) t,ci, first);
+				if(t instanceof PNum){
+					numCompClausesIndex.insert((PNum) t,ci, first);
 				} else if(t instanceof Struct){
 					constantCompClausesIndex.insert(((Struct) t).getName(), ci, first);
 				}
@@ -251,7 +251,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 
 	// Updates indexes, deleting informations about the last removed clause
 	public void unregister(Clause ci) {
-		Term clause = ci.getHead();
+		PTerm clause = ci.getHead();
 		if(clause instanceof Struct){
 			Struct g = (Struct) clause.getTerm();
 
@@ -259,7 +259,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 				return;
 			}
 
-			Term t = g.getTerms(0).getTerm();
+			PTerm t = g.getTerms(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.removeShared(ci);
 				constantCompClausesIndex.removeShared(ci);
@@ -267,8 +267,8 @@ public class ClauseIndex extends ArrayList<Clause> {
 
 				listCompClausesList.remove(ci);
 			} else if(t.isAtomic()){
-				if(t instanceof Number){
-					numCompClausesIndex.remove((Number) t, ci);
+				if(t instanceof PNum){
+					numCompClausesIndex.remove((PNum) t, ci);
 				} else if(t instanceof Struct){
 					constantCompClausesIndex.remove(((Struct) t).getName(), ci);
 				}

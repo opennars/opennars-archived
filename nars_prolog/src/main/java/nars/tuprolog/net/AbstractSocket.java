@@ -1,6 +1,8 @@
 package nars.tuprolog.net;
 
-import nars.tuprolog.Term;
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.TermVisitor;
 import nars.tuprolog.Var;
 
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 
 
 
-public abstract class AbstractSocket extends Term{
+public abstract class AbstractSocket implements PTerm {
 	
 	public abstract boolean isClientSocket();
 	
@@ -61,23 +63,23 @@ public abstract class AbstractSocket extends Term{
 	}
 
 	@Override
-	public boolean isGreater(Term t) {
+	public boolean isGreater(PTerm t) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEqual(Term t) {
+	public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Term getTerm() {
+	public boolean isEqual(PTerm t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public PTerm getTerm() {
 		return this;
 	}
 
@@ -93,12 +95,12 @@ public abstract class AbstractSocket extends Term{
 	}
 
 	@Override
-	public Term copy(Map<Var, Var> vMap, int idExecCtx) {
+	public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
 		return this;
 	}
 
 	@Override
-	public Term copy(Map<Var, Var> vMap, Map<Term, Var> substMap) {
+	public PTerm copy(Map<Var, Var> vMap, Map<PTerm, Var> substMap) {
 		return this;
 	}
 
@@ -120,7 +122,26 @@ public abstract class AbstractSocket extends Term{
 		return getSocket().hashCode();
 	}
 
+	@Override
+	public PTerm clone() {
+		return null;
+	}
 
+	@Override
+	public Term cloneDeep() {
+		return null;
+	}
+
+	@Override
+	public NALOperator operator() {
+		return null;
+	}
+
+
+	@Override
+	public short getComplexity() {
+		return 1;
+	}
 }
 
 

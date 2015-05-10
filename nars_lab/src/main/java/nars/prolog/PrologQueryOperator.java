@@ -28,7 +28,7 @@ public class PrologQueryOperator extends Operator {
     private final PrologContext context;
 
     private static class VariableInfo {
-        public nars.tuprolog.Term boundValue;
+        public PTerm boundValue;
         
         public String variableName; // only valid if it is not bound
         
@@ -180,7 +180,7 @@ public class PrologQueryOperator extends Operator {
         return resultVariableInfos;
     }
     
-    static private nars.tuprolog.Term convertConstantNarsTermToPrologTerm(Term term) {
+    static private PTerm convertConstantNarsTermToPrologTerm(Term term) {
         String termAsString = term.name().toString();
         
         if (termAsString.length() == 0) {
@@ -246,7 +246,7 @@ public class PrologQueryOperator extends Operator {
         // parse, fill in known variables
         nars.tuprolog.Parser parser = new nars.tuprolog.Parser(prolog.getOperators(), goal);
         
-        nars.tuprolog.Term queryTerm = parser.nextTerm(true);
+        PTerm queryTerm = parser.nextTerm(true);
         
         queryTerm = replaceBoundVariablesOfPrologTermRecursive(queryTerm, variableInfos);
         
@@ -260,7 +260,7 @@ public class PrologQueryOperator extends Operator {
             throw new RuntimeException("Query was not successful");
         }
         
-        nars.tuprolog.Term solutionTerm;
+        PTerm solutionTerm;
         
         try {
             solutionTerm = solution.getSolution();
@@ -287,7 +287,7 @@ public class PrologQueryOperator extends Operator {
             }
 
             variableTerm.resolveTerm();
-            nars.tuprolog.Term dereferencedTerm = variableTerm.getTerm();
+            PTerm dereferencedTerm = variableTerm.getTerm();
             
             variableInfos[variableI].boundValue = dereferencedTerm;
         }
@@ -296,11 +296,11 @@ public class PrologQueryOperator extends Operator {
     // sets unbound variables inside the term
     // so for example the term a(X,6,Y) with X=7 in VariablesInfos gets rewritten to
     // a(7,6,Y)
-    static private nars.tuprolog.Term replaceBoundVariablesOfPrologTermRecursive(nars.tuprolog.Term term, VariableInfo[] variableInfos) {
+    static private PTerm replaceBoundVariablesOfPrologTermRecursive(PTerm term, VariableInfo[] variableInfos) {
         if (term instanceof nars.tuprolog.Struct) {
             nars.tuprolog.Struct termAsStruct = (nars.tuprolog.Struct)term;
             
-            nars.tuprolog.Term[] replacedArguments = new nars.tuprolog.Term[termAsStruct.getArity()];
+            PTerm[] replacedArguments = new PTerm[termAsStruct.getArity()];
             
             int childrenI;
             
@@ -342,7 +342,7 @@ public class PrologQueryOperator extends Operator {
     // tries to convert a prolog term to a nars term
     // a chained Prolog Struct List will be converted to a Nars-Product (because it maps good to a list and nars can kinda understand it)
     // throws a exception if the term type is not handable
-    static private Term convertPrologTermToNarsTermRecursive(nars.tuprolog.Term prologTerm, Memory memory) {
+    static private Term convertPrologTermToNarsTermRecursive(PTerm prologTerm, Memory memory) {
         if( prologTerm instanceof Int ) {
             Int prologIntegerTerm = (Int)prologTerm;
 
@@ -369,7 +369,7 @@ public class PrologQueryOperator extends Operator {
             }
             else if (structTerm.getArity() == 2 && structTerm.getName().equals(".")) {
                 // convert the result array to a nars thingy
-                ArrayList<nars.tuprolog.Term> structAsList = convertChainedStructToList(structTerm);
+                ArrayList<PTerm> structAsList = convertChainedStructToList(structTerm);
                 
                 // convert the list to a nars product wth the cconverted elements
                 Term[] innerProductTerms = new Term[structAsList.size()];
@@ -393,7 +393,7 @@ public class PrologQueryOperator extends Operator {
                 String operationName = structTerm.getName();
                 
                 // convert the result array to a nars thingy
-                ArrayList<nars.tuprolog.Term> parametersAsList = convertChainedStructToList(structTerm);
+                ArrayList<PTerm> parametersAsList = convertChainedStructToList(structTerm);
                 
                 // convert the list to a nars product wth the cconverted elements
                 Term[] innerProductTerms = new Term[1+parametersAsList.size()];
@@ -420,11 +420,11 @@ public class PrologQueryOperator extends Operator {
     
     // tries to get a variable from a term by name
     // returns null if it wasn't found
-    static private nars.tuprolog.Var getVariableByNameRecursive(nars.tuprolog.Term term, String name) {
+    static private nars.tuprolog.Var getVariableByNameRecursive(PTerm term, String name) {
         if( term instanceof Struct ) {
             Struct s = (Struct)term;
             for (int i = 0; i < s.getArity(); i++) {
-                nars.tuprolog.Term iterationTerm = s.getTerms(i);
+                PTerm iterationTerm = s.getTerms(i);
                 nars.tuprolog.Var result = getVariableByNameRecursive(iterationTerm, name);
                
                 if( result != null ) {
@@ -455,8 +455,8 @@ public class PrologQueryOperator extends Operator {
     }
    
     // converts a chained compound term (which contains oher compound terms) to a list
-    static private ArrayList<nars.tuprolog.Term> convertChainedStructToList(Struct structTerm) {
-        ArrayList<nars.tuprolog.Term> result = new ArrayList<>();
+    static private ArrayList<PTerm> convertChainedStructToList(Struct structTerm) {
+        ArrayList<PTerm> result = new ArrayList<>();
        
         Struct currentCompundTerm = structTerm;
        
@@ -471,7 +471,7 @@ public class PrologQueryOperator extends Operator {
            
             result.add(currentCompundTerm.getTerms(0));
            
-            nars.tuprolog.Term arg2 = currentCompundTerm.getTerms(1);
+            PTerm arg2 = currentCompundTerm.getTerms(1);
             
             if (arg2.isAtom()) {
                 Struct atomTerm = (Struct)arg2;
@@ -504,10 +504,10 @@ public class PrologQueryOperator extends Operator {
     // tries to convert a list with integer terms to an string
     // checks also if the signs are correct
     // throws an ConversionFailedException if the conversion is not possible
-    static private String tryToConvertPrologListToString(ArrayList<nars.tuprolog.Term> array) {
+    static private String tryToConvertPrologListToString(ArrayList<PTerm> array) {
         String result = "";
        
-        for( nars.tuprolog.Term iterationTerm : array ) {
+        for( PTerm iterationTerm : array ) {
             if( !(iterationTerm instanceof Int) ) {
                 throw new PrologTheoryStringOperator.ConversionFailedException();
             }

@@ -29,7 +29,7 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
-public class Float extends Number {
+public class Float extends PNum {
     
     private final float value;
     
@@ -132,18 +132,18 @@ public class Float extends Number {
      * Returns true if this Float term is grater that the term provided.
      * For number term argument, the int value is considered.
      */
-    public boolean isGreater(Term t) {
+    public boolean isGreater(PTerm t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).floatValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).floatValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
     }
-    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
+    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).floatValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).floatValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -153,10 +153,10 @@ public class Float extends Number {
      * Returns true if this Float term is equal that the term provided.
      * For number term argument, the int value is considered.
      */
-    public boolean isEqual(Term t) {
+    public boolean isEqual(PTerm t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value == ( (Number) t ).floatValue();
+        if (t instanceof PNum) {
+            return value == ( (PNum) t ).floatValue();
         } else {
             return false;
         }
@@ -166,17 +166,22 @@ public class Float extends Number {
      * Tries to unify a term with the provided term argument.
      * This service is to be used in demonstration context.
      */
-    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
+    public boolean unify(List<Var> vl1, List<Var> vl2, PTerm t) {
         t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(vl2, vl1, this);
-        } else if (t instanceof Number && ((Number) t).isReal()) {
-            return value == ((Number) t).floatValue();
+        } else if (t instanceof PNum && ((PNum) t).isReal()) {
+            return value == ((PNum) t).floatValue();
         } else {
             return false;
         }
     }
-    
+
+    @Override
+    public PTerm clone() {
+        return null;
+    }
+
     public String toString() {
         return java.lang.Float.toString(value);
     }
@@ -184,9 +189,9 @@ public class Float extends Number {
     /**
      * @author Paolo Contessi
      */    
-    public int compareTo(Term o) {
-        if (o instanceof Number)
-            return java.lang.Float.compare(value, ((Number)o).floatValue());
+    public int compareTo(PTerm o) {
+        if (o instanceof PNum)
+            return java.lang.Float.compare(value, ((PNum)o).floatValue());
         else
             return -1;
     }

@@ -28,8 +28,8 @@ class Flag implements java.io.Serializable {
     
     private String name;
     private Struct valueList;
-    private Term   value;
-    private Term   defaultValue;
+    private PTerm value;
+    private PTerm defaultValue;
     private boolean modifiable;
     private String  libraryName;
     
@@ -42,7 +42,7 @@ class Flag implements java.io.Serializable {
      * @param modifiable states if the flag is modifiable
      * @param library is the library defining the flag
      */
-    public Flag(String name, Struct valueSet, Term defValue, boolean modifiable, String library) {
+    public Flag(String name, Struct valueSet, PTerm defValue, boolean modifiable, String library) {
         this.name = name;
         this.valueList = valueSet;
         defaultValue = defValue;
@@ -76,14 +76,14 @@ class Flag implements java.io.Serializable {
      * @param value the possible value of the flag
      * @return flag validity
      */
-    public boolean isValidValue(Term value) {
-        java.util.Iterator<? extends Term> it=valueList.listIterator();
+    public boolean isValidValue(PTerm value) {
+        java.util.Iterator<? extends PTerm> it=valueList.listIterator();
 
         ArrayList<Var> v1 = new ArrayList(), v2 = new ArrayList();
         long now = System.currentTimeMillis();
 
         while (it.hasNext()) {
-            Term t= it.next();
+            PTerm t= it.next();
             if (value.match(t, now, v1, v2)) {
                 return true;
             }
@@ -113,7 +113,7 @@ class Flag implements java.io.Serializable {
      * @param value new value of the flag
      * @return true if the value is valid
      */
-    public boolean setValue(Term value) {
+    public boolean setValue(PTerm value) {
         if (modifiable && isValidValue(value)) {
             this.value = value;
             return true;
@@ -126,7 +126,7 @@ class Flag implements java.io.Serializable {
 	 * Gets the current value of the flag
 	 * @return  flag current value
 	 */
-    public Term getValue() {
+    public PTerm getValue() {
         return value;
     }
     

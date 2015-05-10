@@ -1,6 +1,6 @@
 package nars.tuprolog.net;
 
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.Var;
 
 import java.net.DatagramSocket;
@@ -49,7 +49,7 @@ public class Datagram_Socket extends AbstractSocket {
 	}
 
 	@Override
-	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
+	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, PTerm t) {
 		t = t.getTerm();
         if (t instanceof Var) {
             return t.unify(varsUnifiedArg1, varsUnifiedArg2, this);
