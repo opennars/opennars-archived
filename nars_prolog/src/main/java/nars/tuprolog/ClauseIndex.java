@@ -1,7 +1,12 @@
 package nars.tuprolog;
 
 
-import java.util.*;
+import nars.nal.term.Term;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * <code>FamilyClausesList</code> is a common <code>LinkedList</code>
@@ -136,7 +141,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 			}
 
 			/* Retrieves first argument and checks type */
-			PTerm t = g.getTermX(0).getTerm();
+			Term t = g.getTermX(0).getTerm();
 			if(t instanceof Var){
 				/*
 				 * if first argument is an unbounded variable,
@@ -218,7 +223,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 				return;
 			}
 
-			PTerm t = g.getTermX(0).getTerm();
+			Term t = g.getTermX(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.insertAsShared(ci, first);
 				constantCompClausesIndex.insertAsShared(ci, first);
@@ -259,7 +264,7 @@ public class ClauseIndex extends ArrayList<Clause> {
 				return;
 			}
 
-			PTerm t = g.getTermX(0).getTerm();
+			Term t = g.getTermX(0).getTerm();
 			if(t instanceof Var){
 				numCompClausesIndex.removeShared(ci);
 				constantCompClausesIndex.removeShared(ci);

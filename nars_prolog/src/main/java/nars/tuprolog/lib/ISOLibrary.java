@@ -18,8 +18,8 @@
 package nars.tuprolog.lib;
 
 
+import nars.nal.term.Term;
 import nars.tuprolog.*;
-import nars.tuprolog.PNum;
 
 /**
  * This class represents a tuProlog library providing most of the built-ins
@@ -36,7 +36,7 @@ public class ISOLibrary extends Library {
     public ISOLibrary() {
     }
 
-    public boolean atom_length_2(PTerm arg0, PTerm len) throws PrologError {
+    public boolean atom_length_2(Term arg0, Term len) throws PrologError {
         arg0 = arg0.getTerm();
         if (arg0 instanceof Var)
             throw PrologError.instantiation_error(engine, 1);
@@ -47,7 +47,7 @@ public class ISOLibrary extends Library {
         return unify(len, new Int(atom.getName().length()));
     }
 
-    public boolean atom_chars_2(PTerm arg0, PTerm arg1) throws PrologError {
+    public boolean atom_chars_2(Term arg0, Term arg1) throws PrologError {
         arg0 = arg0.getTerm();
         arg1 = arg1.getTerm();
         if (arg0 instanceof Var) {
@@ -99,7 +99,7 @@ public class ISOLibrary extends Library {
         }
     }
 
-    public boolean char_code_2(PTerm arg0, PTerm arg1) throws PrologError {
+    public boolean char_code_2(Term arg0, Term arg1) throws PrologError {
         arg0 = arg0.getTerm();
         arg1 = arg1.getTerm();
         if (arg1 instanceof Var) {
@@ -126,8 +126,8 @@ public class ISOLibrary extends Library {
 
     // functors
 
-    public PTerm sin_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm sin_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -139,8 +139,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm cos_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm cos_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -152,8 +152,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm exp_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm exp_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -165,8 +165,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm atan_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm atan_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -178,8 +178,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm log_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm log_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -191,8 +191,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm sqrt_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm sqrt_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -204,8 +204,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm abs_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm abs_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -220,8 +220,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm sign_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm sign_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -237,8 +237,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm float_integer_part_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm float_integer_part_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -250,8 +250,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm float_fractional_part_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm float_fractional_part_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -264,8 +264,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm float_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm float_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -276,8 +276,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm floor_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm floor_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -288,8 +288,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm round_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm round_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -301,8 +301,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm truncate_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm truncate_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -313,8 +313,8 @@ public class ISOLibrary extends Library {
         return null;
     }
 
-    public PTerm ceiling_1(PTerm val) {
-        PTerm val0 = null;
+    public PTerm ceiling_1(Term val) {
+        Term val0 = null;
         try {
             val0 = evalExpression(val);
         } catch (Throwable e) {
@@ -326,8 +326,8 @@ public class ISOLibrary extends Library {
     }
 
     public PTerm div_2(PTerm v0, PTerm v1) throws PrologError {
-        PTerm val0 = null;
-        PTerm val1 = null;
+        Term val0 = null;
+        Term val1 = null;
         try {
             val0 = evalExpression(v0);
             val1 = evalExpression(v1);
@@ -341,8 +341,8 @@ public class ISOLibrary extends Library {
     }
 
     public PTerm mod_2(PTerm v0, PTerm v1) throws PrologError {
-        PTerm val0 = null;
-        PTerm val1 = null;
+        Term val0 = null;
+        Term val1 = null;
         try {
             val0 = evalExpression(v0);
             val1 = evalExpression(v1);
@@ -360,8 +360,8 @@ public class ISOLibrary extends Library {
     }
 
     public PTerm rem_2(PTerm v0, PTerm v1) {
-        PTerm val0 = null;
-        PTerm val1 = null;
+        Term val0 = null;
+        Term val1 = null;
         try {
             val0 = evalExpression(v0);
             val1 = evalExpression(v1);
@@ -457,7 +457,7 @@ public class ISOLibrary extends Library {
 
     // Java guards for Prolog predicates
 
-    public boolean sub_atom_guard_5(PTerm arg0, PTerm arg1, PTerm arg2, PTerm arg3, PTerm arg4)
+    public boolean sub_atom_guard_5(Term arg0, Term arg1, Term arg2, Term arg3, Term arg4)
             throws PrologError {
         arg0 = arg0.getTerm();
         if (!arg0.isAtom())

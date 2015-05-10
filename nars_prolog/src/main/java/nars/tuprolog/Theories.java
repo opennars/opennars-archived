@@ -227,13 +227,13 @@ public class Theories implements Serializable {
         }
     }
 
-    public void consult(final Iterator<? extends PTerm> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+    public void consult(final Iterator<? extends Term> theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
         startGoalStack.clear();
         int clause = 1;
             /**/
         // iterate and assert all clauses in theory
         try {
-            for (Iterator<? extends PTerm> it = theory; it.hasNext(); ) {
+            for (Iterator<? extends Term> it = theory; it.hasNext(); ) {
                 clause++;
                 Struct d = (Struct) it.next();
                 if (!runDirective(d))

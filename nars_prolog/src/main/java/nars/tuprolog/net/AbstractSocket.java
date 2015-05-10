@@ -63,17 +63,17 @@ public abstract class AbstractSocket implements PTerm {
 	}
 
 	@Override
-	public boolean isGreater(PTerm t) {
+	public boolean isGreater(Term t) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
+	public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isEqual(PTerm t) {
+	public boolean isEqual(Term t) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -95,7 +95,7 @@ public abstract class AbstractSocket implements PTerm {
 	}
 
 	@Override
-	public Term copy(Map<Var, Var> vMap, int idExecCtx) {
+	public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
 		return this;
 	}
 
@@ -142,6 +142,17 @@ public abstract class AbstractSocket implements PTerm {
 	public short getComplexity() {
 		return 1;
 	}
+
+	@Override
+	public void recurseSubterms(nars.nal.term.TermVisitor v) {
+
+	}
+
+	@Override
+	public void recurseSubterms(nars.nal.term.TermVisitor v, Term parent) {
+
+	}
 }
+
 
 

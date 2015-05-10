@@ -1,6 +1,7 @@
 package nars.tuprolog.gui.spyframe;
 
 import nars.nal.AbstractSubGoalTree;
+import nars.nal.term.Term;
 import nars.tuprolog.*;
 import nars.tuprolog.event.SpyEvent;
 import nars.tuprolog.event.SpyListener;
@@ -42,22 +43,22 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener {
 
         private ArrayList<PTerm> elementi;
 
-        PTerm makeTermFrom(List<ExecutionContext> eclist) {
+        Term makeTermFrom(List<ExecutionContext> eclist) {
             int levels = eclist.size();
             if (levels < 1) return null;
-            PTerm bottom = null;
+            Term bottom = null;
             for (int i = 0; i < levels; i++) {
                 ExecutionContext ec = eclist.get(i);
-                PTerm c = ec.getClause();
+                Struct c = ec.getClause();
                 if (c instanceof Struct) {
                     Struct s = (Struct) c;
                     String name = s.getName();
-                    ArrayList<PTerm> sub = new ArrayList<>();
+                    ArrayList<Term> sub = new ArrayList<>();
                     for (AbstractSubGoalTree sgt : ec.getSubGoalStore().getSubGoals()) {
                         if (sgt.isRoot()) {
                             //SubGoalTree
                             cerca(sgt);
-                            for (PTerm t : elementi) {
+                            for (Term t : elementi) {
                                 sub.add(t);
                             }
                         } else {
@@ -66,7 +67,7 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener {
                         }
                     }
                     if (":-".equals(name))
-                        sub.add(0, i + 1 < levels ? eclist.get(i + 1).getCurrentGoal() : s.getTermX(0));
+                        sub.add(0, i + 1 < levels ? eclist.get(i + 1).getCurrentGoal() : s.getTermXP(0));
                     else if (",".equals(name)) name = " ";//don't want to build the ,-tree
                     else name = null;//indicates that we have a normal compound
                     int pos = sub.indexOf(ec.getCurrentGoal());

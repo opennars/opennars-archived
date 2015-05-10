@@ -1,9 +1,10 @@
 package nars.tuprolog.gui.spyframe;
 
 
+import nars.nal.term.Term;
 import nars.tuprolog.PNum;
-import nars.tuprolog.Struct;
 import nars.tuprolog.PTerm;
+import nars.tuprolog.Struct;
 import nars.tuprolog.Var;
 
 import javax.swing.*;
@@ -25,9 +26,9 @@ public class TermPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 1L;
 
 /**Transforms prolog terms into trees.*/
-  public static final ToTree<PTerm> term2tree=new ToTree<PTerm>(){
+  public static final ToTree<Term> term2tree=new ToTree<Term>(){
     @Override
-    public Node makeTreeFrom(PTerm term){
+    public Node makeTreeFrom(Term term){
       Node node=new Node(""+term);
       node.textcolor=node.bordercolor=Color.BLACK;
       //make it more specific if possible
@@ -54,12 +55,12 @@ public class TermPanel extends JPanel implements ActionListener{
   };
 
   JTextField input;
-  Tree<PTerm> ptt;
+  Tree<Term> ptt;
 
   /** Constructs a new TermFrame.
    *  @param term the prolog term to be displayed.
    */
-  public TermPanel(PTerm term){
+  public TermPanel(Term term){
     
     ptt=new Tree<>(term2tree, term);
     add(new JScrollPane(ptt));

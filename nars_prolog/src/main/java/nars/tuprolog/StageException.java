@@ -1,5 +1,7 @@
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class StageException extends Stage {
     }
 
     private void prologError(Engine.State e) {
-        PTerm errorTerm = e.currentContext.currentGoal.getTermX(0);
+        Term errorTerm = e.currentContext.currentGoal.getTermX(0);
         e.currentContext = e.currentContext.fatherCtx;
         if (e.currentContext == null) {
             // passo nello stato HALT se l?errore non pu? essere gestito (sono
@@ -39,7 +41,7 @@ public class StageException extends Stage {
             // subgoal catch/3 il cui secondo argomento unifica con l?argomento
             // dell?eccezione lanciata
             if (e.currentContext.currentGoal.match(catchTerm)
-                    && e.currentContext.currentGoal.getTermX(1).match(errorTerm)) {
+                    && e.currentContext.currentGoal.getTermXP(1).match(errorTerm)) {
                 // ho identificato l?ExecutionContext con il corretto subgoal
                 // catch/3
 
@@ -50,7 +52,7 @@ public class StageException extends Stage {
                 // catch/3
                 List<Var> unifiedVars = e.currentContext.trailingVars
                         .getHead();
-                e.currentContext.currentGoal.getTermX(1).unify(unifiedVars,
+                e.currentContext.currentGoal.getTermXP(1).unify(unifiedVars,
                         unifiedVars, errorTerm);
 
                 // inserisco il gestore dell?errore in testa alla lista dei
@@ -59,8 +61,8 @@ public class StageException extends Stage {
                 // l?esecuzione, mantenendo le sostituzioni effettuate durante
                 // il processo di unificazione tra l?argomento di throw/1 e il
                 // secondo argomento di catch/3
-                PTerm handlerTerm = e.currentContext.currentGoal.getTermX(2);
-                PTerm curHandlerTerm = handlerTerm.getTerm();
+                PTerm handlerTerm = e.currentContext.currentGoal.getTermXP(2);
+                Term curHandlerTerm = handlerTerm.getTerm();
                 if (!(curHandlerTerm instanceof Struct)) {
                     e.nextState = c.END_FALSE;
                     return;
@@ -96,7 +98,7 @@ public class StageException extends Stage {
     }
 
     private void javaException(Engine.State e) {
-        PTerm exceptionTerm = e.currentContext.currentGoal.getTermX(0);
+        Term exceptionTerm = e.currentContext.currentGoal.getTermX(0);
         e.currentContext = e.currentContext.fatherCtx;
         if (e.currentContext == null) {
             // passo nello stato HALT se l?errore non pu? essere gestito (sono
@@ -109,7 +111,7 @@ public class StageException extends Stage {
             // subgoal java_catch/3 che abbia un catcher unificabile con
             // l'argomento dell'eccezione lanciata
             if (e.currentContext.currentGoal.match(javaCatchTerm)
-                    && javaMatch(e.currentContext.currentGoal.getTermX(1),
+                    && javaMatch(e.currentContext.currentGoal.getTermXP(1),
                             exceptionTerm)) {
                 // ho identificato l?ExecutionContext con il corretto subgoal
                 // java_catch/3
@@ -122,7 +124,7 @@ public class StageException extends Stage {
                 List<Var> unifiedVars = e.currentContext.trailingVars
                         .getHead();
                 PTerm handlerTerm = javaUnify(e.currentContext.currentGoal
-                        .getTermX(1), exceptionTerm, unifiedVars);
+                        .getTermXP(1), exceptionTerm, unifiedVars);
                 if (handlerTerm == null) {
                     e.nextState = c.END_FALSE;
                     return;
@@ -133,13 +135,13 @@ public class StageException extends Stage {
                 // essere preparati per l?esecuzione, mantenendo le sostituzioni
                 // effettuate durante il processo di unificazione tra
                 // l'eccezione e il catcher
-                PTerm curHandlerTerm = handlerTerm.getTerm();
+                Term curHandlerTerm = handlerTerm.getTerm();
                 if (!(curHandlerTerm instanceof Struct)) {
                     e.nextState = c.END_FALSE;
                     return;
                 }
-                PTerm finallyTerm = e.currentContext.currentGoal.getTermX(2);
-                PTerm curFinallyTerm = finallyTerm.getTerm();
+                PTerm finallyTerm = e.currentContext.currentGoal.getTermXP(2);
+                Term curFinallyTerm = finallyTerm.getTerm();
                 // verifico se c'? il blocco finally
                 boolean isFinally = true;
                 if (curFinallyTerm instanceof Int) {
@@ -196,15 +198,15 @@ public class StageException extends Stage {
 
     // verifica se c'? un catcher unificabile con l'argomento dell'eccezione
     // lanciata
-    private boolean javaMatch(PTerm arg1, PTerm exceptionTerm) {
+    private boolean javaMatch(PTerm arg1, Term exceptionTerm) {
         if (!arg1.isList())
             return false;
         Struct list = (Struct) arg1;
         if (list.isEmptyList())
             return false;
-        Iterator<? extends PTerm> it = list.listIterator();
+        Iterator<? extends Term> it = list.listIterator();
         while (it.hasNext()) {
-            PTerm nextTerm = it.next();
+            Term nextTerm = it.next();
             if (!nextTerm.isCompound())
                 continue;
             Struct element = (Struct) nextTerm;
@@ -212,7 +214,7 @@ public class StageException extends Stage {
                 continue;
             if (element.size() != 2)
                 continue;
-            if (element.getTermX(0).match(exceptionTerm)) {
+            if (element.getTermXP(0).match(exceptionTerm)) {
                 return true;
             }
         }
@@ -221,11 +223,11 @@ public class StageException extends Stage {
 
     // unifica l'argomento di java_throw/1 con il giusto catcher e restituisce
     // l'handler corrispondente
-    private PTerm javaUnify(PTerm arg1, PTerm exceptionTerm, List<Var> unifiedVars) {
+    private PTerm javaUnify(Term arg1, Term exceptionTerm, List<Var> unifiedVars) {
         Struct list = (Struct) arg1;
-        Iterator<? extends PTerm> it = list.listIterator();
+        Iterator<? extends Term> it = list.listIterator();
         while (it.hasNext()) {
-            PTerm nextTerm = it.next();
+            Term nextTerm = it.next();
             if (!nextTerm.isCompound())
                 continue;
             Struct element = (Struct) nextTerm;
@@ -233,10 +235,10 @@ public class StageException extends Stage {
                 continue;
             if (element.size() != 2)
                 continue;
-            if (element.getTermX(0).match(exceptionTerm)) {
-                element.getTermX(0)
+            if (element.getTermXP(0).match(exceptionTerm)) {
+                element.getTermXP(0)
                         .unify(unifiedVars, unifiedVars, exceptionTerm);
-                return element.getTermX(1);
+                return element.getTermXP(1);
             }
         }
         return null;

@@ -261,6 +261,13 @@ public class Struct implements PTerm, Compound {
     public Term getTermX(final int index) {
         return term[index];
     }
+    /** same as getTermX, but returns null if is not an instanceof PTerm */
+    public PTerm getTermXP(final int index) {
+        Term x = term[index];
+        if (x instanceof PTerm)
+            return ((PTerm)x);
+        return null;
+    }
 
     /**
      * Sets the i-th element of this structure
@@ -489,7 +496,7 @@ public class Struct implements PTerm, Compound {
      *
      * @param vMap is needed for register occurence of same variables
      */
-    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
+    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
         Struct t = new Struct(arity);
         t.resolved = resolved;
         t.name = name;
@@ -651,7 +658,7 @@ public class Struct implements PTerm, Compound {
      * If the callee structure is not a list, throws an <code>UnsupportedOperationException</code>
      * </p>
      */
-    public Iterator<? extends PTerm> listIterator() {
+    public Iterator<? extends Term> listIterator() {
         if (!isList())
             throw new UnsupportedOperationException("The structure " + this + " is not a list.");
         return new StructIterator(this);

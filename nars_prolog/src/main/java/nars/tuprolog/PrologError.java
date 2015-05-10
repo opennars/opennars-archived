@@ -82,7 +82,7 @@ public class PrologError extends Throwable {
 		/**/		
 	}
 
-	public static PrologError existence_error(Prolog e, int argNo, String objectType, PTerm culprit, PTerm message) {
+	public static PrologError existence_error(Prolog e, int argNo, String objectType, Term culprit, PTerm message) {
 		PTerm errorTerm = new Struct("existence_error", new Struct(objectType), culprit);
 		PTerm tuPrologTerm = new Struct("existence_error", e.getEnv().currentContext.currentGoal, new Int(argNo), new Struct(objectType), culprit, message);
 		/*Castagna 06/2011*/
@@ -94,7 +94,7 @@ public class PrologError extends Throwable {
 		/**/		
 	}
 
-	public static PrologError permission_error(Prolog e,	String operation, String objectType, PTerm culprit, PTerm message) {
+	public static PrologError permission_error(Prolog e,	String operation, String objectType, Term culprit, Term message) {
 		PTerm errorTerm = new Struct("permission_error", new Struct(operation), new Struct(objectType), culprit);
 		PTerm tuPrologTerm = new Struct("permission_error", e.getEnv().currentContext.currentGoal, new Struct(operation), new Struct(objectType), culprit, message);
 		/*Castagna 06/2011*/

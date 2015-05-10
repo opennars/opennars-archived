@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -25,7 +27,7 @@ import java.util.NoSuchElementException;
  * @see Struct
  */
 @SuppressWarnings("serial")
-class StructIterator implements java.util.Iterator<PTerm>, java.io.Serializable {
+class StructIterator implements java.util.Iterator<Term>, java.io.Serializable {
     
     Struct list;
     
@@ -38,14 +40,14 @@ class StructIterator implements java.util.Iterator<PTerm>, java.io.Serializable 
     }
 
 
-    public PTerm next() {
+    public Term next() {
         final Struct list = this.list;
         if (list.isEmptyList())
             throw new NoSuchElementException();
         // Using Struct#getTerm(int) instead of Struct#listHead and Struct#listTail
         // to avoid redundant Struct#isList calls since it is only possible to get
         // a StructIterator on a Struct instance which is already a list.
-        PTerm head = list.getTerm(0);
+        Term head = list.getTerm(0);
         this.list = (Struct) list.getTerm(1);
         return head;
     }

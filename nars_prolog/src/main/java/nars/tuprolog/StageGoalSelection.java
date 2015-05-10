@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 /**
  * @author Alex Benini
  *
@@ -49,7 +51,7 @@ public class StageGoalSelection extends Stage {
                 e.currentContext = e.currentContext.fatherCtx;
             } else {
                 // Caso di individuazione curGoal
-                PTerm goal_app = curGoal.getTerm();
+                Term goal_app = curGoal.getTerm();
                 if (!(goal_app instanceof Struct)) {
                     e.nextState = c.END_FALSE;
                     return;

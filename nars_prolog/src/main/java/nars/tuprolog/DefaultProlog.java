@@ -456,7 +456,7 @@ public class DefaultProlog extends Prolog  {
         return er.getEnv();
     }
 
-    @Override public void identify(PTerm t) {
+    @Override public void identify(Term t) {
         Engine er = findRunner();
         er.identify(t);
     }
@@ -471,12 +471,12 @@ public class DefaultProlog extends Prolog  {
         r.setRelinkVar(b);
     }
 
-    public ArrayList<PTerm> getBagOFres() {
+    public ArrayList<Term> getBagOFres() {
         Engine r = this.findRunner();
         return r.getBagOFres();
     }
 
-    public void setBagOFres(ArrayList<PTerm> l) {
+    public void setBagOFres(ArrayList<Term> l) {
         Engine r = this.findRunner();
         r.setBagOFres(l);
     }

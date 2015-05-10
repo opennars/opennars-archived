@@ -29,7 +29,7 @@ public class Engine implements java.io.Serializable, Runnable {
 
 
     private boolean relinkVar = false;
-    private ArrayList<PTerm> bagOFres;
+    private ArrayList<Term> bagOFres;
     private ArrayList<String> bagOFresString;
     private PTerm bagOFvarSet;
     private PTerm bagOfgoal;
@@ -454,7 +454,7 @@ public class Engine implements java.io.Serializable, Runnable {
         return theories.find(t);
     }
 
-    void identify(PTerm t) {
+    void identify(Term t) {
         primitives.identifyPredicate(t);
     }
 
@@ -608,11 +608,11 @@ public class Engine implements java.io.Serializable, Runnable {
         this.relinkVar = b;
     }
 
-    public ArrayList<PTerm> getBagOFres() {
+    public ArrayList<Term> getBagOFres() {
         return this.bagOFres;
     }
 
-    public void setBagOFres(ArrayList<PTerm> l) {
+    public void setBagOFres(ArrayList<Term> l) {
         this.bagOFres = l;
     }
 

@@ -99,7 +99,7 @@ public class Theory implements Serializable, PrologTermIterator {
     }
     
     @Override
-    public Iterator<? extends PTerm> iterator(Prolog engine) {
+    public Iterator<? extends Term> iterator(Prolog engine) {
         if (isTextual())
             return new Parser(engine.getOperators(), theory).iterator();
         else

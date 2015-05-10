@@ -1,5 +1,6 @@
 package nars.tuprolog.lib;
 
+import nars.nal.term.Term;
 import nars.tuprolog.*;
 import nars.tuprolog.interfaces.ISocketLib;
 import nars.tuprolog.net.AbstractSocket;
@@ -13,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Pattern;
 
@@ -166,8 +168,8 @@ public boolean udp_receive(PTerm Socket, PTerm Data, Struct AddressFrom,
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	LinkedList<PTerm> list = StructToList(Options);
-	for (PTerm t : list) { // Explore options list
+	List<Term> list = StructToList(Options);
+	for (Term t : list) { // Explore options list
 		if (((Struct) t).getName().equals("timeout")) { // If a timeout has been specified
 			int time = Integer.parseInt(((Struct) t).getTermX(0).toString());
 			try {
@@ -214,8 +216,8 @@ public boolean tcp_socket_server_open_3(Struct Address, PTerm Socket, Struct Opt
 	port = Integer.parseInt(split[split.length - 1]);
 
 
-	LinkedList<PTerm> list = StructToList(Options); 			// Convert Options Struct to a LinkedList
-	for (PTerm t : list) { 									// Explore Options list
+	List<Term> list = StructToList(Options); 			// Convert Options Struct to a LinkedList
+	for (Term t : list) { 									// Explore Options list
 		if (((Struct) t).getName().equals("backlog")) { 	// If a backlog has been specified
 			backlog = Integer.parseInt(((Struct) t).getTermX(0).toString());
 		}
@@ -407,8 +409,8 @@ public boolean read_from_socket_3(PTerm Socket, PTerm Msg, Struct Options) throw
 				return false;
 		}
 
-		LinkedList<PTerm> list = StructToList(Options); // Convert Options Struct to a LinkedList
-		for (PTerm t : list) { // Explore options list
+		List<Term> list = StructToList(Options); // Convert Options Struct to a LinkedList
+		for (Term t : list) { // Explore options list
 			if (((Struct) t).getName().equals("timeout")) { // If a timeout has been specified
 				int time = Integer.parseInt(((Struct) t).getTermX(0).toString());
 				try {
@@ -485,8 +487,8 @@ public boolean aread_from_socket_2(PTerm Socket, Struct Options) throws PrologEr
 			e1.printStackTrace();
 		}
 
-		LinkedList<PTerm> list = StructToList(Options); // Convert Options Struct to a LinkedList
-		for (PTerm t : list) { // Explore options list
+		List<Term> list = StructToList(Options); // Convert Options Struct to a LinkedList
+		for (Term t : list) { // Explore options list
 			if (((Struct) t).getName().equals("timeout")) { // If a timeout has been specified
 				int time = Integer.parseInt(((Struct) t).getTermX(0).toString());
 				try {
@@ -512,9 +514,9 @@ public boolean aread_from_socket_2(PTerm Socket, Struct Options) throws PrologEr
 /*
  * Transform the Struct s in a LinkedList
  */
-private LinkedList<PTerm> StructToList(Struct s) {
-	LinkedList<PTerm> list = new LinkedList<>();
-	PTerm temp;
+private LinkedList<Term> StructToList(Struct s) {
+	LinkedList<Term> list = new LinkedList<>();
+	Term temp;
 	temp = s;
 	while (true) {
 		if (((Struct) temp).getName().equals(".")) {

@@ -34,10 +34,10 @@ public class Client_Socket extends AbstractSocket {
 	}
 	
 	
-	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, PTerm t) {
+	public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
 		t = t.getTerm();
         if (t instanceof Var) {
-            return t.unify(varsUnifiedArg1, varsUnifiedArg2, this);
+            return ((Var)t).unify(varsUnifiedArg1, varsUnifiedArg2, this);
         } else if (t instanceof AbstractSocket && ((AbstractSocket) t).isServerSocket()) {
         	InetAddress addr= ((AbstractSocket) t).getAddress();
             return socket.getInetAddress().toString().equals(addr.toString());

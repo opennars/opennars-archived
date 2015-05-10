@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 
 /**

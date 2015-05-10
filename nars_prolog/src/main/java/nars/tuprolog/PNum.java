@@ -179,7 +179,7 @@ public abstract class PNum implements PTerm {
      * the list argument passed contains the list of variables to be renamed
      * (if empty list then no renaming)
      */
-    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
+    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
         return this;
     }
 

@@ -17,6 +17,7 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
 import nars.tuprolog.util.OneWayList;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class StageBacktrack extends Stage {
         
         //deunify variables and reload old goal
         e.currentContext = curChoice.executionContext;
-        PTerm curGoal = e.currentContext.goalsToEval.backTo(curChoice.indexSubGoal).getTerm();
+        Term curGoal = e.currentContext.goalsToEval.backTo(curChoice.indexSubGoal).getTerm();
         if (!(curGoal instanceof Struct)) {
             e.nextState = c.END_FALSE;
             return;

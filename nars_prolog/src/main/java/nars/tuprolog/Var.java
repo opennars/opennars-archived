@@ -138,7 +138,7 @@ public class Var implements PTerm {
      * with the same time identifier is found in the list, then the variable in
      * the list is returned.
      */
-    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
+    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
         Term tt = getTerm();
         if (tt == this) {
             Var v = vMap.get(this);
@@ -151,7 +151,7 @@ public class Var implements PTerm {
         } else {
             if (tt instanceof PTerm)
                 return ((PTerm)tt).copy(vMap, idExecCtx);
-            return tt.clone();
+            throw new RuntimeException("copy resulted in a non-PTerm");
         }
     }
 

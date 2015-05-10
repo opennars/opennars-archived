@@ -134,7 +134,7 @@ public class StageEnd extends Stage {
 
 //	    	System.out.println("STATE END relinkvar(): Le var del risultato sono "+(c.getEngineMan()).getBagOFres()); 
 //	    	System.out.println("STATE END relinkvar(): Le var del risultato STRINGA sono "+(c.getEngineMan()).getBagOFresString());
-            ArrayList<PTerm> bag = (c.getEngineMan()).getBagOFres();
+            ArrayList<Term> bag = (c.getEngineMan()).getBagOFres();
             PTerm initBag = c.getEngineMan().getBagOFbag();
             PTerm BOgoal = (c.getEngineMan()).getBagOFgoal();
 //	    	System.out.println("STATE END relinkvar(): la bag � "+(c.getEngineMan()).getBagOFbag());
@@ -159,7 +159,7 @@ public class StageEnd extends Stage {
             //String solution="";
 
 
-            PTerm query = e.query;
+            Term query = e.query;
 //	    	if(query instanceof Struct && (((Struct)query).getName().equals("setof") || ((Struct)query).getName().equals("bagof"))){
 //	    		System.out.println("******** query � struct "+((Struct)query).getName()+" ");
 //	    		System.out.println("******** ARG 0 "+((Struct)query).getArg(0));
@@ -453,10 +453,10 @@ public class StageEnd extends Stage {
             //System.out.println("Lista variabili goal bagof nomi e.goalVars "+e.goalVars.toString());
             //int r=0;
             if (varList != null)
-                for (java.util.Iterator<? extends PTerm> it = varList.listIterator(); it.hasNext(); ) {
+                for (java.util.Iterator<? extends Term> it = varList.listIterator(); it.hasNext(); ) {
                     //System.out.println("Entro "+r);
                     //r++;
-                    PTerm var = it.next();
+                    Term var = it.next();
                     for (int y = 0; y < a.length; y++) {
                         Var vv = (Var) a[y];
                         if ((vv.getLink() instanceof PTerm) && ((PTerm)(vv.getLink())).isEqual(var)/*&& !(var.toString().startsWith("_"))*/) {
@@ -554,7 +554,7 @@ public class StageEnd extends Stage {
             String s = "";
             //System.out.println("LGOAL VAR "+lGoalVar);
             for (int m = 0; m < bagString.size(); m++) {
-                PTerm bm = bag.get(m);
+                Term bm = bag.get(m);
                 String bagResString = bm.toString();
                 boolean var = false;
                 if (bm instanceof Var) {

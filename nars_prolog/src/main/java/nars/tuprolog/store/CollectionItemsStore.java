@@ -1,5 +1,6 @@
 package nars.tuprolog.store;
 
+import nars.nal.term.Term;
 import nars.tuprolog.*;
 import nars.tuprolog.lib.JavaLibrary;
 

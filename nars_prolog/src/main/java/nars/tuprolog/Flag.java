@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,12 +65,14 @@ class Flag implements java.io.Serializable {
         Flag f = new Flag();
         f.name=name;
         f.valueList=(Struct)valueList.copy(new HashMap<>(),Var.ORIGINAL);
-        f.value=value.copy(new HashMap<>(),Var.ORIGINAL);
-        f.defaultValue=defaultValue.copy(new HashMap<>(),Var.ORIGINAL);
+        f.value=PTerm.copyp(value);
+        f.defaultValue=PTerm.copyp(defaultValue);
         f.modifiable=modifiable;
         f.libraryName=libraryName;
         return f;
     }
+
+
     
     /**
      * Checks if a value is valid according to flag description
@@ -77,13 +81,13 @@ class Flag implements java.io.Serializable {
      * @return flag validity
      */
     public boolean isValidValue(PTerm value) {
-        java.util.Iterator<? extends PTerm> it=valueList.listIterator();
+        java.util.Iterator<? extends Term> it=valueList.listIterator();
 
         ArrayList<Var> v1 = new ArrayList(), v2 = new ArrayList();
         long now = System.currentTimeMillis();
 
         while (it.hasNext()) {
-            PTerm t= it.next();
+            Term t= it.next();
             if (value.match(t, now, v1, v2)) {
                 return true;
             }

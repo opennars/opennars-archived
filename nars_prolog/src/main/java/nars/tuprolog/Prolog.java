@@ -456,7 +456,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
         return addTheory(th.iterator(this));
     }
 
-    public SolveInfo addTheory(final Iterator<? extends PTerm> i) throws InvalidTheoryException {    //no syn
+    public SolveInfo addTheory(final Iterator<? extends Term> i) throws InvalidTheoryException {    //no syn
         Theory oldTh = getDynamicTheoryCopy();
         getTheories().consult(i, true, null);
         SolveInfo theoryGoal = getTheories().solveTheoryGoal();
@@ -951,5 +951,5 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
 
     public abstract void pushSubGoal(SubGoalTree abstractSubGoalTrees);
 
-    public abstract void identify(PTerm goal);
+    public abstract void identify(Term goal);
 }

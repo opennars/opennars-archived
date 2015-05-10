@@ -1,10 +1,11 @@
 package nars.tuprolog.store;
 
 
+import nars.nal.term.Term;
 import nars.tuprolog.ClauseStore;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.Struct;
-import nars.tuprolog.PTerm;
 import nars.tuprolog.lib.JavaLibrary;
 
 import java.util.List;
@@ -21,12 +22,12 @@ public class JavaCollectionStoreFactory //implements ClauseStoreFactory
 				try
 				{
 					JavaLibrary jl = (JavaLibrary)prolog.getLibraries().getLibrary("alice.tuprolog.lib.JavaLibrary");
-					PTerm collectionTerm = s.getTermX(0).getTerm();
+					Term collectionTerm = s.getTermX(0).getTerm();
 					Object obj = jl.getRegisteredDynamicObject((Struct)collectionTerm);
 					if (obj instanceof java.util.Collection)
 						return new CollectionItemsStore(prolog, 
 													    (java.util.Collection<?>)obj, 
-													    s.getTermX(1),
+													    s.getTermXP(1),
 													    varList, 
 													    jl);				
 				}

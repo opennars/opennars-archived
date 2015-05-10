@@ -1,5 +1,6 @@
 package nars.tuprolog.store;
 
+import nars.nal.term.Term;
 import nars.tuprolog.*;
 import nars.tuprolog.lib.JavaLibrary;
 
@@ -18,7 +19,7 @@ public class MapEntriesStore extends ClauseStore
 	private Prolog engine;
 	private PTerm key, value;
 	private List varList;
-	private PTerm currentKey = null, currentValue = null;
+	private Term currentKey = null, currentValue = null;
 	
 	void nextCompatible()
 	{
@@ -59,7 +60,7 @@ public class MapEntriesStore extends ClauseStore
 			return null;
 		Var.free(varList);
 		CollectionItemClause result = new CollectionItemClause(new Struct(
-				"map_entry", new PTerm[] {map, currentKey, currentValue} ));
+				"map_entry", new Term[] {map, currentKey, currentValue} ));
 		nextCompatible();
 		return result;
 	}

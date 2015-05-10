@@ -1409,7 +1409,7 @@ public class BasicLibrary extends Library {
     public boolean $wt_unify_3(Term witness, Term wtList, Term tList) {
         Struct list = (Struct) wtList.getTerm();
         Struct result = new Struct();
-        for (java.util.Iterator<? extends PTerm> it = list.listIterator(); it.hasNext();) {
+        for (java.util.Iterator<? extends Term> it = list.listIterator(); it.hasNext();) {
             Struct element = (Struct) it.next();
             Term w = element.getTermX(0);
             Term t = element.getTermX(1);
@@ -1428,7 +1428,7 @@ public class BasicLibrary extends Library {
     	*/
     	//se ci sono variabili libere nel goal alla fine il risultato deve essere relinked
     	Struct freeVarList = (Struct) varSet.getTerm();
-    	java.util.Iterator<? extends PTerm> it1 = freeVarList.listIterator();
+    	java.util.Iterator<? extends Term> it1 = freeVarList.listIterator();
     	if (it1.hasNext()) {
     		(engine).setRelinkVar(true);
     		//ArrayList<String> l = new ArrayList<String>(); 
@@ -1450,7 +1450,7 @@ public class BasicLibrary extends Library {
         
         //System.out.println("termini wtList "+list);
         Struct result = new Struct();
-        for (java.util.Iterator<? extends PTerm> it = list.listIterator(); it.hasNext();) {
+        for (java.util.Iterator<? extends Term> it = list.listIterator(); it.hasNext();) {
             Struct element = (Struct) it.next();
             //System.out.println("termine wtList "+element);
             Term w = element.getTermX(0);
@@ -1485,7 +1485,7 @@ public class BasicLibrary extends Library {
   public boolean $s_next0_3(Term witness, Term wtList, Term sNext) {
         Struct list = (Struct) wtList.getTerm();
         Struct result = new Struct();
-        for (java.util.Iterator<? extends PTerm> it = list.listIterator(); it.hasNext();) {
+        for (java.util.Iterator<? extends Term> it = list.listIterator(); it.hasNext();) {
             Struct element = (Struct) it.next();
             Term w = element.getTermX(0);
             if (!unify(witness, w))

@@ -167,7 +167,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      * (if empty list then no renaming)
      * @param idExecCtx Execution Context identifier
      */
-    public Term copy(Map<Var, Var> vMap, int idExecCtx);
+    public PTerm copy(Map<Var, Var> vMap, int idExecCtx);
     
     /**
      * gets a copy for result.
@@ -252,7 +252,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
         return ok;
     }
 
-    default public boolean match(PTerm t) {
+    default public boolean match(Term t) {
         return match(t, System.currentTimeMillis(), new ArrayList(), new ArrayList());
     }
 
@@ -383,4 +383,30 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
 
     public PTerm clone();
 
+    /** applies the default copy parameters when it is a PTerm, otherwise it just clones a Term */
+    public static Term copy(Term value) {
+        if (value instanceof PTerm)
+            return ((PTerm)value).copy(new HashMap<>(),Var.ORIGINAL);
+        return value.clone();
+    }
+    /** applies the default copy parameters when it is a PTerm, otherwise it just clones a Term */
+    public static PTerm copyp(Term value) {
+        if (value instanceof PTerm)
+            return ((PTerm)value).copy(new HashMap<>(),Var.ORIGINAL);
+        return null;
+    }
+
+    /** true unless it's a PTerm then it checks for isGround() */
+    public static boolean isGround(Term t) {
+        if (t instanceof PTerm)
+            return ((PTerm)t).isGround();
+        return true;
+    }
+
+    /** returns the term cast to PTerm if it is, otherwise returns null */
+    static PTerm p(Term t) {
+        if (t instanceof PTerm)
+            return ((PTerm)t);
+        return null;
+    }
 }

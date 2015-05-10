@@ -135,7 +135,7 @@ public class Int extends PNum {
      * Returns true if this integer term is grater that the term provided.
      * For number term argument, the int value is considered.
      */
-    public boolean isGreater(PTerm t) {
+    public boolean isGreater(Term t) {
         t = t.getTerm();
         if (t instanceof PNum) {
             return value>((PNum)t).intValue();
@@ -143,7 +143,7 @@ public class Int extends PNum {
             return false;
         } else return t instanceof Var;
     }
-    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
+    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
         if (t instanceof PNum) {
             return value>((PNum)t).intValue();
@@ -155,7 +155,7 @@ public class Int extends PNum {
     /**
      * Returns true if this integer term is equal to the term provided.
      */
-    public boolean isEqual(PTerm t) {
+    public boolean isEqual(Term t) {
         t = t.getTerm();
         if (t instanceof PNum) {
             PNum n = (PNum) t;
@@ -170,10 +170,10 @@ public class Int extends PNum {
      * Tries to unify a term with the provided term argument.
      * This service is to be used in demonstration context.
      */
-    public boolean unify(List<Var> vl1, List<Var> vl2, PTerm t) {
+    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
         t = t.getTerm();
         if (t instanceof Var) {
-            return t.unify(vl2, vl1, this);
+            return ((Var)t).unify(vl2, vl1, this);
         } else if (t instanceof PNum && ((PNum) t).isInteger()) {
             return value == ((PNum) t).intValue();
         } else {
