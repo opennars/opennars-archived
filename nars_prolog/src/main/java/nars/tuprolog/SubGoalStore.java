@@ -1,6 +1,8 @@
 package nars.tuprolog;
 
 
+import nars.nal.AbstractSubGoalTree;
+
 public class SubGoalStore {
 
     private SubGoalTree goals;

@@ -69,23 +69,15 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
 
 
 
-    /** is this term a null term?*/
-    public boolean isEmptyList();
+
     
     //
     
-    /** is this term a constant prolog term? */
-    public boolean isAtomic();
-    
-    /** is this term a prolog compound term? */
-    public boolean isCompound();
-    
+
     /** is this term a prolog (alphanumeric) atom? */
     public boolean isAtom();
     
-    /** is this term a prolog list? */
-    public boolean isList();
-    
+
     /** is this term a ground term? */
     public boolean isGround();
 
@@ -98,18 +90,18 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
     /**
      * is term greater than term t?
      */
-    public boolean isGreater(PTerm t);
-    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder);
+    public boolean isGreater(Term t);
+    public boolean isGreaterRelink(Term t, ArrayList<String> vorder);
     
     /**
      * Tests if this term is (logically) equal to another
      */
-    public boolean isEqual(PTerm t);
+    public boolean isEqual(Term t);
     
     /**
 	 * Gets the actual term referred by this Term. if the Term is a bound variable, the method gets the Term linked to the variable
 	 */
-    public PTerm getTerm();
+    public Term getTerm();
     
     
     /**
@@ -143,7 +135,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      * gets a engine's copy of this term.
      * @param idExecCtx Execution Context identified
      */
-    default public PTerm copyGoal(Map<Var,Var> vars, int idExecCtx) {
+    default public Term copyGoal(Map<Var,Var> vars, int idExecCtx) {
         return copy(vars,idExecCtx);
     }
 
@@ -153,7 +145,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
     /**
      * gets a copy of this term for the output
      */
-    default public PTerm copyResult(Collection<Var> goalVars, List<Var> resultVars) {
+    default public Term copyResult(Collection<Var> goalVars, List<Var> resultVars) {
         IdentityHashMap<Var,Var> originals = new IdentityHashMap<>();
         for (Var key: goalVars) {
             Var clone = new Var();
@@ -167,6 +159,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
 
 
 
+
     /**
      * gets a copy (with renamed variables) of the term.
      *
@@ -174,7 +167,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      * (if empty list then no renaming)
      * @param idExecCtx Execution Context identifier
      */
-    public PTerm copy(Map<Var,Var> vMap, int idExecCtx);
+    public Term copy(Map<Var, Var> vMap, int idExecCtx);
     
     /**
      * gets a copy for result.
@@ -182,7 +175,7 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
     public PTerm copy(Map<Var,Var> vMap, Map<PTerm,Var> substMap);
 
 
-    default public boolean unify(final Prolog mediator, final PTerm t1) {
+    default public boolean unify(final Prolog mediator, final Term t1) {
         return unify(mediator, t1, new ArrayList(), new ArrayList());
     }
     /**
@@ -191,9 +184,10 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      * @param t1 the term to unify
      * @return true if the term is unifiable with this one
      */
-    default public boolean unify(final Prolog engine, final PTerm t1, ArrayList<Var> v1, ArrayList<Var> v2) {
+    default public boolean unify(final Prolog engine, final Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {
         resolveTerm();
-        t1.resolveTerm();
+        if (t1 instanceof PTerm)
+            ((PTerm)t1).resolveTerm();
 
         v1.clear(); v2.clear();
         boolean ok = unify(v1,v2,t1);
@@ -245,11 +239,12 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      *
      * @return true if the term is unifiable with this one
      */
-    default public boolean match(PTerm t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
+    default public boolean match(Term t, long time, ArrayList<Var> v1, ArrayList<Var> v2) {
         v1.clear(); v2.clear();
 
         resolveTerm(time);
-        t.resolveTerm(time);
+        if (t instanceof PTerm)
+            ((PTerm)t).resolveTerm(time);
 
         boolean ok = unify(v1,v2,t);
         Var.free(v1);
@@ -269,13 +264,9 @@ public interface PTerm extends nars.nal.term.Term, SubGoalElement {
      * @param varsUnifiedArg1 Vars unified in myself
      * @param varsUnifiedArg2 Vars unified in term t
      */
-    public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, PTerm t);
+    public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t);
 
-    /** default handler to disable unification with non-PTerm */
-    default public boolean unify(List<Var> varsUnifiedArg1, List<Var> varsUnifiedArg2, Term t) {
-        return false;
-    }
-    
+
     /**
      * Static service to create a Term from a string.
      * @param st the string representation of the term

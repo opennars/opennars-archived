@@ -17,6 +17,7 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
 import nars.tuprolog.event.*;
 import nars.tuprolog.interfaces.IProlog;
 
@@ -214,7 +215,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @param t1 second term to be unified
      * @return true if the unification was successful
      */
-    public boolean match(PTerm t0, PTerm t1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
+    public boolean match(PTerm t0, Term t1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
         return t0.match(t1, now, v1, v2);
     }
 
@@ -225,11 +226,11 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @param t1 second term to be unified
      * @return true if the unification was successful
      */
-    public boolean unify(PTerm t0, PTerm t1) {    //no syn
+    public boolean unify(PTerm t0, Term t1) {    //no syn
         return unify(t0, t1, new ArrayList(), new ArrayList());
     }
 
-    public boolean unify(PTerm t0, PTerm t1, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
+    public boolean unify(PTerm t0, Term t1, ArrayList<Var> v1, ArrayList<Var> v2) {    //no syn
         return t0.unify(this, t1, v1, v2);
     }
 
@@ -920,7 +921,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
 
     public abstract ArrayList<String> getBagOFresString();
 
-    public abstract ArrayList<PTerm> getBagOFres();
+    public abstract ArrayList<Term> getBagOFres();
 
     public abstract void setRelinkVar(boolean b);
 
@@ -930,7 +931,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
 
     public abstract void setBagOFbag(PTerm tList);
 
-    public abstract void setBagOFres(ArrayList<PTerm> l);
+    public abstract void setBagOFres(ArrayList<Term> l);
 
     public abstract void setBagOFresString(ArrayList<String> lString);
 

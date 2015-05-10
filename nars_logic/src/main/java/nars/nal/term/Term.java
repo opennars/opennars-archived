@@ -21,19 +21,17 @@
 package nars.nal.term;
 
 
-import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.nal.AbstractSubGoalTree;
 import nars.nal.NALOperator;
 import nars.nal.Named;
 import nars.nal.Sentence;
 import nars.nal.nal7.TemporalRules;
-import nars.util.data.sorted.SortedList;
 
 import java.io.Serializable;
-import java.util.*;
 
-public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed, Serializable {
+public interface Term extends Cloneable, AbstractSubGoalTree, Comparable<Term>, Named<byte[]>, Termed, Serializable {
 
 
     default Term getTerm() {
@@ -48,8 +46,20 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         return (getComplexity()==1);
     }
 
-    default public boolean isEmpty() {
+
+    /** not sure why Tuprolog called this 'isAtomic' , it's more appropriately named 'isEmpty' we'll fix it */
+    default public boolean isAtomic() {
         return getComplexity() == 0;
+    }
+
+
+    default public boolean isCompound() {
+        return getComplexity() > 1;
+    }
+
+    /** is this term a null term?*/
+    default public boolean isEmptyList() {
+        return isAtomic() && isList();
     }
 
     public void recurseSubterms(final TermVisitor v, Term parent);
@@ -192,6 +202,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         if (!sentence.isEternal() && nal < 7) return false;
         return levelValid(t, nal);
     }
+
 
 
 }

@@ -1,5 +1,7 @@
 package nars.tuprolog;
 
+import nars.nal.AbstractSubGoalTree;
+
 abstract public interface SubGoalElement extends AbstractSubGoalTree {
 
     

@@ -1,5 +1,6 @@
 package nars.tuprolog.gui.spyframe;
 
+import nars.nal.AbstractSubGoalTree;
 import nars.tuprolog.*;
 import nars.tuprolog.event.SpyEvent;
 import nars.tuprolog.event.SpyListener;

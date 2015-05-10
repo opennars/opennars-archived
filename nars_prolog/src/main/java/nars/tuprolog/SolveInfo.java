@@ -16,6 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.tuprolog;
+
+import nars.nal.term.Term;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +47,7 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
     private int     endState;
     private boolean isSuccess;
     
-    private PTerm query;
+    private Term query;
     private Struct goal;
     private List<Var>   bindings;
     private String setOfSolution;
@@ -53,7 +56,7 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
     /**
      * 
      */
-    SolveInfo(PTerm initGoal){
+    SolveInfo(Term initGoal){
         query = initGoal;
         isSuccess = false;
         setOfSolution=null;
@@ -66,7 +69,7 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
      * @param resultState
      * @param resultVars
      */
-    SolveInfo(PTerm initGoal, Struct resultGoal, int resultState, List<Var> resultVars) {
+    SolveInfo(Term initGoal, Struct resultGoal, int resultState, List<Var> resultVars) {
         query = initGoal;
         goal = resultGoal;
         bindings = resultVars;
@@ -110,7 +113,7 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
 	 * Gets the query
 	 * @return  the query
 	 */
-    public PTerm getQuery() {
+    public Term getQuery() {
         return query;
     }
     
@@ -157,8 +160,8 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
      * @throws NoSolutionException if the solve request has no solution
      * @throws UnknownVarException if the variable does not appear in the substitution.
      */
-    public PTerm getTerm(String varName) throws NoSolutionException, UnknownVarException {
-        PTerm t = getVarValue(varName);
+    public Term getTerm(String varName) throws NoSolutionException, UnknownVarException {
+        Term t = getVarValue(varName);
         if (t == null)
             throw new UnknownVarException();
         return t;
@@ -168,7 +171,7 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
      * Gets the value of a variable in the substitution. Returns <code>null</code>
      * if the variable does not appear in the substitution.
      */
-    public PTerm getVarValue(String varName) throws NoSolutionException {
+    public Term getVarValue(String varName) throws NoSolutionException {
         if (isSuccess) {
             Iterator<Var> it = bindings.iterator();
             while (it.hasNext()) {

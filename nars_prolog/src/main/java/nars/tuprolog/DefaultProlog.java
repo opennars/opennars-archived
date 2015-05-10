@@ -7,6 +7,8 @@ import com.gs.collections.api.map.primitive.MutableIntIntMap;
 import com.gs.collections.api.map.primitive.MutableIntObjectMap;
 import com.gs.collections.impl.map.mutable.primitive.IntIntHashMap;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import nars.nal.term.Term;
+
 import nars.tuprolog.event.QueryEvent;
 
 import java.util.*;
@@ -56,7 +58,7 @@ public class DefaultProlog extends Prolog  {
     }
 
 
-    public synchronized boolean threadCreate(PTerm threadID, PTerm goal) {
+    public synchronized boolean threadCreate(PTerm threadID, Term goal) {
         id += 1;
 
         if (goal == null) return false;
@@ -123,18 +125,28 @@ public class DefaultProlog extends Prolog  {
         er.detach();
     }
 
-    public boolean sendMsg(int dest, PTerm msg) {
+    public boolean sendMsg(int dest, Term msg) {
         Engine er = findRunner(dest);
         if (er == null) return false;
-        PTerm msgcopy = msg.copy(new LinkedHashMap<>(), 0);
+        Term msgcopy;
+        if (msg instanceof PTerm)
+            msgcopy = ((PTerm)msg).copy(new LinkedHashMap<>(), 0);
+        else
+            msgcopy = msg;
         er.sendMsg(msgcopy);
         return true;
     }
 
-    public boolean sendMsg(String name, PTerm msg) {
+    public boolean sendMsg(String name, Term msg) {
         TermQueue queue = queues.get(name);
         if (queue == null) return false;
-        PTerm msgcopy = msg.copy(new LinkedHashMap<>(), 0);
+        Term msgcopy;
+
+        if (msg instanceof PTerm)
+            msgcopy = ((PTerm)msg).copy(new LinkedHashMap<>(), 0);
+        else
+            msgcopy = msg; //no copy
+
         queue.store(msgcopy);
         return true;
     }

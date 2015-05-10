@@ -18,6 +18,7 @@
 package nars.tuprolog;
 
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import nars.nal.term.Term;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -112,8 +113,10 @@ public abstract class Library<E extends Prolog> implements Serializable, IPrimit
      * The runtime (demonstration) context currently used by the engine
      * is deployed and altered.
      */
-    protected boolean unify(PTerm a0,PTerm a1) {
-        return engine.unify(a0,a1);
+    protected boolean unify(Term a0,Term a1) {
+        if (a0 instanceof PTerm)
+            return engine.unify((PTerm)a0,a1);
+        return false;
     }
     
     /**
@@ -122,7 +125,7 @@ public abstract class Library<E extends Prolog> implements Serializable, IPrimit
      * The runtime (demonstration) context currently used by the engine
      * is deployed and altered.
      */
-    protected boolean match(PTerm a0,PTerm a1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {
+    protected boolean match(PTerm a0,Term a1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {
         return engine.match(a0,a1,now,v1,v2);
     }
 
@@ -135,10 +138,10 @@ public abstract class Library<E extends Prolog> implements Serializable, IPrimit
      * is deployed and altered.
      * @throws Throwable 
      */
-    protected PTerm evalExpression(PTerm term) throws Throwable {
+    protected Term evalExpression(Term term) throws Throwable {
         if (term == null)
             return null;
-        PTerm val = term.getTerm();
+        Term val = term.getTerm();
         if (val instanceof Struct) {
             Struct t = (Struct) val;
             if (term != t)
@@ -167,7 +170,7 @@ public abstract class Library<E extends Prolog> implements Serializable, IPrimit
      * method invoked when the engine is going
      * to demonstrate a goal
      */
-    public void onSolveBegin(PTerm goal) {}
+    public void onSolveBegin(Term goal) {}
     
     /**
      * method invoked when the engine has

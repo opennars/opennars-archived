@@ -42,7 +42,7 @@ public class Var implements PTerm {
     private String name;
     private StringBuilder completeName;     /* Reviewed by Paolo Contessi: String -> StringBuilder */
 
-    private PTerm link;            /* tlink is used for unification process */
+    private Term link;            /* tlink is used for unification process */
 
     private long timestamp;        /* timestamp is used for fix vars order */
 
@@ -138,8 +138,8 @@ public class Var implements PTerm {
      * with the same time identifier is found in the list, then the variable in
      * the list is returned.
      */
-    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
-        PTerm tt = getTerm();
+    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
+        Term tt = getTerm();
         if (tt == this) {
             Var v = vMap.get(this);
             if (v == null) {
@@ -149,7 +149,9 @@ public class Var implements PTerm {
             }
             return v;
         } else {
-            return tt.copy(vMap, idExecCtx);
+            if (tt instanceof PTerm)
+                return ((PTerm)tt).copy(vMap, idExecCtx);
+            return tt.clone();
         }
     }
 
@@ -158,7 +160,7 @@ public class Var implements PTerm {
      */
     public PTerm copy(final Map<Var, Var> vMap, final Map<PTerm, Var> substMap) {
         Var v;
-        Object temp = vMap.get(this);
+        Var temp = vMap.get(this);
         if (temp == null) {
             v = new Var(null, Var.PROGRESSIVE, vMap.size(), timestamp);
                 //name,Var.PROGRESSIVE,vMap.size(),timestamp);
@@ -166,9 +168,9 @@ public class Var implements PTerm {
         } else {
             v = (Var) temp;
         }
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t instanceof Var) {
-            Object tt = substMap.putIfAbsent(t, v);
+            Object tt = substMap.putIfAbsent((Var)t, v);
             if (tt == null) {
                 v.link = null;
             } else {
@@ -176,7 +178,7 @@ public class Var implements PTerm {
             }
         }
         else if (t instanceof Struct) {
-            v.link = t.copy(vMap, substMap);
+            v.link = ((Struct)t).copy(vMap, substMap);
         }
         else if (t instanceof PNum) {
             v.link = t;
@@ -237,9 +239,9 @@ public class Var implements PTerm {
      * For unbound variable it is the variable itself, while for bound variable
      * it is the bound term.
      */
-    public PTerm getTerm() {
-        PTerm tt = this;
-        PTerm t = link;
+    public Term getTerm() {
+        Term tt = this;
+        Term t = link;
         while (t != null) {
             tt = t;
             if (t instanceof Var) {
@@ -256,14 +258,14 @@ public class Var implements PTerm {
     /**
      * Gets the term which is direct referred by the variable.
      */
-    public PTerm getLink() {
+    public Term getLink() {
         return link;
     }
 
     /**
      * Set the term which is direct bound
      */
-    public void setLink(PTerm l) {
+    public void setLink(Term l) {
         link = l;
     }
 
@@ -288,7 +290,7 @@ public class Var implements PTerm {
     }
 
     public boolean isEmptyList() {
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -297,7 +299,7 @@ public class Var implements PTerm {
     }
 
     public boolean isAtomic() {
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -306,7 +308,7 @@ public class Var implements PTerm {
     }
 
     public boolean isCompound() {
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -315,7 +317,7 @@ public class Var implements PTerm {
     }
 
     public boolean isAtom() {
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -324,7 +326,7 @@ public class Var implements PTerm {
     }
 
     public boolean isList() {
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t == this) {
             return false;
         } else {
@@ -333,11 +335,11 @@ public class Var implements PTerm {
     }
 
     public boolean isGround() {
-        PTerm t = getTerm();
+        Term t = getTerm();
         if (t == this) {
             return false;
         } else {
-            return t.isGround();
+            return (t instanceof PTerm) && ((PTerm)t).isGround();
         }
     }
 
@@ -365,7 +367,7 @@ public class Var implements PTerm {
     private boolean occurCheck(final List<Var> vl, final Struct t) {
         int arity = t.size();
         for (int c = 0; c < arity; c++) {
-            PTerm at = t.getTerm(c);
+            Term at = t.getTerm(c);
             if (at instanceof Struct) {
                 if (occurCheck(vl, (Struct) at)) {
                     return true;
@@ -389,9 +391,9 @@ public class Var implements PTerm {
      * Resolve the occurence of variables in a Term
      */
     public long resolveTerm(long count) {
-        PTerm tt = getTerm();
-        if (tt != this) {
-            return tt.resolveTerm(count);
+        Term tt = getTerm();
+        if ((tt != this) && (tt instanceof PTerm)) {
+            return ((PTerm)tt).resolveTerm(count);
         } else {
             timestamp = count;
             return count++;
@@ -424,8 +426,8 @@ public class Var implements PTerm {
      * occur check is ok then it's success and a new tlink is created
      * (retractable by a code)
      */
-    public boolean unify(List<Var> vl1, List<Var> vl2, PTerm t) {
-        PTerm tt = getTerm();
+    public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
+        Term tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             if (t instanceof Var) {
@@ -456,7 +458,7 @@ public class Var implements PTerm {
             //System.out.println("VAR "+name+" BOUND to "+tlink+" - time: "+time+" - mark: "+mark);
             return true;
         } else {
-            return (tt.unify(vl1, vl2, t));
+            return (tt instanceof PTerm) && ( ((PTerm)tt).unify(vl1, vl2, t));
         }
     }
 
@@ -473,8 +475,8 @@ public class Var implements PTerm {
      }
      }
      */
-    public boolean isGreater(PTerm t) {
-        PTerm tt = getTerm();
+    public boolean isGreater(Term t) {
+        Term tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             if (!(t instanceof Var)) {
@@ -482,12 +484,12 @@ public class Var implements PTerm {
             }
             return timestamp > ((Var) t).timestamp;
         } else {
-            return tt.isGreater(t);
+            return (tt instanceof PTerm) && ((PTerm)tt).isGreater(t);
         }
     }
 
-    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
-        PTerm tt = getTerm();
+    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
+        Term tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             if (!(t instanceof Var)) {
@@ -499,17 +501,17 @@ public class Var implements PTerm {
             //return timestamp > ((Var)t).timestamp;
             return vorder.indexOf(((Var) tt).getName()) > vorder.indexOf(((Var) t).getName());
         } else {
-            return tt.isGreaterRelink(t, vorder);
+            return (tt instanceof PTerm) && ((PTerm)tt).isGreaterRelink(t, vorder);
         }
     }
 
-    public boolean isEqual(PTerm t) {
-        PTerm tt = getTerm();
+    public boolean isEqual(Term t) {
+        Term tt = getTerm();
         if (tt == this) {
             t = t.getTerm();
             return (t instanceof Var && timestamp == ((Var) t).timestamp);
         } else {
-            return tt.isEqual(t);
+            return (tt instanceof PTerm) && (t instanceof PTerm) && ((PTerm)tt).isEqual((PTerm)t);
         }
     }
 
@@ -534,7 +536,7 @@ public class Var implements PTerm {
      */
     @Override
     public String toString() {
-        PTerm tt = getTerm();
+        Term tt = getTerm();
         if (name != null) {
             if (tt == this) {
                 return completeName.toString();
@@ -556,7 +558,7 @@ public class Var implements PTerm {
      *
      */
     public String toStringFlattened() {
-        PTerm tt = getTerm();
+        Term tt = getTerm();
         if (name != null) {
             if (tt == this) {
                 return completeName.toString();

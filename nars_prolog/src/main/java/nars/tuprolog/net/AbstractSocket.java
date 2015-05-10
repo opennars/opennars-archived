@@ -79,7 +79,7 @@ public abstract class AbstractSocket implements PTerm {
 	}
 
 	@Override
-	public PTerm getTerm() {
+	public Term getTerm() {
 		return this;
 	}
 
@@ -95,7 +95,7 @@ public abstract class AbstractSocket implements PTerm {
 	}
 
 	@Override
-	public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
+	public Term copy(Map<Var, Var> vMap, int idExecCtx) {
 		return this;
 	}
 

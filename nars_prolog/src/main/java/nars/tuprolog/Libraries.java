@@ -4,6 +4,7 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
 import nars.tuprolog.event.LibraryEvent;
 import nars.tuprolog.event.WarningEvent;
 
@@ -397,7 +398,7 @@ public class Libraries
 		return null;
 	}
 
-	public synchronized void onSolveBegin(PTerm g)
+	public synchronized void onSolveBegin(Term g)
 	{
 		for (Library alib : libraries)
 		{

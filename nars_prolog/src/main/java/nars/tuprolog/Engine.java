@@ -4,6 +4,9 @@
  */
 package nars.tuprolog;
 
+
+import nars.nal.term.Term;
+
 import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -36,7 +39,7 @@ public class Engine implements java.io.Serializable, Runnable {
     private int pid;
     private boolean detached;
     private boolean solving;
-    private PTerm query;
+    private Term query;
     private final TermQueue msgs;
     private final ArrayList<Boolean> next;
     private int countNext;
@@ -83,7 +86,7 @@ public class Engine implements java.io.Serializable, Runnable {
 
         //PrintStream log;
         Stage nextState;
-        PTerm query;
+        Term query;
         Struct startGoal;
         Collection<Var> goalVars;
         int nDemoSteps;
@@ -96,7 +99,7 @@ public class Engine implements java.io.Serializable, Runnable {
 
         long cyclesToCheckForTimeout = 512;
 
-        public State(Engine manager, PTerm query) {
+        public State(Engine manager, Term query) {
             this.manager = manager;
             this.nextState = manager.INIT;
             this.query = query;
@@ -167,7 +170,7 @@ public class Engine implements java.io.Serializable, Runnable {
         /*
          * Methods for spyListeners
          */
-        public PTerm getQuery() {
+        public Term getQuery() {
             return query;
         }
 
@@ -193,7 +196,7 @@ public class Engine implements java.io.Serializable, Runnable {
 
         void prepareGoal() {
             goalMap.clear();
-            startGoal = (Struct) (query).copyGoal(goalMap, 0);
+            startGoal = (Struct) ((PTerm)query).copyGoal(goalMap, 0);
             this.goalVars = goalMap.values();
         }
 
@@ -309,7 +312,8 @@ public class Engine implements java.io.Serializable, Runnable {
 
     public SolveInfo solve(double maxTimeSeconds) {
         try {
-            query.resolveTerm();
+            if (query instanceof PTerm)
+                ((PTerm)query).resolveTerm();
 
             libraries.onSolveBegin(query);
             primitives.identifyPredicate(query);
@@ -526,7 +530,7 @@ public class Engine implements java.io.Serializable, Runnable {
         return sinfo;
     }
 
-    public void setGoal(PTerm goal) {
+    public void setGoal(Term goal) {
         this.query = goal;
     }
 
@@ -561,7 +565,7 @@ public class Engine implements java.io.Serializable, Runnable {
     }
 
 
-    public void sendMsg(PTerm t) {
+    public void sendMsg(Term t) {
         msgs.store(t);
     }
 

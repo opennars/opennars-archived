@@ -18,6 +18,7 @@
 package nars.tuprolog;
 
 import com.google.common.collect.Lists;
+import nars.nal.term.Term;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +94,7 @@ public class Theory implements Serializable, PrologTermIterator {
     }
 
     public static Theory parse(Prolog engine, String input) throws InvalidTheoryException {
-       Deque<PTerm> tc = Lists.newLinkedList(new Parser(engine.getOperators(), input));
+       Deque<Term> tc = Lists.newLinkedList(new Parser(engine.getOperators(), input));
        return new Theory(new Struct(".", tc));       
     }
     

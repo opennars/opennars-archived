@@ -17,13 +17,18 @@
  */
 package nars.tuprolog;
 
+import nars.nal.AbstractSubGoalTree;
+import nars.nal.term.Term;
 import nars.tuprolog.util.Tools;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class defines the Theory Manager who manages the clauses/theory often referred to as the Prolog database.
@@ -279,7 +284,7 @@ public class Theories implements Serializable {
     private boolean runDirective(final Struct c) {
         if (c.size() != 1)
             return false;
-        PTerm t = c.getTerm(0);
+        Term t = c.getTerm(0);
         if (!(t instanceof Struct))
             return false;
 

@@ -83,36 +83,37 @@ public class Struct implements PTerm, Compound {
     /**
      * Builds a compound, with three arguments
      */
-    public Struct(String f, PTerm at0, PTerm at1, PTerm at2) {
-        this(f, new PTerm[]{at0, at1, at2});
+    public Struct(String f, Term at0, Term at1, Term at2) {
+        
+        this(f, new Term[]{at0, at1, at2});
     }
 
     /**
      * Builds a compound, with four arguments
      */
-    public Struct(String f, PTerm at0, PTerm at1, PTerm at2, PTerm at3) {
-        this(f, new PTerm[]{at0, at1, at2, at3});
+    public Struct(String f, Term at0, Term at1, Term at2, Term at3) {
+        this(f, new Term[]{at0, at1, at2, at3});
     }
 
     /**
      * Builds a compound, with five arguments
      */
-    public Struct(String f, PTerm at0, PTerm at1, PTerm at2, PTerm at3, PTerm at4) {
-        this(f, new PTerm[]{at0, at1, at2, at3, at4});
+    public Struct(String f, Term at0, Term at1, Term at2, Term at3, Term at4) {
+        this(f, new Term[]{at0, at1, at2, at3, at4});
     }
 
     /**
      * Builds a compound, with six arguments
      */
-    public Struct(String f, PTerm at0, PTerm at1, PTerm at2, PTerm at3, PTerm at4, PTerm at5) {
-        this(f, new PTerm[]{at0, at1, at2, at3, at4, at5});
+    public Struct(String f, Term at0, Term at1, Term at2, Term at3, Term at4, Term at5) {
+        this(f, new Term[]{at0, at1, at2, at3, at4, at5});
     }
 
     /**
      * Builds a compound, with seven arguments
      */
-    public Struct(String f, PTerm at0, PTerm at1, PTerm at2, PTerm at3, PTerm at4, PTerm at5, PTerm at6) {
-        this(f, new PTerm[]{at0, at1, at2, at3, at4, at5, at6});
+    public Struct(String f, Term at0, Term at1, Term at2, Term at3, Term at4, Term at5, Term at6) {
+        this(f, new Term[]{at0, at1, at2, at3, at4, at5, at6});
     }
 
     /**
@@ -174,12 +175,12 @@ public class Struct implements PTerm, Compound {
     /**
      * Builds a compound, with a linked list of arguments
      */
-    public Struct(String f, Collection<Term> al) {
+    public Struct(String f, Collection<? extends Term> al) {
         name = f;
         arity = al.size();
         if (arity > 0) {
             term = new Term[arity];
-            Iterator<Term> ali = al.iterator();
+            Iterator<? extends Term> ali = al.iterator();
             for (int c = 0; c < arity; c++)
                 term[c] = ali.next();
         }
@@ -266,7 +267,7 @@ public class Struct implements PTerm, Compound {
      * <p>
      * (Only for internal service)
      */
-    void setTerm(final int index, final PTerm argument) {
+    void setTerm(final int index, final Term argument) {
         term[index] = argument;
     }
 
@@ -315,22 +316,17 @@ public class Struct implements PTerm, Compound {
 
     // check type services
 
-    public boolean isAtomic() {
-        return arity == 0;
-    }
-
     public boolean isCompound() {
         return arity > 0;
     }
 
     public boolean isAtom() {
-
-        return (size() == 0 || (isEmpty() && isList());
+        return (size() == 0 || isEmptyList());
     }
 
     @Override
     public boolean isList() {
-        return (arity == 2 && name.equals(".") && term[1].isList()) || ((size() == 0) && (getName().equals("[]")));
+        return (size() == 2 && getName().equals(".") && term[1].isList()) || ((size() == 0) && (getName().equals("[]")));
     }
 
     public boolean isGround() {
@@ -352,7 +348,7 @@ public class Struct implements PTerm, Compound {
     }
 
     @Override
-    public PTerm getTerm() {
+    public Term getTerm() {
         return this;
     }
 
@@ -395,7 +391,7 @@ public class Struct implements PTerm, Compound {
     /**
      * Test if a term is greater than other
      */
-    public boolean isGreater(PTerm t) {
+    public boolean isGreater(Term t) {
         t = t.getTerm();
         if (!(t instanceof Struct)) {
             return true;
@@ -427,7 +423,7 @@ public class Struct implements PTerm, Compound {
         return false;
     }
 
-    public boolean isGreaterRelink(PTerm t, ArrayList<String> vorder) {
+    public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
         if (!(t instanceof Struct)) {
             return true;
@@ -463,7 +459,7 @@ public class Struct implements PTerm, Compound {
     /**
      * Test if a term is equal to other
      */
-    public boolean isEqual(PTerm t) {
+    public boolean isEqual(Term t) {
         if (this == t) return true;
         //TODO use a hashcode for the arguments to compare quickly
         t = t.getTerm();
@@ -493,7 +489,7 @@ public class Struct implements PTerm, Compound {
      *
      * @param vMap is needed for register occurence of same variables
      */
-    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
+    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
         Struct t = new Struct(arity);
         t.resolved = resolved;
         t.name = name;
@@ -515,7 +511,7 @@ public class Struct implements PTerm, Compound {
      *
      * @param vMap is needed for register occurence of same variables
      */
-    public PTerm copy(Map<Var, Var> vMap, Map<PTerm, Var> substMap) {
+    public Struct copy(Map<Var, Var> vMap, Map<PTerm, Var> substMap) {
 
         Struct t = new Struct(arity);
         t.resolved = false;
@@ -701,12 +697,12 @@ public class Struct implements PTerm, Compound {
     /**
      * Appends an element to this structure supposed to be a list
      */
-    public void append(PTerm t) {
+    public void append(Term t) {
         if (isEmptyList()) {
             name = ".";
             arity = 2;
             predicateIndicator = name + '/' + arity; /* Added by Paolo Contessi */
-            term = new PTerm[arity];
+            term = new Term[arity];
             term[0] = t;
             term[1] = new Struct();
         } else if (term[1].isList()) {
@@ -738,8 +734,7 @@ public class Struct implements PTerm, Compound {
      * @param vl2 list of variables unified
      * @return true if the term is unifiable with this one
      */
-    @Override
-    public boolean unify(final List<Var> vl1, final List<Var> vl2, PTerm t) {
+    public boolean unify(final List<Var> vl1, final List<Var> vl2, Term t) {
         // In fase di unificazione bisogna annotare tutte le variabili della struct completa.
         t = t.getTerm();
 
@@ -760,7 +755,7 @@ public class Struct implements PTerm, Compound {
                 return true;
             }
         } else if (t instanceof Var) {
-            return t.unify(vl2, vl1, this);
+            return ((Var)t).unify(vl2, vl1, this);
         }
         return false;
     }
@@ -948,38 +943,47 @@ public class Struct implements PTerm, Compound {
             return ('{' + toString0_bracket() + '}');
         }
 
+        Term t0 = term[0];
+        Term t1 = term[1];
+        if (!(t0 instanceof PTerm && t1 instanceof PTerm)) {
+            return toString();
+        }
+
+        PTerm p0 = (PTerm)t0;
+        PTerm p1 = (PTerm)t1;
+
         if (arity == 2) {
             if ((p = op.opPrio(name, "xfx")) >= Operators.OP_LOW) {
                 return (
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
-                                term[0].toStringAsArgX(op, p) +
+                                p0.toStringAsArgX(op, p) +
                                 ' ' + name + ' ' +
-                                term[1].toStringAsArgX(op, p) +
+                                p1.toStringAsArgX(op, p) +
                                 (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
             if ((p = op.opPrio(name, "yfx")) >= Operators.OP_LOW) {
                 return (
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
-                                term[0].toStringAsArgY(op, p) +
+                                p0.toStringAsArgY(op, p) +
                                 ' ' + name + ' ' +
-                                term[1].toStringAsArgX(op, p) +
+                                p1.toStringAsArgX(op, p) +
                                 (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
             if ((p = op.opPrio(name, "xfy")) >= Operators.OP_LOW) {
                 if (!name.equals(",")) {
                     return (
                             (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
-                                    term[0].toStringAsArgX(op, p) +
+                                    p0.toStringAsArgX(op, p) +
                                     ' ' + name + ' ' +
-                                    term[1].toStringAsArgY(op, p) +
+                                    p1.toStringAsArgY(op, p) +
                                     (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
                 } else {
                     return (
                             (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
-                                    term[0].toStringAsArgX(op, p) +
+                                    p0.toStringAsArgX(op, p) +
                                     //",\n\t"+
                                     ',' +
-                                    term[1].toStringAsArgY(op, p) +
+                                    p1.toStringAsArgY(op, p) +
                                     (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
                 }
             }
@@ -988,27 +992,27 @@ public class Struct implements PTerm, Compound {
                 return (
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                                 name + ' ' +
-                                term[0].toStringAsArgX(op, p) +
+                                p0.toStringAsArgX(op, p) +
                                 (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
             if ((p = op.opPrio(name, "fy")) >= Operators.OP_LOW) {
                 return (
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
                                 name + ' ' +
-                                term[0].toStringAsArgY(op, p) +
+                                p0.toStringAsArgY(op, p) +
                                 (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
             if ((p = op.opPrio(name, "xf")) >= Operators.OP_LOW) {
                 return (
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
-                                term[0].toStringAsArgX(op, p) +
+                                p0.toStringAsArgX(op, p) +
                                 ' ' + name + ' ' +
                                 (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
             if ((p = op.opPrio(name, "yf")) >= Operators.OP_LOW) {
                 return (
                         (((x && p >= prio) || (!x && p > prio)) ? "(" : "") +
-                                term[0].toStringAsArgY(op, p) +
+                                p0.toStringAsArgY(op, p) +
                                 ' ' + name + ' ' +
                                 (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
@@ -1019,19 +1023,22 @@ public class Struct implements PTerm, Compound {
         }
         v += "(";
         for (p = 1; p < arity; p++) {
-            v = v + term[p - 1].toStringAsArgY(op, 0) + ',';
+            v = v + term[p - 1].toString() /*toStringAsArgY(op, 0)*/ + ',';
         }
-        v += term[arity - 1].toStringAsArgY(op, 0);
+        v += term[arity - 1].toString() /*toStringAsArgY(op, 0) */;
         v += ")";
         return v;
     }
 
     public PTerm iteratedGoalTerm() {
         if (name.equals("^") && arity == 2) {
-            PTerm goal = getTerm(1);
-            return goal.iteratedGoalTerm();
-        } else
-            return this;
+            Term goal = getTerm(1);
+            if (goal instanceof PTerm) {
+                return ((PTerm) goal).iteratedGoalTerm();
+            }
+        }
+
+        return this;
         //return super.iteratedGoalTerm();
     }
 
@@ -1052,8 +1059,15 @@ public class Struct implements PTerm, Compound {
 
     @Override
     public short getComplexity() {
-        return (short) size(); //TODO this is just an estimate; for now
+        //TODO this is a minimum estimate. 1 + arity = complexity
+        return (short) (size() + 1);
     }
+
+    /** renamed from the misleading 'isAtomic' */
+    public boolean isAtomic() {
+        return size() == 0;
+    }
+
 
 
     @Override

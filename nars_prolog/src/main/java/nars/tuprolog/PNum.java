@@ -106,7 +106,7 @@ public abstract class PNum implements PTerm {
     /**
      * Gets the actual term referred by this Term.
      */
-    public PTerm getTerm() {
+    public Term getTerm() {
         return this;
     }
 
@@ -179,7 +179,7 @@ public abstract class PNum implements PTerm {
      * the list argument passed contains the list of variables to be renamed
      * (if empty list then no renaming)
      */
-    public PTerm copy(Map<Var,Var> vMap, int idExecCtx) {
+    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
         return this;
     }
 
@@ -244,5 +244,10 @@ public abstract class PNum implements PTerm {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void recurseSubterms(nars.nal.term.TermVisitor v, Term parent) {
+        //nothing to do
     }
 }

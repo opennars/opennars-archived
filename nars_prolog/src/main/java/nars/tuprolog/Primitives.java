@@ -18,6 +18,7 @@
 package nars.tuprolog;
 
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import nars.nal.term.Term;
 import nars.tuprolog.interfaces.IPrimitives;
 
 import java.lang.reflect.InvocationTargetException;
@@ -123,7 +124,7 @@ public class Primitives /*Castagna 06/2011*/implements IPrimitives/**/{
             return false;
     }
     
-    public void identifyPredicate(PTerm term) {
+    public void identifyPredicate(Term term) {
         identify(term,PrimitiveInfo.PREDICATE);
     }
     
@@ -131,7 +132,7 @@ public class Primitives /*Castagna 06/2011*/implements IPrimitives/**/{
         identify(term,PrimitiveInfo.FUNCTOR);
     }
     
-    private void identify(PTerm term, int typeOfPrimitive) {
+    private void identify(Term term, int typeOfPrimitive) {
         if (term == null) {
             return;
         }

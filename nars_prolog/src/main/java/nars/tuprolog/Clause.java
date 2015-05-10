@@ -16,6 +16,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.tuprolog;
+
+import nars.nal.AbstractSubGoalTree;
+import nars.nal.term.Term;
+
 import java.util.AbstractMap;
 import java.util.IdentityHashMap;
 
@@ -79,15 +83,15 @@ public class Clause {
     /**
      * Gets a clause from a generic Term
      */
-    static SubGoalTree extractBody(PTerm body) {
+    static SubGoalTree extractBody(Term body) {
         SubGoalTree r = new SubGoalTree();
         extractBody(r, body);
         return r;
     }
     
-    private static void extractBody(SubGoalTree parent, PTerm body) {
+    private static void extractBody(SubGoalTree parent, Term body) {
         while (body instanceof Struct && ((Struct)body).getName().equals(",")) {
-            PTerm t = ((Struct)body).getTermX(0);
+            Term t = ((Struct)body).getTermX(0);
             if (t instanceof Struct && ((Struct)t).getName().equals(",")) {
                 extractBody(parent.addChild(),t);
             } else {
@@ -108,7 +112,7 @@ public class Clause {
         int p;
         if ((p = op.opPrio(":-","xfx")) >= Operators.OP_LOW) {
             String st=indentPredicatesAsArgX(clause.getTermX(1),op,p);
-            String head = clause.getTermX(0).toStringAsArgX(op,p);
+            String head = clause.getTermX(0).toString(); //toStringAsArgX(op,p);
             if (st.equals("true")) {
                 return head +".\n";
             } else {
@@ -118,7 +122,7 @@ public class Clause {
         
         if ((p = op.opPrio(":-","yfx")) >= Operators.OP_LOW) {
             String st=indentPredicatesAsArgX(clause.getTermX(1),op,p);
-            String head = clause.getTermX(0).toStringAsArgY(op,p);
+            String head = clause.getTermX(0).toString(); //.toStringAsArgY(op,p);
             if (st.equals("true")) {
                 return head +".\n";
             } else {
@@ -128,7 +132,7 @@ public class Clause {
         
         if ((p = op.opPrio(":-","xfy")) >= Operators.OP_LOW) {
             String st=indentPredicatesAsArgY(clause.getTermX(1),op,p);
-            String head = clause.getTermX(0).toStringAsArgX(op,p);
+            String head = clause.getTermX(0).toString(); //.toStringAsArgX(op,p);
             if (st.equals("true")) {
                 return head +".\n";
             } else {
@@ -184,7 +188,7 @@ public class Clause {
         for(AbstractSubGoalTree s: source){
             if (s.isLeaf()) {
                 SubGoalElement l = (SubGoalElement)s;
-                PTerm t = l.getValue().copy(map,id);
+                Term t = l.getValue().copy(map,id);
                 destination.addChild(t);
             } else {
                 SubGoalTree src  = (SubGoalTree)s; 
@@ -216,7 +220,7 @@ public class Clause {
         return ( clause.getTermX(0).toString() + " :- "+clause.getTermX(1)+".\n");
     }
     
-    static private String indentPredicates(PTerm t) {
+    static private String indentPredicates(Term t) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")){
@@ -259,13 +263,13 @@ public class Clause {
         }
     }*/
     
-    static private String indentPredicatesAsArgX(PTerm t,Operators op,int p) {
+    static private String indentPredicatesAsArgX(Term t,Operators op,int p) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")) {
                int prio = op.opPrio(",","xfy");
                StringBuilder sb = new StringBuilder(prio >= p ? "(" : "");
-               sb.append(co.getTermX(0).toStringAsArgX(op,prio));
+               sb.append(co.getTermX(0).toString()); //toStringAsArgX(op,prio));
                sb.append(",\n\t");
                sb.append(indentPredicatesAsArgY(co.getTermX(1),op,prio));
                if (prio >= p) sb.append(')');
@@ -273,30 +277,30 @@ public class Clause {
                return sb.toString();
 
            } else {
-               return t.toStringAsArgX(op,p);
+               return t.toString(); //.toStringAsArgX(op,p);
            }
        } else {
-           return t.toStringAsArgX(op,p);
+           return t.toString(); //.toStringAsArgX(op,p);
        }
     }
 
-    static private String indentPredicatesAsArgY(PTerm t,Operators op,int p) {
+    static private String indentPredicatesAsArgY(Term t,Operators op, int p) {
         if (t instanceof Struct) {
             Struct co=(Struct)t;
             if (co.getName().equals(",")) {
                int prio = op.opPrio(",","xfy");
                StringBuilder sb = new StringBuilder(prio > p ? "(" : "");
-               sb.append(co.getTermX(0).toStringAsArgX(op,prio));
+                sb.append(co.getTermX(0).toString()); //toStringAsArgX(op,prio));
                sb.append(",\n\t");
                sb.append(indentPredicatesAsArgY(co.getTermX(1),op,prio));
                if (prio > p) sb.append(')');
 
                return sb.toString();
             } else {
-               return t.toStringAsArgY(op,p);
+               return t.toString(); //AsArgY(op,p);
             }
         } else {
-           return t.toStringAsArgY(op,p);
+           return t.toString(); //AsArgY(op,p);
         }
     }
     

@@ -1,11 +1,13 @@
 package nars.tuprolog;
 
+import nars.nal.term.Term;
 import nars.tuprolog.util.OneWayList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+
 
 /**
  * A list of clauses belonging to the same family as a goal. A family is
@@ -79,7 +81,7 @@ public class ClauseStore {
      * @return true if compatible or false otherwise.
      */
     protected boolean existCompatibleClause(ArrayList<Var> v1, ArrayList<Var> v2, long now) {
-        List<PTerm> saveUnifications = deunify(vars);
+        List<Term> saveUnifications = deunify(vars);
         boolean found = checkCompatibility(goal, v1, v2, now);
         reunify(vars, saveUnifications);
         return found;
@@ -100,8 +102,8 @@ public class ClauseStore {
      * @param varsToDeunify
      * @return unificazioni delle variabili
      */
-    private List<PTerm> deunify(List<Var> varsToDeunify) {
-        List<PTerm> saveUnifications = new ArrayList<>(varsToDeunify.size());
+    private List<Term> deunify(List<Var> varsToDeunify) {
+        List<Term> saveUnifications = new ArrayList<>(varsToDeunify.size());
         for (Var v : varsToDeunify) {
             saveUnifications.add(v.getLink());
             v.free();
@@ -116,11 +118,11 @@ public class ClauseStore {
      * @param varsToReunify
      * @param saveUnifications
      */
-    private void reunify(List<Var> varsToReunify, List<PTerm> saveUnifications) {
+    private void reunify(List<Var> varsToReunify, List<Term> saveUnifications) {
         int size = varsToReunify.size();
         //TODO dont use ListIterator instances here: just a simple for loop on an ArrayList
         ListIterator<Var> it1 = varsToReunify.listIterator(size);
-        ListIterator<PTerm> it2 = saveUnifications.listIterator(size);
+        ListIterator<Term> it2 = saveUnifications.listIterator(size);
         // Only the first occurrence of a variable gets its binding saved;
         // following occurrences get a null instead. So, to avoid clashes
         // between those values, and avoid random variable deunification,

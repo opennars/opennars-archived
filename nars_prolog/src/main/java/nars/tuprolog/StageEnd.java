@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,11 +70,11 @@ public class StageEnd extends Stage {
             relinkVar(e);
     }
 
-    private PTerm solve(PTerm a1, Object[] a, PTerm initGoalBag) {
+    private Term solve(Term a1, Object[] a, Term initGoalBag) {
         //System.out.println("ENTRO NEL SOLVE a1 "+a1+" initGoalBag "+initGoalBag);
         while (a1 instanceof Struct && ((Struct) a1).size() > 0) {
             //System.out.println("substituteVarGoalBO --- a1 "+a1);
-            PTerm a10 = ((Struct) a1).getTermX(0);
+            Term a10 = ((Struct) a1).getTermX(0);
             if (a10 instanceof Var) {
                 //System.out.println("substituteVarGoalBO --- a10 var name  "+((Var)a10).getName()+" original name "+((Var)a10).getOriginalName());
                 //System.out.println("substituteVarGoalBO faccio findvar e sostisuisco a1 pos 0 "+a1);
@@ -80,7 +82,7 @@ public class StageEnd extends Stage {
                 //System.out.println("substituteVarGoalBO dopo sostituzione "+a1);
                 //((Struct)initGoalBag).setArg(1,a1);
             } else if (a10 instanceof Struct) {
-                PTerm a100;
+                Term a100;
                 a100 = ((Struct) a10).getTermX(0);
                 //System.out.println("substituteVarGoalBO --- a10 Struct name  "+a10);
                 //System.out.println("substituteVarGoalBO --- a10 faccio solve di "+a100+" a1 "+a1);
@@ -88,7 +90,7 @@ public class StageEnd extends Stage {
                 ((Struct) a1).setTerm(0, a10);
                 //((Struct)initGoalBag).setArg(1,a1);
             }
-            PTerm a11 = null;
+            Term a11 = null;
             if (((Struct) a1).size() > 1)
                 a11 = ((Struct) a1).getTermX(1);
             a1 = a11;
@@ -100,14 +102,14 @@ public class StageEnd extends Stage {
         return initGoalBag;
     }
 
-    private PTerm findVarName(PTerm link, Object[] a, PTerm initGoalBag, int pos) {
+    private Term findVarName(Term link, Object[] a, Term initGoalBag, int pos) {
         boolean findName = false;
         //System.out.println("****!!!!!!! INIZIA FINDVARNAME tlink "+tlink+" bag "+initGoalBag+" pos "+pos);
         while (link != null && link instanceof Var && !findName) {
             //System.out.println("****Trovato Link "+tlink);
             int y = 0;
             while (!findName && y < a.length) {
-                PTerm gVar = (Var) a[y];
+                Term gVar = (Var) a[y];
                 while (!findName && gVar != null && gVar instanceof Var) {
                     //System.out.println("**** ----- verifico uguaglianza con "+gVar);
                     if (((Var) gVar).getName().compareTo(((Var) link).getName()) == 0) {
@@ -141,8 +143,8 @@ public class StageEnd extends Stage {
 	    	/* itero nel goal per cercare una eventuale struttura che deve fare match con la
 	    	 * result bag ESEMPIO setof(X,member(X,[V,U,f(U),f(V)]),[a,b,f(b),f(a)]).
 	    	 */
-            PTerm tgoal = BOgoal;
-            PTerm initGoalBag = null;
+            Term tgoal = BOgoal;
+            Term initGoalBag = null;
             Boolean find = false; //trovo nel goal della bag una struct che unifica con la bag iniziale
             Boolean findSamePredicateIndicator = false;
             Object[] a = (e.goalVars).toArray();
@@ -189,7 +191,7 @@ public class StageEnd extends Stage {
                         tgoal = ((Struct) tgoal).getTermX(1);
                         //System.out.println("STATE END relinkvar(): trovata struct con arg 1 "+tgoal);
 
-                        if (p.unify(tgoal, ((Var) initBag).getLink())) { //In realtˆ sembra che giˆ qui non unifichi
+                        if (p.unify((Struct)tgoal, ((Var) initBag).getLink())) { //In realtˆ sembra che giˆ qui non unifichi
                             //System.out.println("STATE END relinkvar(): trovata struct con arg 1 che unifica con bag iniziale");
                             initGoalBag = tgoal;
                             find = true;
@@ -208,10 +210,10 @@ public class StageEnd extends Stage {
                         //scorro initBagGoal e sostituisco i suoi nomi con i nomi delle variabili goal
                         if ((find && initGoalBag instanceof Struct) || (findSamePredicateIndicator && initGoalBag instanceof Struct)) {
                             //System.out.println("substituteVarGoalBO --- initGoalBag "+initGoalBag);
-                            PTerm a0 = ((Struct) initGoalBag).getTermX(0);
-                            PTerm a1 = ((Struct) initGoalBag).getTermX(1);
+                            Term a0 = ((Struct) initGoalBag).getTermX(0);
+                            Term a1 = ((Struct) initGoalBag).getTermX(1);
                             if (a0 instanceof Var) {
-                                PTerm link = a0;
+                                Term link = a0;
 //		    					System.out.println("substituteVarGoalBO --- a0  var name  "+((Var)a0).getName()+" original name "+((Var)a0).getOriginalName()+" tlink "+((Var)a0).getLink());
 //		    					System.out.println("SCORRO LINK VARIABILE "+a0);
                                 initGoalBag = findVarName(link, a, initGoalBag, 0);
@@ -227,12 +229,12 @@ public class StageEnd extends Stage {
                 //riordino la struttura seguendo l'ordine di comparsa delle var nel goal
                 if (initGoalBag != null) {
                     //System.out.println("Creo una lista a partire dalla struttura di initGoalBag ");
-                    ArrayList<PTerm> initGoalBagList = new ArrayList<>();
+                    ArrayList<Term> initGoalBagList = new ArrayList<>();
                     Struct initGoalBagTemp = (Struct) initGoalBag;
                     while (initGoalBagTemp.size() > 0) {
-                        PTerm t1 = initGoalBagTemp.getTermX(0);
+                        Term t1 = initGoalBagTemp.getTermX(0);
                         initGoalBagList.add(t1);
-                        PTerm t2 = initGoalBagTemp.getTermX(1);
+                        Term t2 = initGoalBagTemp.getTermX(1);
                         if (t2 instanceof Struct) {
                             initGoalBagTemp = (Struct) t2;
                         }
@@ -240,7 +242,7 @@ public class StageEnd extends Stage {
                     //System.out.println("Lista "+initGoalBagList);
 
                     // QUI FA ORDINAMENTO
-                    ArrayList<PTerm> initGoalBagListOrdered = new ArrayList<>();
+                    ArrayList<Term> initGoalBagListOrdered = new ArrayList<>();
                     if (((Struct) query).getName().equals("setof")) {
                         ArrayList<String> initGoalBagListVar = new ArrayList<>();
                         for (int m = 0; m < initGoalBagList.size(); m++) {
@@ -248,16 +250,17 @@ public class StageEnd extends Stage {
                                 initGoalBagListVar.add(((Var) initGoalBagList.get(m)).getName());
                         }
                         //System.out.println("Lista VAR "+initGoalBagListVar);
-                        ArrayList<PTerm> left = new ArrayList<>();
-                        ArrayList<PTerm> left_temp = new ArrayList<>();
+                        ArrayList<Term> left = new ArrayList<>();
+                        ArrayList<Term> left_temp = new ArrayList<>();
                         left.add(initGoalBagList.get(0));
-                        ArrayList<PTerm> right = new ArrayList<>();
-                        ArrayList<PTerm> right_temp = new ArrayList<>();
+                        ArrayList<Term> right = new ArrayList<>();
+                        ArrayList<Term> right_temp = new ArrayList<>();
                         //right.add(initGoalBagList.get(1));
                         for (int m = 1; m < initGoalBagList.size(); m++) {
                             int k = 0;
                             for (k = 0; k < left.size(); k++) {
-                                if (initGoalBagList.get(m).isGreaterRelink(left.get(k), initGoalBagListVar)) {
+                                Term igm = initGoalBagList.get(m);
+                                if (igm instanceof PTerm && ((PTerm)igm).isGreaterRelink(left.get(k), initGoalBagListVar)) {
                                     //System.out.println(initGoalBagList.get(m)+" pi� grande di "+left.get(k));
                                     left_temp.add(left.get(k));
                                 } else {
@@ -320,12 +323,12 @@ public class StageEnd extends Stage {
                     initGoalBag = s;
 
                     //System.out.println("Creo una lista a partire dalla struttura di initBag ");//serve per unificare
-                    ArrayList<PTerm> initBagList = new ArrayList<>();
+                    ArrayList<Term> initBagList = new ArrayList<>();
                     Struct initBagTemp = (Struct) ((Var) initBag).getLink();
                     while (initBagTemp.size() > 0) {
-                        PTerm t0 = initBagTemp.getTermX(0);
+                        Term t0 = initBagTemp.getTermX(0);
                         initBagList.add(t0);
-                        PTerm t2 = initBagTemp.getTermX(1);
+                        Term t2 = initBagTemp.getTermX(1);
                         if (t2 instanceof Struct) {
                             initBagTemp = (Struct) t2;
                         }
@@ -349,8 +352,8 @@ public class StageEnd extends Stage {
 //		    	System.out.println("Struttura INIZIALE con cui provo ad unificare "+initBag);
 //		    	System.out.println("Struttura CREATA con cui provo ad unificare "+initGoalBag);
 
-                if (findSamePredicateIndicator) {
-                    if (!(find && p.unify(initGoalBag, initBag))) {
+                if (findSamePredicateIndicator && (initGoalBag instanceof PTerm)) {
+                    if (!(find && p.unify((PTerm)initGoalBag, initBag))) {
                         //System.out.println("NOOOOOOOOOOOOOOOON unifica DOPO RELINK ");
                         String s = c.getEngineMan().getSetOfSolution() + "\n\nfalse.";
                         c.getEngineMan().setSetOfSolution(s);
@@ -384,7 +387,7 @@ public class StageEnd extends Stage {
             for (int i = 0; i < bag.size(); i++) {
                 Var resVar = (Var) bag.get(i);
                 //System.out.println("RESVAR BAG "+resVar);
-                PTerm t = resVar.getLink();
+                Term t = resVar.getLink();
                 //System.out.println("RESVAR BAG LINK "+resVar);
                 if (t != null) {
                     if (t instanceof Struct) {
@@ -420,7 +423,7 @@ public class StageEnd extends Stage {
             Var goalBO = (Var) (c.getEngineMan()).getBagOFgoal();
             //System.out.println("il goal interno bag of � var con tlink "+goalBO.getLink());
             ArrayList<String> lgoalBOVar = new ArrayList<>();
-            PTerm goalBOvalue = goalBO.getLink();
+            Term goalBOvalue = goalBO.getLink();
             if (goalBOvalue instanceof Struct) {
                 Struct t1 = ((Struct) goalBOvalue);
                 l_temp.clear();
@@ -456,7 +459,7 @@ public class StageEnd extends Stage {
                     PTerm var = it.next();
                     for (int y = 0; y < a.length; y++) {
                         Var vv = (Var) a[y];
-                        if (vv.getLink() != null && vv.getLink().isEqual(var)/*&& !(var.toString().startsWith("_"))*/) {
+                        if ((vv.getLink() instanceof PTerm) && ((PTerm)(vv.getLink())).isEqual(var)/*&& !(var.toString().startsWith("_"))*/) {
                             //System.out.println("Aggiungo trovata uguaglianza "+vv+" e var "+var);
                             lGoalVar.add(vv.getName());
                         }
@@ -492,7 +495,7 @@ public class StageEnd extends Stage {
                     //System.out.println("BAG SIZE "+bag.size());
                     Var resVar = (Var) bag.get(i);
                     //System.out.println("SOSTITUZIONE VAR "+resVar);
-                    PTerm t = resVar.getLink();
+                    Term t = resVar.getLink();
                     if (t == null) {
                         //System.out.println("----tlink null");
                         t = resVar;
@@ -556,7 +559,8 @@ public class StageEnd extends Stage {
                 boolean var = false;
                 if (bm instanceof Var) {
                     Var vbm = (Var) bm;
-                    if (vbm.getLink() != null && (vbm.getLink() instanceof Struct) && !(vbm.getLink().isAtomic()))
+                    Term vlink = vbm.getLink();
+                    if ((vlink instanceof Struct) && !(((Struct)vlink)).isAtomic())
                         var = true;
                 }
                 //System.out.println("&&&&&& Var "+var);
@@ -689,8 +693,8 @@ public class StageEnd extends Stage {
 
         if (s.size() > 0) {
             ArrayList<String> allVar = new ArrayList<>(s.size());
-            PTerm t = s.getTermX(0);
-            PTerm tt;
+            Term t = s.getTermX(0);
+            Term tt;
             if (s.size() > 1) {
                 tt = s.getTermX(1);
                 //System.out.println("---Termine "+t+" e termine "+tt);
@@ -714,9 +718,9 @@ public class StageEnd extends Stage {
     }
 
     public Struct substituteVar(Struct s, ArrayList<String> lSol, ArrayList<String> lgoal) {
-        PTerm t = s.getTermX(0);
+        Term t = s.getTermX(0);
         //System.out.println("STATE END Substitute var ---Termine "+t);
-        PTerm tt = null;
+        Term tt = null;
         if (s.size() > 1)
             tt = s.getTermX(1);
         //System.out.println("Substitute var ---Termine "+t+" e termine "+tt);

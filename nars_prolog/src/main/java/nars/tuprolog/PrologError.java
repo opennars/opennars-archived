@@ -1,5 +1,7 @@
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 /**
  * @author Matteo Iuliani
  */
@@ -7,12 +9,12 @@ package nars.tuprolog;
 public class PrologError extends Throwable {
 
 	// termine Prolog che rappresenta l'argomento di throw/1
-	private PTerm error;
+	private Term error;
 	/*Castagna 06/2011*/
 	private String descriptionError;
 	/**/
 
-	public PrologError(PTerm error) {
+	public PrologError(Term error) {
 		this.error = error;
 	}
 
@@ -40,7 +42,7 @@ public class PrologError extends Throwable {
 	}
 	/**/
 
-	public PTerm getError() {
+	public Term getError() {
 		return error;
 	}
 
@@ -56,7 +58,7 @@ public class PrologError extends Throwable {
 		/**/	
 	}
 
-	public static PrologError type_error(Prolog e, int argNo, String validType, PTerm culprit) {
+	public static PrologError type_error(Prolog e, int argNo, String validType, Term culprit) {
 		PTerm errorTerm = new Struct("type_error", new Struct(validType), culprit);
 		PTerm tuPrologTerm = new Struct("type_error", e.getEnv().currentContext.currentGoal, new Int(argNo), new Struct(validType), culprit);
 		/*Castagna 06/2011*/
@@ -68,7 +70,7 @@ public class PrologError extends Throwable {
 		/**/
 	}
 
-	public static PrologError domain_error(Prolog e, int argNo, String validDomain, PTerm culprit) {
+	public static PrologError domain_error(Prolog e, int argNo, String validDomain, Term culprit) {
 		PTerm errorTerm = new Struct("domain_error", new Struct(validDomain), culprit);
 		PTerm tuPrologTerm = new Struct("domain_error", e.getEnv().currentContext.currentGoal, new Int(argNo), new Struct(validDomain), culprit);
 		/*Castagna 06/2011*/		
