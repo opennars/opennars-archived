@@ -13,11 +13,11 @@ public class TermQueue {
 		queue=new ArrayDeque<>();
 	}
 	
-	public boolean get(Term t, Prolog engine, EngineRunner er){
+	public boolean get(Term t, Prolog engine, Engine er){
 		return searchLoop(t,engine,true, true, er);
 	}
 	
-	private synchronized boolean searchLoop(Term t, Prolog engine, boolean block, boolean remove, EngineRunner er){
+	private synchronized boolean searchLoop(Term t, Prolog engine, boolean block, boolean remove, Engine er){
 		boolean found=false;
 		do{
 			found=search(t,engine,remove);
@@ -61,7 +61,7 @@ public class TermQueue {
 		return search(t, engine, true);
 	}
 	
-	public synchronized boolean wait (Term t, Prolog engine, EngineRunner er){
+	public synchronized boolean wait (Term t, Prolog engine, Engine er){
 		return searchLoop(t,engine, true, false, er);
 	}
 	

@@ -21,11 +21,11 @@ package nars.tuprolog;
  * @author Alex Benini
  *
  */
-public class StateGoalSelection extends State {
+public class StageGoalSelection extends Stage {
     
     
     
-    public StateGoalSelection(EngineRunner c) {
+    public StageGoalSelection(Engine c) {
         this.c = c;
         stateName = "Call";
     }
@@ -34,7 +34,7 @@ public class StateGoalSelection extends State {
     /* (non-Javadoc)
      * @see alice.tuprolog.AbstractRunState#doJob()
      */
-    void doJob(Engine e) {
+    void run(Engine.State e) {
         Term curGoal = null;
         while (curGoal == null) {
             curGoal = e.currentContext.goalsToEval.fetch();

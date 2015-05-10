@@ -17,7 +17,7 @@
  */
 package nars.tuprolog;
 
-import java.util.AbstractMap;
+import java.util.Map;
 
 /**
  *
@@ -177,14 +177,14 @@ public abstract class Number extends Term  {
      * the list argument passed contains the list of variables to be renamed
      * (if empty list then no renaming)
      */
-    public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
+    public Term copy(Map<Var,Var> vMap, int idExecCtx) {
         return this;
     }
 
     /**
      * gets a copy of the term.
      */
-    public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
+    public Term copy(Map<Var,Var> vMap, Map<Term,Var> substMap) {
         return this;
     }
     

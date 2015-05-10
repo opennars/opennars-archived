@@ -16,9 +16,9 @@ import java.util.concurrent.locks.ReentrantLock;
 /** Prolog core with multithreaded concurrency */
 public class DefaultProlog extends Prolog  {
 
-    protected MutableIntObjectMap<EngineRunner> runners;    //key: id; obj: runner
+    protected MutableIntObjectMap<Engine> runners;    //key: id; obj: runner
     protected MutableIntIntMap threads;    //key: pid; obj: id
-    protected EngineRunner er1;
+    protected Engine er1;
     protected int id = 0;
     protected int rootID = 0;
 
@@ -36,12 +36,9 @@ public class DefaultProlog extends Prolog  {
         setWarning(true);
         runners = new IntObjectHashMap().asSynchronized();
         threads = new IntIntHashMap().asSynchronized();
-    }
 
-    @Override
-    protected void init() {
-        super.init();
-        er1 = new EngineRunner(rootID, this);
+        er1 = new Engine(rootID, this);
+
     }
 
     public synchronized boolean threadCreate(Term threadID, Term goal) {
@@ -51,7 +48,7 @@ public class DefaultProlog extends Prolog  {
         if (goal instanceof Var)
             goal = goal.getTerm();
 
-        EngineRunner er = new EngineRunner(id, this);
+        Engine er = new Engine(id, this);
 
         if (!unify(threadID, new Int(id))) return false;
 
@@ -65,7 +62,7 @@ public class DefaultProlog extends Prolog  {
     }
 
     public SolveInfo join(int id) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null || er.isDetached()) return null;
         /*toSPY
 		 * System.out.println("Thread id "+runnerId()+" - prelevo la soluzione (join)");*/
@@ -77,7 +74,7 @@ public class DefaultProlog extends Prolog  {
     }
 
     public SolveInfo read(int id) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null || er.isDetached()) return null;
 		/*toSPY
 		 * System.out.println("Thread id "+runnerId()+" - prelevo la soluzione (read) del thread di id: "+er.getId());
@@ -90,13 +87,13 @@ public class DefaultProlog extends Prolog  {
     }
 
     public boolean hasNext(int id) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null || er.isDetached()) return false;
         return er.hasOpenAlternatives();
     }
 
     public boolean nextSolution(int id) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null || er.isDetached()) return false;
 		/*toSPY
 		 * System.out.println("Thread id "+runnerId()+" - next_solution: risveglio il thread di id: "+er.getId());
@@ -106,13 +103,13 @@ public class DefaultProlog extends Prolog  {
     }
 
     public void detach(int id) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null) return;
         er.detach();
     }
 
     public boolean sendMsg(int dest, Term msg) {
-        EngineRunner er = findRunner(dest);
+        Engine er = findRunner(dest);
         if (er == null) return false;
         Term msgcopy = msg.copy(new LinkedHashMap<>(), 0);
         er.sendMsg(msgcopy);
@@ -128,13 +125,13 @@ public class DefaultProlog extends Prolog  {
     }
 
     public boolean getMsg(int id, Term msg) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null) return false;
         return er.getMsg(msg);
     }
 
     public boolean getMsg(String name, Term msg) {
-        EngineRunner er = findRunner();
+        Engine er = findRunner();
         if (er == null) return false;
         TermQueue queue = queues.get(name);
         if (queue == null) return false;
@@ -142,13 +139,13 @@ public class DefaultProlog extends Prolog  {
     }
 
     public boolean waitMsg(int id, Term msg) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null) return false;
         return er.waitMsg(msg);
     }
 
     public boolean waitMsg(String name, Term msg) {
-        EngineRunner er = findRunner();
+        Engine er = findRunner();
         if (er == null) return false;
         TermQueue queue = queues.get(name);
         if (queue == null) return false;
@@ -156,7 +153,7 @@ public class DefaultProlog extends Prolog  {
     }
 
     public boolean peekMsg(int id, Term msg) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null) return false;
         return er.peekMsg(msg);
     }
@@ -168,7 +165,7 @@ public class DefaultProlog extends Prolog  {
     }
 
     public boolean removeMsg(int id, Term msg) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         if (er == null) return false;
         return er.removeMsg(msg);
     }
@@ -180,7 +177,7 @@ public class DefaultProlog extends Prolog  {
     }
 
     private void removeRunner(int id) {
-        EngineRunner er = runners.get(id);
+        Engine er = runners.get(id);
 
         if (er == null) return;
         runners.remove(id);
@@ -191,7 +188,7 @@ public class DefaultProlog extends Prolog  {
 
     }
 
-    protected void addRunner(EngineRunner er, int id) {
+    protected void addRunner(Engine er, int id) {
         runners.put(id, er);
     }
 
@@ -204,22 +201,22 @@ public class DefaultProlog extends Prolog  {
     }
 
     @Override public ExecutionContext getCurrentContext() {
-        EngineRunner runner = findRunner();
+        Engine runner = findRunner();
         return runner.getCurrentContext();
     }
 
     public boolean hasOpenAlternatives() {
-        EngineRunner runner = findRunner();
+        Engine runner = findRunner();
         return runner.hasOpenAlternatives();
     }
 
     public boolean isHalted() {
-        EngineRunner runner = findRunner();
+        Engine runner = findRunner();
         return runner.isHalted();
     }
 
     public void pushSubGoal(SubGoalTree goals) {
-        EngineRunner runner = findRunner();
+        Engine runner = findRunner();
         runner.pushSubGoal(goals);
 
     }
@@ -258,7 +255,7 @@ public class DefaultProlog extends Prolog  {
     public void solveEnd() {
         er1.solveEnd();
         if (!runners.isEmpty()) {
-            for (EngineRunner e : runners.values()) {
+            for (Engine e : runners.values()) {
                 e.solveEnd();
             }
             queues.clear();
@@ -271,7 +268,7 @@ public class DefaultProlog extends Prolog  {
     public void solveHalt() {
         er1.solveHalt();
         if (!runners.isEmpty()) {
-            for (EngineRunner e : runners.values()) {
+            for (Engine e : runners.values()) {
                 e.solveHalt();
             }
         }
@@ -302,12 +299,12 @@ public class DefaultProlog extends Prolog  {
      * @return L'EngineRunner associato al thread di id specificato.
      */
 
-    private EngineRunner findRunner(int id) {
+    private Engine findRunner(int id) {
         if (!runners.containsKey(id)) return null;
         return runners.get(id);
     }
 
-    private EngineRunner findRunner() {
+    private Engine findRunner() {
         int pid = (int) Thread.currentThread().getId();
         int id = threads.getIfAbsent(pid, -1);
         if (id == -1)
@@ -318,7 +315,7 @@ public class DefaultProlog extends Prolog  {
 
     //Ritorna l'identificativo del thread corrente
     public int runnerId() {
-        EngineRunner er = findRunner();
+        Engine er = findRunner();
         return er.getId();
     }
 
@@ -338,7 +335,7 @@ public class DefaultProlog extends Prolog  {
     }
 
     public int queueSize(int id) {
-        EngineRunner er = findRunner(id);
+        Engine er = findRunner(id);
         return er.msgQSize();
     }
 
@@ -427,88 +424,88 @@ public class DefaultProlog extends Prolog  {
         }
     }
 
-    @Override public Engine getEnv() {
-        EngineRunner er = findRunner();
-        return er.env;
+    @Override public Engine.State getEnv() {
+        Engine er = findRunner();
+        return er.getEnv();
     }
 
-    public void identify(Term t) {
-        EngineRunner er = findRunner();
+    @Override public void identify(Term t) {
+        Engine er = findRunner();
         er.identify(t);
     }
 
     public boolean getRelinkVar() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getRelinkVar();
     }
 
     public void setRelinkVar(boolean b) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setRelinkVar(b);
     }
 
     public ArrayList<Term> getBagOFres() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getBagOFres();
     }
 
     public void setBagOFres(ArrayList<Term> l) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setBagOFres(l);
     }
 
     public ArrayList<String> getBagOFresString() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getBagOFresString();
     }
 
     public void setBagOFresString(ArrayList<String> l) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setBagOFresString(l);
     }
 
     public Term getBagOFvarSet() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getBagOFvarSet();
     }
 
     public void setBagOFvarSet(Term l) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setBagOFvarSet(l);
     }
 
     public Term getBagOFgoal() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getBagOFgoal();
     }
 
     public void setBagOFgoal(Term l) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setBagOFgoal(l);
     }
 
     public Term getBagOFbag() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getBagOFBag();
     }
 
     public void setBagOFbag(Term l) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setBagOFBag(l);
     }
 
     public String getSetOfSolution() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         return r.getSetOfSolution();
     }
 
     public void setSetOfSolution(String s) {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.setSetOfSolution(s);
     }
 
     public void clearSinfoSetOf() {
-        EngineRunner r = this.findRunner();
+        Engine r = this.findRunner();
         r.clearSinfoSetOf();
     }
 

@@ -17,20 +17,43 @@
  */
 package nars.tuprolog;
 
+import nars.util.data.FastBitSet;
+
 /**
  * @author Alex Benini
  *
- * Template for states of Core Engine
+ * Initial state of demostration
  */
-abstract class State {
+public class StageInit extends Stage {
     
-    protected EngineRunner c;
-    protected String stateName;
     
-    abstract void doJob(Engine e);
+    public StageInit(Engine c) {
+        this.c = c;
+        stateName = "Goal";
+    }
     
-    public String toString() {
-        return stateName;
+    
+    /* (non-Javadoc)
+     * @see alice.tuprolog.AbstractRunState#doJob()
+     */
+    void run(Engine.State e) {
+        e.prepareGoal();
+        
+        /* Initialize first executionContext */
+        ExecutionContext eCtx = new ExecutionContext(0);
+        eCtx.goalsToEval = new SubGoalStore();
+        eCtx.goalsToEval.load(ClauseInfo.extractBody(e.startGoal));
+        eCtx.clause = (Struct)e.query;
+        eCtx.depth = 0;
+        eCtx.fatherCtx = null;
+       	eCtx.haveAlternatives = false;
+        
+        /* Initialize VM environment */
+        e.initialize(eCtx);
+        
+        
+        /* Set the future state */
+        e.nextState = c.GOAL_SELECTION;
     }
     
 }

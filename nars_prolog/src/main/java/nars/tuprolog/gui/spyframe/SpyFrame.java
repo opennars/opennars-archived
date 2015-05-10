@@ -209,10 +209,10 @@ public class SpyFrame extends JFrame implements ActionListener, SpyListener {
      */
     @Override
     public synchronized void onSpy(SpyEvent e) {
-        Engine engine = e.getSnapshot();
-        if (engine == null || !"Call".equals(engine.getNextStateName())) return;
+        Engine.State state = e.getSnapshot();
+        if (state == null || !"Call".equals(state.getNextStateName())) return;
         if (--steps > 0) return;
-        tree.setStructure(engine.getExecutionStack());
+        tree.setStructure(state.getExecutionStack());
         number.setText("1");
         while (steps < 1)
             try {

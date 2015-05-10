@@ -465,7 +465,7 @@ public class Struct extends Term {
      * Gets a copy of this structure
      * @param vMap is needed for register occurence of same variables
      */
-    public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx) {
+    public Term copy(Map<Var,Var> vMap, int idExecCtx) {
         Struct t = new Struct(arity);
         t.resolved  = resolved;
         t.name      = name;
@@ -482,7 +482,7 @@ public class Struct extends Term {
      * Gets a copy of this structure
      * @param vMap is needed for register occurence of same variables
      */
-    public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap) {
+    public Term copy(Map<Var,Var> vMap, Map<Term,Var> substMap) {
 
         Struct t = new Struct(arity);
         t.resolved  = false;

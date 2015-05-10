@@ -20,9 +20,9 @@ package nars.tuprolog;
 /**
  * @author Alex Benini
  */
-public class StateGoalEvaluation extends State {
+public class StageGoalEvaluation extends Stage {
 
-	public StateGoalEvaluation(EngineRunner c) {
+	public StageGoalEvaluation(Engine c) {
 		this.c = c;
 		stateName = "Eval";
 	}
@@ -32,7 +32,7 @@ public class StateGoalEvaluation extends State {
 	 * 
 	 * @see alice.tuprolog.AbstractRunState#doJob()
 	 */
-	void doJob(Engine e) {
+	void run(Engine.State e) {
 		if (e.currentContext.currentGoal.isPrimitive()) {
 			// Recupero primitiva
 			PrimitiveInfo primitive = e.currentContext.currentGoal

@@ -5,7 +5,7 @@ import nars.tuprolog.TermVisitor;
 import nars.tuprolog.Var;
 
 import java.net.InetAddress;
-import java.util.AbstractMap;
+import java.util.Map;
 import java.util.ArrayList;
 @SuppressWarnings("serial")
 
@@ -93,12 +93,12 @@ public abstract class AbstractSocket extends Term{
 	}
 
 	@Override
-	public Term copy(AbstractMap<Var, Var> vMap, int idExecCtx) {
+	public Term copy(Map<Var, Var> vMap, int idExecCtx) {
 		return this;
 	}
 
 	@Override
-	public Term copy(AbstractMap<Var, Var> vMap, AbstractMap<Term, Var> substMap) {
+	public Term copy(Map<Var, Var> vMap, Map<Term, Var> substMap) {
 		return this;
 	}
 

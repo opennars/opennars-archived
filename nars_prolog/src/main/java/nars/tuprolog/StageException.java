@@ -6,18 +6,18 @@ import java.util.List;
 /**
  * @author Matteo Iuliani
  */
-public class StateException extends State {
+public class StageException extends Stage {
 
     final Term catchTerm = Term.createTerm("catch(Goal, Catcher, Handler)");
     final Term javaCatchTerm = Term
             .createTerm("java_catch(Goal, List, Finally)");
 
-    public StateException(EngineRunner c) {
+    public StageException(Engine c) {
         this.c = c;
         stateName = "Exception";
     }
 
-    void doJob(Engine e) {
+    void run(Engine.State e) {
         String errorType = e.currentContext.currentGoal.getName();
         if (errorType.equals("throw"))
             prologError(e);
@@ -25,7 +25,7 @@ public class StateException extends State {
             javaException(e);
     }
 
-    private void prologError(Engine e) {
+    private void prologError(Engine.State e) {
         Term errorTerm = e.currentContext.currentGoal.getTerms(0);
         e.currentContext = e.currentContext.fatherCtx;
         if (e.currentContext == null) {
@@ -95,7 +95,7 @@ public class StateException extends State {
         }
     }
 
-    private void javaException(Engine e) {
+    private void javaException(Engine.State e) {
         Term exceptionTerm = e.currentContext.currentGoal.getTerms(0);
         e.currentContext = e.currentContext.fatherCtx;
         if (e.currentContext == null) {

@@ -21,7 +21,10 @@ import nars.tuprolog.event.*;
 import nars.tuprolog.interfaces.IProlog;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -98,7 +101,11 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
         libraryListeners = new ArrayList<>();
         absolutePathList = new ArrayList<>();
 
-        init();
+        flags = new Flags(this);
+        operators = new Operators();
+        libraries = new Libraries(this);
+        primitives = new Primitives(this);
+        theories = new Theories(this);
 
         if (libs != null) {
             for (int i = 0; i < libs.length; i++) {
@@ -108,27 +115,17 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
     }
 
 
-    protected void init() {
-        flags = new Flags(this);
-        operators = new Operators();
-        libraries = new Libraries(this);
-        primitives = new Primitives(this);
-        theories = new Theories(this);
-    }
-
-
-
     /**
      * Gets the component managing flags
      */
-    public Flags getFlags() {
+    @Override public Flags getFlags() {
         return flags;
     }
 
     /**
      * Gets the component managing theory
      */
-    public Theories getTheories() {
+    @Override public Theories getTheories() {
         return theories;
     }
 
@@ -143,7 +140,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
     /**
      * Gets the component managing libraries
      */
-    public Libraries getLibraries() {
+    @Override public Libraries getLibraries() {
         return libraries;
     }
 
@@ -224,7 +221,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      * @param t1 second term to be unified
      * @return true if the unification was successful
      */
-    @Deprecated public boolean unify(Term t0, Term t1) {    //no syn
+    public boolean unify(Term t0, Term t1) {    //no syn
         return unify(t0, t1, new ArrayList(), new ArrayList());
     }
 
@@ -263,7 +260,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
     }
 
 
-    public synchronized SolveInfo solve(Term query) {
+    public SolveInfo solve(Term query) {
         return solve(query, 0);
     }
 
@@ -275,7 +272,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
 
     abstract public SolveInfo solveNext(double maxTimeSec) throws NoMoreSolutionException;
 
-    abstract public Engine getEnv();
+    abstract public Engine.State getEnv();
 
     /**
      * Gets a term from a string, using the operators currently
@@ -805,7 +802,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      *
      * @return true if the engine emits warning information
      */
-    public synchronized boolean isWarning() {
+    public boolean isWarning() {
         return warning;
     }
 
@@ -837,7 +834,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      *
      * @return true if the engine emits exception information
      */
-    public synchronized boolean isException() {
+    public boolean isException() {
         return exception;
     }
 
@@ -873,7 +870,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      *
      * @return true if the engine emits spy information
      */
-    public synchronized boolean isSpy() {
+    public boolean isSpy() {
         return spy;
     }
 
@@ -891,7 +888,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
      *
      * @param s TODO
      */
-    protected synchronized void spy(String s, Engine e) {
+    protected synchronized void spy(String s, Engine.State e) {
         //System.out.println("spy: "+i+"  "+s+"  "+g);
         if (spy) {
             ExecutionContext ctx = e.currentContext;

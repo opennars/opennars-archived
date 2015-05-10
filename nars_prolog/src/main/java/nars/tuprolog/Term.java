@@ -28,7 +28,7 @@ import java.util.*;
  * @see Var
  * @see  Number
  */
-public abstract class Term extends SubGoalElement implements Comparable<Term>, /*nars.nal.term.Term,*/ Serializable {
+public abstract class Term extends SubGoalElement implements Comparable<Term>, Serializable {
 	private static final long serialVersionUID = 1L;
 
     // true and false constants
@@ -125,7 +125,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * gets a engine's copy of this term.
      * @param idExecCtx Execution Context identified
      */
-    public Term copyGoal(AbstractMap<Var,Var> vars, int idExecCtx) {
+    public Term copyGoal(Map<Var,Var> vars, int idExecCtx) {
         return copy(vars,idExecCtx);
     }
     
@@ -170,12 +170,12 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
      * (if empty list then no renaming)
      * @param idExecCtx Execution Context identifier
      */
-    abstract public Term copy(AbstractMap<Var,Var> vMap, int idExecCtx);
+    abstract public Term copy(Map<Var,Var> vMap, int idExecCtx);
     
     /**
      * gets a copy for result.
      */
-    abstract public Term copy(AbstractMap<Var,Var> vMap, AbstractMap<Term,Var> substMap);
+    abstract public Term copy(Map<Var,Var> vMap, Map<Term,Var> substMap);
 
 
     public boolean unify(final Prolog mediator, final Term t1) {
@@ -196,7 +196,7 @@ public abstract class Term extends SubGoalElement implements Comparable<Term>, /
         if (ok) {
             ExecutionContext ec = engine.getCurrentContext();
             if (ec != null) {
-                Engine env = engine.getEnv();
+                Engine.State env = engine.getEnv();
                 int id = (env==null)? Var.PROGRESSIVE : env.nDemoSteps;
                 // Update trailingVars
                 ec.trailingVars = new OneWayList<>(v1,ec.trailingVars);

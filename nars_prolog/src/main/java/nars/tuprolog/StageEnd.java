@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
  *         <p>
  *         End state of demostration.
  */
-public class StateEnd extends State {
+public class StageEnd extends Stage {
 
     private final int endState;
     private Struct goal;
@@ -39,7 +39,7 @@ public class StateEnd extends State {
      *
      * @param end Terminal state of computation
      */
-    public StateEnd(EngineRunner c, int end) {
+    public StageEnd(Engine c, int end) {
         this.c = c;
         endState = end;
     }
@@ -57,14 +57,14 @@ public class StateEnd extends State {
     }
 
 
-    void doJob(Engine e) {
+    void run(Engine.State e) {
         vars = new ArrayList<>();
         goal = (Struct) e.startGoal.copyResult(e.goalVars, vars);
 //        System.out.println("STATE END: STAMPO LE VAR del GOAL****"+e.goalVars);
 //        System.out.println("STATE END: STATE END "+vars+ " GOAL "+goal);  
 //        System.out.println("STATE END GOALLLLLLL: "+e.query); 
 
-        if (this.endState == EngineRunner.TRUE || this.endState == EngineRunner.TRUE_CP)
+        if (this.endState == Engine.TRUE || this.endState == Engine.TRUE_CP)
             relinkVar(e);
     }
 
@@ -127,7 +127,7 @@ public class StateEnd extends State {
     }
 
 
-    private void relinkVar(Engine e) {
+    private void relinkVar(Engine.State e) {
         if (c.getEngineMan().getRelinkVar()) { //devo fare il relink solo se ho var libere nella bagof E SE NON CI SONO ESISTENZE
 
 //	    	System.out.println("STATE END relinkvar(): Le var del risultato sono "+(c.getEngineMan()).getBagOFres()); 
@@ -756,11 +756,11 @@ public class StateEnd extends State {
 
     public String toString() {
         switch (endState) {
-            case EngineRunner.FALSE:
+            case Engine.FALSE:
                 return "FALSE";
-            case EngineRunner.TRUE:
+            case Engine.TRUE:
                 return "TRUE";
-            case EngineRunner.TRUE_CP:
+            case Engine.TRUE_CP:
                 return "TRUE_CP";
             default:
                 return "HALT";

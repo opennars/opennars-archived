@@ -11,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 				IOLibraryTestCase.class, 
 				DoubleTestCase.class, 
 				SolveInfoTestCase.class,
-				StateRuleSelectionTestCase.class, 
+				StageRuleSelectionTestCase.class,
 				StructIteratorTestCase.class, 
 				StructTestCase.class, 
 				TermIteratorTestCase.class,

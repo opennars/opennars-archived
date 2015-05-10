@@ -9,12 +9,18 @@ import nars.tuprolog.event.SpyListener;
  * @author  ale
  */
 public interface IProlog {
-	
+
+	Libraries getLibraries();
+
 	/**
 	 * Gets the component managing operators
 	 */
 	IOperators getOperators();
-		
+
+	Flags getFlags();
+
+	Theories getTheories();
+
 	/**
 	 * Gets the component managing primitives
 	 */

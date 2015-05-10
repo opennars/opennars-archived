@@ -14,6 +14,13 @@ package nars.util.data;
  * freely granted, provided that this notice is preserved.
  */
 
+import objenome.op.cas.Var;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 /**
  * <p> This class represents either a table of bits or a set of non-negative 
  *     numbers.</p>
@@ -657,4 +664,5 @@ public class FastBitSet {
         return n;
     }           
     }
+
 }

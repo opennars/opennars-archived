@@ -26,11 +26,11 @@ import java.util.List;
  * @author Alex Benini
  *
  */
-public class StateBacktrack extends State {
+public class StageBacktrack extends Stage {
     
 
     
-    public StateBacktrack(EngineRunner c) {
+    public StageBacktrack(Engine c) {
         this.c = c;
         stateName = "Back";
     }
@@ -39,7 +39,7 @@ public class StateBacktrack extends State {
     /* (non-Javadoc)
      * @see alice.tuprolog.AbstractRunState#doJob()
      */
-    void doJob(Engine e) {
+    void run(Engine.State e) {
         ChoicePointContext curChoice = e.choicePointSelector.fetch();
         //verify ChoicePoint
         if (curChoice == null) {

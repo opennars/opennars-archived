@@ -23,6 +23,7 @@ import nars.tuprolog.net.AbstractSocket;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a variable term. Variables are identified by a name
@@ -135,7 +136,7 @@ public class Var extends Term {
      * with the same time identifier is found in the list, then the variable in
      * the list is returned.
      */
-    public Term copy(AbstractMap<Var, Var> vMap, int idExecCtx) {
+    public Term copy(Map<Var, Var> vMap, int idExecCtx) {
         Term tt = getTerm();
         if (tt == this) {
             Var v = vMap.get(this);
@@ -153,7 +154,7 @@ public class Var extends Term {
     /**
      * Gets a copy of this variable.
      */
-    public Term copy(final AbstractMap<Var, Var> vMap, final AbstractMap<Term, Var> substMap) {
+    public Term copy(final Map<Var, Var> vMap, final Map<Term, Var> substMap) {
         Var v;
         Object temp = vMap.get(this);
         if (temp == null) {

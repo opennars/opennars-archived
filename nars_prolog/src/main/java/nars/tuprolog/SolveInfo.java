@@ -36,10 +36,10 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
      * possible values returned by step functions
      * and used as eval state flags
      */
-    static final int HALT    = EngineRunner.HALT;
-    static final int FALSE   = EngineRunner.FALSE;
-    static final int TRUE    = EngineRunner.TRUE;
-    static final int TRUE_CP = EngineRunner.TRUE_CP;
+    static final int HALT    = Engine.HALT;
+    static final int FALSE   = Engine.FALSE;
+    static final int TRUE    = Engine.TRUE;
+    static final int TRUE_CP = Engine.TRUE_CP;
     
     private int     endState;
     private boolean isSuccess;
@@ -209,7 +209,7 @@ public class SolveInfo implements Serializable/*, ISolution<Term,Term,Term>*/  {
             return st.toString().trim();
         } else {
         	/*Castagna 06/2011*/
-        	if(endState == EngineRunner.HALT)
+        	if(endState == Engine.HALT)
         		return ("halt.");
         	else
         	/**/

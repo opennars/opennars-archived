@@ -20,38 +20,17 @@ package nars.tuprolog;
 /**
  * @author Alex Benini
  *
- * Initial state of demostration
+ * Template for stages of Core Engine
  */
-public class StateInit extends State {
+abstract class Stage {
     
+    protected Engine c;
+    protected String stateName;
     
-    public StateInit(EngineRunner c) {
-        this.c = c;
-        stateName = "Goal";
-    }
+    abstract void run(Engine.State e);
     
-    
-    /* (non-Javadoc)
-     * @see alice.tuprolog.AbstractRunState#doJob()
-     */
-    void doJob(Engine e) {
-        e.prepareGoal();
-        
-        /* Initialize first executionContext */
-        ExecutionContext eCtx = new ExecutionContext(0);
-        eCtx.goalsToEval = new SubGoalStore();
-        eCtx.goalsToEval.load(ClauseInfo.extractBody(e.startGoal));
-        eCtx.clause = (Struct)e.query;
-        eCtx.depth = 0;
-        eCtx.fatherCtx = null;
-       	eCtx.haveAlternatives = false;
-        
-        /* Initialize VM environment */
-        e.initialize(eCtx);
-        
-        
-        /* Set the future state */
-        e.nextState = c.GOAL_SELECTION;
+    public String toString() {
+        return stateName;
     }
     
 }

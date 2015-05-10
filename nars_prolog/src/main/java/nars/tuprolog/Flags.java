@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * 
  * @author Alex Benini
  */
-class Flags {
+public class Flags {
 
     /* flag list */
     private final ArrayList<Flag> flags;

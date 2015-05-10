@@ -26,11 +26,11 @@ import java.util.List;
  * @author Alex Benini
  *
  */
-public class StateRuleSelection extends State {
+public class StageRuleSelection extends Stage {
     
     
     
-    public StateRuleSelection(EngineRunner c) {
+    public StageRuleSelection(Engine c) {
         this.c = c;
         stateName = "Init";
     }
@@ -38,7 +38,7 @@ public class StateRuleSelection extends State {
     /* (non-Javadoc)
      * @see alice.tuprolog.AbstractRunState#doJob()
      */
-    void doJob(Engine e) {
+    void run(Engine.State e) {
         /*----------------------------------------------------
          * Individuo compatibleGoals e
          * stabilisco se derivo da Backtracking.

@@ -2,7 +2,7 @@ package nars.tuprolog;
 
 import junit.framework.TestCase;
 
-public class StateRuleSelectionTestCase extends TestCase {
+public class StageRuleSelectionTestCase extends TestCase {
 	
 	public void testUnknownPredicateInQuery() throws MalformedGoalException, InvalidLibraryException {
 		Prolog engine = new DefaultProlog();
