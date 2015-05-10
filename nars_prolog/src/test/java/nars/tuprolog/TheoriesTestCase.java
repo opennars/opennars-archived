@@ -1,8 +1,9 @@
 package nars.tuprolog;
 
+import com.google.common.collect.Lists;
 import junit.framework.TestCase;
 
-import java.util.List;
+import java.util.Iterator;
 
 public class TheoriesTestCase extends TestCase {
 
@@ -39,13 +40,13 @@ public class TheoriesTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		Theories manager = engine.getTheories();
 		Struct testTerm = new Struct("test", new Struct("a"), new Struct("b"));
-		List<ClauseInfo> testClauses = manager.find(testTerm);
-		assertEquals(1, testClauses.size());
-		manager.abolish(new Struct("/", new Struct("test"), new Int(2)));
+		Iterator<Clause> testClauses = manager.find(testTerm);
+		assertEquals(1, Lists.newArrayList(testClauses).size());
+		manager.remove(new Struct("/", new Struct("test"), new Int(2)));
 		testClauses = manager.find(testTerm);
 		// The predicate should also disappear completely from the clause
 		// database, i.e. ClauseDatabase#get(f/a) should return null
-		assertEquals(0, testClauses.size());
+		assertNull(testClauses);
 	}
 
 	public void testAbolish2() throws InvalidTheoryException, MalformedGoalException, InvalidLibraryException {

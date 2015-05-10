@@ -17,8 +17,6 @@
  */
 package nars.tuprolog;
 
-import nars.util.data.FastBitSet;
-
 /**
  * @author Alex Benini
  *
@@ -42,7 +40,7 @@ public class StageInit extends Stage {
         /* Initialize first executionContext */
         ExecutionContext eCtx = new ExecutionContext(0);
         eCtx.goalsToEval = new SubGoalStore();
-        eCtx.goalsToEval.load(ClauseInfo.extractBody(e.startGoal));
+        eCtx.goalsToEval.load(Clause.extractBody(e.startGoal));
         eCtx.clause = (Struct)e.query;
         eCtx.depth = 0;
         eCtx.fatherCtx = null;

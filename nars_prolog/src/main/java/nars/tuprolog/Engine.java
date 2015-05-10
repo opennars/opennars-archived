@@ -446,7 +446,7 @@ public class Engine implements java.io.Serializable, Runnable {
      * Utility functions for Finite State Machine
      */
 
-    List<ClauseInfo> find(Term t) {
+    public Iterator<Clause> find(Term t) {
         return theories.find(t);
     }
 

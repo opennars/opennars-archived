@@ -24,6 +24,7 @@ public class DefaultProlog extends Prolog  {
 
     private Map<String, TermQueue> queues = new HashMap();
     private Map<String, ReentrantLock> locks = new HashMap();
+    private MutableClauses dynamicTheory, staticTheory;
 
     public DefaultProlog() throws InvalidLibraryException {
         this("nars.tuprolog.lib.BasicLibrary","nars.tuprolog.lib.ISOLibrary", "nars.tuprolog.lib.IOLibrary", "nars.tuprolog.lib.JavaLibrary");
@@ -40,6 +41,20 @@ public class DefaultProlog extends Prolog  {
         er1 = new Engine(rootID, this);
 
     }
+
+    @Override
+    public Clauses getDynamicTheory() {
+        if (dynamicTheory==null)
+            dynamicTheory = new MutableClauses();
+        return dynamicTheory;
+    }
+    @Override
+    public Clauses getStaticTheory() {
+        if (staticTheory==null)
+            staticTheory = new MutableClauses();
+        return staticTheory;
+    }
+
 
     public synchronized boolean threadCreate(Term threadID, Term goal) {
         id += 1;

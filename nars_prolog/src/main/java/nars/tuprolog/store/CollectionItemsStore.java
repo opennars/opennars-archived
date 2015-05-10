@@ -45,7 +45,7 @@ public class CollectionItemsStore extends ClauseStore
 	
 	public void close() { /* nothing to do here */ }
 	
-	public ClauseInfo fetch()
+	public Clause fetch()
 	{
 		if (current == null)
 			return null;

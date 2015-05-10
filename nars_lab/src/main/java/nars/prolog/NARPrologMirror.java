@@ -116,28 +116,17 @@ public class NARPrologMirror extends AbstractMirror {
             Struct clause = (Struct) new Parser(axiom).nextTerm(true);
             addTheory(clause);
         }
-//        String axiomString = Joiner.on(" \n").join(l);
-//        try {
-//            nars.tuprolog.Term[] ax = toArray(new Theory(axiomString + '\n').iterator(prolog.prolog), nars.tuprolog.Term.class);
-////            nars.tuprolog.Term[] ax = Lists.transform(l, x -> new Struct(x)).toArray(new nars.tuprolog.Term[l.size()]);
-//            //axioms = new Theory(ax);
-//            //prolog.setTheory(axioms);
-//        } catch (InvalidTheoryException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-
 
         setTemporalMode(eternalJudgments, presentJudgments);
     }
 
-    public ClauseInfo retractFact(Struct fact) {
-        return prolog.prolog.getTheories().retract(fact);
+    public Clause retractFact(Struct fact) {
+        return prolog.getTheories().retract(fact);
     }
 
     public boolean assertFact(Struct fact) {
         try {
-            boolean b = prolog.prolog.getTheories().assertA(fact, true, null, true);
+            boolean b = prolog.getTheories().assertA(fact, true, null, true);
             return b;
         }
         catch (Exception e) {
@@ -148,7 +137,7 @@ public class NARPrologMirror extends AbstractMirror {
 
     public boolean addTheory(Struct clause) {
         try {
-            SolveInfo s = prolog.prolog.addTheory(clause);
+            SolveInfo s = prolog.addTheory(clause);
             System.err.println("Prolog theory: " + clause + " (" + s +")");
             return true;
         } catch (Exception e) {
@@ -427,7 +416,7 @@ public class NARPrologMirror extends AbstractMirror {
                 withSolution.accept(solution);
 
                 try {
-                    si = prolog.prolog.solveNext(solveTime);
+                    si = prolog.solveNext(solveTime);
                 }
                 catch (NoMoreSolutionException e) {
                     break;
@@ -444,7 +433,7 @@ public class NARPrologMirror extends AbstractMirror {
             si = null;
         }
         finally {
-            prolog.prolog.solveEnd();
+            prolog.solveEnd();
         }
 
 
@@ -868,7 +857,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     public Theory getBeliefsTheory() throws InvalidTheoryException {
-        return prolog.prolog.getDynamicTheoryCopy();
+        return prolog.getDynamicTheoryCopy();
     }
 
     protected void onQuestion(Sentence s) {

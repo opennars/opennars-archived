@@ -45,19 +45,19 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class Theories implements Serializable {
 
-    private final ClauseDatabase dynamicDBase;
-    private final ClauseDatabase staticDBase;
-    private final ClauseDatabase retractDBase;
+    private final Clauses dynamicDBase;
+    private final Clauses staticDBase;
+    private final Clauses retractDBase;
     private final Prolog engine;
     private final Primitives primitives;
     private final Deque<Term> startGoalStack = new ArrayDeque();
     //Theory lastConsultedTheory;
 
-    public Theories(Prolog vm) {
+    public Theories(Prolog vm, Clauses dynamic, Clauses statics) {
         engine = vm;
-        dynamicDBase = new ClauseDatabase();
-        staticDBase = new ClauseDatabase();
-        retractDBase = new ClauseDatabase();
+        dynamicDBase = dynamic;
+        staticDBase = statics;
+        retractDBase = new MutableClauses();
 //		lastConsultedTheory = new Theory();
         primitives = vm.getPrimitives();
     }
@@ -66,7 +66,7 @@ public class Theories implements Serializable {
      * inserting of a clause at the head of the dbase
      */
     public synchronized boolean assertA(Struct clause, boolean dyn, String libName, boolean backtrackable) {
-        ClauseInfo d = new ClauseInfo(toClause(clause), libName);
+        Clause d = new Clause(toClause(clause), libName);
         String key = d.getHead().getPredicateIndicator();
         if (dyn) {
             dynamicDBase.addFirst(key, d);
@@ -85,7 +85,7 @@ public class Theories implements Serializable {
      * inserting of a clause at the end of the dbase
      */
     public synchronized boolean assertZ(final Struct clause, final boolean dyn, final String libName, final boolean backtrackable) {
-        ClauseInfo d = new ClauseInfo(toClause(clause), libName);
+        Clause d = new Clause(toClause(clause), libName);
         String key = d.getHead().getPredicateIndicator();
         if (dyn) {
             dynamicDBase.addLast(key, d);
@@ -104,10 +104,10 @@ public class Theories implements Serializable {
     /**
      * removing from dbase the first clause with head unifying with clause
      */
-    public synchronized ClauseInfo retract(Struct cl) {
+    public synchronized Clause retract(Struct cl) {
         Struct clause = toClause(cl);
         Struct struct = ((Struct) clause.getTerms(0));
-        FamilyClausesList family = dynamicDBase.get(struct.getPredicateIndicator());
+        ClauseIndex family = dynamicDBase.get(struct.getPredicateIndicator());
         ExecutionContext ctx = engine.getCurrentContext();
 
 		/*creo un nuovo clause database x memorizzare la teoria all'atto della retract 
@@ -115,10 +115,10 @@ public class Theories implements Serializable {
 		 * (e riconosco questo in base all'id del contesto)
 		 * sara' la retract da questo db a restituire il risultato
 		 */
-        FamilyClausesList familyQuery;
+        ClauseIndex familyQuery;
         String ctxID = "ctxId " + ctx.getId();
         if (!retractDBase.containsKey(ctxID)) {
-            familyQuery = new FamilyClausesList();
+            familyQuery = new ClauseIndex();
             for (int i = 0; i < family.size(); i++) {
                 familyQuery.add(family.get(i));
             }
@@ -132,21 +132,21 @@ public class Theories implements Serializable {
             return null;
         //fa la retract dalla teoria base
         if (family != null) {
-            for (Iterator<ClauseInfo> it = family.iterator(); it.hasNext(); ) {
-                ClauseInfo d = it.next();
+            for (Iterator<Clause> it = family.iterator(); it.hasNext(); ) {
+                Clause d = it.next();
                 if (clause.match(d.getClause())) {
                     it.remove();
                 }
             }
         }
         //fa la retract dal retract db
-        for (Iterator<ClauseInfo> i = familyQuery.iterator(); i.hasNext(); ) {
-            ClauseInfo d = i.next();
+        for (Iterator<Clause> i = familyQuery.iterator(); i.hasNext(); ) {
+            Clause d = i.next();
             if (clause.match(d.getClause())) {
                 i.remove();
                 if (engine.isSpy())
                     engine.spy("DELETE: " + d.getClause() + '\n');
-                return new ClauseInfo(d.getClause(), null);
+                return new Clause(d.getClause(), null);
             }
         }
         return null;
@@ -156,7 +156,7 @@ public class Theories implements Serializable {
      * removing from dbase all the clauses corresponding to the
      * predicate indicator passed as a parameter
      */
-    public synchronized boolean abolish(Struct pi) {
+    public synchronized boolean remove(Struct pi) {
         if (!(pi instanceof Struct) || !pi.isGround() || !(pi.getArity() == 2))
             throw new IllegalArgumentException(pi + " is not a valid Struct");
         if (!pi.getName().equals("/"))
@@ -165,7 +165,7 @@ public class Theories implements Serializable {
         String arg0 = Tools.removeApices(pi.getTerms(0).toString());
         String arg1 = Tools.removeApices(pi.getTerms(1).toString());
         String key = arg0 + '/' + arg1;
-        List<ClauseInfo> abolished = dynamicDBase.abolish(key); /* Reviewed by Paolo Contessi: LinkedList -> List */
+        List<Clause> abolished = dynamicDBase.remove(key); /* Reviewed by Paolo Contessi: LinkedList -> List */
         if (abolished != null)
             if (engine.isSpy())
                 engine.spy("ABOLISHED: " + key + " number of clauses=" + abolished.size() + '\n');
@@ -179,11 +179,11 @@ public class Theories implements Serializable {
      * Reviewed by Paolo Contessi: modified according to new ClauseDatabase
      * implementation
      */
-    public synchronized List<ClauseInfo> find(Term headt) {
+    public synchronized Iterator<Clause> find(Term headt) {
         if (headt instanceof Struct) {
             //String key = ((Struct) headt).getPredicateIndicator();
-            List<ClauseInfo> list = dynamicDBase.getPredicates(headt);
-            if (list.isEmpty())
+            Iterator<Clause> list = dynamicDBase.getPredicates(headt);
+            if (list == null)
                 list = staticDBase.getPredicates(headt);
             return list;
         }
@@ -198,7 +198,7 @@ public class Theories implements Serializable {
             //            return l;
             throw new RuntimeException();
         }
-        return Collections.EMPTY_LIST;
+        return null;
     }
 
     /**
@@ -244,7 +244,7 @@ public class Theories implements Serializable {
      * primitive predicate, if any
      */
     public void rebindPrimitives() {
-        for (ClauseInfo d : dynamicDBase) {
+        for (Clause d : dynamicDBase) {
             for (AbstractSubGoalTree sge : d.getBody()) {
                 Term t = ((SubGoalElement) sge).getValue();
                 primitives.identifyPredicate(t);
@@ -263,8 +263,8 @@ public class Theories implements Serializable {
      * remove all the clauses of lib theory
      */
     public synchronized void removeLibraryTheory(String libName) {
-        for (Iterator<ClauseInfo> allClauses = staticDBase.iterator(); allClauses.hasNext(); ) {
-            ClauseInfo d = allClauses.next();
+        for (Iterator<Clause> allClauses = staticDBase.iterator(); allClauses.hasNext(); ) {
+            Clause d = allClauses.next();
             if (d.libName != null && libName.equals(d.libName)) {
                 try {
                     // Rimuovendolo da allClauses si elimina solo il valore e non la chiave
@@ -363,13 +363,13 @@ public class Theories implements Serializable {
      */
     public synchronized String getTheory(boolean onlyDynamic) {
         StringBuilder buffer = new StringBuilder();
-        for (Iterator<ClauseInfo> dynamicClauses = dynamicDBase.iterator(); dynamicClauses.hasNext(); ) {
-            ClauseInfo d = dynamicClauses.next();
+        for (Iterator<Clause> dynamicClauses = dynamicDBase.iterator(); dynamicClauses.hasNext(); ) {
+            Clause d = dynamicClauses.next();
             buffer.append(d.toString(engine.getOperators())).append('\n');
         }
         if (!onlyDynamic)
-            for (Iterator<ClauseInfo> staticClauses = staticDBase.iterator(); staticClauses.hasNext(); ) {
-                ClauseInfo d = staticClauses.next();
+            for (Iterator<Clause> staticClauses = staticDBase.iterator(); staticClauses.hasNext(); ) {
+                Clause d = staticClauses.next();
                 buffer.append(d.toString(engine.getOperators())).append('\n');
             }
         return buffer.toString();

@@ -53,7 +53,7 @@ public class MapEntriesStore extends ClauseStore
 	
 	public void close() { /* nothing to do here */ }
 	
-	public ClauseInfo fetch()
+	public Clause fetch()
 	{	
 		if (currentValue == null)
 			return null;

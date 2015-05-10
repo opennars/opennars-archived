@@ -65,7 +65,7 @@ public class StageRuleSelection extends Stage {
         /*-----------------------------------------------------
          * Scelgo una regola fra quelle potenzialmente compatibili.
          */
-        ClauseInfo clause = clauseStore.fetch();
+        Clause clause = clauseStore.fetch();
         
         /*-----------------------------------------------------
          * Build ExecutionContext and ChoicePointContext

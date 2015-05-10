@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * <code>FamilyClausesList</code> is a common <code>LinkedList</code>
- * which stores {@link ClauseInfo} objects. Internally it indexes stored data
+ * which stores {@link Clause} objects. Internally it indexes stored data
  * in such a way that, knowing what type of clauses are required, only
  * goal compatible clauses are returned
  *
@@ -15,16 +15,16 @@ import java.util.*;
  * @see LinkedList
  */
 @SuppressWarnings("serial")
-class FamilyClausesList extends ArrayList<ClauseInfo> {
+public class ClauseIndex extends ArrayList<Clause> {
 	
 	private FamilyClausesIndex<Number> numCompClausesIndex;
 	private FamilyClausesIndex<String> constantCompClausesIndex;
 	private FamilyClausesIndex<String> structCompClausesIndex;
-	private LinkedList<ClauseInfo> listCompClausesList;
+	private LinkedList<Clause> listCompClausesList;
 
 	//private LinkedList<ClauseInfo> clausesList;
 
-	public FamilyClausesList(){
+	public ClauseIndex(){
 		super();
 
 		numCompClausesIndex = new FamilyClausesIndex<>();
@@ -39,7 +39,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	 *
 	 * @param ci    The clause to be added (with related informations)
 	 */	
-	public void addFirst(ClauseInfo ci){
+	public void addFirst(Clause ci){
 		super.add(0, ci);
 
 		// Add first in type related storage
@@ -51,7 +51,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	 *
 	 * @param ci    The clause to be added (with related informations)
 	 */
-	public void addLast(ClauseInfo ci){
+	public void addLast(Clause ci){
 		super.add(ci);
 
 		// Add last in type related storage
@@ -59,14 +59,14 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	}
 
 	@Override
-	public boolean add(ClauseInfo o) {
+	public boolean add(Clause o) {
 		addLast(o);
 
 		return true;
 	}
 
-	public ClauseInfo removeFirst() {
-		ClauseInfo ci = get(0);
+	public Clause removeFirst() {
+		Clause ci = get(0);
 		if (remove(ci)){
 			return ci;
 		}
@@ -74,21 +74,21 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 		return null;
 	}
 
-	public ClauseInfo removeLast() {
-		ClauseInfo ci = get(size()-1);
+	public Clause removeLast() {
+		Clause ci = get(size()-1);
 		if (remove(ci)){
 			return ci;
 		}
 		return null;
 	}
 	
-	public ClauseInfo remove(){
+	public Clause remove(){
 		return removeFirst();
 	}
 
 	@Override
-	public ClauseInfo remove(int index){
-		ClauseInfo ci = super.get(index);
+	public Clause remove(int index){
+		Clause ci = super.get(index);
 
 		if(remove(ci)){
 			return ci;
@@ -101,7 +101,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	public boolean remove(Object ci){
 		if(super.remove(ci))
 		{
-			unregister((ClauseInfo) ci);
+			unregister((Clause) ci);
 
 			return true;
 		}
@@ -122,7 +122,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	 * @param goal  The goal to be resolved
 	 * @return      The list of goal-compatible predicates
 	 */
-	public List<ClauseInfo> get(Term goal){
+	public Iterator<Clause> get(Term goal){
 		// Gets the correct list and encapsulates it in ReadOnlyLinkedList
 		if(goal instanceof Struct){
 			Struct g = (Struct) goal.getTerm();
@@ -132,7 +132,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 			 * (and probably no optimization is needed)
 			 */
 			if(g.getArity() == 0){
-				return Collections.unmodifiableList(this);
+				return iterator();
 			}
 
 			/* Retrieves first argument and checks type */
@@ -142,7 +142,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 				 * if first argument is an unbounded variable,
 				 * no reasoning is possible, all family must be returned
 				 */
-				return Collections.unmodifiableList(this);
+				return iterator();
 			} else if(t.isAtomic()){
 				if(t instanceof Number){
 					/* retrieves clauses whose first argument is numeric (or Var)
@@ -150,50 +150,50 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return Collections.unmodifiableList(numCompClausesIndex.get((Number) t));
+					return numCompClausesIndex.get((Number) t).iterator();
 				} else if(t instanceof Struct){
 					/* retrieves clauses whose first argument is a constant (or Var)
 					 * and same as goal's first argument, if no clauses
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return Collections.unmodifiableList(constantCompClausesIndex.get(((Struct) t).getName()));
+					return constantCompClausesIndex.get(((Struct) t).getName()).iterator();
 				}
 			} else if(t instanceof Struct){
 				if(isAList((Struct) t)){
 					/* retrieves clauses which has a list  (or Var) as first argument */
-					return Collections.unmodifiableList(listCompClausesList);
+					return listCompClausesList.iterator();
 				} else {
 					/* retrieves clauses whose first argument is a struct (or Var)
 					 * and same as goal's first argument, if no clauses
 					 * are retrieved, all clauses with a variable
 					 * as first argument
 					 */
-					return Collections.unmodifiableList(structCompClausesIndex.get(((Struct) t).getPredicateIndicator()));
+					return structCompClausesIndex.get(((Struct) t).getPredicateIndicator()).iterator();
 				}
 			}
 		}
 
 		/* Default behaviour: no optimization done */
-		return Collections.unmodifiableList(this);
+		return iterator();
 	}
 
 	@Override
-	public Iterator<ClauseInfo> iterator(){
+	public Iterator<Clause> iterator(){
 		return listIterator(0);
 	}
 
 	@Override
-	public ListIterator<ClauseInfo> listIterator(){
+	public ListIterator<Clause> listIterator(){
 		return new ListItr(this,0).getIt();
 	}
 
-	private ListIterator<ClauseInfo> superListIterator(int index){
+	private ListIterator<Clause> superListIterator(int index){
 		return super.listIterator(index);
 	}
 
 	@Override
-	public ListIterator<ClauseInfo> listIterator(int index){
+	public ListIterator<Clause> listIterator(int index){
 		return new ListItr(this,index).getIt();
 	}
 
@@ -208,7 +208,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	}
 
 	// Updates indexes, storing informations about the last added clause
-	private void register(ClauseInfo ci, boolean first){
+	private void register(Clause ci, boolean first){
 		// See FamilyClausesList.get(Term): same concept
 		Term clause = ci.getHead();
 		if(clause instanceof Struct){
@@ -250,7 +250,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	}
 
 	// Updates indexes, deleting informations about the last removed clause
-	public void unregister(ClauseInfo ci) {
+	public void unregister(Clause ci) {
 		Term clause = ci.getHead();
 		if(clause instanceof Struct){
 			Struct g = (Struct) clause.getTerm();
@@ -282,13 +282,13 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 		}
 	}
 
-	private class ListItr implements ListIterator<ClauseInfo> {
+	private class ListItr implements ListIterator<Clause> {
 
-		private ListIterator<ClauseInfo> it;
-		private FamilyClausesList l;
+		private ListIterator<Clause> it;
+		private ClauseIndex l;
 		private int currentIndex = 0;
 
-		public ListItr(FamilyClausesList list, int index){
+		public ListItr(ClauseIndex list, int index){
 			l = list;
 			it = list.superListIterator(index);
 		}
@@ -297,7 +297,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 			return it.hasNext();
 		}
 
-		public ClauseInfo next() {
+		public Clause next() {
 			// Alessandro Montanari - alessandro.montanar5@studio.unibo.it
 			currentIndex = it.nextIndex();
 
@@ -308,7 +308,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 			return it.hasPrevious();
 		}
 
-		public ClauseInfo previous() {
+		public Clause previous() {
 			// Alessandro Montanari - alessandro.montanar5@studio.unibo.it
 			currentIndex = it.previousIndex();
 
@@ -325,25 +325,25 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 
 		public void remove() {
 			// Alessandro Montanari - alessandro.montanar5@studio.unibo.it
-			ClauseInfo ci = l.get(currentIndex);
+			Clause ci = l.get(currentIndex);
 
 			it.remove();
 
 			unregister(ci);
 		}
 
-		public void set(ClauseInfo o) {
+		public void set(Clause o) {
 			it.set(o);
 			//throw new UnsupportedOperationException("Not supported.");
 		}
 
-		public void add(ClauseInfo o) {
+		public void add(Clause o) {
                     l.addLast(o);
                     
 
 		}
 
-		public ListIterator<ClauseInfo> getIt(){
+		public ListIterator<Clause> getIt(){
 			return this;
 		}    
 
@@ -355,13 +355,13 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 	@SuppressWarnings("unused")
 	private static class ListItrTest{
 
-		private static FamilyClausesList clauseList = new FamilyClausesList();
+		private static ClauseIndex clauseList = new ClauseIndex();
 
 		public static void main(String[] args) {
-			ClauseInfo first = new ClauseInfo(new Struct(new Struct("First"),new Struct("First")),"First Element");
-			ClauseInfo second = new ClauseInfo(new Struct(new Struct("Second"),new Struct("Second")),"Second Element");
-			ClauseInfo third = new ClauseInfo(new Struct(new Struct("Third"),new Struct("Third")),"Third Element");
-			ClauseInfo fourth = new ClauseInfo(new Struct(new Struct("Fourth"),new Struct("Fourth")),"Fourth Element");
+			Clause first = new Clause(new Struct(new Struct("First"),new Struct("First")),"First Element");
+			Clause second = new Clause(new Struct(new Struct("Second"),new Struct("Second")),"Second Element");
+			Clause third = new Clause(new Struct(new Struct("Third"),new Struct("Third")),"Third Element");
+			Clause fourth = new Clause(new Struct(new Struct("Fourth"),new Struct("Fourth")),"Fourth Element");
 
 			clauseList.add(first);
 			clauseList.add(second);
@@ -370,7 +370,7 @@ class FamilyClausesList extends ArrayList<ClauseInfo> {
 			
 			// clauseList = [First, Second, Third, Fourh]
 			
-			ListIterator<ClauseInfo> allClauses = clauseList.listIterator();
+			ListIterator<Clause> allClauses = clauseList.listIterator();
 			// Get the first object and remove it
 			allClauses.next();
 			allClauses.remove();

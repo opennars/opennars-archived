@@ -159,7 +159,7 @@ public class BuiltIn extends Library {
 				 throw PrologError.type_error(engineManager, 1, "clause", arg0);
 		 }
 		 Struct sarg0 = (Struct) arg0;
-		 ClauseInfo c = theories.retract(sarg0);
+		 Clause c = theories.retract(sarg0);
 		 // if clause to retract found -> retract + true
 		 if (c != null) {
 			 Struct clause = null;
@@ -184,7 +184,7 @@ public class BuiltIn extends Library {
 		 if( ((Struct)arg0).getTerms(0).toString().equals("abolish") )
 			 throw PrologError.permission_error(engineManager, "modify", "static_procedure", arg0, new Struct(""));
 		 
-		 return theories.abolish((Struct) arg0);
+		 return theories.remove((Struct) arg0);
 	 }
 
 	 /*Castagna 06/2011*/	
@@ -304,7 +304,7 @@ public class BuiltIn extends Library {
 		 arg0 = arg0.getTerm();
 		 arg1 = arg1.getTerm();
 		 Struct s = new Struct(",", arg0, arg1);
-		 engineManager.pushSubGoal(ClauseInfo.extractBody(s));
+		 engineManager.pushSubGoal(Clause.extractBody(s));
 		 return true;
 	 }
 
@@ -323,7 +323,7 @@ public class BuiltIn extends Library {
 		 if (goal == null)
 			 throw PrologError.type_error(engineManager, 1, "callable", goal);
 		 engineManager.identify(goal);
-		 engineManager.pushSubGoal(ClauseInfo.extractBody(goal));
+		 engineManager.pushSubGoal(Clause.extractBody(goal));
 		 return true;
 	 }
 
@@ -473,17 +473,21 @@ public class BuiltIn extends Library {
 			 throw PrologError.instantiation_error(engineManager, 1);
 		 if (/* !arg0 instanceof Struct || */!arg1.isList())
 			 throw PrologError.type_error(engineManager, 2, "list", arg1);
-		 List<ClauseInfo> l = null;
+		 Iterator<Clause> l = null;
 		 try {
 			 l = theories.find(arg0);
+			 if (l == null)
+				 return false;
 		 } catch (RuntimeException e) {
-
+			 e.printStackTrace();
+			 return false;
 		 }
+
 		 ArrayList<Var> v1 = new ArrayList(), v2 = new ArrayList();
 		 long now = System.currentTimeMillis();
-		 java.util.Iterator<ClauseInfo> it = l.iterator();
+		 java.util.Iterator<Clause> it = l;
 		 while (it.hasNext()) {
-			 ClauseInfo b = it.next();
+			 Clause b = it.next();
 			 if (match(arg0, b.getHead(), now, v1, v2)) {
 				 b.getClause().resolveTerm();
 				 ((Struct) arg1).append(b.getClause());

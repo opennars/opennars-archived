@@ -12,52 +12,53 @@ import java.util.ListIterator;
  * composed by clauses with the same functor and arity.
  */
 public class ClauseStore {
-    
-    
-    private OneWayList<ClauseInfo> clauses;
-    protected Term goal;
-    protected List<Var> vars;
+
+
+    private OneWayList<Clause> clauses;
+    protected final Term goal;
+    protected final List<Var> vars;
     private boolean haveAlternatives;
-    
+
     protected ClauseStore(Term goal, List<Var> vars) {
         this.goal = goal;
         this.vars = vars;
         clauses = null;
     }
-    
-    
+
+
     /**
      * Carica una famiglia di clausole
-         *
-         * Reviewed by Paolo Contessi:
-         * OneWayList.transform(List) -> OneWayList.transform2(List)
-         * 
+     * <p>
+     * Reviewed by Paolo Contessi:
+     * OneWayList.transform(List) -> OneWayList.transform2(List)
+     *
      * @param familyClauses
      */
-    public static ClauseStore build(Term goal, List<Var> vars, List<ClauseInfo> familyClauses) {
+    public static ClauseStore build(Term goal, List<Var> vars, Iterator<Clause> familyClauses) {
         ClauseStore clauseStore = new ClauseStore(goal, vars);
-                clauseStore.clauses = OneWayList.transform2(familyClauses);
-                if (clauseStore.clauses == null || !clauseStore.existCompatibleClause())
+        if ((clauseStore.clauses = OneWayList.transform2(familyClauses)) == null
+                || !clauseStore.existCompatibleClause())
             return null;
         return clauseStore;
     }
-    
-    
+
+
     /**
      * Restituisce la clausola da caricare
      */
-    public ClauseInfo fetch() {
+    public Clause fetch() {
         if (clauses == null) return null;
         deunify(vars);
         if (!checkCompatibility(goal))
             return null;
-        ClauseInfo clause = clauses.getHead();
+        Clause clause = clauses.getHead();
         clauses = clauses.getTail();
         haveAlternatives = checkCompatibility(goal);
         return clause;
     }
 
-    @Deprecated public boolean checkCompatibility(Term goal) {
+    @Deprecated
+    public boolean checkCompatibility(Term goal) {
         //v1 and v2 will be re-used during the loop
         ArrayList<nars.tuprolog.Var> v1 = new ArrayList(), v2 = new ArrayList();
         long now = System.currentTimeMillis();
@@ -68,10 +69,11 @@ public class ClauseStore {
     public boolean haveAlternatives() {
         return haveAlternatives;
     }
-    
-    
+
+
     /**
-     * Verify if there is a term in compatibleGoals compatible with goal. 
+     * Verify if there is a term in compatibleGoals compatible with goal.
+     *
      * @param goal
      * @param compGoals
      * @return true if compatible or false otherwise.
@@ -82,6 +84,7 @@ public class ClauseStore {
         reunify(vars, saveUnifications);
         return found;
     }
+
     protected boolean existCompatibleClause() {
         //v1 and v2 will be re-used during the loop
         ArrayList<nars.tuprolog.Var> v1 = new ArrayList();
@@ -93,6 +96,7 @@ public class ClauseStore {
 
     /**
      * Salva le unificazioni delle variabili da deunificare
+     *
      * @param varsToDeunify
      * @return unificazioni delle variabili
      */
@@ -104,10 +108,11 @@ public class ClauseStore {
         }
         return saveUnifications;
     }
-    
-    
+
+
     /**
      * Restore previous unifications into variables.
+     *
      * @param varsToReunify
      * @param saveUnifications
      */
@@ -124,18 +129,19 @@ public class ClauseStore {
             it1.previous().setLink(it2.previous());
         }
     }
-    
-    
+
+
     /**
      * Verify if a clause exists that is compatible with goal.
      * As a side effect, clauses that are not compatible get
      * discarded from the currently examined family.
+     *
      * @param goal
      */
     private boolean checkCompatibility(Term goal, ArrayList<Var> v1, ArrayList<Var> v2, long now) {
-        OneWayList<ClauseInfo> cc = this.clauses;
+        OneWayList<Clause> cc = this.clauses;
         if (cc == null) return false;
-        ClauseInfo clause;
+        Clause clause;
 
 
         do {
@@ -145,36 +151,36 @@ public class ClauseStore {
         } while (cc != null);
         return false;
     }
-    
-    
+
+
     public String toString() {
-        return "clauses: "+clauses+ '\n' +
-        "goal: "+goal+ '\n' +
-        "vars: "+vars+ '\n';
+        return "clauses: " + clauses + '\n' +
+                "goal: " + goal + '\n' +
+                "vars: " + vars + '\n';
     }
     
     
     /*
      * Methods for spyListeners
      */
-    
-    public List<ClauseInfo> getClauses() {
-        ArrayList<ClauseInfo> l = new ArrayList<>();
-        OneWayList<ClauseInfo> t = clauses;
-        while (t != null) {
-            l.add(t.getHead());
-            t = t.getTail();
-        }
-        return l;
-    }
-    
+
+//    public List<Clause> getClauses() {
+//        ArrayList<Clause> l = new ArrayList<>();
+//        OneWayList<Clause> t = clauses;
+//        while (t != null) {
+//            l.add(t.getHead());
+//            t = t.getTail();
+//        }
+//        return l;
+//    }
+
     public Term getMatchGoal() {
         return goal;
     }
-    
+
     public List<Var> getVarsForMatch() {
         return vars;
     }
-    
-    
+
+
 }

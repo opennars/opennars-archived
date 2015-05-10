@@ -30,68 +30,54 @@ import java.util.List;
  * Reviewed by Paolo Contessi
  */
 @SuppressWarnings("serial")
-class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterable<ClauseInfo> {
+public class MutableClauses extends HashMap<String,ClauseIndex> implements Clauses {
 
 
-	void addFirst(String key, ClauseInfo d) {
-		FamilyClausesList family = get(key);
+	@Override
+	public void addFirst(String key, Clause d) {
+		ClauseIndex family = get(key);
 		if (family == null)
-			put(key, family = new FamilyClausesList());
+			put(key, family = new ClauseIndex());
 		family.addFirst(d);
 	}
 
-	void addLast(String key, ClauseInfo d) {
-		FamilyClausesList family = get(key);
+	@Override
+	public void addLast(String key, Clause d) {
+		ClauseIndex family = get(key);
 		if (family == null)
-			put(key, family = new FamilyClausesList());
+			put(key, family = new ClauseIndex());
 		family.addLast(d);
 	}
 
-	FamilyClausesList abolish(final String key) 
-	{
-		return remove(key);
-	}
-
-	/**
-	 * Retrieves a list of the predicates which has the same name and arity
-	 * as the goal and which has a compatible first-arg for matching.
-	 *
-	 * @param headt The goal
-	 * @return  The list of matching-compatible predicates
-	 */
-	List<ClauseInfo> getPredicates(final Term headt) {
-		FamilyClausesList family = get(((Struct) headt).getPredicateIndicator());
+	@Override
+	public Iterator<Clause> getPredicates(final Term headt) {
+		ClauseIndex family = get(((Struct) headt).getPredicateIndicator());
 		if (family == null){
-			return Collections.EMPTY_LIST;
+			return null;
 		}
 		return family.get(headt);
 	}
 
-	/**
-	 * Retrieves the list of clauses of the requested family
-	 *
-	 * @param key   Goal's Predicate Indicator
-	 * @return      The family clauses
-	 */
-	List<ClauseInfo> getPredicates(final String key){
-		FamilyClausesList family = get(key);
+	@Override
+	public Iterator<Clause> getPredicates(final String key){
+		ClauseIndex family = get(key);
 		if(family == null){
-			return Collections.EMPTY_LIST;
+			return null;
 		}
-		return Collections.unmodifiableList(family);
+		return family.iterator();
 	}
 
         @Override
-	public Iterator<ClauseInfo> iterator() {
+	public Iterator<Clause> iterator() {
 		return new CompleteIterator(this);
 	}
 
-	private static class CompleteIterator implements Iterator<ClauseInfo> {
-		final Iterator<FamilyClausesList> values;
-		Iterator<ClauseInfo> workingList;
+	public static class CompleteIterator implements Iterator<Clause> {
+		final Iterator<ClauseIndex> values;
+		Iterator<Clause> workingList;
 		//private boolean busy = false;
 
-		public CompleteIterator(final ClauseDatabase clauseDatabase) {
+		public CompleteIterator(final MutableClauses clauseDatabase) {
 			values = clauseDatabase.values().iterator();
 		}
 
@@ -108,17 +94,36 @@ class ClauseDatabase extends HashMap<String,FamilyClausesList> implements Iterab
 			}
 		}
 
-                @Override
-		public synchronized ClauseInfo next() {
+		@Override
+		public synchronized Clause next() {
 			if (workingList.hasNext())
 				return workingList.next();
 			else return null;
 		}
 
-                @Override
+		@Override
 		public void remove() {
 			workingList.remove();
 		}
 	}
 
+	@Override
+	public boolean containsKey(String key) {
+		return super.containsKey(key);
+	}
+
+	@Override
+	public ClauseIndex get(String ctxID) {
+		return super.get(ctxID);
+	}
+
+	@Override
+	public ClauseIndex remove(String ctxID) {
+		return super.remove(ctxID);
+	}
+
+	@Override
+	public ClauseIndex put(String key, ClauseIndex value) {
+		return super.put(key, value);
+	}
 }

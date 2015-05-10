@@ -1,5 +1,6 @@
 package nars.tuprolog.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -17,7 +18,10 @@ public class OneWayList<E> {
         if(list.isEmpty()) return null;
         return new OneWayList<>(list.remove(0),transform(list));
     }
-    
+
+    public static <T> OneWayList<T> transform2(Iterable<T> list){
+        return transform2(list.iterator());
+    }
     /**
      * Transforms given list into a OneWayList without any modification
      * to it
@@ -27,11 +31,18 @@ public class OneWayList<E> {
      * @param list  Perceive list to be transformed
      * @return      An equivalent OneWayList
      */
-    public static <T> OneWayList<T> transform2(List<T> list){
+    public static <T> OneWayList<T> transform2(Iterator<T> list){
         OneWayList<T> result = null;
         OneWayList<T> p = null;
 
-        for(T obj : list){
+        if (list == null) {
+            return null;// Collections.EMPTY_LIST;
+        }
+
+        T obj;
+        while (list.hasNext()) {
+            obj = list.next();
+
             OneWayList<T> l = new OneWayList<>(obj, null);
 
             if(result == null){

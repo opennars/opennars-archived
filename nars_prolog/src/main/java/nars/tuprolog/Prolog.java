@@ -105,7 +105,7 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
         operators = new Operators();
         libraries = new Libraries(this);
         primitives = new Primitives(this);
-        theories = new Theories(this);
+        theories = new Theories(this, getDynamicTheory(), getStaticTheory());
 
         if (libs != null) {
             for (int i = 0; i < libs.length; i++) {
@@ -113,6 +113,10 @@ abstract public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Seriali
             }
         }
     }
+
+    abstract public Clauses getDynamicTheory();
+    abstract public Clauses getStaticTheory();
+
 
 
     /**

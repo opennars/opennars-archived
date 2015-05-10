@@ -26,7 +26,7 @@ import java.util.IdentityHashMap;
  * to use the clause in a consistent way
  *
  */
-public class ClauseInfo {
+public class Clause {
     
     /**
 	 * referring clause
@@ -57,14 +57,14 @@ public class ClauseInfo {
     /**
      * building a valid clause with a time stamp = original time stamp + NumVar in clause
      */
-    public ClauseInfo(Struct clause_, String lib) {
+    public Clause(Struct clause_, String lib) {
         clause = clause_;
         head = extractHead(clause);
         body = extractBody(clause.getTerms(1));
         libName = lib;
     }
 
-    public ClauseInfo(Struct clause_) {
+    public Clause(Struct clause_) {
         this(clause_, null);
     }
     

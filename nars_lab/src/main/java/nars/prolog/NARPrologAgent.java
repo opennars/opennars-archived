@@ -120,6 +120,12 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
 
     }
 
+    @Override
+    public Clauses getDynamicTheory() {
+        return new NARTheoryAdapter(nar);
+    }
+
+
     private void addTheory(List<String> t) throws InvalidTheoryException {
         for (String s : t) {
             Struct clause = (Struct) new Parser(s).nextTerm(true);
@@ -127,7 +133,7 @@ public class NARPrologAgent extends NARTuprolog implements Reaction {
         }
     }
 
-    public ClauseInfo retractFact(Struct fact) {
+    public Clause retractFact(Struct fact) {
         return getTheories().retract(fact);
     }
 
