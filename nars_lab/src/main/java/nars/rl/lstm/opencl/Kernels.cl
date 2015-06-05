@@ -335,9 +335,9 @@ kernel void stage1Kernel(
 
 
         // reset barrier-reset barrier
-
-        barrierResetBarrier[0] = syncronisationCounterResetValue;
-
+        if( fiberId == 0 ) {
+            barrierResetBarrier[0] = syncronisationCounterResetValue;
+        }
 
 
         inputsToCellblocksFiber(fiberId, sumF, sumG, weightsF, weightsG, full_input, full_input_dimension, cell_blocks);
@@ -475,16 +475,17 @@ kernel void stage1Kernel(
 
 
         // reset most counterBarriers
-        counterBarrier0[0] = syncronisationCounterResetValue;
-        counterBarrier1[0] = syncronisationCounterResetValue;
-        counterBarrier2[0] = syncronisationCounterResetValue;
-        counterBarrier3[0] = syncronisationCounterResetValue;
-        counterBarrier4[0] = syncronisationCounterResetValue;
-        counterBarrier5[0] = syncronisationCounterResetValue;
-        counterBarrier6[0] = syncronisationCounterResetValue;
-        counterBarrier7[0] = syncronisationCounterResetValue;
-        counterBarrier8[0] = syncronisationCounterResetValue;
-
+        if( fiberId == 0 ) {
+            counterBarrier0[0] = syncronisationCounterResetValue;
+            counterBarrier1[0] = syncronisationCounterResetValue;
+            counterBarrier2[0] = syncronisationCounterResetValue;
+            counterBarrier3[0] = syncronisationCounterResetValue;
+            counterBarrier4[0] = syncronisationCounterResetValue;
+            counterBarrier5[0] = syncronisationCounterResetValue;
+            counterBarrier6[0] = syncronisationCounterResetValue;
+            counterBarrier7[0] = syncronisationCounterResetValue;
+            counterBarrier8[0] = syncronisationCounterResetValue;
+        }
 
         // barrier for the reset of all other barriers
 
