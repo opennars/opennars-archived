@@ -673,7 +673,7 @@ public class LSTMCL extends AgentSupervised {
 
             long nanotimeDiff = nanotimeAfter - nanotimeBefore;
 
-            System.out.println("kernel took " + Long.toString (nanotimeDiff/1000) + " us");
+            //System.out.println("kernel took " + Long.toString (nanotimeDiff/1000) + " us");
         }
 
         // validation
