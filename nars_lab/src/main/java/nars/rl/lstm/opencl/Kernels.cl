@@ -302,8 +302,6 @@ kernel void stage1Kernel(
     int fiberId = get_global_id(0);
 
     for( int inputI = 0; inputI < countOfInputOutputTuples; inputI++ ) {
-
-
         // assemle full inputs buffer from inputs and context
         if( fiberId == 0 ) {
             int location = 0;
@@ -335,8 +333,7 @@ kernel void stage1Kernel(
 
 
         // reset barrier-reset barrier
-
-        barrierResetBarrier[0] = syncronisationCounterResetValue;
+        atomic_xchg(barrierResetBarrier, syncronisationCounterResetValue);
 
 
 
@@ -475,15 +472,15 @@ kernel void stage1Kernel(
 
 
         // reset most counterBarriers
-        counterBarrier0[0] = syncronisationCounterResetValue;
-        counterBarrier1[0] = syncronisationCounterResetValue;
-        counterBarrier2[0] = syncronisationCounterResetValue;
-        counterBarrier3[0] = syncronisationCounterResetValue;
-        counterBarrier4[0] = syncronisationCounterResetValue;
-        counterBarrier5[0] = syncronisationCounterResetValue;
-        counterBarrier6[0] = syncronisationCounterResetValue;
-        counterBarrier7[0] = syncronisationCounterResetValue;
-        counterBarrier8[0] = syncronisationCounterResetValue;
+        atomic_xchg(counterBarrier0, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier1, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier2, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier3, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier4, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier5, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier6, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier7, syncronisationCounterResetValue);
+        atomic_xchg(counterBarrier8, syncronisationCounterResetValue);
 
 
         // barrier for the reset of all other barriers
