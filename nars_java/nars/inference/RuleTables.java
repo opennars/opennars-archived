@@ -88,12 +88,12 @@ public class RuleTables {
         final Term beliefTerm = bLink.target;       // cloning for substitution
 
         //CONTRAPOSITION //TODO: put into rule table
-        /*if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+        if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             Concept d=memory.sampleNextConceptNovel(task.sentence);
             if(d!=null && d.term.equals(taskSentence.term)) {
                 StructuralRules.contraposition((Statement)taskTerm, taskSentence, nal); 
             }
-        }  */
+        }  
         
         if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm))
            return;
@@ -106,13 +106,13 @@ public class RuleTables {
         nal.setCurrentBelief( belief );  // may be null
         perceptionBasedDetachment(task, nal, memory);
         
-        //temporalInduce(nal, task, taskSentence, memory);
+        temporalInduce(nal, task, taskSentence, memory);
         
         if (belief != null) {   
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
 
-            //temporalInductionChain(beliefTerm, nal, belief);
+            temporalInductionChain(beliefTerm, nal, belief);
             
             if (LocalRules.match(task, belief, nal)) {
                 //new tasks resulted from the match, so return
@@ -121,11 +121,11 @@ public class RuleTables {
         }
         
         // to be invoked by the corresponding links 
-        /*if (CompositionalRules.dedSecondLayerVariableUnification(task, nal)) {
+        if (CompositionalRules.dedSecondLayerVariableUnification(task, nal)) {
             //unification ocurred, done reasoning in this cycle if it's judgment
             if (taskSentence.isJudgment())
                 return;
-        }*/
+        }
 
         
         //current belief and task may have changed, so set again:
@@ -136,7 +136,7 @@ public class RuleTables {
             return;
         }*/
         
-        //CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, nal);
+        CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, nal);
         
         final short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
