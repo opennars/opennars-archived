@@ -43,14 +43,14 @@ public interface BeliefTable extends TaskTable {
      *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
      *
      */
-    public Task add(Task input, Ranker r, Concept c, Premise nal);
+    Task add(Task input, Ranker r, Concept c, Premise nal);
 
     default Task add(Task input, Concept c, Premise nal) {
         return add(input, getRank(), c, nal);
     }
 
     /** the default rank used when adding and other operations where rank is unspecified */
-    public Ranker getRank();
+    Ranker getRank();
 
 //    /**
 //     * projects to a new task at a given time
@@ -65,7 +65,7 @@ public interface BeliefTable extends TaskTable {
     /**
      * get a random belief, weighted by their sentences confidences
      */
-    default public Task getBeliefRandomByConfidence(boolean eternal, Random rng) {
+    default Task getBeliefRandomByConfidence(boolean eternal, Random rng) {
 
         if (isEmpty()) return null;
 
@@ -83,18 +83,18 @@ public interface BeliefTable extends TaskTable {
     }
 
 
-    default public float getConfidenceSum() {
+    default float getConfidenceSum() {
         return getConfidenceSum(this);
     }
 
-    public static float getConfidenceSum(Iterable<? extends Truthed> beliefs) {
+    static float getConfidenceSum(Iterable<? extends Truthed> beliefs) {
         float t = 0;
         for (final Truthed s : beliefs)
             t += s.getTruth().getConfidence();
         return t;
     }
 
-    public static float getMeanFrequency(Collection<? extends Truthed> beliefs) {
+    static float getMeanFrequency(Collection<? extends Truthed> beliefs) {
         if (beliefs.isEmpty()) return 0.5f;
 
         float t = 0;
@@ -103,7 +103,7 @@ public interface BeliefTable extends TaskTable {
         return t / beliefs.size();
     }
 
-    default public Task top(final Task query, final long now) {
+    default Task top(final Task query, final long now) {
 
         final Task top = top();
         if (top == null) return null;
@@ -154,7 +154,7 @@ public interface BeliefTable extends TaskTable {
         }
     }
 
-    default public Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
+    default Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
 
         if (isEmpty()) return null;
 
@@ -198,15 +198,15 @@ public interface BeliefTable extends TaskTable {
 
 
     /** get the top-ranking belief/goal, selecting either eternal or temporal beliefs, or both  */
-    public Task top(boolean eternal, boolean temporal);
+    Task top(boolean eternal, boolean temporal);
 
     /** get the top-ranking belief/goal */
-    default public Task top() {
+    default Task top() {
         return top(true, true);
     }
 
     /** the truth v alue of the topmost element, or null if there is none */
-    default public Truth topTruth() {
+    default Truth topTruth() {
         if (isEmpty()) return null;
         return top().getTruth();
     }
@@ -217,7 +217,7 @@ public interface BeliefTable extends TaskTable {
         }
     }
 
-    default public TruthWave getWave() {
+    default TruthWave getWave() {
         return new TruthWave(this);
     }
 
@@ -225,7 +225,7 @@ public interface BeliefTable extends TaskTable {
     /** computes the truth/desire as an aggregate of projections of all
      * beliefs to current time
      */
-    default public float getMeanProjectedExpectation(final long time) {
+    default float getMeanProjectedExpectation(final long time) {
         int size = size();
         if (size == 0) return 0;
 
@@ -237,12 +237,12 @@ public interface BeliefTable extends TaskTable {
         return d/size;
     }
 
-    public interface Ranker extends Function<Task,Float> {
+    interface Ranker extends Function<Task,Float> {
         /** returns a number producing a score or relevancy number for a given Task
          * @param bestToBeat current best score, which the ranking can use to decide to terminate early
          * @return a score value, or Float.MIN_VALUE to exclude that result
          * */
-        public float rank(Task t, float bestToBeat);
+        float rank(Task t, float bestToBeat);
 
 
         default float rank(Task t) {
@@ -256,14 +256,14 @@ public interface BeliefTable extends TaskTable {
     }
 
     @FunctionalInterface
-    public interface RankBuilder {
-        public Ranker get(Concept c, boolean /*true*/ beliefOrGoal /*false*/);
+    interface RankBuilder {
+        Ranker get(Concept c, boolean /*true*/ beliefOrGoal /*false*/);
     }
 
     /** allowed to return null. must evaluate all items in case the final one is the
      *  only item that does not have disqualifying rank (MIN_VALUE)
      * */
-    default public Task top(Ranker r) {
+    default Task top(Ranker r) {
 
         float s = Float.MIN_VALUE;
         Task b = null;
@@ -279,7 +279,7 @@ public interface BeliefTable extends TaskTable {
         return b;
     }
 
-    default public Task topRanked() {
+    default Task topRanked() {
         return top(getRank());
     }
 
@@ -290,7 +290,7 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    public static class BeliefConfidenceAndCurrentTime implements Ranker {
+    static class BeliefConfidenceAndCurrentTime implements Ranker {
 
         private final Concept concept;
 

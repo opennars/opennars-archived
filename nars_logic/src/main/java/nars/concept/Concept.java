@@ -42,17 +42,17 @@ import java.util.Map;
 
 import static com.google.common.collect.Iterators.*;
 
-abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
+public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
-    public Bag<Sentence, TaskLink> getTaskLinks();
-    public Bag<TermLinkKey, TermLink> getTermLinks();
+    Bag<Sentence, TaskLink> getTaskLinks();
+    Bag<TermLinkKey, TermLink> getTermLinks();
 
-    public Map<Object, Object> getMeta();
+    Map<Object, Object> getMeta();
     void setMeta(Map<Object, Object> meta);
 
 
-    public Memory getMemory();
+    Memory getMemory();
 
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
@@ -77,11 +77,11 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /**
      * whether a concept's desire exceeds decision threshold
      */
-    default public boolean isDesired() {
+    default boolean isDesired() {
         return isDesired(getMemory().getParam().executionThreshold.floatValue());
     }
 
-    default public boolean isDesired(float threshold) {
+    default boolean isDesired(float threshold) {
         Truth desire=this.getDesire();
         if(desire==null) {
             return false;
@@ -89,13 +89,13 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return desire.getExpectation() > threshold;
     }
 
-    default public void discountBeliefConfidence() {
+    default void discountBeliefConfidence() {
         if (hasBeliefs()) {
             discountTaskConfidences(getBeliefs());
         }
     }
 
-    default public void discountGoalConfidence() {
+    default void discountGoalConfidence() {
         if (hasGoals()) {
             discountTaskConfidences(getGoals());
         }
@@ -106,25 +106,25 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
 
-    default public boolean hasGoals() {
+    default boolean hasGoals() {
         final BeliefTable s = getGoals();
         if (s == null) return false;
         return !s.isEmpty();
     }
 
-    default public boolean hasBeliefs() {
+    default boolean hasBeliefs() {
         final BeliefTable s = getBeliefs();
         if (s == null) return false;
         return !s.isEmpty();
     }
 
-    default public boolean hasQuestions() {
+    default boolean hasQuestions() {
         final TaskTable s = getQuestions();
         if (s == null) return false;
         return !s.isEmpty();
     }
 
-    default public boolean hasQuests() {
+    default boolean hasQuests() {
         final TaskTable s = getQuests();
         if (s == null) return false;
         return !s.isEmpty();
@@ -137,7 +137,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    default public float getDesireExpectation() {
+    default float getDesireExpectation() {
         Truth d = getDesire();
         if (d!=null) return d.getExpectation();
         return 0;
@@ -147,18 +147,18 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    public TermLinkBuilder getTermLinkBuilder();
+    TermLinkBuilder getTermLinkBuilder();
 
 
     /** selects the next termlink for a given tasklink with this concept.
      *  may return null if it could not decide on one, or there was none
      *  it wants to select.
      */
-    public TermLink nextTermLink(TaskLink taskLink);
+    TermLink nextTermLink(TaskLink taskLink);
 
 
 
-    default public String toInstanceString() {
+    default String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);
         return this + "::" + id;
     }
@@ -187,7 +187,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
     /** like Map.gett for getting data stored in meta map */
-    default public <C> C get(Object key) {
+    default <C> C get(Object key) {
         final Map<Object, Object> m = getMeta();
         if (m == null) return null;
         return (C) m.get(key);
@@ -196,7 +196,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /**
      * Get the current overall desire value. TODO to be refined
      */
-    default public Truth getDesire() {
+    default Truth getDesire() {
         if (!hasGoals()) {
             return null;
         }
@@ -207,7 +207,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /** satisfaction/success metric:
      * if desire exists, returns 1.0 / (1 + Math.abs(belief - desire))
      *  otherwise zero */
-    default public float getSuccess() {
+    default float getSuccess() {
         if (hasBeliefs() && hasGoals()) {
 
             Truth d = getDesire();
@@ -225,18 +225,18 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return 0;
     }
 
-    public BeliefTable getBeliefs();
-    public BeliefTable getGoals();
+    BeliefTable getBeliefs();
+    BeliefTable getGoals();
 
-    public TaskTable getQuestions();
-    public TaskTable getQuests();
+    TaskTable getQuestions();
+    TaskTable getQuests();
 
 
 
-    public long getCreationTime();
+    long getCreationTime();
 
     @Override
-    public void delete();
+    void delete();
 
 //    /** debugging utility */
 //    default public void ensureNotDeleted() {
@@ -247,13 +247,13 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    public boolean processBelief(Premise nal, Task task);
+    boolean processBelief(Premise nal, Task task);
 
-    public boolean processGoal(Premise nal, Task task);
+    boolean processGoal(Premise nal, Task task);
 
-    public Task processQuestion(Premise nal, Task task);
+    Task processQuestion(Premise nal, Task task);
 
-    default public Task processQuest(Premise nal, Task task) {
+    default Task processQuest(Premise nal, Task task) {
         return processQuestion(nal, task);
     }
 
@@ -261,7 +261,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /**
      * by default, any Task is valid to be processed
      */
-    default public boolean processable(Task t) {
+    default boolean processable(Task t) {
         return true;
     }
 
@@ -279,7 +279,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    default public Iterator<? extends Termed> adjacentTermables(boolean termLinks, boolean taskLinks) {
+    default Iterator<? extends Termed> adjacentTermables(boolean termLinks, boolean taskLinks) {
         if (termLinks && taskLinks) {
             return concat(
                     this.getTermLinks().iterator(), this.getTaskLinks().iterator()
@@ -295,12 +295,12 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return null;
     }
 
-    default public void print(PrintStream out) {
+    default void print(PrintStream out) {
         print(out, true, true, true, true);
     }
 
     /** prints a summary of all termlink, tasklink, etc.. */
-    default public void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
+    default void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
         long now = getMemory().time();
 
         out.println("CONCEPT: " + toInstanceString() + " @ " + now);
@@ -351,11 +351,11 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         out.println();
     }
 
-    default public long time() {
+    default long time() {
         return getMemory().time();
     }
 
-    default public Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
+    default Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
         return transform(adjacentTermables(termLinks, taskLinks), new Function<Termed, Term>() {
             @Override
             public Term apply(final Termed term) {
@@ -364,7 +364,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         });
     }
 
-    default public Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
+    default Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
         final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termed, Concept>() {
             @Override
             public Concept apply(final Termed term) {
