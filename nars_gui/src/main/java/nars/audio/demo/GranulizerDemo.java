@@ -6,6 +6,7 @@ import nars.audio.SoundListener;
 import nars.audio.granular.Granulize;
 import nars.audio.granular.TimeStretchGui;
 import nars.audio.sample.SampleLoader;
+import nars.audio.sample.SonarSample;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -55,8 +56,12 @@ public class GranulizerDemo {
         TimeStretchGui gui = new TimeStretchGui(audio);
 
 
-        Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.01f, 0.2f);
+        Granulize ts = new Granulize(SonarSample.digitize(t -> {
+            return (float)(Math.sin(t*1000.0f) + 0.25 * Math.sin(Math.exp(t*200.0f)));
+        }, 44100 /* sample rate */ , 0.5f /* clip duration */ ), 0.01f /* grain size */, 0.2f /* window size */);
+
         ts.setStretchFactor(1f);
+        audio.play(ts, SoundListener.zero, 1, 1);
 
 
         frame.setLayout(new GridLayout());
@@ -65,7 +70,6 @@ public class GranulizerDemo {
         frame.setSize(200, 360);
         frame.setVisible(true);
 
-        audio.play(ts, SoundListener.zero, 1, 1);
 
 
         /*    }

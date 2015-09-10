@@ -1,12 +1,20 @@
 package nars.sonification;
 
+import com.google.common.collect.Lists;
 import nars.*;
+import nars.audio.SoundListener;
 import nars.audio.SoundProducer;
 import nars.audio.granular.Granulize;
+import nars.audio.sample.SonarSample;
 import nars.audio.synth.SineWave;
 import nars.concept.Concept;
 import nars.event.ConceptReaction;
+import nars.event.FrameReaction;
+import nars.guifx.NARfx;
+import nars.io.out.TextOutput;
+import nars.nar.experimental.Equalized;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,9 +26,9 @@ import java.util.stream.Collectors;
 /**
  * Sonifies the activity of concepts being activated and forgotten
  */
-public class ConceptSonification extends ConceptReaction {
+public class ConceptSonification extends FrameReaction {
 
-    List<String> samples;
+    List<SonarSample> samples;
 
     private final Audio sound;
     Map<Concept, SoundProducer> playing = Global.newHashMap();
@@ -28,7 +36,7 @@ public class ConceptSonification extends ConceptReaction {
 
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
-        super(nar.memory, true, Events.FrameEnd.class);
+        super(nar);
 
         this.sound = sound;
 
@@ -37,21 +45,45 @@ public class ConceptSonification extends ConceptReaction {
             update(f.getConcept());*/
 
 
+        nar.memory.eventConceptProcessed.on(c -> {
+            update(c.getConcept());
+        });
         updateSamples();
 
         //TODO update all existing concepts on start?
     }
 
+    public static void main(String[] args) throws LineUnavailableException, IOException {
+        NAR n = new NAR(new Equalized(1000,8,3));
+        new ConceptSonification(n, new Audio(16));
+        n.believe("<a-->b>");
+        n.believe("<b-->c>");
+        n.stdout();
+        n.loop(100);
+
+        //NARfx.newWindow(n);
+    }
+
+
     protected void updateSamples() throws IOException {
 
-        samples = Files.list(Paths.get("/home/me/share/wav")).
-                map(p -> p.toAbsolutePath().toString() ).filter( x -> x.endsWith(".wav") ).collect(Collectors.toList());
+        //samples = Files.list(Paths.get("/home/me/share/wav")).
+         //       map(p -> p.toAbsolutePath().toString() ).filter( x -> x.endsWith(".wav") ).collect(Collectors.toList());
+
+        samples = Lists.newArrayList(
+                SonarSample.digitize(t ->
+                        (float) (Math.sin(t * 1000.0f) + 0.25 * Math.sin(Math.exp(t * 200.0f))),
+                        44100 /* sample rate */, 0.5f /* clip duration */),
+                SonarSample.digitize(t ->
+                        (float) (Math.tan(t * 500.0f) + 0.25 * Math.sin(Math.cos(t * 200.0f))),
+                        44100 /* sample rate */, 0.5f /* clip duration */)
+        );
 
         Collections.shuffle(samples);
     }
 
     /** returns file path to load sample */
-    String getSample(Concept c) {
+    SonarSample getSample(Concept c) {
         return samples.get(Math.abs(c.hashCode()) % samples.size());
     }
 
@@ -60,11 +92,11 @@ public class ConceptSonification extends ConceptReaction {
             SoundProducer g = playing.get(c);
             if (g == null) {
                 if (!samples.isEmpty()) {
-                    String sp = getSample(c);
+                    SonarSample sp = getSample(c);
                     //do {
                         try {
-                            //g = new Granulize(SampleLoader.load(sp), 0.1f, 0.1f);
-                            g = new SineWave(Video.hashFloat(c.hashCode()));
+                            g = new Granulize(sp, 0.1f, 0.1f);
+                            //g = new SineWave(Video.hashFloat(c.hashCode()));
                         } catch (Exception e) {
                             samples.remove(sp);
                             g = null;
@@ -103,27 +135,9 @@ public class ConceptSonification extends ConceptReaction {
     }
 
     @Override
-    public void event(Class event, Object[] args) {
-
-        if (event == Events.FrameEnd.class) {
-            updateConceptsPlaying();
-        }
-
-        /*/else if (event == Events.ConceptProcessed.class) {
-            Premise f = (Premise)args[0];
-            update(f.getConcept());
-        }*/
-
-
+    public void onFrame() {
+        updateConceptsPlaying();
     }
 
-    @Override
-    public void onConceptActive(Concept c) {
-        update(c);
-    }
 
-    @Override
-    public void onConceptForget(Concept c) {
-        update(c);
-    }
 }
