@@ -68,6 +68,12 @@ public class FindSubst {
                     ", perm=" + perm +
                     '}';
         }
+
+        public int shuffledPos(int pos) {
+            ShuffledPermutations p = this.perm;
+            if (p == null) return pos;
+            return p.get(pos);
+        }
     }
 
     public FindSubst(Op type, NAR nar) {
@@ -145,12 +151,8 @@ public class FindSubst {
                     pop = true; //end of compound
                 }
                 else {
-                    //if shuffling, run cx's pos through shuffle
-                    int spos = (frame.perm==null) ?
-                            pos :
-                            frame.perm.get(pos);
-
-                    tx = cx.term(spos); ty = cy.term(pos);
+                    tx = cx.term(frame!=null ? frame.shuffledPos(pos) : pos); //if shuffling, run cx's pos through shuffle
+                    ty = cy.term(pos);
                 }
             }
             else {
@@ -230,16 +232,22 @@ public class FindSubst {
                 else {
                     if (frame!=null) {
                         ShuffledPermutations perm = frame.perm;
-                        if (perm != null && perm.hasNext()) {
-                            //restart on next permutation
-                            perm.next();
-                            pos = 0;
-                        } else {
-                            //failure: pop
-                            pop = true;
+                        if (perm != null) {
+                            if (perm.hasNext()) {
+                                //restart on next permutation
+                                perm.next();
+                                pos = 0;
+                                //continue;
+                            }
+                            else {
+                                //fail
+                                //pop = true;
+                            }
                         }
                     }
 
+
+                    //pop = true; //failure at this level
                 }
             }
 
