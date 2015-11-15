@@ -125,8 +125,8 @@ public abstract class AbstractAtomic implements Term, Byted, Externalizable {
 
     @Override
     public final int size() {
-        throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
-        //return 0;
+        //throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
+        return 0;
     }
 
     @Override public final int volume() { return 1; }

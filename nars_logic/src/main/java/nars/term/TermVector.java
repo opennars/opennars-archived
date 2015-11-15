@@ -1,9 +1,11 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
+import nars.Op;
 import nars.util.data.Util;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,6 +58,12 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     }
 
     @Override
+    public Op op() {
+        return Op.NONE;  //no op associated with an anonymous termvector
+    }
+
+
+    @Override
     public T term(int i) {
         return term[i];
     }
@@ -88,6 +96,11 @@ public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Ser
     @Override
     public final int complexity() {
         return complexity;
+    }
+
+    @Override
+    public final String toString() {
+        return Arrays.toString(term);
     }
 
     /**

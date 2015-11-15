@@ -51,4 +51,5 @@ public interface TermContainer extends Comparable {
         return impossibleToMatch(c.structure());
     }
 
+    Op op();
 }

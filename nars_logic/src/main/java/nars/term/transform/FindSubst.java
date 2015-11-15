@@ -37,6 +37,38 @@ public class FindSubst {
     final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
     final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
 
+    final DequePool<Frame> frames = new DequePool<Frame>(1) {
+        @Override public Frame create() { return new Frame(); }
+    };
+
+    static class Frame {
+        Map<Term, Term> xy;
+        Map<Term, Term> yx;
+        ShuffledPermutations perm;
+
+        TermContainer compx, compy;
+        //int pos;
+
+        //Term current
+        Frame parent;
+        //public int len; //terms in the current compound pair
+        public int limit;
+        public int pos;
+
+        @Override
+        public String toString() {
+            return "Frame{" +
+                    //", xy=" + xy +
+                    //", yx=" + yx +
+                    ", cx=" + compx +
+                    ", cy=" + compy +
+                    //", parent=" + parent +
+                    //", limit=" + limit +
+                    ", pos=" + pos +
+                    ", perm=" + perm +
+                    '}';
+        }
+    }
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -80,104 +112,289 @@ public class FindSubst {
         System.out.println("     " + this);
     }
 
+
+
     /** find substitutions, returning the success state.
      * this method should be used only from the outside.
-     * all internal purposes should use the find() method
-     * in order to manage decrease in power correctly */
-    public final boolean next(final Term x, final Term y, int power) {
-        int endPower = match(x, y, power);
+      */
+    public final boolean next(final Term _x, final Term _y, final int startPower) {
 
+        Frame frame = null;
+
+        //current compound
+        TermContainer cx = _x, cy = _y;
+
+        final Op type = this.type;
+
+        int limit = startPower, time = 0;
+
+        int pos = -1; //subterm pointer
+
+        do {
+
+            boolean pop = false, advance = false; //opcodes
+            TermContainer pushx = cx, pushy = cy;
+
+
+            TermContainer tx = null, ty = null; //current term
+
+            if (pos > -1) {
+                //compare subterm
+                int cs = cx.size();
+                if (pos >= cs) {
+                    pop = true; //end of compound
+                }
+                else {
+                    //if shuffling, run cx's pos through shuffle
+                    int spos = (frame.perm==null) ?
+                            pos :
+                            frame.perm.get(pos);
+
+                    tx = cx.term(spos); ty = cy.term(pos);
+                }
+            }
+            else {
+                //compare compound
+                tx = cx; ty = cy;
+            }
+
+
+
+
+            /*---*/
+            System.out.println(time + " " + limit + "\t" +
+                    cx + ":" + tx + " \t " + cy + ":" + ty + " pos=" + pos + " frame=" + frame);
+
+            if (!pop) {
+
+                if (tx.equals(ty)) {
+
+                    if (frame == null) return true;//break;
+                    advance = true;
+
+                } else {
+
+                    final Op xOp = tx.op();
+
+                    if (xOp == type) {
+
+                        final Term xSubst = xy.get(tx);
+
+                        if (xSubst != null) {
+                            pushx = xSubst;
+                        } else {
+                            nextVarX((Variable) tx, (Term) ty);
+                        }
+
+                        advance = true;
+                    } else {
+
+                        final Op yOp = ty.op();
+                        if (yOp == type) {
+
+                            final Term ySubst = yx.get(ty);
+
+                            if (ySubst != null) {
+                                pushy = ySubst;
+                            } else {
+                                putVarY((Term) tx, (Variable) ty);
+                            }
+                            advance = true;
+
+                        } else {
+                            if (xOp.isVar()) {
+                                if (yOp.isVar()) {
+                                    nextVarX((Variable) tx, (Term) ty);
+                                    advance = true;
+                                }
+                            } else {
+                                if ((xOp == yOp) && (tx instanceof Compound)) {
+
+                                    if (matchable(tx, ty)) {
+                                        pushx = ((Compound) tx).subterms();
+                                        pushy = ((Compound) ty).subterms();
+                                    }
+
+
+                                    //return matchCompound((Compound)cx, (Compound)y, power);
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                if (advance) {
+                    pos++;
+                }
+                else {
+                    if (frame!=null) {
+                        ShuffledPermutations perm = frame.perm;
+                        if (perm != null && perm.hasNext()) {
+                            //restart on next permutation
+                            perm.next();
+                            pos = 0;
+                        } else {
+                            //failure: pop
+                            pop = true;
+                        }
+                    }
+
+                }
+            }
+
+
+
+            if (pop) {
+                if (frame == null)
+                    return true;
+
+                Frame last = frame.parent;
+                if (last == null)
+                    return true;
+
+                pos = last.pos + 1;
+                pushx = last.compx; pushy = last.compy;
+
+                if (pos >= pushx.size())
+                    return true;
+
+                limit = frame.limit;
+                if (frame.perm!=null) {
+                    permutationPool.put(frame.perm);
+                    frame.perm = null;
+                }
+                frames.put(frame);
+
+                frame = last;
+                //advance = true;
+
+            }
+            else {
+
+                int ps = pushx.size();
+
+                if (pushx != cx || pushy != cy) {
+
+                    if (ps > 1) {
+                        //push: descend into a compound's subterms
+                        Frame save = frames.get();
+                        save.parent = frame; //may be null
+                        save.compx = cx;
+                        save.compy = cy;
+                        save.pos = pos;
+                        save.limit = limit;
+                        if (cx instanceof Term &&  ((Term)cx).isCommutative()) {
+                            save.perm = permutationPool.get();
+                            save.perm.restart(ps, random);
+                        }
+
+                        frame = save;
+
+                        limit /= ps; //divide equally by # subterms
+                    }
+
+                    pos = 0; //start at beginning of subterm
+                }
+            }
+
+            cx = pushx;
+            cy = pushy;
+
+        } while (time++ < limit);
+
+        return false;
         /*
-        System.out.println((power - Math.abs(endPower)) + " " +
+        System.out.println((startPower - Math.abs(power)) + " " +
                 (endPower >= 0) + " " + x + " " + y + " " + power + " .. " + endPower);
         */
 
-        return endPower >= 0; //non-negative power value indicates success
+
     }
 
-    /**
-     * recurses into the next sublevel of the term
-     * @return
-     *      if success: a POSITIVE next power value, after having subtracted the cost (>0)
-     *      if fail: the NEGATED next power value (<=0)
-     **
-     * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
-     */
-    final int match(final Term x, final Term y, int power) {
+//    /**
+//     * recurses into the next sublevel of the term
+//     * @return
+//     *      if success: a POSITIVE next power value, after having subtracted the cost (>0)
+//     *      if fail: the NEGATED next power value (<=0)
+//     **
+//     * this effectively uses the sign bit of the integer as a success flag while still preserving the magnitude of the decreased power for the next attempt
+//     */
+//    final int match(final Term x, final Term y, int power) {
+//
+//        if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
+//            return power; //fail due to insufficient power
+//
+//        //System.out.println("  m: " + x + " " + y + " " + power);
+//
+//        if (x.equals(y)) {
+//            return power; //match
+//        }
+//
+//        return matchNotEqual(x, y, power);
+//    }
 
-        if ((power = power - 1 /*costFunction(X, Y)*/) < 0)
-            return power; //fail due to insufficient power
-
-        //System.out.println("  m: " + x + " " + y + " " + power);
-
-        if (x.equals(y)) {
-            return power; //match
-        }
-
-        return matchNotEqual(x, y, power);
-    }
-
-    /** at this point, x and y have been determined not equal
-     * but there is still the possibility of a match.
-     */
-    private final int matchNotEqual(Term x, Term y, int power) {
-
-
-        final Op type = this.type;
-        final Op xOp = x.op();
-        if (xOp == type) {
-
-            final Term xSubst = xy.get(x);
-
-            if (xSubst != null) {
-                return match(xSubst, y, power);
-            }
-            else {
-                nextVarX((Variable) x, y);
-                return power;
-            }
-
-        }
-
-        final Op yOp = y.op();
-        if (yOp == type) {
-
-            final Term ySubst = yx.get(y);
-
-            if (ySubst != null) {
-                return match(x, ySubst, power);
-            }
-            else {
-                putVarY(x, (Variable) y);
-                return power;
-            }
-
-        }
-
-        if (xOp.isVar()) {
-            if (yOp.isVar()) {
-                nextVarX((Variable) x, y);
-                return power;
-            }
-        }
-        else {
-            if ((xOp == yOp) && (x instanceof Compound)) {
-                return matchCompound((Compound)x, (Compound)y, power);
-            }
-        }
-
-
-        return fail(power);
-    }
-
-    private static void printComparison(int power, Compound cx, Compound cy) {
-        System.out.println(cx.structureString() + " " + cx.volume() + "\t" + cx);
-        System.out.println(cy.structureString() + " " + cy.volume() + "\t" + cy);
-        System.out.println(!cx.impossibleToMatch(cy) + "|" + !cy.impossibleToMatch(cx) + " ---> " + (power >= 0) + " " + power);
-        System.out.println();
-    }
-
-    /** compare variable type to determine if matchable */
+//    /** at this point, x and y have been determined not equal
+//     * but there is still the possibility of a match.
+//     */
+//    private final int matchNotEqual(Term x, Term y, int power) {
+//
+//
+//        final Op type = this.type;
+//        final Op xOp = x.op();
+//        if (xOp == type) {
+//
+//            final Term xSubst = xy.get(x);
+//
+//            if (xSubst != null) {
+//                return match(xSubst, y, power);
+//            }
+//            else {
+//                nextVarX((Variable) x, y);
+//                return power;
+//            }
+//
+//        }
+//
+//        final Op yOp = y.op();
+//        if (yOp == type) {
+//
+//            final Term ySubst = yx.get(y);
+//
+//            if (ySubst != null) {
+//                return match(x, ySubst, power);
+//            }
+//            else {
+//                putVarY(x, (Variable) y);
+//                return power;
+//            }
+//
+//        }
+//
+//        if (xOp.isVar()) {
+//            if (yOp.isVar()) {
+//                nextVarX((Variable) x, y);
+//                return power;
+//            }
+//        }
+//        else {
+//            if ((xOp == yOp) && (x instanceof Compound)) {
+//                return matchCompound((Compound)x, (Compound)y, power);
+//            }
+//        }
+//
+//
+//        return fail(power);
+//    }
+//
+//    private static void printComparison(int power, Compound cx, Compound cy) {
+//        System.out.println(cx.structureString() + " " + cx.volume() + "\t" + cx);
+//        System.out.println(cy.structureString() + " " + cy.volume() + "\t" + cy);
+//        System.out.println(!cx.impossibleToMatch(cy) + "|" + !cy.impossibleToMatch(cx) + " ---> " + (power >= 0) + " " + power);
+//        System.out.println();
+//    }
+//
+//    /** compare variable type to determine if matchable */
     private final boolean matchable(Op xVarOp/*, Op yOp*/) {
         //if (xVarOp == Op.VAR_PATTERN) return true;
 //        if (xVarOp == Op.VAR_QUERY) {
@@ -186,16 +403,16 @@ public class FindSubst {
 
         return (xVarOp == type);
     }
-
-//    /** cost subtracted in the re-entry method: next(x, y, power) */
-//    static final int costFunction(final Compound x, final Compound y) {
-//        return 1;
-//        //return Math.min(x.volume(), y.volume());
-//        //return x.volume() + y.volume();
-//    }
-
-
-
+//
+////    /** cost subtracted in the re-entry method: next(x, y, power) */
+////    static final int costFunction(final Compound x, final Compound y) {
+////        return 1;
+////        //return Math.min(x.volume(), y.volume());
+////        //return x.volume() + y.volume();
+////    }
+//
+//
+//
     final void nextVarX(final Variable xVar, final Term y) {
         final Op xOp = xVar.op();
 
@@ -228,76 +445,6 @@ public class FindSubst {
 //        }
 
     }
-
-
-    protected static boolean matchable(final Compound X, final Compound Y) {
-        /** must have same # subterms */
-        if (X.size() != Y.size()) {
-            return false;
-        }
-
-        //TODO see if there is a volume or structural constraint that can terminate early here
-
-        /** if they are images, they must have same relationIndex */
-        //TODO simplify comparison with Image base class
-        if (X instanceof Image) {
-            if (((Image) X).relationIndex != ((Image) Y).relationIndex)
-                return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * X and Y are of the same operator type and length (arity)
-     * X's permutations matched against constant Y
-     */
-    protected int matchCompound(final Compound X, final Compound Y, int power) {
-
-        if (!matchable(X, Y))
-            return fail(power);
-
-        final int xLen = X.size();
-
-        if (xLen == 0)
-            return power;
-        else if (xLen == 1)
-            return match(X.term(0), Y.term(0), power);
-        else { /*if (xLen >= 1) {*/
-            if (!X.isCommutative()) {
-                //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
-                return matchSequence(X.subterms(), Y.subterms(), power);
-            }
-            else {
-                //commutative, try permutations
-                return matchPermute(X, Y, power);
-            }
-        }
-    }
-
-    private final int matchPermute(Compound x, Compound y, int power) {
-        DequePool<ShuffledPermutations> pp = this.permutationPool;
-
-        final ShuffledPermutations perm = pp.get();
-
-        final int result = permute(perm, x, y, power);
-
-        pp.put(perm);
-
-        return result;
-    }
-
-
-//    /**
-//     * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
-//     */
-//    static protected boolean queryVarMatch(final Op xVar, final Op yVar) {
-//
-//        final boolean xQuery = (xVar == Op.VAR_QUERY);
-//        final boolean yQuery = (yVar == Op.VAR_QUERY);
-//
-//        return (xQuery ^ yQuery);
-//    }
 
     /**
      * elimination
@@ -343,147 +490,217 @@ public class FindSubst {
         xyChanged|= (xy.put(x, y)!=y);
     }
 
-
-
-    /**
-     * @param X the compound which is permuted/shuffled
-     * @param Y what is being compared against
-     *
-     * use with compounds with >= 2 subterms
-     *
-     * unoptimized N-ary permute,
-     *  which requires allocating a temporary array for shuffling */
-    int permute(final ShuffledPermutations perm, final Compound X, final Compound Y, int power) {
-
-
-        final int len = X.size();
-
-        final int minAttempts = len; //heuristic assumption
-
-        int permPower = power / minAttempts; //power allocate to each permutation
-
-        final int subPower = permPower / len; //power allocated to each permutation's subterm
-        if (subPower < 1) return fail(power);
-
-        perm.restart(len, random);
-
-        final Map<Term, Term> xy = this.xy; //local copy on stack
-        final Map<Term, Term> yx = this.yx; //local copy on stack
-
-
-        //push/save:
-        Map<Term, Term> savedXY = acquireCopy(xy);
-        xyChanged = false;
-        Map<Term, Term> savedYX = acquireCopy(yx);
-        yxChanged = false;
-
-        boolean matched = false;
-
-        ShuffleTermVector xv = new ShuffleTermVector(X, perm);
-
-        while (perm.hasNext()) {
-
-            perm.next();
-
-            int sp = matchSequence(xv, Y, permPower);
-            int cost = permPower - Math.abs(sp);
-            power -= cost;
-
-            matched = sp >= 0;
-
-            if (matched || power <= 0) break;
-
-            //try again; invert negated power back to a positive value for next attempt
-
-            //pop/restore
-            if (yxChanged) {
-                yxChanged = false;
-                restore(savedYX, yx);
-            }
-
-            if (xyChanged) {
-                xyChanged = false;
-                restore(savedXY, xy);
-            }
-
-            //ready to continue on next permutation
-
+    protected static boolean matchable(final TermContainer X, final TermContainer Y) {
+        /** must have same # subterms */
+        if (X.size() != Y.size()) {
+            return false;
         }
 
-        releaseCopies(savedXY, savedYX);
+        //TODO see if there is a volume or structural constraint that can terminate early here
 
-        //finished: succeeded (+) or depleted power (-)
-        if (!matched)
-            power = fail(power);
-
-        return power;
-    }
-
-    private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
-        originToRevert.clear();
-        originToRevert.putAll(savedCopy);
-    }
-
-    private final Map<Term, Term> acquireCopy(Map<Term, Term> init) {
-        Map<Term, Term> m = mapPool.get();
-        m.putAll(init);
-        return m;
-    }
-
-    private final void releaseCopies(Map<Term, Term> a, Map<Term, Term> b) {
-        final DequePool<Map<Term, Term>> mp = this.mapPool;
-        mp.put(a);
-        mp.put(b);
-    }
-
-
-
-    static final int fail(int powerMagnitude) {
-        return (powerMagnitude > 0) ?
-                -powerMagnitude : Math.min(-1, powerMagnitude);
-    }
-
-
-    /**
-     * a branch for comparing a particular permutation, called from the main next()
-     */
-    final protected int matchSequence(final TermContainer X, final TermContainer Y, int power) {
-
-        final int yLen = Y.size();
-
-        //distribute recursion equally among subterms, though should probably be in proportion to their volumes
-        final int subPower = power / yLen;
-        if (subPower < 1) return fail(power);
-
-
-        boolean phase = false;
-
-        int processed = 0;
-
-        //process non-commutative subterms in phase 1, then phase 2
-        for (int j = 0; j < 2; j++) {
-
-            for (int i = 0; i < yLen; i++) {
-
-                Term xSub = X.term(i);
-
-                if (xSub.isCommutative() == phase) {
-                    int s;
-                    s = match(xSub, Y.term(i), subPower);
-                    power -= (subPower - Math.abs(s));
-                    if (s < 0) {
-                        return fail(power);
-                    }
-                    processed++;
-                }
-            }
-
-            if (processed == yLen) break; //exit early if all have been processed
-            phase = !phase;
+        /** if they are images, they must have same relationIndex */
+        //TODO simplify comparison with Image base class
+        if (X instanceof Image) {
+            if (((Image) X).relationIndex != ((Image) Y).relationIndex)
+                return false;
         }
 
-        return power; //success
+        return true;
     }
+//
+//    /**
+//     * X and Y are of the same operator type and length (arity)
+//     * X's permutations matched against constant Y
+//     */
+//    protected int matchCompound(final Compound X, final Compound Y, int power) {
+//
+//        if (!matchable(X, Y))
+//            return fail(power);
+//
+//        final int xLen = X.size();
+//
+//        if (xLen == 0)
+//            return power;
+//        else if (xLen == 1)
+//            return match(X.term(0), Y.term(0), power);
+//        else { /*if (xLen >= 1) {*/
+//            if (!X.isCommutative()) {
+//                //non-commutative (must all match), or no permutation necessary (0 or 1 arity)
+//                return matchSequence(X.subterms(), Y.subterms(), power);
+//            }
+//            else {
+//                //commutative, try permutations
+//                return matchPermute(X, Y, power);
+//            }
+//        }
+//    }
+//
+//    private final int matchPermute(Compound x, Compound y, int power) {
+//        DequePool<ShuffledPermutations> pp = this.permutationPool;
+//
+//        final ShuffledPermutations perm = pp.get();
+//
+//        final int result = permute(perm, x, y, power);
+//
+//        pp.put(perm);
+//
+//        return result;
+//    }
+//
+//
+////    /**
+////     * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+////     */
+////    static protected boolean queryVarMatch(final Op xVar, final Op yVar) {
+////
+////        final boolean xQuery = (xVar == Op.VAR_QUERY);
+////        final boolean yQuery = (yVar == Op.VAR_QUERY);
+////
+////        return (xQuery ^ yQuery);
+////    }
+//
+//
+//
+//
+//    /**
+//     * @param X the compound which is permuted/shuffled
+//     * @param Y what is being compared against
+//     *
+//     * use with compounds with >= 2 subterms
+//     *
+//     * unoptimized N-ary permute,
+//     *  which requires allocating a temporary array for shuffling */
+//    int permute(final ShuffledPermutations perm, final Compound X, final Compound Y, int power) {
+//
+//
+//        final int len = X.size();
+//
+//        final int minAttempts = len; //heuristic assumption
+//
+//        int permPower = power / minAttempts; //power allocate to each permutation
+//
+//        final int subPower = permPower / len; //power allocated to each permutation's subterm
+//        if (subPower < 1) return fail(power);
+//
+//        perm.restart(len, random);
+//
+//        final Map<Term, Term> xy = this.xy; //local copy on stack
+//        final Map<Term, Term> yx = this.yx; //local copy on stack
+//
+//
+//        //push/save:
+//        Map<Term, Term> savedXY = acquireCopy(xy);
+//        xyChanged = false;
+//        Map<Term, Term> savedYX = acquireCopy(yx);
+//        yxChanged = false;
+//
+//        boolean matched = false;
+//
+//        ShuffleTermVector xv = new ShuffleTermVector(X, perm);
+//
+//        while (perm.hasNext()) {
+//
+//            perm.next();
+//
+//            int sp = matchSequence(xv, Y, permPower);
+//            int cost = permPower - Math.abs(sp);
+//            power -= cost;
+//
+//            matched = sp >= 0;
+//
+//            if (matched || power <= 0) break;
+//
+//            //try again; invert negated power back to a positive value for next attempt
+//
+//            //pop/restore
+//            if (yxChanged) {
+//                yxChanged = false;
+//                restore(savedYX, yx);
+//            }
+//
+//            if (xyChanged) {
+//                xyChanged = false;
+//                restore(savedXY, xy);
+//            }
+//
+//            //ready to continue on next permutation
+//
+//        }
+//
+//        releaseCopies(savedXY, savedYX);
+//
+//        //finished: succeeded (+) or depleted power (-)
+//        if (!matched)
+//            power = fail(power);
+//
+//        return power;
+//    }
+//
+//    private static void restore(Map<Term, Term> savedCopy, Map<Term, Term> originToRevert) {
+//        originToRevert.clear();
+//        originToRevert.putAll(savedCopy);
+//    }
+//
+//    private final Map<Term, Term> acquireCopy(Map<Term, Term> init) {
+//        Map<Term, Term> m = mapPool.get();
+//        m.putAll(init);
+//        return m;
+//    }
+//
+//    private final void releaseCopies(Map<Term, Term> a, Map<Term, Term> b) {
+//        final DequePool<Map<Term, Term>> mp = this.mapPool;
+//        mp.put(a);
+//        mp.put(b);
+//    }
+//
+//
+//
+//    static final int fail(int powerMagnitude) {
+//        return (powerMagnitude > 0) ?
+//                -powerMagnitude : Math.min(-1, powerMagnitude);
+//    }
+//
+//
+//    /**
+//     * a branch for comparing a particular permutation, called from the main next()
+//     */
+//    final protected int matchSequence(final TermContainer X, final TermContainer Y, int power) {
+//
+//        final int yLen = Y.size();
+//
+//        //distribute recursion equally among subterms, though should probably be in proportion to their volumes
+//        final int subPower = power / yLen;
+//        if (subPower < 1) return fail(power);
+//
+//
+//        boolean phase = false;
+//
+//        int processed = 0;
+//
+//        //process non-commutative subterms in phase 1, then phase 2
+//        for (int j = 0; j < 2; j++) {
+//
+//            for (int i = 0; i < yLen; i++) {
+//
+//                Term xSub = X.term(i);
+//
+//                if (xSub.isCommutative() == phase) {
+//                    int s;
+//                    s = match(xSub, Y.term(i), subPower);
+//                    power -= (subPower - Math.abs(s));
+//                    if (s < 0) {
+//                        return fail(power);
+//                    }
+//                    processed++;
+//                }
+//            }
+//
+//            if (processed == yLen) break; //exit early if all have been processed
+//            phase = !phase;
+//        }
+//
+//        return power; //success
+//    }
 
     private static class ShuffledPermutationsDequePool extends DequePool<ShuffledPermutations> {
         public ShuffledPermutationsDequePool() {
