@@ -100,7 +100,7 @@ public class FindSubst extends SubstFrame {
 
         do {
 
-            boolean pop = false, advance = false; //opcodes
+            boolean pop = false, advance = false, down = false;
             TermContainer pushx = cx, pushy = cy;
 
 
@@ -173,11 +173,10 @@ public class FindSubst extends SubstFrame {
                                     advance = true;
                                 }
                             } else {
-                                if ((xOp == yOp) && (tx instanceof Compound)) {
+                                if ((pos > -1) && (xOp == yOp) && (tx instanceof Compound)) {
 
                                     if (matchable(tx, ty)) {
-                                        pushx = ((Compound) tx).subterms();
-                                        pushy = ((Compound) ty).subterms();
+                                        down = true;
                                         advance = true;
                                     }
 
@@ -209,18 +208,28 @@ public class FindSubst extends SubstFrame {
                             }
                             else {
                                 //fail
-                                //pop = true;
+                                advance = false;
+                                pop = true;
                             }
                         }
-                        else {
-                            //pop = true;
+
+                    }
+
+                        if (pos == -1) {
+                            //descend into
+                            down = true;
                         }
-                    }
-                    else {
-                        return false; //top level inequality/unmatched
-                    }
+                        else {
+                            if (!(tx instanceof Compound)) {
+                                return false; //inequality/unmatched with no recourse
+                            }
+                            //return false;
+                        }
+
                 }
             }
+
+
 
             if (pop) {
                 if (frame == this)
@@ -231,9 +240,16 @@ public class FindSubst extends SubstFrame {
 //                    return true; //back at top level
 
 
-                pos = last.pos;
-                pushx = last.compx; pushy = last.compy;
+                if (last.compx!=pushx || last.compy!=pushy){
+                    pos = last.pos;
+                    pushx = last.compx; pushy = last.compy;
+                }
 
+                if (advance) {
+                    //replace last's xy/yx with frame's
+                    last.xy.clear(); last.xy.putAll(frame.xy);
+                    last.yx.clear(); last.yx.putAll(frame.yx);
+                }
                 if (pos >= pushx.size())
                     return true;
 
@@ -247,9 +263,9 @@ public class FindSubst extends SubstFrame {
 
                 int ps = pushx.size();
 
-                if (pushx != cx || pushy != cy) {
+                if (down) {
 
-                    if (pushx instanceof Compound && ps > 1) {
+                    if (ps > 1) {
 
                         //push: descend into a compound's subterms
                         SubstFrame save = new SubstFrame(frame);
@@ -275,7 +291,6 @@ public class FindSubst extends SubstFrame {
             }
 
             pos++;
-
             cx = pushx;
             cy = pushy;
 

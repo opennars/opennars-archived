@@ -468,8 +468,8 @@ public class UnificationTest  {
     }
     @Test public void patternLongSeq()  {
         test(Op.VAR_PATTERN,
-                "(a,b,c,d,e,f,g,h,j)",
-                "(x,b,c,d,e,f,g,h,j)",
+                "(a,b,c)",
+                "(x,b,c)",
                 false);
     }
     @Test public void patternLongSeq2()  {
