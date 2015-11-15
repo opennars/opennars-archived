@@ -20,61 +20,21 @@ and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
 returned indicates success value to the callee.  */
-public class FindSubst {
+public class FindSubst extends SubstFrame {
 
     public final Op type;
-
-    /** X var -> Y term mapping */
-    public final Map<Term, Term> xy;
-    boolean xyChanged = false;
-
-    /** Y var -> X term mapping */
-    public final Map<Term, Term> yx;
-    boolean yxChanged = false;
+//
+//    /** X var -> Y term mapping */
+//    public final Map<Term, Term> xy;
+//
+//    /** Y var -> X term mapping */
+//    public final Map<Term, Term> yx;
 
     private final Random random;
 
-    final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
-    final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
+    //final DequePool<ShuffledPermutations> permutationPool = new ShuffledPermutationsDequePool();
+    //final DequePool<Map<Term,Term>> mapPool = new MapDequePool();
 
-    final DequePool<Frame> frames = new DequePool<Frame>(1) {
-        @Override public Frame create() { return new Frame(); }
-    };
-
-    static class Frame {
-        Map<Term, Term> xy;
-        Map<Term, Term> yx;
-        ShuffledPermutations perm;
-
-        TermContainer compx, compy;
-        //int pos;
-
-        //Term current
-        Frame parent;
-        //public int len; //terms in the current compound pair
-        public int limit;
-        public int pos;
-
-        @Override
-        public String toString() {
-            return "Frame{" +
-                    //", xy=" + xy +
-                    //", yx=" + yx +
-                    ", cx=" + compx +
-                    ", cy=" + compy +
-                    //", parent=" + parent +
-                    //", limit=" + limit +
-                    ", pos=" + pos +
-                    ", perm=" + perm +
-                    '}';
-        }
-
-        public int shuffledPos(int pos) {
-            ShuffledPermutations p = this.perm;
-            if (p == null) return pos;
-            return p.get(pos);
-        }
-    }
 
     public FindSubst(Op type, NAR nar) {
         this(type, nar.memory);
@@ -93,9 +53,8 @@ public class FindSubst {
     }
 
     public FindSubst(Op type, Map<Term, Term> xy, Map<Term, Term> yx, Random random) {
+        super(xy, yx);
         this.type = type;
-        this.xy = xy;
-        this.yx = yx;
         this.random = random;
     }
 
@@ -125,12 +84,15 @@ public class FindSubst {
       */
     public final boolean next(final Term _x, final Term _y, final int startPower) {
 
-        Frame frame = null;
+        SubstFrame frame = this;
 
         //current compound
         TermContainer cx = _x, cy = _y;
 
         final Op type = this.type;
+
+        compx = _x;
+        compy = _y;
 
         int limit = startPower, time = 0;
 
@@ -148,10 +110,11 @@ public class FindSubst {
                 //compare subterm
                 int cs = cx.size();
                 if (pos >= cs) {
+                    advance = true;
                     pop = true; //end of compound
                 }
                 else {
-                    tx = cx.term(frame!=null ? frame.shuffledPos(pos) : pos); //if shuffling, run cx's pos through shuffle
+                    tx = cx.term(frame!=this ? frame.shuffledPos(pos) : pos); //if shuffling, run cx's pos through shuffle
                     ty = cy.term(pos);
                 }
             }
@@ -171,7 +134,7 @@ public class FindSubst {
 
                 if (tx.equals(ty)) {
 
-                    if (frame == null) return true;//break;
+                    //if (frame == this) return true;//break;
                     advance = true;
 
                 } else {
@@ -185,7 +148,7 @@ public class FindSubst {
                         if (xSubst != null) {
                             pushx = xSubst;
                         } else {
-                            nextVarX((Variable) tx, (Term) ty);
+                            frame.nextVarX(type, (Variable) tx, (Term) ty);
                         }
 
                         advance = true;
@@ -199,14 +162,14 @@ public class FindSubst {
                             if (ySubst != null) {
                                 pushy = ySubst;
                             } else {
-                                putVarY((Term) tx, (Variable) ty);
+                                frame.putVarY((Term) tx, (Variable) ty);
                             }
                             advance = true;
 
                         } else {
                             if (xOp.isVar()) {
                                 if (yOp.isVar()) {
-                                    nextVarX((Variable) tx, (Term) ty);
+                                    frame.nextVarX(type, (Variable) tx, (Term) ty);
                                     advance = true;
                                 }
                             } else {
@@ -215,6 +178,7 @@ public class FindSubst {
                                     if (matchable(tx, ty)) {
                                         pushx = ((Compound) tx).subterms();
                                         pushy = ((Compound) ty).subterms();
+                                        advance = true;
                                     }
 
 
@@ -227,16 +191,20 @@ public class FindSubst {
                 }
 
                 if (advance) {
-                    pos++;
-                }
-                else {
-                    if (frame!=null) {
+                    //continue
+
+
+                } else {
+                    //failure at this level
+
+                    if (frame!=this) {
                         ShuffledPermutations perm = frame.perm;
                         if (perm != null) {
                             if (perm.hasNext()) {
                                 //restart on next permutation
                                 perm.next();
-                                pos = 0;
+                                pos = -1;
+
                                 //continue;
                             }
                             else {
@@ -244,37 +212,34 @@ public class FindSubst {
                                 //pop = true;
                             }
                         }
+                        else {
+                            //pop = true;
+                        }
                     }
-
-
-                    //pop = true; //failure at this level
+                    else {
+                        return false; //top level inequality/unmatched
+                    }
                 }
             }
 
-
-
             if (pop) {
-                if (frame == null)
-                    return true;
+                if (frame == this)
+                    return advance;
 
-                Frame last = frame.parent;
-                if (last == null)
-                    return true;
+                SubstFrame last = frame.parent;
+//                if (last == this)
+//                    return true; //back at top level
 
-                pos = last.pos + 1;
+
+                pos = last.pos;
                 pushx = last.compx; pushy = last.compy;
 
                 if (pos >= pushx.size())
                     return true;
 
                 limit = frame.limit;
-                if (frame.perm!=null) {
-                    permutationPool.put(frame.perm);
-                    frame.perm = null;
-                }
-                frames.put(frame);
-
                 frame = last;
+
                 //advance = true;
 
             }
@@ -284,27 +249,32 @@ public class FindSubst {
 
                 if (pushx != cx || pushy != cy) {
 
-                    if (ps > 1) {
+                    if (pushx instanceof Compound && ps > 1) {
+
                         //push: descend into a compound's subterms
-                        Frame save = frames.get();
-                        save.parent = frame; //may be null
+                        SubstFrame save = new SubstFrame(frame);
                         save.compx = cx;
                         save.compy = cy;
                         save.pos = pos;
                         save.limit = limit;
-                        if (cx instanceof Term &&  ((Term)cx).isCommutative()) {
-                            save.perm = permutationPool.get();
+                        if (cx instanceof Term && ((Term) cx).isCommutative()) {
+                            save.perm = new ShuffledPermutations();
                             save.perm.restart(ps, random);
+                        } else {
+                            //does this happen
                         }
 
                         frame = save;
 
                         limit /= ps; //divide equally by # subterms
-                    }
 
-                    pos = 0; //start at beginning of subterm
+                    }
+                    pos = -1; //start at beginning of subterm
+
                 }
             }
+
+            pos++;
 
             cx = pushx;
             cy = pushy;
@@ -312,10 +282,7 @@ public class FindSubst {
         } while (time++ < limit);
 
         return false;
-        /*
-        System.out.println((startPower - Math.abs(power)) + " " +
-                (endPower >= 0) + " " + x + " " + y + " " + power + " .. " + endPower);
-        */
+
 
 
     }
@@ -402,15 +369,15 @@ public class FindSubst {
 //        System.out.println();
 //    }
 //
-//    /** compare variable type to determine if matchable */
-    private final boolean matchable(Op xVarOp/*, Op yOp*/) {
-        //if (xVarOp == Op.VAR_PATTERN) return true;
-//        if (xVarOp == Op.VAR_QUERY) {
-//            return yOp!=Op.VAR_QUERY; //dep or indep. it will not be the same query variable because equality has already been tested
-//        }
-
-        return (xVarOp == type);
-    }
+////    /** compare variable type to determine if matchable */
+//    static final boolean matchable(char type, Op xVarOp/*, Op yOp*/) {
+//        //if (xVarOp == Op.VAR_PATTERN) return true;
+////        if (xVarOp == Op.VAR_QUERY) {
+////            return yOp!=Op.VAR_QUERY; //dep or indep. it will not be the same query variable because equality has already been tested
+////        }
+//
+//        return (xVarOp == type);
+//    }
 //
 ////    /** cost subtracted in the re-entry method: next(x, y, power) */
 ////    static final int costFunction(final Compound x, final Compound y) {
@@ -421,82 +388,6 @@ public class FindSubst {
 //
 //
 //
-    final void nextVarX(final Variable xVar, final Term y) {
-        final Op xOp = xVar.op();
-
-        //boolean m = false;
-
-        if (matchable(xOp/*, yOp*/)) {
-            putVarX(xVar, y);
-        }
-        else {
-            final Op yOp = y.op();
-            if (yOp == xOp) {
-                 putCommon(xVar, (Variable) y);
-            }
-        }
-
-        //return power; //m ? power : fail(power);
-
-//
-//            if(type == Op.VAR_PATTERN && xOp == Op.VAR_PATTERN) {
-//                return putVarX(xVar, yVar);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
-//            }
-//
-//            //variables can and need sometimes to change name in order to unify
-//            if(xOp == yOp) {  //and if its same op, its indeed variable renaming
-//                return putCommon(xVar, yVar);
-//            }
-//
-//        } else {
-//            yVar = null;
-//        }
-
-    }
-
-    /**
-     * elimination
-     */
-    private final void putVarY(final Term x, final Variable yVar) {
-        /*if (yVar.op()!=type) {
-            throw new RuntimeException("tried to set invalid map: " + yVar + "->" + x + " but type=" + type);
-        }*/
-        yxPut(yVar, x);
-        if (yVar instanceof CommonVariable) {
-            xyPut(yVar, x);
-        }
-        //return true;
-    }
-
-    /**
-     * elimination
-     */
-    private final void putVarX(final Variable xVar, final Term y) {
-        /*if (xVar.op()!=type) {
-            throw new RuntimeException("tried to set invalid map: " + xVar + "->" + y + " but type=" + type);
-        }*/
-        xyPut(xVar, y);
-        if (xVar instanceof CommonVariable) {
-            yxPut(xVar, y);
-        }
-        //return true;
-    }
-
-
-    protected final void putCommon(final Variable x, final Variable y) {
-        final Variable commonVar = CommonVariable.make(x, y);
-        xyPut(x, commonVar);
-        yxPut(y, commonVar);
-        //return true;
-    }
-
-    private final void yxPut(Variable y, Term x) {
-        yxChanged|= (yx.put(y, x)!=x);
-    }
-
-    private final void xyPut(Variable x, Term y) {
-        xyChanged|= (xy.put(x, y)!=y);
-    }
 
     protected static boolean matchable(final TermContainer X, final TermContainer Y) {
         /** must have same # subterms */
