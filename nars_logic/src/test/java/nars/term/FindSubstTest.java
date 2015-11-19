@@ -1,8 +1,8 @@
-package nars.term.transform;
+package nars.term;
 
 import nars.$;
 import nars.Op;
-import nars.term.Term;
+import nars.term.transform.FindSubst;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 

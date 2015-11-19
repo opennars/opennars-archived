@@ -1,8 +1,6 @@
-package nars.term.compile;
+package nars.nar;
 
 import nars.NAR;
-import nars.nar.Default2;
-import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
 import org.junit.Test;

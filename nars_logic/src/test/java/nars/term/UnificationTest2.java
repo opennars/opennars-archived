@@ -1,13 +1,10 @@
-package nars.nal;
+package nars.term;
 
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.nar.Terminal;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.term.transform.MatchSubst;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -71,7 +68,7 @@ public class UnificationTest2 extends UnificationTest {
 
         MatchSubst.next(rng, p, t2, power, sub-> {
 
-            foundAny[0] = true;
+            foundAny[0] = sub.match();
 
             boolean subbed = true;
 
@@ -91,7 +88,7 @@ public class UnificationTest2 extends UnificationTest {
                 assertTrue( (n1) <= (sub.frame.xy.size()));
             }
 
-        });
+        }, Global.newHashMap(16), Global.newHashMap(16));
 
         assertEquals(shouldSub, foundAny[0]);
 

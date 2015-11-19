@@ -5,6 +5,8 @@ import nars.bag.impl.TrieCacheBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
+import nars.nal.Deriver;
+import nars.nal.SimpleDeriver;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
@@ -30,6 +32,10 @@ public class Terminal extends Default {
                     new RealtimeMSClock(),
                     new TrieCacheBag()
         ), 0,0,0,0);
+    }
+
+    @Override protected Deriver getDeriver() {
+        return SimpleDeriver.nullDeriver;
     }
 
     @Override

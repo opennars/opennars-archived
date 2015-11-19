@@ -1,17 +1,12 @@
-package nars.nal;
+package nars.term;
 
 import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
-import nars.nar.Default;
 import nars.nar.Terminal;
-import nars.term.Compound;
-import nars.term.Term;
 import nars.term.transform.FindSubst;
-import nars.util.graph.TermLinkGraph;
-import nars.util.meter.RuleTest;
 import nars.util.meter.TestNAR;
 import org.junit.Before;
 import org.junit.Test;
@@ -455,16 +450,6 @@ public class UnificationTest  {
                 false);
     }
 
-    @Test
-    public void posNegQuestion() {
-        //((p1, (--,p1), task("?")), (p1, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
-        //  ((a:b, (--,a:b), task("?")), (a:b, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
-        new RuleTest(
-                "a:b?", "(--,a:b).",
-                "a:b.",
-                0,0,0.9f,0.9f)
-                .run();
-    }
 
     @Test public void patternSimilarity1()  {
         test(Op.VAR_PATTERN,
@@ -507,7 +492,7 @@ public class UnificationTest  {
 
     void testIntroduction(String subj, Op relation, String pred, String belief, String concl) {
 
-        new TestNAR(new Default().nal(6))
+        new TestNAR(new Terminal().nal(6))
                 .believe("<" + subj + " " + relation + " " + pred + ">")
                 .believe(belief)
                 .mustBelieve(16, concl, 0.81f)
@@ -517,18 +502,20 @@ public class UnificationTest  {
 
     }
 
-    @Test
-    public void testIndVarConnectivity() {
-
-        String c = "<<$x --> bird> ==> <$x --> animal>>.";
-
-        NAR n = new Default().nal(6);
-        n.input(c);
-        n.frame(1);
-
-        TermLinkGraph g = new TermLinkGraph(n);
-        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
-
+    @Test public void nal4_1111() {
+        test(Op.VAR_PATTERN,
+                "(<(%1, %2) --> z>, <%1 --> %4>)",
+                "(<(a, b) --> z>, <a--> c>)",
+                true);
     }
+
+    @Test public void nal4QueryVar() {
+        test(Op.VAR_PATTERN,
+                "(<(%1, %2) --> ?3>, <%1 --> %4>)",
+                "(<(a, b) --> ?1>, <a--> c>)",
+                true);
+    }
+
+
 
 }

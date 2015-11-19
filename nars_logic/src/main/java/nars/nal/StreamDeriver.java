@@ -10,6 +10,10 @@ import java.util.stream.Stream;
  * */
 public class StreamDeriver extends SimpleDeriver {
 
+    public StreamDeriver(DerivationRules rules) {
+        super(rules);
+    }
+
     public final Stream<Task> run(RuleMatch m, final List<TaskRule> u, final int maxNAL) {
         return run(m, u.stream(), maxNAL);
     }

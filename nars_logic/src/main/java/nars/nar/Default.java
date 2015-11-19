@@ -404,7 +404,7 @@ public class Default extends NAR {
     }
 
     protected Deriver getDeriver() {
-        return SimpleDeriver.standardDeriver;
+        return SimpleDeriver.getStandardDeriver();
     }
 
     public NAR forEachConcept(Consumer<Concept> recip) {

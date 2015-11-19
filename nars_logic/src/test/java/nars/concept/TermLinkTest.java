@@ -259,6 +259,20 @@ public class TermLinkTest {
 
     }
 
+    @Test
+    public void testIndVarConnectivity() {
+
+        String c = "<<$x --> bird> ==> <$x --> animal>>.";
+
+        NAR n = new Default().nal(6);
+        n.input(c);
+        n.frame(1);
+
+        TermLinkGraph g = new TermLinkGraph(n);
+        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
+
+    }
+
 //    @Test
 //    public void termlinksSetAndElement() {
 //        //from nal6.4

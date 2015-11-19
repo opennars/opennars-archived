@@ -1,9 +1,8 @@
-package nars.term;
+package nars.nar;
 
 
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default;
 import nars.util.meter.EventCount;
 import org.junit.Test;
 

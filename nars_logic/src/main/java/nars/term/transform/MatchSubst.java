@@ -78,6 +78,20 @@ public class MatchSubst {
             return "Term{" +  a +  '}';
         }
     }
+
+    static final MatchOp MatchVarQuery = new MatchOp() {
+
+        @Override
+        public boolean match(Term f) {
+            return f.op() == Op.VAR_QUERY;
+        }
+
+        @Override
+        public String toString() {
+            return "MatchVarQuery";
+        }
+    };
+
     public static final class TermSizeEquals extends MatchOp {
         public final int size;
 
@@ -354,9 +368,12 @@ public class MatchSubst {
     /** represents the "program" that the matcher will execute */
     public static class TermPattern {
 
+        @Deprecated public final Term pattern; //technically this isnt necessar, just temporary for debug
         final PatternOp[] code;
 
         public TermPattern(Op type, Term pattern) {
+
+            this.pattern = pattern;
 
             List<PatternOp> code = Global.newArrayList();
 
@@ -432,7 +449,12 @@ public class MatchSubst {
                 return;
             }
 
-            code.add(new MatchTerm(t));
+            if (t.op() == Op.VAR_QUERY) {
+                code.add(MatchVarQuery);
+            }
+            else {
+                code.add(new MatchTerm(t));
+            }
 
 
             //throw new RuntimeException("unknown compile behavior for term: " + t);
@@ -450,7 +472,7 @@ public class MatchSubst {
 
     public static class Frame {
 
-        boolean match = true;
+        public boolean match = true;
 
 
         /** X var -> Y term mapping */
@@ -471,19 +493,13 @@ public class MatchSubst {
         public Frame prev = null; //pointer to previous frame that should be current after pop
         private Frame pending = null; //pointer to next frame that should be current after push
 
-        Frame(Random rng) {
+
+        public Frame(Random rng, Term root, Map<Term, Term> xy, Map<Term, Term> yx) {
             this.rng = rng;
-
-            term = null;
-            perm = null;
-            xy = Global.newHashMap();
-            yx = Global.newHashMap();
-        }
-
-        public Frame(Random rng, Term root) {
-            this(rng);
             this.parent = null;
             this.term = root;
+            this.xy = xy;
+            this.yx = yx;
         }
 
         Frame(Random rng, Compound parent, Map<Term, Term> xyToClone, Map<Term, Term> yxToClone, int ip) {
@@ -627,8 +643,8 @@ public class MatchSubst {
 
         final public Consumer<State> onSuccess;
 
-        public State(Random rng, Term term, Consumer<State> onSuccess) {
-            this.frame = new Frame(rng, term);
+        public State(Random rng, Term term, Consumer<State> onSuccess, Map<Term, Term> xy, Map<Term, Term> yx) {
+            this.frame = new Frame(rng, term, xy, yx);
             this.onSuccess = onSuccess;
         }
 
@@ -637,24 +653,32 @@ public class MatchSubst {
             return "State" + frame;
         }
 
+        public boolean match() {
+            return frame.match &&
+                    frame.prev == null; //terminated at lowest level
+        }
     }
 
 
+
+    public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onResult) {
+        next(rng, type, pattern, y, power, onResult, Global.newHashMap(), Global.newHashMap());
+    }
 
     /** note: it's probably better to use the other method with a precompiled pattern */
-    public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onSuccess) {
+    public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onResult, Map<Term, Term> xy, Map<Term, Term> yx) {
         TermPattern p = new TermPattern(type, pattern);
         //System.out.println(pattern + "\n" + p);
-        next(rng, p, y, power, onSuccess);
+        next(rng, p, y, power, onResult, xy, yx);
     }
 
-    /** find substitutions, returning the success state.
+    /** find substitutions, returning the onResult state.
      * this method should be used only from the outside.
      * all internal purposes should use the find() method
      * in order to manage decrease in power correctly */
-    public static final boolean next(Random rng, final TermPattern x, final Term y, int power, Consumer<State> success) {
+    public static final boolean next(Random rng, final TermPattern x, final Term y, int power, Consumer<State> onResult, Map<Term, Term> xy, Map<Term, Term> yx) {
 
-        State s = new State(rng, y, success);
+        State s = new State(rng, y, onResult, xy, yx);
 
         final PatternOp code[] = x.code;
         int ip = s.frame.ip; //instruction pointer
@@ -694,11 +718,9 @@ public class MatchSubst {
 
             s.frame.ip = ip; //store ip
 
-        } while (ip >= 0);
+        } while ((ip >= 0) && (power-- > 0));
 
-        if (s.frame.match) {
-            success.accept(s);
-        }
+        onResult.accept(s);
 
         return s.frame.match;
     }
@@ -710,8 +732,7 @@ public class MatchSubst {
             100,
             (s) -> {
                 System.out.println(s);
-            }
-        );
+            });
     }
 
 }

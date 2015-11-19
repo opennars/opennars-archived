@@ -19,12 +19,10 @@ package nars.term;
 import nars.Global;
 import nars.NAR;
 import nars.Narsese;
-import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal4.Image;
 import nars.nal.nal8.Operation;
-import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
 import org.junit.Test;
@@ -48,7 +46,7 @@ public class TermTest {
 
     protected void assertEquivalent(String term1String, String term2String) {
         try {
-            NAR n = new Default();
+            NAR n = new Terminal();
 
             Term term1 = n.term(term1String);
             Term term2 = n.term(term2String);
@@ -67,7 +65,7 @@ public class TermTest {
 
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
@@ -92,7 +90,7 @@ public class TermTest {
 
     @Test
     public void testConjunctionTreeSet() throws Narsese.NarseseException {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
 
         //these 2 representations are equal, after natural ordering
@@ -148,7 +146,7 @@ public class TermTest {
 
     @Test
     public void testUnconceptualizedTermInstancing() throws Narsese.NarseseException {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         String term1String = "<a --> b>";
         Term term1 = n.term(term1String);
@@ -165,44 +163,12 @@ public class TermTest {
 
     }
 
-    @Test
-    public void testConceptInstancing() throws Narsese.NarseseException {
-        Default n = new Default();
-
-        String statement1 = "<a --> b>.";
-
-        Term a = n.term("a");
-        assertTrue(a != null);
-        Term a1 = n.term("a");
-        assertTrue(a.equals(a1));
-
-        n.input(statement1);
-        n.frame(4);
-
-        n.input(" <a  --> b>.  ");
-        n.frame(1);
-        n.input(" <a--> b>.  ");
-        n.frame(1);
-
-        String statement2 = "<a --> c>.";
-        n.input(statement2);
-        n.frame(4);
-
-        Term a2 = n.term("a");
-        assertTrue(a2 != null);
-
-        Concept ca = n.concept(a2);
-        assertTrue(ca != null);
-
-        assertEquals(true, n.core.active.size() > 0);
-
-    }
 
 //    @Test
 //    public void testEscaping() {
 //        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
 //
-////        NAR n = new Default().build();
+////        NAR n = new Terminal().build();
 ////        n.addInput("<a --> \"b c\">.");
 ////        n.step(1);
 ////        n.finish(1);
@@ -232,7 +198,7 @@ public class TermTest {
     public void invalidTermIndep() {
 
         String t = "<$1-->(~,{place4},$1)>";
-        NAR n = new Default();
+        NAR n = new Terminal();
 
 
         try {
@@ -285,7 +251,7 @@ public class TermTest {
     @Test
     public void testParseOperationInFunctionalForm() {
 
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         try {
             Term x = n.term("wonder(a,b)");
@@ -325,7 +291,7 @@ public class TermTest {
     }
 
 //    public void nullCachedName(String term) {
-//        NAR n = new Default();
+//        NAR n = new Terminal();
 //        n.input(term + ".");
 //        n.run(1);
 //        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).getTerm()).nameCached());
@@ -351,7 +317,7 @@ public class TermTest {
 
     @Test
     public void termEqualityWithQueryVariables() {
-        NAR n = new Default();
+        NAR n = new Terminal();
         String a = "<?1-->bird>";
         assertEquals(n.term(a), n.term(a));
         String b = "<bird-->?1>";
@@ -400,7 +366,7 @@ public class TermTest {
     }
 
     @Test public void termEqualityWithMixedVariables() {
-        NAR n = new Default();
+        NAR n = new Terminal();
         String s = "(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)";
         Term a = n.term(s);
         Term b = n.term(s);
@@ -414,7 +380,7 @@ public class TermTest {
     }
     @Test
     public void validStatement() {
-        NAR n = new Default();
+        NAR n = new Terminal();
         Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
         assertFalse(Statement.invalidStatement((Inheritance) t));
     }
@@ -450,7 +416,7 @@ public class TermTest {
 
     public void statementHash(String a, String b) {
 
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         Term ta = n.term(a);
         Term tb = n.term(b);
@@ -464,7 +430,7 @@ public class TermTest {
 
     @Test
     public void testTermComplexityMass() {
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         testTermComplexityMass(n, "x", 1, 1);
 
@@ -513,7 +479,7 @@ public class TermTest {
     @Test
     public void testSubtermsVector() {
 
-        NAR n = new Default();
+        NAR n = new Terminal();
 
         Term a3 = n.term("c");
 

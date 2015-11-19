@@ -48,19 +48,26 @@ public class SimpleDeriver extends Deriver  {
         );
     }
 
-    static void loadRules() {
-        try {
-            SimpleDeriver.standard = new DerivationRules();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    public static final SimpleDeriver nullDeriver = new SimpleDeriver(new DerivationRules(new String[] { }));
+    public static SimpleDeriver standardDeriver = null;
+
+    public static Deriver getStandardDeriver() {
+        if (standardDeriver == null) {
+            try {
+                SimpleDeriver.standard = new DerivationRules();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return standardDeriver = new SimpleDeriver(SimpleDeriver.standard);
         }
+        return standardDeriver;
+
     }
 
-    public static final SimpleDeriver standardDeriver;
-
     static {
-        loadRules();
-        standardDeriver = new SimpleDeriver(SimpleDeriver.standard);
+
+
     }
 
     /**
@@ -70,9 +77,7 @@ public class SimpleDeriver extends Deriver  {
     protected final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
     protected final EnumMap<Op, List<TaskRule>> beliefTypeMap;
 
-    public SimpleDeriver() {
-        this(SimpleDeriver.standard);
-    }
+
 
     public SimpleDeriver(DerivationRules rules) {
         super(rules);
@@ -206,6 +211,7 @@ public class SimpleDeriver extends Deriver  {
             }
         }
     }
+
 
 
 }

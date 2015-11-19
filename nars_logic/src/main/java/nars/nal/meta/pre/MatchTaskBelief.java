@@ -1,13 +1,16 @@
 package nars.nal.meta.pre;
 
+import nars.Op;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
+import nars.term.transform.MatchSubst;
 
 
 public class MatchTaskBelief extends PreCondition {
 
     public final TaskBeliefPair pattern;
+    public final MatchSubst.TermPattern compiled;
 
     final String id;
 
@@ -32,6 +35,8 @@ public class MatchTaskBelief extends PreCondition {
                         pStructure) + " " + pattern
         );*/
 
+        compiled = new MatchSubst.TermPattern(Op.VAR_PATTERN, pattern);
+
         this.id = getClass().getSimpleName() + '[' + pattern.toStringCompact() + ']';
 
     }
@@ -41,16 +46,15 @@ public class MatchTaskBelief extends PreCondition {
 
         final TaskBeliefPair tb = m.taskBelief;
 
-        final TaskBeliefPair pattern = this.pattern;
+        //final TaskBeliefPair pattern = this.pattern;
 
         //if (!tb.substitutesMayExistParanoid(pattern)) {
-        if (!tb.substitutesMayExistFast(pattern)) {
-            return false;
-        }
-
+//        if (!tb.substitutesMayExistFast(pattern)) {
+//            return false;
+//        }
 
         //TODO parameterize the power by budget
-        return m.next(pattern, tb, m.unificationPower);
+        return m.next(compiled, tb, m.unificationPower);
     }
 
     @Override

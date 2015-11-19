@@ -1,9 +1,9 @@
-package nars.term.transform;
+package nars.term;
 
 import nars.Global;
 import nars.NAR;
 import nars.nar.Terminal;
-import nars.term.Term;
+import nars.term.transform.Substitution;
 import org.junit.Test;
 
 import java.util.Map;

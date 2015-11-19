@@ -1,7 +1,7 @@
 package nars.term;
 
 import nars.NAR;
-import nars.nar.Default;
+import nars.nar.Terminal;
 import org.junit.Test;
 import org.magnos.trie.Trie;
 import org.magnos.trie.TrieMatch;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TermTrieNodeTest  {
 
-    final static NAR n = new Default();
+    final static NAR n = new Terminal();
 
     static Term t(String s) { return n.term(s); }
 

@@ -2,6 +2,7 @@ package nars.nal.meta;
 
 import nars.NAR;
 import nars.nar.Default;
+import nars.util.meter.RuleTest;
 import org.junit.Test;
 
 /**
@@ -59,4 +60,15 @@ public class BasicRulesTest {
 
     }
 
+
+    @Test
+    public void posNegQuestion() {
+        //((p1, (--,p1), task("?")), (p1, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
+        //  ((a:b, (--,a:b), task("?")), (a:b, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
+        new RuleTest(
+                "a:b?", "(--,a:b).",
+                "a:b.",
+                0,0,0.9f,0.9f)
+                .run();
+    }
 }
