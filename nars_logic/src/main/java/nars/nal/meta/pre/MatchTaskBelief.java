@@ -48,6 +48,7 @@ public class MatchTaskBelief extends PreCondition {
             return false;
         }
 
+
         //TODO parameterize the power by budget
         return m.next(pattern, tb, m.unificationPower);
     }

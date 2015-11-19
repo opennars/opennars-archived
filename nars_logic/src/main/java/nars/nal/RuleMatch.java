@@ -16,7 +16,7 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.term.transform.FindSubst;
+import nars.term.transform.MatchSubst;
 import nars.term.transform.Substitution;
 import nars.truth.Stamp;
 import nars.truth.Truth;
@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * rule matching context, re-recyclable as thread local
  */
-public class RuleMatch extends FindSubst {
+public class RuleMatch  {
 
     /** thread-specific pool of RuleMatchers
         this pool is local to this deriver */
@@ -39,6 +39,9 @@ public class RuleMatch extends FindSubst {
         //TODO use the memory's RNG for complete deterministic reproducibility
         return new RuleMatch(new XorShift1024StarRandom(1));
     });
+
+    private final Random random;
+
     /**
      * if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset
      */
@@ -72,6 +75,8 @@ public class RuleMatch extends FindSubst {
     public final Map<Term, Term> prevXY = Global.newHashMap(0);
     public final Map<Term, Term> prevYX = Global.newHashMap(0);
     public int unificationPower;
+    public Map<Term, Term> xy;
+    private Map<Term, Term> yx;
 
     @Override
     public String toString() {
@@ -79,10 +84,7 @@ public class RuleMatch extends FindSubst {
     }
 
     public RuleMatch(Random random) {
-        super(Op.VAR_PATTERN,
-                Global.newHashMap(0),
-                Global.newHashMap(0),
-                random);
+        this.random = random;
     }
 
     /**
@@ -113,14 +115,13 @@ public class RuleMatch extends FindSubst {
 //    }
 
 
+
     /**
      * clear and re-use with a next rule
      */
     public final void start(TaskRule nextRule) {
 
         this.prevRule = this.rule;
-
-        clear();
 
         occurence_shift = Stamp.TIMELESS;
 
@@ -472,6 +473,22 @@ public class RuleMatch extends FindSubst {
             oc = 0;
         oc += cyclesDelta;
         this.occurence_shift = oc;
+    }
+
+    public boolean next(TaskBeliefPair pattern, TaskBeliefPair tb, int unificationPower) {
+
+        final MatchSubst.State[] state = {null};
+        MatchSubst.next(random, Op.VAR_PATTERN, pattern, tb, unificationPower, s -> {
+            state[0] = s;
+            //s.finish = true //TODO when multiple results, this is how to terminate early
+        });
+        if (state[0]!=null) {
+            MatchSubst.State s = state[0];
+            this.xy = s.frame.xy;
+            this.yx = s.frame.yx;
+            return true;
+        }
+        return false;
     }
 
 //    public void run(TaskRule rule, Stream.Builder<Task> stream) {

@@ -556,8 +556,10 @@ public class MatchSubst {
             Frame inner = this.pending = new Frame(outer);
             this.pending.prev = outer;
 
+            /*
             System.out.println("PUSH  ->" + outer.term + " IN " + outer.parent);
             System.out.println("PUSH  <-" + inner.term + " IN " + inner.parent + "\n");
+            */
         }
 
         /** pops and returns the parent term */
@@ -578,8 +580,10 @@ public class MatchSubst {
                 outer.yx.putAll(inner.yx);
             }
 
+            /*
             System.out.println("POP  <- " + inner.term + " IN " + inner.parent);
             System.out.println("POP  -> " + outer.term + " IN " + outer.parent + "\n");
+            */
 
             outer.ip = inner.ip;
 
@@ -618,10 +622,6 @@ public class MatchSubst {
 
     public static class State /* extends Frame? */ {
 
-        /** match state */
-
-        final Deque<Frame> stack = new ArrayDeque();
-
         /** current frame */
         public Frame frame;
 
@@ -639,10 +639,12 @@ public class MatchSubst {
 
     }
 
+
+
+    /** note: it's probably better to use the other method with a precompiled pattern */
     public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onSuccess) {
         TermPattern p = new TermPattern(type, pattern);
-        System.out.println(pattern + "\n" + p);
-
+        //System.out.println(pattern + "\n" + p);
         next(rng, p, y, power, onSuccess);
     }
 
@@ -661,7 +663,7 @@ public class MatchSubst {
 
             PatternOp o = code[ip];
 
-            System.out.println(ip + "\t" + o);
+            //System.out.println(ip + "\t" + o);
 
             final Frame current = s.frame;
 
@@ -676,7 +678,7 @@ public class MatchSubst {
 
             ip = s.frame.ip; //read ip
 
-            System.out.println("\t\t" + s);
+            //System.out.println("\t\t" + s);
 
             switch (result) {
                 case 0: ip = -1; break; //failure
