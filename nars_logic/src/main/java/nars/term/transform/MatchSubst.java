@@ -12,6 +12,7 @@ import nars.util.data.random.XorShift1024StarRandom;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 
 import static nars.$.$;
 
@@ -370,9 +371,28 @@ public class MatchSubst {
 
         @Deprecated public final Term pattern; //technically this isnt necessar, just temporary for debug
         final PatternOp[] code;
+        private final int size;
+        private Op type; //TODO make final
+
+        transient Set<Variable> vars = Global.newHashSet(1);
+
+        /** heuristic for ordering comparison of subterms; lower is first */
+        private ToIntFunction<Term> subtermPrioritizer = (t) -> {
+
+            if (t.op() == type) {
+                return 0;
+            }
+            else if (!t.isCommutative()) {
+                return 1+(1*t.volume());
+            }
+            else {
+                return (2*t.volume());
+            }
+        };
 
         public TermPattern(Op type, Term pattern) {
 
+            this.type = type;
             this.pattern = pattern;
 
             List<PatternOp> code = Global.newArrayList();
@@ -382,11 +402,42 @@ public class MatchSubst {
             code.add(End);
 
             this.code = code.toArray(new PatternOp[code.size()]);
+            this.size = vars.size();
+
+            vars = null;
+        }
+
+        final static class SubtermPosition implements Comparable<SubtermPosition> {
+
+            public final int score;
+            public final Term term; //the subterm
+            public final int position; //where it is located
+
+            public SubtermPosition(Term term, int pos, ToIntFunction<Term> scorer) {
+                this.term = term;
+                this.position = pos;
+                this.score = scorer.applyAsInt(term);
+            }
+
+            @Override
+            public int compareTo(SubtermPosition o) {
+                if (this == o) return 0;
+                int p = Integer.compare(o.score, score); //lower first
+                if (p!=0) return p;
+                return Integer.compare(position, o.position);
+            }
+
+            @Override
+            public String toString() {
+                return term + " x " + score + " (" + position + ')';
+            }
         }
 
         private void compile(Op type, Term t, List<PatternOp> code) {
             if (t.op() == type) {
-                code.add(new SaveAs((Variable)t));
+                Variable v = (Variable) t;
+                code.add(new SaveAs(v));
+                vars.add(v);
                 return;
             }
 
@@ -424,9 +475,17 @@ public class MatchSubst {
                 //TODO 2-phase match
 
 
+                TreeSet<SubtermPosition> ss = new TreeSet();
 
                 for (int i = 0; i < s; i++) {
                     Term x = c.term(i);
+                    ss.add(new SubtermPosition(x, i, subtermPrioritizer));
+                }
+
+                //iterate sorted
+                ss.forEach(sp -> {
+                    Term x = sp.term;
+                    int i = sp.position;
 
                     code.add( permute ?
                             new SelectPermutedSubTerm(i) :
@@ -435,10 +494,10 @@ public class MatchSubst {
                     compile(type, x, code);
 
                     code.add( permute?
-                        new IfFailPermuteOrBreak(matchSubtermsStart, breakToEndBeforePop) :
-                        new IfFailBreak(breakToEndBeforePop)
+                            new IfFailPermuteOrBreak(matchSubtermsStart, breakToEndBeforePop) :
+                            new IfFailBreak(breakToEndBeforePop)
                     );
-                }
+                });
 
                 int endCompound = code.size();
 
@@ -465,6 +524,11 @@ public class MatchSubst {
         @Override
         public String toString() {
             return "TermPattern{" + Arrays.toString(code) + '}';
+        }
+
+        /** # of unique output variables expected to match */
+        public int getOutputCount() {
+            return size;
         }
     }
 
@@ -643,10 +707,14 @@ public class MatchSubst {
 
         final public Consumer<State> onSuccess;
 
+        public TermPattern pattern;
+
         public State(Random rng, Term term, Consumer<State> onSuccess, Map<Term, Term> xy, Map<Term, Term> yx) {
             this.frame = new Frame(rng, term, xy, yx);
             this.onSuccess = onSuccess;
         }
+
+
 
         @Override
         public String toString() {
@@ -654,12 +722,28 @@ public class MatchSubst {
         }
 
         public boolean match() {
-            return frame.match &&
-                    frame.prev == null; //terminated at lowest level
+            return frame.xy.size() == pattern.getOutputCount();
+
+//            return frame.match &&
+//                    frame.prev == null; //terminated at lowest level
         }
     }
 
+    public static final State next(Random rng, Op type, final Term pattern, final Term y, int power) {
+        State[] s = new State[1];
+        next(rng, type, pattern, y, power, r-> {
+           s[0] = r;
+        });
+        return s[0];
+    }
 
+    public static final State next(Random rng, final TermPattern pattern, final Term y, int power) {
+        State[] s = new State[1];
+        next(rng, pattern, y, power, r-> {
+            s[0] = r;
+        }, Global.newHashMap(), Global.newHashMap());
+        return s[0];
+    }
 
     public static final void next(Random rng, Op type, final Term pattern, final Term y, int power, Consumer<State> onResult) {
         next(rng, type, pattern, y, power, onResult, Global.newHashMap(), Global.newHashMap());
@@ -679,6 +763,8 @@ public class MatchSubst {
     public static final boolean next(Random rng, final TermPattern x, final Term y, int power, Consumer<State> onResult, Map<Term, Term> xy, Map<Term, Term> yx) {
 
         State s = new State(rng, y, onResult, xy, yx);
+
+        s.pattern = x;
 
         final PatternOp code[] = x.code;
         int ip = s.frame.ip; //instruction pointer
@@ -720,9 +806,11 @@ public class MatchSubst {
 
         } while ((ip >= 0) && (power-- > 0));
 
+        if (power <= 0) s.frame.match = false;
+
         onResult.accept(s);
 
-        return s.frame.match;
+        return s.frame.xy.size() == x.getOutputCount();
     }
 
     public static void main(String[] args) {

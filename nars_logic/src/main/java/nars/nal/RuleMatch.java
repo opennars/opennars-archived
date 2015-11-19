@@ -16,7 +16,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.term.transform.FindSubst;
 import nars.term.transform.MatchSubst;
 import nars.term.transform.Substitution;
 import nars.truth.Stamp;
@@ -492,15 +491,15 @@ public class RuleMatch  {
         if (state[0]!=null) {
             MatchSubst.State s = state[0];
 
-            {
-                FindSubst f = new FindSubst(Op.VAR_PATTERN, random);
-                boolean x = f.next(pattern.pattern, tb, unificationPower);
-                if (x!=s.frame.match) {
-                    System.out.println(pattern.pattern + " " + tb);
-                    System.out.println();
-                }
-
-            }
+//            {
+//                FindSubst f = new FindSubst(Op.VAR_PATTERN, random);
+//                boolean x = f.next(pattern.pattern, tb, unificationPower);
+//                if (x!=s.frame.match) {
+//                    System.out.println(pattern.pattern + " " + tb);
+//                    System.out.println();
+//                }
+//
+//            }
 
             return s.frame.match;
         }
