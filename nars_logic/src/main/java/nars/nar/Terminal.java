@@ -1,7 +1,7 @@
 package nars.nar;
 
 import nars.Memory;
-import nars.bag.impl.TrieCacheBag;
+import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
@@ -30,7 +30,10 @@ public class Terminal extends Default {
     public Terminal() {
         super(new Memory(
                     new RealtimeMSClock(),
-                    new TrieCacheBag()
+
+                    CacheBag.memory()
+                    //new TrieCacheBag()
+
         ), 0,0,0,0);
     }
 

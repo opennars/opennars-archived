@@ -37,7 +37,7 @@ public class MatchSubstTest {
     @Test public void testDifferentSizeSetBalancing() {
 
         double d = testSubtermBalancing(
-                "({a,b,c,d,%1}, {%1,z})", "({a,b,c,d,z}, {a,z})",
+                "({a,b,c,d,%1}, {%1,a})", "({a,b,c,d,z}, {a,z})",
                 "({%1,a}, {a,b,c,d,%1})", "({a,z}, {a,b,c,d,z})");
 
         //correct subterm ordering should make these two

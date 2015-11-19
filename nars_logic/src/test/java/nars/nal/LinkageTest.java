@@ -22,12 +22,12 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTester {
 
-    private int cycles = 55;
+    private int cycles = 5;
 
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
-    public static Iterable configurations() {
+    public static Iterable<Supplier<NAR>> configurations() {
         return AbstractNALTester.nars(6,true);
     }
 

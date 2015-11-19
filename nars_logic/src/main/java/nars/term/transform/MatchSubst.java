@@ -17,16 +17,34 @@ import java.util.function.ToIntFunction;
 import static nars.$.$;
 
 
-/* recurses a pair of compound term tree's subterms
+/*
+recurses a pair of compound term tree's subterms
 across a hierarchy of sequential and permutative fanouts
 where valid matches are discovered, backtracked,
 and collected until a total solution is found.
 the magnitude of a running integer depth metric ("power") serves
 as a finite-time AIKR cutoff and its polarity as
-returned indicates success value to the callee.  */
+returned indicates success value to the callee.
+
+NOTE: currently this implements only a simplified assymetric /
+unidirectional matching that does not perform the full
+bidirectional term mapping that FindSubst provides.  */
 public class MatchSubst {
 
 
+    /** instruction pointer codes:
+     *      negative value is inverted to specify a target address to jump to
+     *      positive values are encoded as follows:
+     * */
+
+    /** stop execution */
+    public static final int IP_TERMINATE = 0;
+
+    /** next opcode (ip++) */
+    public static final int IP_CONTINUE = 1;
+
+    /** repeat current opcode */
+    public static final int IP_REPEAT = 2;
 
     /** pattern opcodes */
     interface PatternOp extends Serializable {
@@ -62,21 +80,40 @@ public class MatchSubst {
         }
     }
 
-    public static final class MatchTerm extends MatchOp {
-        public final Term a;
+    public static final class MatchTerm implements PatternOp {
+        public final Term x;
 
-        public MatchTerm(Term a) {
-            this.a = a;
+        public MatchTerm(Term x) {
+            this.x = x;
         }
 
         @Override
-        public boolean match(Term t) {
-            return a.equals(t);
+        public int run(Frame f) {
+            Term y = f.term;
+            if (y.equals(x)) {
+                return IP_CONTINUE;
+            }
+            else {
+                if ((x.op().isVar()) &&
+                     (y.op().isVar())) {;
+                        f.match = f.nextVarX(x.op(),(Variable) x, y);
+                }
+                else {
+                    //throw new RuntimeException("??");
+
+                    f.match = false;
+//                    if ((x.op() == y.op()) && (x instanceof Compound)) {
+//                        return matchCompound((Compound)x, (Compound)y, power);
+//                    }
+                }
+                //f.match = false;
+            }
+            return IP_CONTINUE;
         }
 
         @Override
         public String toString() {
-            return "Term{" +  a +  '}';
+            return "Term{" + x +  '}';
         }
     }
 
@@ -334,29 +371,62 @@ public class MatchSubst {
     }
 
     final static class SaveAs implements PatternOp {
-        public final Variable var;
+        public final Variable x;
 
-        public SaveAs(Variable v) {
-            this.var = v;
-        }
-        @Override public int run(Frame f) {
-
-            final Term xSubst = f.resolve(var);
-
-            if (xSubst != null) {
-                if (!f.term.equals(xSubst)) {
-                    f.match = false;
-                }
-            }
-            else {
-                f.putVarX(var, f.term);
-            }
-            return 1;
+        public SaveAs(Variable x) {
+            this.x = x;
         }
 
         @Override
+        public int run(Frame f) {
+            return resolve(f, x, f.term);
+        }
+
+        private int resolve(Frame f, Variable x, Term y) {
+            final Term y2 = f.xy.get(x);
+
+            if (y2 != null) {
+                if (y2.equals(y)) {
+                    //match
+                }
+                else {
+                    f.term = y2;
+                    //recurse?
+                    f.match = false;
+
+                    //return IP_REPEAT;
+                    //f.match = false;
+                    //return resolve(f, x, y2);
+                    //throw new RuntimeException("??");
+                }
+            }
+            else {
+                //f.match = f.nextVarX(x.op(), (Variable) x, y);
+                f.putVarX(x, y);
+            }
+
+            return IP_CONTINUE;
+        }
+
+        //        @Override public int run(Frame f) {
+//
+//            final Term xSubst = f.resolve(var);
+//
+//            if (xSubst != null) {
+//                if (!f.term.equals(xSubst)) {
+//                    f.match = false;
+//                }
+//            }
+//            else {
+//                f.putVarX(var, f.term);
+//
+//            }
+//            return 1;
+//        }
+
+        @Override
         public String toString() {
-            return "SaveAs{" +  var + '}';
+            return "SaveAs{" + x + '}';
         }
     }
 
@@ -383,10 +453,10 @@ public class MatchSubst {
                 return 0;
             }
             else if (!t.isCommutative()) {
-                return 1+(1*t.volume());
+                return 1+(1*t.size());
             }
             else {
-                return (2*t.volume());
+                return 1+(2*t.size());
             }
         };
 
@@ -588,6 +658,27 @@ public class MatchSubst {
         }
 
 
+        private final boolean nextVarX(final Op type, final Variable xVar, final Term y) {
+            final Op xOp = xVar.op();
+
+            if (xOp == type) {
+                putVarX(xVar, y);
+                return true;
+            }
+            else {
+                final Op yOp = y.op();
+                if (yOp == xOp) {
+                    putCommon(xVar, (Variable) y);
+                    return true;
+                }
+                else {
+                    //if query variable?
+                    return false;
+                }
+            }
+
+        }
+
         private final void putVarX(final Term /* variable */ x, final Term y) {
             xyPut(x, y);
             if (x instanceof CommonVariable) {
@@ -722,7 +813,7 @@ public class MatchSubst {
         }
 
         public boolean match() {
-            return frame.xy.size() == pattern.getOutputCount();
+            return frame.match && (frame.xy.size() == pattern.getOutputCount());
 
 //            return frame.match &&
 //                    frame.prev == null; //terminated at lowest level
@@ -791,8 +882,9 @@ public class MatchSubst {
             //System.out.println("\t\t" + s);
 
             switch (result) {
-                case 0: ip = -1; break; //failure
-                case 1: ip++;  break;
+                case IP_TERMINATE: ip = -1; break; //failure
+                case IP_CONTINUE: ip++;  break;
+                case IP_REPEAT: /* nothing */ break;
                 default: {
                     if (result < 0)
                         ip = -result;
@@ -806,11 +898,16 @@ public class MatchSubst {
 
         } while ((ip >= 0) && (power-- > 0));
 
-        if (power <= 0) s.frame.match = false;
+        //if (power <= 0) s.frame.match = false;
 
         onResult.accept(s);
 
-        return s.frame.xy.size() == x.getOutputCount();
+        return getUniqueVariableCount(x.type, s) == x.getOutputCount();
+    }
+
+    private static int getUniqueVariableCount(Op type, State s) {
+        //TODO not Stream
+        return (int)s.frame.xy.keySet().stream().filter(k -> k.op() == type).count();
     }
 
     public static void main(String[] args) {

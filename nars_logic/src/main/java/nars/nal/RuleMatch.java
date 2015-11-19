@@ -501,7 +501,7 @@ public class RuleMatch  {
 //
 //            }
 
-            return s.frame.match;
+            return s.match();
         }
 
 
