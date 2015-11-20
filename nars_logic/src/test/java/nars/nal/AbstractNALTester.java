@@ -84,9 +84,9 @@ abstract public class AbstractNALTester {
 
         l.add( supply("Default2[NAL<=" + level + "]",
             () -> {
-                Default2 d = new Default2(512,2,2,3);
+                Default2 d = new Default2(768,2,2,2);
                 d.nal(finalLevel);
-                d.getInput().inputPerCycle.set(6);
+                d.getInput().inputPerCycle.set(4);
                 return d;
             }
         ) );
