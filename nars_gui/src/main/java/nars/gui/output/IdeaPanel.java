@@ -162,7 +162,7 @@
 //                for (Concept c : idea)
 //                    f.add(new ConceptButton(nar, c));
 //
-//                //get the only sentence type, use it's punctuation as a suffix button
+//                //apply the only sentence type, use it's punctuation as a suffix button
 //                Iterator<SentenceType> oi = idea.getSentenceTypes().iterator();
 //                if (oi.hasNext()) {
 //
@@ -223,7 +223,7 @@
 //    int y = 0;
 //
 //    protected void onOutputTask(Task t) {
-//        Idea i = ideas.get(t);
+//        Idea i = ideas.apply(t);
 //        if (i==null)
 //            return;
 //        update(i, t.getBudget());
@@ -257,7 +257,7 @@
 //    }
 //
 //    protected void onOutputConcept(Concept c, Task t) {
-//        Idea i = ideas.get(c);
+//        Idea i = ideas.apply(c);
 //        if (t!=null)
 //            update(i, t.getBudget());
 //        else
@@ -265,7 +265,7 @@
 //    }
 //
 //    protected IdeaSummary getPanel(Idea i) {
-//        IdeaSummary existing = ideaPanel.get(i);
+//        IdeaSummary existing = ideaPanel.apply(i);
 //        if (existing == null) {
 //            existing = new IdeaSummary(i);
 //            ideaPanel.put(i, existing);

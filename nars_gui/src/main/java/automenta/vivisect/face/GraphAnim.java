@@ -270,7 +270,7 @@ package automenta.vivisect.face;
 //	loadPan = new Panel();
 //	msgPan = new Panel();
 //
-//	// get images, make buttons from some of them
+//	// apply images, make buttons from some of them
 //	try {
 //	    Toolkit tk = Toolkit.getDefaultToolkit();
 //	    MediaTracker tracker = new MediaTracker(this);
@@ -705,7 +705,7 @@ package automenta.vivisect.face;
 //	DataInputStream in;
 //	StringBuffer text = new StringBuffer();
 //
-//	// get saved text from server
+//	// apply saved text from server
 //	try {
 //	    u = new URL(servletURL + "?load=" + seqno);
 //	    conn = u.openConnection();
@@ -1301,7 +1301,7 @@ package automenta.vivisect.face;
 //	return after;
 //    }
 //
-//    // get coords of component relative to top-level frame
+//    // apply coords of component relative to top-level frame
 //    public Point getLocationGlobal(Component c) {
 //	Point p = c.location();
 //	Container cn = c.getParent();
@@ -1315,7 +1315,7 @@ package automenta.vivisect.face;
 //	return p;
 //    }
 //
-//    // get local coords within component of x, y which are specified in top-level frame coords
+//    // apply local coords within component of x, y which are specified in top-level frame coords
 //    public int[] getLocalCoords(Component c, int x, int y) {
 //	Point p = getLocationGlobal(c);
 //	int[] n = new int[2];
@@ -1613,7 +1613,7 @@ package automenta.vivisect.face;
 //    }
 //}
 //
-//// need to do this so that snapshot and animation face panels get their paint events
+//// need to do this so that snapshot and animation face panels apply their paint events
 //class DrawPanel extends Panel {
 //    private int type;
 //    private GraphApp rent;

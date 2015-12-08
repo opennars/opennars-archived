@@ -373,7 +373,7 @@
 //        @Override public int run(Frame f) {
 //
 //            Term t = f.term;
-//            final Term xSubst = f.xy.get(var);
+//            final Term xSubst = f.xy.apply(var);
 //            //final Term xSubst = f.resolve(var, new Substitution());
 //
 //            if (xSubst != null) {
@@ -602,7 +602,7 @@
 //
 //            /* DEBUG */ if (!parent.isCommutative())
 //                throw new RuntimeException("only commutative but parent=" + parent);
-//            term = parent.term(perm.get(index));
+//            term = parent.term(perm.apply(index));
 //            return term;
 //        }
 //

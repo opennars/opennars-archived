@@ -685,7 +685,7 @@ public class AbstractSurfaceModel implements SurfaceModel {
 	}
 
 	/**
-	 * factory to get a plotter, i.e. the best way to append data to this surface model
+	 * factory to apply a plotter, i.e. the best way to append data to this surface model
 	 * 
 	 * @param calcDivisions
 	 * @return

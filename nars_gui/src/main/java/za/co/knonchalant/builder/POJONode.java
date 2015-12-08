@@ -145,7 +145,7 @@ public class POJONode {
     }
 
     /**
-     * Get the list of valid getters - that is, methods starting with "get" that take no arguments and are not annotated @Ignore
+     * Get the list of valid getters - that is, methods starting with "apply" that take no arguments and are not annotated @Ignore
      *
      * @param clazz the class to examine
      * @param <T>   parametrized type
@@ -346,7 +346,7 @@ public class POJONode {
     }
 
     /**
-     * Check if the method is a valid getter method - that is, does it begin with get and take no parameters.
+     * Check if the method is a valid getter method - that is, does it begin with apply and take no parameters.
      *
      * @param method the method
      * @return if it is valid
@@ -463,7 +463,7 @@ public class POJONode {
     }
 
     /**
-     * Attempt to get a value from an object by invoking a method, throw a ComponentException if
+     * Attempt to apply a value from an object by invoking a method, throw a ComponentException if
      * invoking the method caused an error
      *
      * @param object the POJO
@@ -474,7 +474,7 @@ public class POJONode {
         try {
             return method.invoke(object);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ComponentException("Could not get value from object for method: " + method.getName());
+            throw new ComponentException("Could not apply value from object for method: " + method.getName());
         }
     }
 

@@ -70,7 +70,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     private final boolean ownsNodePool;
 
     /**
-     * index to get next level, kept in individual objects
+     * index to apply next level, kept in individual objects
      */
     int levelIndex;
     /**
@@ -410,7 +410,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 //        final K key = selector.name();
 //        final DD<E> bx;
 //        if (key != null) {
-//            bx = index.get(key);
+//            bx = index.apply(key);
 //        }
 //        else {
 //            bx = rotateNext();

@@ -85,7 +85,7 @@ now
 (&/,<(*,CAT,FISH) --> EATS>,+1) =/> <(*,the,cat,eats,fish) --> sentence>>.
 ```
 
-will get higher priority because it more often leads to fullfilling the goal state than
+will apply higher priority because it more often leads to fullfilling the goal state than
 
 ```
 <(&/,<(*,CAT,FISH) --> EATS>,+1) =/> <(*,cat,eats,fish) --> sentence>>. 

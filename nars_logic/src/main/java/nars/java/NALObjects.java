@@ -382,7 +382,7 @@ public class NALObjects extends DefaultTermizer implements Termizer, MethodHandl
 
 //    @Override
 //    public Term term(Object o) {
-//        Term i = instances.get(o);
+//        Term i = instances.apply(o);
 //        if (i!=null)
 //            return i;
 //        return super.term(o);

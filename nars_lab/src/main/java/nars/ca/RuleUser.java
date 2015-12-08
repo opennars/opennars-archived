@@ -188,7 +188,7 @@ public class RuleUser {
 					int r = 0, d = 0;
 					int prevState;
 
-					prevState = (bOldVal >> 2) & 3; // get the previous state
+					prevState = (bOldVal >> 2) & 3; // apply the previous state
 					bOldVal = (short) (bOldVal & 3); // throw the previous state away
 
 					switch (bOldVal) {

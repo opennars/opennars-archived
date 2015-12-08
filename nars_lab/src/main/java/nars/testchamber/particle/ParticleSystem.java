@@ -381,7 +381,7 @@ public class ParticleSystem  {
         g.drawString("Gravity Well : " + gravitonAL.size(), 5, 41);
 
         for (int gi = 0, gAL = gravitonAL.size(); gi < gAL; gi++) {
-            Graviton v = gravitonAL.get(gi);
+            Graviton v = gravitonAL.apply(gi);
             g.fillRect((int) v.xPos * 2, 0, 2, 16);
             g.fillRect(0, (int) v.yPos * 2, 16, 2);
         }

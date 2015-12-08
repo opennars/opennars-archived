@@ -203,8 +203,8 @@ public class Spacegraph extends ZoomFX {
 
 //        space.zoomFactorProperty().addListener((prop, oldVal, newVal) -> zoomFactor.setText(String.format("%d%%", Math.round(newVal.doubleValue() * 100))));
 //        bOne.setOnAction((event) -> space.zoomFactorProperty().set(1.0));
-//        bMinus.setOnAction((event) -> space.zoomFactorProperty().set(space.zoomFactorProperty().get() * 0.75));
-//        bPlus.setOnAction((event) -> space.zoomFactorProperty().set(space.zoomFactorProperty().get() * 1.25));
+//        bMinus.setOnAction((event) -> space.zoomFactorProperty().set(space.zoomFactorProperty().apply() * 0.75));
+//        bPlus.setOnAction((event) -> space.zoomFactorProperty().set(space.zoomFactorProperty().apply() * 1.25));
 
         GestureEventProperties zoomFXZoom = new GestureEventProperties(GestureModifiers.none());
         MouseEventProperties zoomFXPan = new MouseEventProperties(MouseModifiers.none(), MouseButtons.middle());

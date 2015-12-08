@@ -111,7 +111,7 @@ public class TermVector<T extends Term> implements TermContainer<T>, Comparable,
     }
 
     /**
-     * get the number of term
+     * apply the number of term
      *
      * @return the size of the component list
      */

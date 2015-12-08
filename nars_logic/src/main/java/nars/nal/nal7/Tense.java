@@ -646,7 +646,7 @@ public enum Tense  {
 //            //it was not "semantically" connected by temporal succession
 //            int tt1 = (int) snext.getOccurrenceTime();
 //            int tt2 = (int) sprev.getOccurrenceTime();
-//            float d = Math.abs(tt1 - tt2) / ((float)nal.memory().duration.get());
+//            float d = Math.abs(tt1 - tt2) / ((float)nal.memory().duration.apply());
 //            if (d != 0) {
 //                float mul = 1.0f / d;
 //                if (budget1!=null)  budget1.mulPriority(mul);
@@ -690,7 +690,7 @@ public enum Tense  {
 //        }
 //
 //
-//        final int inductionLimit = nal.memory().temporalRelationsMax.get();
+//        final int inductionLimit = nal.memory().temporalRelationsMax.apply();
 //
 //        //List<Task> success = new ArrayList<Task>();
 //        if (t11 != null && t22 != null) {
@@ -730,7 +730,7 @@ public enum Tense  {
 //    }
 
 //    /** //micropsi inspired strive for knowledge
-//     //get strongest belief of that concept and use the revison truth, if there is no, use this truth */
+//     //apply strongest belief of that concept and use the revison truth, if there is no, use this truth */
 //    protected static void deriveCompiledInferenceHelper(Sentence snext, Sentence sprev, NAL nal, Task task) {
 //
 //        desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);

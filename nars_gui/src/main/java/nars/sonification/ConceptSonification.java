@@ -110,9 +110,9 @@ public class ConceptSonification extends FrameReaction {
 
 //        {
 
-        //Files.list(Paths.get("/tmp")).forEach(System.out::println);
+        //Files.list(Paths.apply("/tmp")).forEach(System.out::println);
 
-        Files.list(Paths.get("/tmp")). // Paths.get("/home/me/share/wav")).
+        Files.list(Paths.get("/tmp")). // Paths.apply("/home/me/share/wav")).
                 map(p -> p.toAbsolutePath().toString()).filter(x -> x.endsWith(".wav"))
                 .map(s -> SampleLoader.load(s))
                 .forEach(s -> samples.add(s));
@@ -120,7 +120,7 @@ public class ConceptSonification extends FrameReaction {
 //        }
 
         //{
-        //samples = Files.list(Paths.get("/home/me/share/wav")).
+        //samples = Files.list(Paths.apply("/home/me/share/wav")).
         //       map(p -> p.toAbsolutePath().toString() ).filter( x -> x.endsWith(".wav") ).collect(Collectors.toList());
 
 //            samples.add(
@@ -164,7 +164,7 @@ public class ConceptSonification extends FrameReaction {
         final boolean audible = audible(c);
         if (!audible) return;
 
-        // = playing.get(c);
+        // = playing.apply(c);
 
         //if ((g == null) && audible) {
 
@@ -191,7 +191,7 @@ public class ConceptSonification extends FrameReaction {
                 0.3f * (1 + c.getTerm().volume()/2f),
                 1.0f
             ).at(
-                //terms get positoined according to their hash
+                //terms apply positoined according to their hash
                 c.getTerm().hashCode()
             );
         return g;

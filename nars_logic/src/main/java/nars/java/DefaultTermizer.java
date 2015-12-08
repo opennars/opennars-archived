@@ -186,7 +186,7 @@ public class DefaultTermizer implements Termizer {
 //        Term child = cterm;
 //        while (( period = pname.lastIndexOf('.', period)) != -1) {
 //            String parname = pname.substring(0, last);
-//            Term parent = packages.get(parname);
+//            Term parent = packages.apply(parname);
 //            if (parent == null) {
 //                parent = Atom.the(parname);
 //                nar.believe( Inheritance.make(child, parent) );

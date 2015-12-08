@@ -36,8 +36,8 @@
 //        public void init(TermNode n) {
 //            resetLearning();
 //            setLearningRate(0.4f);
-//            setRepulsiveWeakness(repulseWeakness.get());
-//            setAttractionStrength(attractionStrength.get());
+//            setRepulsiveWeakness(repulseWeakness.apply());
+//            setAttractionStrength(attractionStrength.apply());
 //            setMaxRepulsionDistance(250);
 //            setEquilibriumDistance(0.05f);
 //        }

@@ -130,7 +130,7 @@ public class TaskLabel extends AutoLabel<Task> {
     /*setOnMouseEntered(e-> {
         if (e.isPrimaryButtonDown()) {
             System.out.println("dragged: " + task);
-            selected.set(!selected.get());
+            selected.set(!selected.apply());
         }
     });*/
         AtomicBoolean dragging = new AtomicBoolean(false);

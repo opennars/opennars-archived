@@ -20,14 +20,13 @@
  */
 package nars.truth;
 
-import nars.nal.UtilityFunctions;
-
 import static java.lang.Math.abs;
+import static nars.nal.UtilityFunctions.*;
 
 /**
  * All truth-value (and desire-value) functions used in logic rules
  */
-public final class TruthFunctions extends UtilityFunctions {
+public final class TruthFunctions /*extends UtilityFunctions */{
 
     /* ----- Single argument functions, called in MatchingRules ----- */
     /**
@@ -61,7 +60,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c = t.getConfidence();
 
         if (t.isAnalytic())
-            return AnalyticTruth.get(f, c, t); //experimental: for cases where analytic is inverted, to preserve analytic state
+            return AnalyticTruth.apply(f, c, t); //experimental: for cases where analytic is inverted, to preserve analytic state
         else
             return new DefaultTruth(f, c, t);
             */
@@ -82,17 +81,8 @@ public final class TruthFunctions extends UtilityFunctions {
     }
 
     /* ----- double argument functions, called in MatchingRules ----- */
-    /**
-     * {<S ==> P>, <S ==> P>} |- <S ==> P>
-     * @param a Truth value of the first premise
-     * @param b Truth value of the second premise
-     * @return Truth value of the conclusion
-     */
-    public static final Truth revision(final Truth a, final Truth b) {
-        return revision(a, b, new DefaultTruth(0, 0));
-    }
 
-    static final Truth revision(final Truth a, final Truth b, final Truth result) {
+    public static final Truth revision(final Truth a, final Truth b, final Truth result) {
         final float f1 = a.getFrequency();
         final float f2 = b.getFrequency();
         final float w1 = c2w(a.getConfidence());
@@ -355,8 +345,8 @@ public final class TruthFunctions extends UtilityFunctions {
 
     /**
      * {(--, (&&, A, B)), B} |- (--, A)
-     * @param a Truth value of the first premise
-     * @param b Truth value of the second premise
+     * @param v1 Truth value of the first premise
+     * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
     public static final Truth reduceConjunction(final Truth v1, final Truth v2) {

@@ -475,7 +475,7 @@
 //            meters = null;
 //
 //        init();
-//        volumeSlider.setValue(nar.param.outputVolume.get());
+//        volumeSlider.setValue(nar.param.outputVolume.apply());
 //
 //
 //        this.timer = null;
@@ -534,7 +534,7 @@
 //            long now = System.currentTimeMillis();
 //            long deltaTime = now - lastUpdateTime;
 //
-//            if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.get())*/) {
+//            if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.apply())*/) {
 //
 //                updateGUI();
 //
@@ -832,9 +832,9 @@
 //
 //            pg.add(new NSliderSwing(memory.param.conceptForgetDurations, "Concept Memory Durations", 0.5f, 20), c);
 //
-//            tasklinkRate.set(memory.param.taskLinkForgetDurations.get() / memory.param.conceptForgetDurations.get());
-//            termlinkRate.set( memory.param.termLinkForgetDurations.get() / memory.param.conceptForgetDurations.get() );
-//            novelRate.set( memory.param.novelTaskForgetDurations.get() / memory.param.conceptForgetDurations.get() );
+//            tasklinkRate.set(memory.param.taskLinkForgetDurations.apply() / memory.param.conceptForgetDurations.apply());
+//            termlinkRate.set( memory.param.termLinkForgetDurations.apply() / memory.param.conceptForgetDurations.apply() );
+//            novelRate.set( memory.param.novelTaskForgetDurations.apply() / memory.param.conceptForgetDurations.apply() );
 //
 //            pg.add(new NCSlider(tasklinkRate, "TaskLink Memory x", 0.1f, 5f), c);
 //            pg.add(new NCSlider(termlinkRate, "TermLink Memory x", 0.1f, 5f), c);
@@ -890,11 +890,11 @@
 //        final float conceptRate = memory.param.conceptForgetDurations.floatValue();
 //
 //        //  term x
-//        memory.param.termLinkForgetDurations.set( termlinkRate.get() * conceptRate );
+//        memory.param.termLinkForgetDurations.set( termlinkRate.apply() * conceptRate );
 //        //  task x
-//        memory.param.taskLinkForgetDurations.set( tasklinkRate.get() * conceptRate );
+//        memory.param.taskLinkForgetDurations.set( tasklinkRate.apply() * conceptRate );
 //        //  novelty x
-//        memory.param.novelTaskForgetDurations.set( novelRate.get() * conceptRate );
+//        memory.param.novelTaskForgetDurations.set( novelRate.apply() * conceptRate );
 //    }
 //
 //    private NSliderSwing newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {

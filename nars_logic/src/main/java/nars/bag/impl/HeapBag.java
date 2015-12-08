@@ -486,7 +486,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 //        final K key = selector.name();
 //        final E b;
 //        if (key != null) {
-//            b = index.get(key);
+//            b = index.apply(key);
 //        }
 //        else {
 //            b = peekNext();

@@ -83,7 +83,7 @@ public class NARWebServer extends PathHandler {
 //                protected boolean output(final Channel channel, final Class event, final Object... args) {
 //
 //                    final String prefix = channel.getLinePrefix(event, args);
-//                    final CharSequence s = channel.get(event, args);
+//                    final CharSequence s = channel.apply(event, args);
 //
 //                    if (s != null) {
 //                        return output(prefix, s);

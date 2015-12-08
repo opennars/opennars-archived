@@ -333,7 +333,7 @@ public class EditorPanel extends JPanel {
                             });
 
                         } catch (IOException ex) {
-                            System.out.println("not able to get path of " + file.getName());
+                            System.out.println("not able to apply path of " + file.getName());
                         }
                     }
                 }

@@ -78,7 +78,7 @@
 //    }
 //
 //    public void traceStack(Task t, boolean success) {
-//        StackTraceElement[] s = derived.get(t);
+//        StackTraceElement[] s = derived.apply(t);
 //        if (s == null) {
 //            //probably a non-derivation condition, ex: immediate reaction to an input event, etc.. or execution
 //            //throw new RuntimeException("A stackTrace for successful output condition " + t + " was not recorded");

@@ -154,7 +154,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 //                    public N newNode(K t) {
 //                        N tn = (N)new TermNode(t);
 //                        builder.accept(
-//                                termObject.get(t),
+//                                termObject.apply(t),
 //                                tn
 //                        );
 //                        return tn;
@@ -427,7 +427,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
             //termList.forEach((Consumer<TermNode>) n -> {
 
 //        for (int i = 0, termListSize = termList.size(); i < termListSize; i++) {
-//            final TermNode n = termList.get(i);
+//            final TermNode n = termList.apply(i);
 //            for (final TermEdge e : n.getEdges()) {
 //                removable.remove(e);
 //            }
@@ -437,7 +437,7 @@ public class SpaceGrapher<K extends Termed, N extends TermNode<K>> extends Space
 //
 //        termList.forEach((Consumer<TermNode>)n -> {
 //        for (int i = 0, termListSize = termList.size(); i < termListSize; i++) {
-//            final TermNode n = termList.get(i);
+//            final TermNode n = termList.apply(i);
             if (n != null) {
                 for (final TermEdge e : n.getEdges())
                     if (e != null) er.accept(e);

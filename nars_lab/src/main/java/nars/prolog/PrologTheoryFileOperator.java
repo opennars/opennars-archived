@@ -58,7 +58,7 @@
 //
 //        String theoryContent;
 //
-//        if (theoryInCache.get()) {
+//        if (theoryInCache.apply()) {
 //            theoryContent = foundCachedTheory.content;
 //        }
 //        else {

@@ -104,12 +104,12 @@
 //
 //
 //    /**
-//     * get existing entry or attempt to create one. if fails, returns null
+//     * apply existing entry or attempt to create one. if fails, returns null
 //     *
 //     * @return
 //     */
 //    protected V getEntry(Concept c, R row, C col) {
-//        V v = c.get(this);
+//        V v = c.apply(this);
 //        if (v != null) {
 //            return v;
 //        }

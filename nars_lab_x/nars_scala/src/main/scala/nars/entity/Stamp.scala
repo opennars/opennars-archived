@@ -25,7 +25,7 @@ object Stamp {
    * @return The merged Stamp, or null
    */
   def make(first: Stamp, second: Stamp, time: Long): Stamp = {
-    for (i <- 0 until first.length; j <- 0 until second.length if first.get(i) == second.get(j)) {
+    for (i <- 0 until first.length; j <- 0 until second.length if first.apply(i) == second.apply(j)) {
       return null
     }
     if (first.length > second.length) {
@@ -99,15 +99,15 @@ class Stamp(@BeanProperty var creationTime: Long) extends Cloneable {
     baseLength = Math.min(first.length + second.length, Parameters.MAXIMUM_STAMP_LENGTH)
     evidentialBase = new Array[Long](baseLength)
     while (i2 < second.length && j < baseLength) {
-      evidentialBase(j) = first.get(i1)
+      evidentialBase(j) = first.apply(i1)
       i1 += 1
       j += 1
-      evidentialBase(j) = second.get(i2)
+      evidentialBase(j) = second.apply(i2)
       i2 += 1
       j += 1
     }
     while (i1 < first.length && j < baseLength) {
-      evidentialBase(j) = first.get(i1)
+      evidentialBase(j) = first.apply(i1)
       i1 += 1
       j += 1
     }
@@ -131,7 +131,7 @@ class Stamp(@BeanProperty var creationTime: Long) extends Cloneable {
    * @param i The index
    * @return The number at the index
    */
-  def get(i: Int): Long = evidentialBase(i)
+  def apply(i: Int): Long = evidentialBase(i)
 
   /**
    * Get the evidentialBase, called in this class only

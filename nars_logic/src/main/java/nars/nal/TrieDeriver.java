@@ -49,7 +49,7 @@ public class TrieDeriver extends RuleTrie {
 //        int branchingFactor = children.length;
 //        //limit each branch to an equal fraction of the input power
 //        Versioned<Integer> branchPower = match.branchPower;
-//        branchPower.set( branchPower.get() / branchingFactor );
+//        branchPower.set( branchPower.apply() / branchingFactor );
 //        //System.out.println("    branch power: " + branchPower + " x " + branchingFactor);
 
         for (RuleBranch s : children) {
@@ -65,7 +65,7 @@ public class TrieDeriver extends RuleTrie {
 //        final int nr = rules.size();
 //        for (int i = 0; i < nr; i++) {
 //
-//            TaskRule r = rules.get(i);
+//            TaskRule r = rules.apply(i);
 //            if (r.minNAL > level) continue;
 //
 //            PostCondition[] pc = m.run(r);

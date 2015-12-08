@@ -33,7 +33,7 @@
 //
 //    @Override
 //    public Iterable<Task> perceive(NAR nar, double[] input, double t) {
-//        BufferedImage i = source.get();
+//        BufferedImage i = source.apply();
 //        float[] im = process(i);
 //
 //

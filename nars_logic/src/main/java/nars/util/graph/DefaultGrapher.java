@@ -216,13 +216,13 @@
 //
 ////        if (includeDerivations && includeBeliefs) {
 ////            for (final Sentence derivedSentence : sentenceTerms.keySet()) {
-////                Concept derived = sentenceTerms.get(derivedSentence);
+////                Concept derived = sentenceTerms.apply(derivedSentence);
 ////                final Collection<Term> schain = derivedSentence.stamp.getChain();
 ////                for (final Sentence deriverSentence : sentenceTerms.keySet()) {
 ////                    if (derivedSentence == deriverSentence) {
 ////                        continue;
 ////                    }
-////                    final Concept deriver = sentenceTerms.get(deriverSentence);
+////                    final Concept deriver = sentenceTerms.apply(deriverSentence);
 ////                    if (derived == deriver) {
 ////                        continue;
 ////                    }
@@ -244,7 +244,7 @@
 //        if (includeTermLinks) {
 //            int nt = termLinks.size();
 //            for (int i = 0; i < nt; i++) {
-//                TermLink t = termLinks.get(i);
+//                TermLink t = termLinks.apply(i);
 //                if (t.getPriority() < minPriority) continue;
 //                Term to = t.getTarget().getTerm();
 //                if (to != null) {

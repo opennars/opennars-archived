@@ -71,7 +71,7 @@ package nars.gui.output;
 //                t += "STM Task: " + task.toStringExternal() + "\n";
 //        }
 //        
-//        String cs = cycleSummary.get(cycle);
+//        String cs = cycleSummary.apply(cycle);
 //        if (cs!=null)
 //            t += cs + "\n";
 //        

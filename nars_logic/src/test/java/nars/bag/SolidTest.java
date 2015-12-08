@@ -59,7 +59,7 @@
 //
 //        };
 //
-//        n.input(LibraryInput.get(n, "app/detective.nal"));
+//        n.input(LibraryInput.apply(n, "app/detective.nal"));
 //
 //        for (int i = 0; i < time;  i++) {
 //            n.frame(1);

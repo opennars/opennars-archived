@@ -103,7 +103,7 @@
 ////        });
 //////        controls.add(new ChartButton("Delta Concepts") {
 //////            @Override public Chart newChart() {
-//////                return new BarChart(new TreeMLData.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.get("concept.count")));
+//////                return new BarChart(new TreeMLData.FirstOrderDifferenceTimeSeries("d(concepts)", trace.charts.apply("concept.count")));
 //////            }
 //////        });
 ////        controls.add(new ChartButton("Concept Priority Histogram (4 level)") {

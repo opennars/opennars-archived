@@ -73,7 +73,7 @@ See Plugins wiki page.
 
 ### Experience Library & Basic Usage
 
-Especially for beginners who want to get used to the system by trying the basic NAL examples, the most straightfoward way to do so is the following:
+Especially for beginners who want to apply used to the system by trying the basic NAL examples, the most straightfoward way to do so is the following:
 
 ![basicusage](https://cloud.githubusercontent.com/assets/11791925/6993944/c4836044-db38-11e4-9add-155ac20080a8.png)
 

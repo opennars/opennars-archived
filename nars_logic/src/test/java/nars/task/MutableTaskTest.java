@@ -55,7 +55,7 @@ public class MutableTaskTest {
 //        //the final occurr() or tense() is the value applied
 //        assertTrue(!n.memory.task(n.term(t)).eternal().stamp(st).isEternal());
 //        assertTrue(n.memory.task(n.term(t)).stamp(st).eternal().isEternal());
-//        assertEquals(20, n.memory.task(n.term(t)).judgment().parent(parent).stamp(st).occurr(20).get().getOccurrenceTime());
+//        assertEquals(20, n.memory.task(n.term(t)).judgment().parent(parent).stamp(st).occurr(20).apply().getOccurrenceTime());
 //    }
 
 }

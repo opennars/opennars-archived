@@ -287,7 +287,7 @@ public class LogPane extends BorderPane  {
 //        if (sb != null)
 //            s = sb.toString();
 //        else
-//            s = "null: " + channel.get(event, args) + " " + event + " " + Arrays.toString(args);
+//            s = "null: " + channel.apply(event, args) + " " + event + " " + Arrays.toString(args);
 //
 //        Text t = new Text(s.toString());
 //        t.setFill(Color.ORANGE);

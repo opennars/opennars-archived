@@ -97,7 +97,7 @@ public class Twenglish {
     }};
     
     public Twenglish() {
-        //TODO use word tokenization so that word substitutions dont get applied across words.
+        //TODO use word tokenization so that word substitutions dont apply applied across words.
         sub.put("go to", "goto");
         //etc..
     }

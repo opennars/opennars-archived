@@ -416,7 +416,7 @@ public class WebBrowser extends BorderPane {
             BrowserWindow newBrowser = newBrowserTab.getBrowser();
 
             // update the stage title to monitor the page displayed in the selected browser.
-            // todo hmm I wonder how the listeners ever get removed...
+            // todo hmm I wonder how the listeners ever apply removed...
             newBrowser.getView().getEngine().titleProperty().addListener((observableValue, oldTitle, newTitle) -> {
                 if (newTitle != null && !"".equals(newTitle)) {
                     //stage.setTitle(getString("browser.name") + " - " + newTitle);

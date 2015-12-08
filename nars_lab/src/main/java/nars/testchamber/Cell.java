@@ -436,7 +436,7 @@ public class Cell {
 //	public static int fromName(String tileName) {
 //        if(nameById == null)
 //            createMaps();
-//        Integer tile = tileByName.get(tileName);
+//        Integer tile = tileByName.apply(tileName);
 //        if(tile != null) return tile.intValue();
 //		throw new Error("Tile named ["+tileName+"] does not exist");
 //	}
@@ -444,7 +444,7 @@ public class Cell {
 //	public static String tileNameFor(int tile) {
 //        if(tileByName == null)
 //            createMaps();
-//        String name = nameById.get(new Integer(tile));
+//        String name = nameById.apply(new Integer(tile));
 //        if(name != null) return name;
 //		throw new Error("Tile of type ["+ tile +"] does not exist");
 //	}
@@ -463,7 +463,7 @@ public class Cell {
 //	}
 //	
 //	public static String getASCII(int t) {
-//		return get(t).getString("ASCII");
+//		return apply(t).getString("ASCII");
 //	}
 //
 //	public static int getFilledImage(int t) {
@@ -565,7 +565,7 @@ public class Cell {
 //		
 //		// fill array values for each tile
 //		for (int i=0; i<n; i++) {
-//			Thing t=al.get(i);
+//			Thing t=al.apply(i);
 //			if (t==null) {
 //				Game.warn("Null in tile list at position "+i);
 //				continue;
@@ -585,13 +585,13 @@ public class Cell {
 //		}
 //	}
 //	
-//	private static Thing get(int t) {
+//	private static Thing apply(int t) {
 //		return tiles[t&65535];
 //	}
 //	
 //	public static void action(Map m, int x, int y, int time) {
 //		int tile=m.getTile(x,y);
-//		Thing t=get(tile);
+//		Thing t=apply(tile);
 //		
 //		if (t.getFlag("IsDamageTile")) {
 //			Thing[] ts=m.getThings(x,y);
@@ -619,7 +619,7 @@ public class Cell {
 //	public static boolean isDiggable(Map m, int x, int y) {
 //		if ((x==0)||(y==0)||(x==m.width-1)||(y==m.height-1)) return false;
 //		int tile=m.getTile(x,y)&65535;
-//		return isDiggable(get(tile));
+//		return isDiggable(apply(tile));
 //	}
 //	
 //	public static boolean isSolid(Map m, int x, int y) {
@@ -634,7 +634,7 @@ public class Cell {
 //	public static boolean isPassable(Thing b, Map m, int x, int y) {
 //		if ((x<0)||(y<0)||(x>=m.width)||(y>=m.height)) return false;
 //		int tile=m.getTile(x,y);
-//		Thing t=get(tile);
+//		Thing t=apply(tile);
 //		
 //		if (t.getFlag("IsPassable")) return true;
 //		
@@ -668,7 +668,7 @@ public class Cell {
 //	public static boolean isSensibleMove(Thing b, Map m, int x, int y) {
 //		if ((x<0)||(y<0)||(x>=m.width)||(y>=m.height)) return false;
 //		int tile=m.getTile(x,y);
-//		Thing t=get(tile);
+//		Thing t=apply(tile);
 //		
 //		if (t.getFlag("IsPassable")) return true;
 //		
@@ -714,7 +714,7 @@ public class Cell {
 //	
 //	public static void kick(Thing b, Map m, int x, int y) {
 //		int tile=m.getTile(x,y);
-//		Thing t=get(tile);
+//		Thing t=apply(tile);
 //		
 //		if (t.getFlag("IsWall")) {
 //			b.message("You kick the wall - ouch!");
@@ -728,7 +728,7 @@ public class Cell {
 //	public static boolean dig(Thing b, Map m, int x, int y) {
 //		int tile=m.getTile(x,y);
 //		Thing w=b.getWielded(RPG.WT_MAINHAND);
-//		Thing t=get(tile);
+//		Thing t=apply(tile);
 //		
 //		if (isDiggable(m,x,y)) {
 //			int cost=digCost(b,w);
@@ -752,7 +752,7 @@ public class Cell {
 //
 //	public static boolean dig(Map m, int x, int y) {
 //		if (!isDiggable(m,x,y)) return false;
-//		Thing t=get(m.getTile(x,y));
+//		Thing t=apply(m.getTile(x,y));
 //		m.setTile(x,y,t.getStat("DigTile"));
 //		return true;
 //	}
@@ -761,7 +761,7 @@ public class Cell {
 //		tile=tile&65535;
 //		ArrayList<Thing> al=Lib.instance().getTiles();
 //		while (al.size()<=tile) al.add(null);
-//		if (al.get(tile)!=null) throw new Error("Tile arraylist already filled at position "+tile);
+//		if (al.apply(tile)!=null) throw new Error("Tile arraylist already filled at position "+tile);
 //		al.set(tile,t);
 //		
 //		int tileMask=0;
@@ -775,7 +775,7 @@ public class Cell {
 //	
 //	public static int getMask(int tile) {
 //		if (tile>tiles.length) return 0;
-//		Thing t=get(tile);
+//		Thing t=apply(tile);
 //		return t.getStat("TileMask");
 //	}
 //	

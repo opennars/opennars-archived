@@ -231,7 +231,7 @@ void draw()
     image(still, 0, 0);
     popMatrix();
     
-    //get the best voted change cell:
+    //apply the best voted change cell:
     int maxX=0;
     int maxY=0;
     int maxVal=0;
@@ -247,7 +247,7 @@ void draw()
         }
       }
     }
-    //get the biggest color in this area:
+    //apply the biggest color in this area:
     int bigR=colorArR[maxX][maxY];
     int bigG=colorArG[maxX][maxY];
     int bigB=colorArB[maxX][maxY];

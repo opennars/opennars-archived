@@ -36,7 +36,7 @@ public class BeanUtils {
 
 		// Since there can be multiple setter methods but only one getter
 		// method, find the getter method first so that you know what the
-		// property type is. For booleans, there can be "is" and "get"
+		// property type is. For booleans, there can be "is" and "apply"
 		// methods. If an "is" method exists, this is the official
 		// reader method so look for this one first.
 
@@ -44,10 +44,10 @@ public class BeanUtils {
 			readMethod = clazz.getMethod("is" + base, (Class<?>[]) null);
 		} catch (Exception getterExc) {
 			try {
-				// no "is" method, so look for a "get" method.
-				readMethod = clazz.getMethod("get" + base, (Class<?>[]) null);
+				// no "is" method, so look for a "apply" method.
+				readMethod = clazz.getMethod("apply" + base, (Class<?>[]) null);
 			} catch (Exception e) {
-				// fall thru, no is and no get, we will return null
+				// fall thru, no is and no apply, we will return null
 			}
 		}
 

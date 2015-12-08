@@ -98,7 +98,7 @@ public class ConceptActivator extends BagActivator<Term, Concept> implements Con
 //        boolean belowThreshold = getBudget().summaryLessThan(memory.newConceptThreshold.floatValue();
 //
 //        //try remembering from subconscious if activation is sufficient
-//        Concept concept = index().get(getKey());
+//        Concept concept = index().apply(getKey());
 //        if (concept != null) {
 //
 //            if (!belowThreshold) {

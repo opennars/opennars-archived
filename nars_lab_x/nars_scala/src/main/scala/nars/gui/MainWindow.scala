@@ -367,7 +367,7 @@ class MainWindow(var reasoner: Reasoner, title: String) extends NarsFrame(title)
   }
 
   /**
-   * To get the timer value and then to reset it
+   * To apply the timer value and then to reset it
    * @return The previous timer value
    */
   def updateTimer(): Long = {

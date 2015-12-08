@@ -259,7 +259,7 @@ public class MutableTask<C extends Compound> extends DefaultTask<C>  {
 //     */
 //    public Task input() {
 //
-//        Task t = get();
+//        Task t = apply();
 //        if (t == null) return null;
 //
 //        if (t.isInput()) {

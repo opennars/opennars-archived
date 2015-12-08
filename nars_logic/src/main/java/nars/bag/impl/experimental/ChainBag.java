@@ -164,7 +164,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 //        final K key = selector.name();
 //        final DD<V> bx;
 //        if (key != null) {
-//            bx = index.get(key);
+//            bx = index.apply(key);
 //        }
 //        else {
 //            bx = next(true);

@@ -18,7 +18,7 @@ public enum Op implements Serializable {
      * an atomic term (includes interval and variables); this value is set if not a compound term
      */
     ATOM(".", Op.ANY, OpType.Other),
-    //        public final Atom get(String i) {
+    //        public final Atom apply(String i) {
 //            return Atom.the(i);
 //        }}
 //

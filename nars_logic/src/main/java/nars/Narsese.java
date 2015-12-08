@@ -953,7 +953,7 @@ public class Narsese extends BaseParser<Object>  {
 
         Collections.reverse(vectorterms);
 
-//        if ((op == null || op == PRODUCT) && (vectorterms.get(0) instanceof Operator)) {
+//        if ((op == null || op == PRODUCT) && (vectorterms.apply(0) instanceof Operator)) {
 //            op = NALOperator.OPERATION;
 //        }
 
@@ -966,7 +966,7 @@ public class Narsese extends BaseParser<Object>  {
             //final Term self = Atom.the("SELF");//memory.self();
 
             //automatically add SELF term to operations if in NAL8+
-            /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
+            /*if (!vectorterms.isEmpty() && !vectorterms.apply(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
             Operation o = $.oper(new Operator(vectorterms.get(0)), Product.make(vectorterms, 1, vectorterms.size()));

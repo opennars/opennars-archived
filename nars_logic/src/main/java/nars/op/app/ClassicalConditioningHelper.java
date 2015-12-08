@@ -52,7 +52,7 @@
 //    public ArrayList<Task> cutoutAppend(int ind1,int ind2,ArrayList<Task> first,ArrayList<Task> second) {
 //        ArrayList<Task> res=new ArrayList<>();
 //        for(int i=ind1;i<first.size()+ind2;i++) {
-//            res.add(first.get(i));
+//            res.add(first.apply(i));
 //        }
 //        for(Task t : second) {
 //            res.add(t);
@@ -67,7 +67,7 @@
 //                if(i+j>=w.size()) {
 //                    return false;
 //                }
-//                if(!w.get(i+j).sentence.term.equals(content.get(j).sentence.term)) {
+//                if(!w.apply(i+j).sentence.term.equals(content.apply(j).sentence.term)) {
 //                    same=false;
 //                    break;
 //                }
@@ -87,7 +87,7 @@
 //        for(int i=0;i<w.size();i++) {
 //            boolean same=true;
 //            for(int j=0;i+j<w.size() && j<content.size();j++) {
-//                if(!w.get(i+j).sentence.term.equals(content.get(j).sentence.term)) {
+//                if(!w.apply(i+j).sentence.term.equals(content.apply(j).sentence.term)) {
 //                    same=false;
 //                    break;
 //                }
@@ -107,7 +107,7 @@
 //        Task lastt=null;
 //        for(Task t: lastElems) {
 //            st.add(t);
-//            if(lastt!=null && Math.abs(t.sentence.getOccurrenceTime()-lastt.sentence.getOccurrenceTime())>nar.param.duration.get()*100) {
+//            if(lastt!=null && Math.abs(t.sentence.getOccurrenceTime()-lastt.sentence.getOccurrenceTime())>nar.param.duration.apply()*100) {
 //                st.add(null); //pause
 //            }
 //            lastt=t;
@@ -118,8 +118,8 @@
 //        ArrayList<Task> H=new ArrayList<>(); //temporary, recycled use in loop below
 //        for(int k=0;k<st.size();k++) {
 //            for(int i=1;i<st.size();i++) {
-//                Task ev=st.get(i);
-//                Task lastev=st.get(i-1);
+//                Task ev=st.apply(i);
+//                Task lastev=st.apply(i-1);
 //                Concept c=nar.memory.concept(ev.sentence.term);
 //                if(c!=null && c.isDesired())//desired
 //                {
@@ -130,8 +130,8 @@
 //                   // System.out.println(ev.sentence.term);
 //                    theoriess.put(ev.sentence.term, H);
 //                    for(int j=i;j<st.size();j++) {
-//                        Task ev2=st.get(j);
-//                        Task lastev2=st.get(j-1); //forward conditioning
+//                        Task ev2=st.apply(j);
+//                        Task lastev2=st.apply(j-1); //forward conditioning
 //                        if(lastev2.sentence.term.equals(lastev.sentence.term) && !ev2.sentence.term.equals(ev.sentence.term) &&
 //                                theoriess.keySet().contains(ev.sentence.term)) {
 //                            theoriess.remove(ev.sentence.term); //extinction
@@ -157,8 +157,8 @@
 //                    while(B.contains(null)) {
 //                        B.remove(null);
 //                    }
-//                    boolean caseA=A.get(A.size()-1).equals(B.get(0));
-//                    boolean caseB=A.size()>2 && B.size()>1 && A.get(A.size()-1).equals(B.get(1)) && Objects.equals(A.get(A.size() - 2), B.get(0));
+//                    boolean caseA=A.apply(A.size()-1).equals(B.apply(0));
+//                    boolean caseB=A.size()>2 && B.size()>1 && A.apply(A.size()-1).equals(B.apply(1)) && Objects.equals(A.apply(A.size() - 2), B.apply(0));
 //
 //                    if((A.size()>1 && B.size()>1) && (caseA || caseB)) {
 //                        ArrayList<Task> compoundT=null;
@@ -190,7 +190,7 @@
 //                    else {
 //                        boolean same=true;
 //                        for(int i=0;i<t.size();i++) {
-//                            if(!(t.get(i).sentence.term.equals(fil.get(i).sentence.term))) { //we need term equals this is why
+//                            if(!(t.apply(i).sentence.term.equals(fil.apply(i).sentence.term))) { //we need term equals this is why
 //                                same=false;
 //                                break;
 //                            }
@@ -262,7 +262,7 @@
 //
 //                Task TT= new Task(s, new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY,
 //
-//                        BudgetFunctions.truthToQuality(Truth)), lastElems.get(lastElems.size() - 1), null);
+//                        BudgetFunctions.truthToQuality(Truth)), lastElems.apply(lastElems.size() - 1), null);
 //                nar.input(TT);
 //
 //                break;

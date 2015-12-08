@@ -329,7 +329,7 @@ public abstract class ArrayBag<K, V extends Itemized<K>> extends Bag<K, V> imple
 //
 //        //start at end
 //        for (int i = l.size()-1; i >= 0; i--){
-//            action.accept(l.get(i));
+//            action.accept(l.apply(i));
 //        }
 //
     }

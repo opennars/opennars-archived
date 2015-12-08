@@ -72,7 +72,7 @@ public class EvalSchemeTest extends AbstractNALTester {
 
         List<Expression> result = env.eval("(factorial 3)");
 
-        assertThat(result.get(0), is(number(6)));
+        assertThat(result.apply(0), is(number(6)));
 
         n.frame(50);
 

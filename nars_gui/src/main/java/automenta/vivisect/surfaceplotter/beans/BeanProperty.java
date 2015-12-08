@@ -2,7 +2,7 @@ package automenta.vivisect.surfaceplotter.beans;
 
 import java.beans.*;
 
-/** Observe a standard Bean's property, and provide easy, type safe access to the get and set.
+/** Observe a standard Bean's property, and provide easy, type safe access to the apply and set.
  * 
  * @author Eric
  *

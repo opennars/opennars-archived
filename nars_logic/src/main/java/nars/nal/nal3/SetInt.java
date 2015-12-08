@@ -25,7 +25,7 @@ public interface SetInt<T extends Term> extends SetTensional<T> {
 //    static Compound make(List<Term> t) {
 //        switch (t.size()) {
 //            case 0: throw new RuntimeException("empty set");
-//            case 1: return new SetInt1(t.get(0));
+//            case 1: return new SetInt1(t.apply(0));
 //            default:
 //                return new SetIntN( Terms.toSortedSetArray(t) );
 //        }

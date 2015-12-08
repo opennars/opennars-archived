@@ -60,7 +60,7 @@ import java.beans.PropertyChangeListener;
  * frame.add("Center", scroll);
  *
  * // Show/hide the "Controls"
- * JButton toggle = new JButton(cp.getActionMap().get(JCollapsiblePane.TOGGLE_ACTION));
+ * JButton toggle = new JButton(cp.getActionMap().apply(JCollapsiblePane.TOGGLE_ACTION));
  * toggle.setText("Show/Hide Search Panel");
  * frame.add("South", toggle);
  *
@@ -102,7 +102,7 @@ public class JCollapsiblePane extends JPanel {
   /**
    * JCollapsible has a built-in toggle action which can be bound to buttons.
    * Accesses the action through
-   * <code>collapsiblePane.getActionMap().get(JCollapsiblePane.TOGGLE_ACTION)</code>.
+   * <code>collapsiblePane.getActionMap().apply(JCollapsiblePane.TOGGLE_ACTION)</code>.
    */
   public final static String TOGGLE_ACTION = "toggle";
   

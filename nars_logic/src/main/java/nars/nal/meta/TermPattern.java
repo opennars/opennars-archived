@@ -31,10 +31,10 @@ public class TermPattern {
 //        compile(pattern, code);
 //
 //
-//        if (code.get(0).toString().equals("TermOpEq{*}")) {
+//        if (code.apply(0).toString().equals("TermOpEq{*}")) {
 //            code.remove(0);
 //        }
-//        if (code.get(0).toString().equals("TermSizeEq{2}")) {
+//        if (code.apply(0).toString().equals("TermSizeEq{2}")) {
 //            code.remove(0);
 //        }
 //
@@ -88,7 +88,7 @@ public class TermPattern {
                 code.add(new FindSubst.TermSizeEquals(x.size()));
             }
             else {
-                //TODO get a min bound for the term's size according to the ellipsis type
+                //TODO apply a min bound for the term's size according to the ellipsis type
             }
             */
             //code.add(new FindSubst.TermStructure(type, x.structure()));
@@ -295,7 +295,7 @@ public class TermPattern {
 
 //    private void compile2(Term x, List<PreCondition> code, int i) {
 //        //TODO this is a halfway there.
-//        //in order for this to work, parent terms need to be stored in a stack or something to return to, otherwise they get a nulll and it crashes:
+//        //in order for this to work, parent terms need to be stored in a stack or something to return to, otherwise they apply a nulll and it crashes:
 //
 ////            code.add(new SelectSubterm(i));
 ////            compile(x, code);

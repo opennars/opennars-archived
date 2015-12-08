@@ -59,7 +59,7 @@
 ////        this.currentValue = currentValue;
 ////
 //////        previousValue = dft;
-////        previousValue = currentValue.get();
+////        previousValue = currentValue.apply();
 ////        currentValue.set( dft );
 ////        setLayout(new GridLayout(3, 3, 8, 4));
 ////        getContentPane().setBackground(SINGLE_WINDOW_COLOR);
@@ -74,7 +74,7 @@
 ////        add(sp2);
 ////        add(new JLabel("0", JLabel.RIGHT));
 //////        valueBar = new JScrollBar(Scrollbar.HORIZONTAL, dft, 0, 0, 100);
-////        valueBar = new JScrollBar(Scrollbar.HORIZONTAL, currentValue.get(), 0, 0, 100);
+////        valueBar = new JScrollBar(Scrollbar.HORIZONTAL, currentValue.apply(), 0, 0, 100);
 ////        valueBar.addAdjustmentListener(this);
 ////        addWindowFocusListener(this);
 ////        add(valueBar);
@@ -96,7 +96,7 @@
 //     * @return The current value
 //     */
 //    public int value() {
-//        return currentValue.get();
+//        return currentValue.apply();
 //    }
 //
 //    /**
@@ -108,11 +108,11 @@
 //        Object s = e.getSource();
 //        if (s == defaultButton) {
 //            currentValue.set( defaultValue );
-//            valueBar.setValue(currentValue.get() );
+//            valueBar.setValue(currentValue.apply() );
 //            valueLabel.setText(String.valueOf(currentValue));
 //        } else if (s == undoButton) {
 //            currentValue.set( previousValue );
-//            valueBar.setValue(currentValue.get() );
+//            valueBar.setValue(currentValue.apply() );
 //            valueLabel.setText(String.valueOf(currentValue));
 //        } else if (s == hideButton) {
 //            close();
@@ -121,7 +121,7 @@
 //
 //    @Override
 //    protected void close() {
-//        previousValue = currentValue.get();
+//        previousValue = currentValue.apply();
 //        setVisible(false);
 //    }
 //
@@ -148,7 +148,7 @@
 //	 * I consider using PropertyChangeSupport for the silence level,
 //	 * or leveraging valueBar's model. */
 //	public void windowGainedFocus(WindowEvent e) {
-//		valueBar.setValue(currentValue.get());
+//		valueBar.setValue(currentValue.apply());
 //	}
 //
 //	@Override

@@ -36,7 +36,7 @@ public class EventValueControlSensor extends ControlSensor {
     @Override
     public double get() {
         return e.get();
-        //double v = e.signalFirst().get();
+        //double v = e.signalFirst().apply();
 //        if (adaptContrast > 0) {
 //            adaptContrast(adaptContrast, v);
 //        }

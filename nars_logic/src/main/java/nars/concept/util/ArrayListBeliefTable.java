@@ -302,7 +302,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //        }
 //
 
-//        if (!addToTable(belief, getBeliefs(), getMemory().param.conceptBeliefsMax.get(), Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class)) {
+//        if (!addToTable(belief, getBeliefs(), getMemory().param.conceptBeliefsMax.apply(), Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class)) {
 //            //wasnt added to table
 //            getMemory().removed(belief, "Insufficient Rank"); //irrelevant
 //            return false;
@@ -323,7 +323,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //            //Truth projectedTruth = oldGoal.projection(now, task.getOccurrenceTime());
 //                /*if (projectedGoal!=null)*/
 //            {
-//                // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
+//                // if (goal.after(oldGoal, nal.memory.param.duration.apply())) { //no need to project the old goal, it will be projected if selected anyway now
 //                // nal.singlePremiseTask(projectedGoal, task.budget);
 //                //return;
 //                // }
@@ -380,7 +380,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //    /**
 //     * Select a belief to interact with the given task in logic
 //     * <p/>
-//     * get the first qualified one
+//     * apply the first qualified one
 //     * <p/>
 //     * only called in RuleTables.rule
 //     *

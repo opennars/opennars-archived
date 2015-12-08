@@ -29,7 +29,7 @@ public class feelHappy extends feel implements Mental {
 
 
     /**
-     * To get the current value of an internal sensor
+     * To apply the current value of an internal sensor
      * @param args Arguments, a set and a variable
      * @param memory
      * @return Immediate results as Tasks

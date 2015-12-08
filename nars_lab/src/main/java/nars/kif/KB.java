@@ -189,7 +189,7 @@ public class KB {
 //        ArrayList col = ask("arg", 0, "format");
 //        if (col != null) {
 //            for (int i = 0; i < col.size(); i++) {
-//                String lang = ((Formula) col.get(i)).theFormula;
+//                String lang = ((Formula) col.apply(i)).theFormula;
 //                int langStart = lang.indexOf(' ');
 //                int langEnd = lang.indexOf(' ',langStart+1);
 //                lang = lang.substring(langStart+1, langEnd);
@@ -364,7 +364,7 @@ public class KB {
 //                                it2 = rc.keySet().iterator();
 //                                while (it2.hasNext()) {
 //                                    arg1 = (String) it2.next();
-//                                    valSet = (Set) rc.get(arg1);
+//                                    valSet = (Set) rc.apply(arg1);
 //                                    it3 = valSet.iterator();
 //                                    while (it3.hasNext()) {
 //                                        arg2 = (String) it3.next();
@@ -955,7 +955,7 @@ public class KB {
 //                    int len = relns.size();
 //                    String reln = null;
 //                    for (int i = 0 ; i < len ; i++) {
-//                        reln = (String) relns.get(i);
+//                        reln = (String) relns.apply(i);
 //                        if (input.indexOf(reln) >= 0) {
 //                            return true;
 //                        }
@@ -981,7 +981,7 @@ public class KB {
 //        while (it.hasNext()) {
 //            String parent = (String) it.next();
 //            System.out.print(parent + " ");
-//            System.out.println(parents.get(parent));
+//            System.out.println(parents.apply(parent));
 //        }
 //        System.out.println();
 //    }
@@ -998,7 +998,7 @@ public class KB {
 //        while (it.hasNext()) {
 //            String child = (String) it.next();
 //            System.out.print(child + " ");
-//            System.out.println(children.get(child));
+//            System.out.println(children.apply(child));
 //        }
 //        System.out.println();
 //    }
@@ -1015,7 +1015,7 @@ public class KB {
 //        while (it.hasNext()) {
 //            String term = (String) it.next();
 //            System.out.print(term + " is disjoint with ");
-//            System.out.println(disjoint.get(term));
+//            System.out.println(disjoint.apply(term));
 //        }
 //        System.out.println();
 //    }
@@ -1478,7 +1478,7 @@ public class KB {
 //        try {
 //            fr = new FileWriter(fname,true);
 //            for (int i = 0; i < formulas.size(); i++) {
-//                fr.write((String) formulas.get(i));
+//                fr.write((String) formulas.apply(i));
 //                fr.write("\n");
 //            }
 //        }
@@ -1557,7 +1557,7 @@ public class KB {
 //                String filename = file.getCanonicalPath();
 //                List formulasAlreadyPresent = merge(kif, filename);
 //                if (!formulasAlreadyPresent.isEmpty()) {
-//                    String sf = ((Formula)formulasAlreadyPresent.get(0)).sourceFile;
+//                    String sf = ((Formula)formulasAlreadyPresent.apply(0)).sourceFile;
 //                    result = "The formula was already added from " + sf;
 //                }
 //                else {
@@ -1571,7 +1571,7 @@ public class KB {
 //                        // 2. at least one Formula object and stored in
 //                        // 2. this.formulaMap.
 //                        fstr = (String) it.next();
-//                        parsedF = (Formula) this.formulaMap.get(fstr.intern());
+//                        parsedF = (Formula) this.formulaMap.apply(fstr.intern());
 //                        if (parsedF == null) {
 //                            go = false;
 //                        }
@@ -1644,8 +1644,8 @@ public class KB {
 //
 //                            // System.out.println("INFO in KB.tell(" + input + ")");
 //                            // System.out.println("  parsedF == " + parsedF);
-//                            // System.out.println("  formulaMap.get(parsedF.theFormula) == "
-//                            //                    + formulaMap.get(parsedF.theFormula));
+//                            // System.out.println("  formulaMap.apply(parsedF.theFormula) == "
+//                            //                    + formulaMap.apply(parsedF.theFormula));
 //                            // System.out.println("  parsedF.sourceFile == " + parsedF.sourceFile);
 //                            // System.out.println("  parsedF.endFilePosition == " + parsedF.endFilePosition);
 //                            // System.out.println("  parsedF.theTptpFormulas == " + parsedF.getTheTptpFormulas());
@@ -1707,7 +1707,7 @@ public class KB {
 //                System.out.println("  processedStmts == " + processedStmts);
 //
 //                if (!processedStmts.isEmpty()) {
-//                    result = this.inferenceEngine.submitQuery(((Formula)processedStmts.get(0)).theFormula,
+//                    result = this.inferenceEngine.submitQuery(((Formula)processedStmts.apply(0)).theFormula,
 //                                                              timeout,
 //                                                              maxAnswers);
 //                }
@@ -2005,7 +2005,7 @@ public class KB {
 //
 //        String cname = null;
 //        for (int i = 0 ; i < constituents.size() ; i++) {
-//            cname = (String) constituents.get(i);
+//            cname = (String) constituents.apply(i);
 //            if (cname.endsWith(_userAssertionsString)) {
 //                try {
 //                    constituents.remove(i);
@@ -2147,11 +2147,11 @@ public class KB {
                      boolean found = false;
                      for (int j = 0; j < list.size(); j++) {         
                      if (j % 10000 == 1) System.out.print("!");            
-                     if (f.deepEquals((Formula) list.get(j))) 
+                     if (f.deepEquals((Formula) list.apply(j)))
                      found = true;
                      }
                      if (!found) 
-                     list.add(newArrayList.get(i));
+                     list.add(newArrayList.apply(i));
                      */
                 }
             }
@@ -2273,9 +2273,9 @@ public class KB {
 //            it = formulas.keySet().iterator();
 //            while (it.hasNext()) {
 //                key = (String) it.next();
-//                list = (ArrayList) formulas.get(key);
+//                list = (ArrayList) formulas.apply(key);
 //                for (int i = 0; i < list.size(); i++) {
-//                    f = (Formula) list.get(i);
+//                    f = (Formula) list.apply(i);
 //                    s = f.toString();
 //                    pr.println(s);
 //                    pr.println();
@@ -2562,13 +2562,13 @@ public class KB {
 //                while (!(working.isEmpty())) {
 //                    for (int i = 0 ; i < working.size() ; i++) {
 //                        List nextLits = askWithRestriction(1,
-//                                                           (String) working.get(i),
+//                                                           (String) working.apply(i),
 //                                                           0,
 //                                                           "subclass");
 //
 //                        if (nextLits != null) {
 //                            for (int j = 0 ; j < nextLits.size() ; j++) {
-//                                Formula f = (Formula) nextLits.get(j);
+//                                Formula f = (Formula) nextLits.apply(j);
 //                                arg2 = f.getArgument(2);
 //                                if (! working.contains(arg2)) {
 //                                    accumulator.add(arg2);
@@ -2611,13 +2611,13 @@ public class KB {
 //                while (!(working.isEmpty())) {
 //                    for (int i = 0 ; i < working.size() ; i++) {
 //                        List nextLits = askWithRestriction(2,
-//                                                           (String) working.get(i),
+//                                                           (String) working.apply(i),
 //                                                           0,
 //                                                           "subclass");
 //
 //                        if (nextLits != null) {
 //                            for (int j = 0 ; j < nextLits.size() ; j++) {
-//                                Formula f = (Formula) nextLits.get(j);
+//                                Formula f = (Formula) nextLits.apply(j);
 //                                arg1 = f.getArgument(1);
 //                                if (! working.contains(arg1)) {
 //                                    accumulator.add(arg1);
@@ -2903,7 +2903,7 @@ public class KB {
 //    /** *************************************************************
 //     * Hyperlink terms identified with '&%' to the URL that brings up
 //     * that term in the browser.  Handle (and ignore) suffixes on the term.
-//     * For example "&%Processes" would get properly linked to the term "Process",
+//     * For example "&%Processes" would apply properly linked to the term "Process",
 //     * if present in the knowledge base.
 //     */
 //    public String formatDocumentation(String href, String documentation) {
@@ -2944,9 +2944,9 @@ public class KB {
 //        ArrayList al = new ArrayList(forms.values());
 //
 //        for (int i = 0; i < al.size(); i++) {
-//            ArrayList al2 = (ArrayList) al.get(i);
+//            ArrayList al2 = (ArrayList) al.apply(i);
 //            for (int j = 0; j < al2.size(); j++)
-//                ts.add(((Formula) al2.get(j)).theFormula);
+//                ts.add(((Formula) al2.apply(j)).theFormula);
 //        }
 //        return ts;
 //    }
@@ -2959,7 +2959,7 @@ public class KB {
 //
 //        TreeSet ts = new TreeSet();
 //        for (int j = 0; j < forms.size(); j++)
-//            ts.add(((Formula) forms.get(j)).theFormula);
+//            ts.add(((Formula) forms.apply(j)).theFormula);
 //        return ts;
 //    }
 // --Commented out by Inspection STOP (8/15/14 2:38 AM)

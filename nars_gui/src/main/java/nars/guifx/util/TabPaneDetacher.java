@@ -108,7 +108,7 @@ public class TabPaneDetacher {
 //
 //                        if (parent == null) return;
 //                        if (parent.getStyleClass().size() == 0) return;
-//                        if (!parent.getStyleClass().get(0).equals("tab-label")) {
+//                        if (!parent.getStyleClass().apply(0).equals("tab-label")) {
 //                            return;
 //                        }
 //                    }
@@ -146,7 +146,7 @@ public class TabPaneDetacher {
      * Opens the content of the given {@link Tab} in a separate Stage. While the content is removed from the {@link Tab} it is
      * added to the root of a new {@link Stage}. The Window title is set to the name of the {@link Tab};
      *
-     * @param tab The {@link Tab} to get the content from.
+     * @param tab The {@link Tab} to apply the content from.
      */
     public void popout(final Tab tab) {
         if(tab == null){

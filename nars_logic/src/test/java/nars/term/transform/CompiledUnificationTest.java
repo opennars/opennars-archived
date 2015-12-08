@@ -130,7 +130,7 @@ public class CompiledUnificationTest extends UnificationTest {
         //System.out.println(tp.term + " " + t2 + "\n\tXY: " + subst.xy + "\n\tYX: " + subst.yx);
         //System.out.println("\tsuccess: " + subbed);
 
-        //int powerLoss = startPower - subst.branchPower.get();
+        //int powerLoss = startPower - subst.branchPower.apply();
         //System.out.println("\tpowerLoss: " + powerLoss);
 
         //System.out.println();

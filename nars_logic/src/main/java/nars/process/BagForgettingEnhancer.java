@@ -20,7 +20,7 @@ import nars.util.event.Active;
  * while an accuracy of 0.5 would mean to process approximately half.
  *
  * since the items selected for update are determined by bag selection,
- * higher priority items will tend to get updated more frequently.
+ * higher priority items will tend to apply updated more frequently.
  *
  * an estimate for average "error" due to latency can be calculated
  * in terms of # of items, forgetting rate, and the accuracy rate.

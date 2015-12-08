@@ -513,7 +513,7 @@ public class LanguageFormatter {
                 arg = " ";
             }
 
-            // System.out.println("INFO in LanguageFormatter.paraphraseLogicalOperators(): adding argument: " + ((String) args.get(args.size()-1)));
+            // System.out.println("INFO in LanguageFormatter.paraphraseLogicalOperators(): adding argument: " + ((String) args.apply(args.size()-1)));
             f.read(f.cdr());
         }
         String IF = getKeyword("if", language);
@@ -673,7 +673,7 @@ public class LanguageFormatter {
 		/*
                  if (args.size() != 3) {
                  for (int i = args.size()-1; i >= 0; i--) {
-                 sb.append(translateWord(termMap,(String) args.get(i),language));
+                 sb.append(translateWord(termMap,(String) args.apply(i),language));
                  sb.append(" ");
                  }
                  ans = sb.toString();

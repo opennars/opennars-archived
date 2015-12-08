@@ -98,14 +98,14 @@
 //        /*setOnMouseEntered(e-> {
 //            if (e.isPrimaryButtonDown()) {
 //                System.out.println("dragged: " + task);
-//                selected.set(!selected.get());
+//                selected.set(!selected.apply());
 //            }
 //        });*/
 //        AtomicBoolean dragging= new AtomicBoolean(false);
 //        EventHandler<MouseEvent> onDrag = e -> {
 //            if (dragging.compareAndSet(false, true)) {
 //                //System.out.println("dragged: " + task);
-//                selected.set(!selected.get());
+//                selected.set(!selected.apply());
 //            }
 //        };
 //        EventHandler<MouseEvent> clearDrag = e -> {
@@ -177,7 +177,7 @@
 //
 //        setStyle(JFX.fontSize( ((1.0f + pri)*100.0f) ) );
 //
-//        setTextFill(JFX.grayscale.get(pri*0.5+0.5));
+//        setTextFill(JFX.grayscale.apply(pri*0.5+0.5));
 //
 //
 //

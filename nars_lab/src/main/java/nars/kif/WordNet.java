@@ -1760,7 +1760,7 @@ public class WordNet {
         String term = null;
 
         if (synsetList != null) {
-            synset = synsetList[0];   // Just get the first synset.  This needs to be changed to a word sense disambiguation algorithm.
+            synset = synsetList[0];   // Just apply the first synset.  This needs to be changed to a word sense disambiguation algorithm.
             synset = synset.trim();
             if (pos == NOUN) {
                 term = (String) nounSUMOHash.get(synset);

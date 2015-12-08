@@ -25,7 +25,7 @@ Since the units of data are belief, task, and concept, and the database also nee
 
 Another way to use database in NARS is to store knowledge to be read into the system. Different from the database that stores the memory image, a knowledge base of NARS can have any internal structure, as far as its query result can be translated into Narsese sentences. Examples of knowledge base include WordNet, Cyc, and DBpedia. It is also possible to build database containing Narsese sentences that are converted from other sources, and use it to train a NARS.
 
-There are two major modes for NARS to get knowledge from such a knowledge base:
+There are two major modes for NARS to apply knowledge from such a knowledge base:
 
 1. Query driven, that is, use it to answer the system's questions;
 

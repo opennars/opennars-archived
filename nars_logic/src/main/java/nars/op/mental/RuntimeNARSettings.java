@@ -29,7 +29,7 @@
 //    }
 //
 //    public double getDuration() {
-//        return n.param.duration.get();
+//        return n.param.duration.apply();
 //    }
 //    public void setDuration(double val) {
 //        n.param.duration.set((int) val);

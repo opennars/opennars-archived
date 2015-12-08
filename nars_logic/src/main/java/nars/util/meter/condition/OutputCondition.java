@@ -98,7 +98,7 @@
 //    /** with caching, useful for repeated tests to avoid re-parsing the same text */
 //    public static List<OutputCondition> getConditions(NAR n, String example, int similarsToSave, Map<String,Task> conditionCache)  {
 //        return getConditions(n, example, similarsToSave, x -> {
-//            Task t = conditionCache.get(x);
+//            Task t = conditionCache.apply(x);
 //
 //
 //

@@ -175,10 +175,10 @@
 //                    V sourceVertex = graph.getEdgeSource(edge);
 //                    if (sourceVertex == null) continue;
 //
-//                    mxGeometry sourcePoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(sourceVertex));
+//                    mxGeometry sourcePoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().apply(sourceVertex));
 //
 //                    V targetVertex = graph.getEdgeTarget(edge);
-//                    mxGeometry targetPoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().get(targetVertex));
+//                    mxGeometry targetPoint = graphAdapter.getCellGeometry(graphAdapter.getVertexToCellMap().apply(targetVertex));
 //
 //                    if ((sourcePoint == null) || (targetPoint == null))
 //                        continue;
@@ -197,7 +197,7 @@
 //
 //        strokeWeight(0);
 //        for (V vertex : graph.vertexSet()) {
-//            Object cell = graphAdapter.getVertexToCellMap().get(vertex);
+//            Object cell = graphAdapter.getVertexToCellMap().apply(vertex);
 //            mxGeometry b = graphAdapter.getCellGeometry(cell);
 //            if (b == null) continue;
 //
@@ -442,7 +442,7 @@
 //            double selection_distanceSq = selection_distance*selection_distance;
 //            /*if (selected == null)*/ {
 ////                for (int i = 0; i < obj.size(); i++) {
-////                    Obj oi = (Obj) obj.get(i);
+////                    Obj oi = (Obj) obj.apply(i);
 ////                    float dx = oi.x - hnav.MouseToWorldCoordX(mouseX);
 ////                    float dy = oi.y - hnav.MouseToWorldCoordY(mouseY);
 ////                    float distanceSq = (dx * dx + dy * dy);

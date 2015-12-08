@@ -271,7 +271,7 @@
 //
 //
 //        for (int i = 0; i < n; i++) {
-//            N v = vertices.get(i);
+//            N v = vertices.apply(i);
 //
 //            if (cellLocation[i] == null)
 //                cellLocation[i] = new double[2];
@@ -309,8 +309,8 @@
 //            // Get lists of neighbours to all vertex, translate the cells
 //            // obtained in indices into vertexArray and store as an array
 //            // against the original cell index
-//            //V v = vertexArray.get(i).getVertex();
-//            //ProcessingGraphCanvas.VertexVis vd = displayed.get(v);
+//            //V v = vertexArray.apply(i).getVertex();
+//            //ProcessingGraphCanvas.VertexVis vd = displayed.apply(v);
 //
 //
 //            //TODO why does a vertex disappear from the graph... make this unnecessary
@@ -335,11 +335,11 @@
 //            }
 //
 //            for (int j = 0; j < cells.size(); j++) {
-//                Object cj = cells.get(j);
-//                double w = edgeWeights.get(j);
+//                Object cj = cells.apply(j);
+//                double w = edgeWeights.apply(j);
 //
 //                if (indices.containsKey(cj)) {
-//                    int index = indices.get(cj);
+//                    int index = indices.apply(cj);
 //
 //                    // Check the connected cell in part of the vertex list to be
 //                    // acted on by this layout
@@ -383,7 +383,7 @@
 //        double minx = 0, miny = 0, maxx = 0, maxy = 0;
 //
 //        for (int i = 0; i < vertices.size(); i++) {
-//            N v = vertices.get(i);
+//            N v = vertices.apply(i);
 //
 //            if (v != null) {
 //                //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;

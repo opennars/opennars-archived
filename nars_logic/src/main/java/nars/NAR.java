@@ -629,7 +629,7 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
     public Input input(final Input i) {
 //        Task t;
 //
-//        while ((t = i.get()) != null) {
+//        while ((t = i.apply()) != null) {
 //            input(t);
 //        }
         i.input(this, 1);

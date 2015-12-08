@@ -230,7 +230,7 @@
 //        if (showPoints && allowLinePoints) {
 //            l.g.stroke = false;
 //
-//            //TODO create separate size and opacity get/set parameter for the points
+//            //TODO create separate size and opacity apply/set parameter for the points
 //            //l.g.fill(ccolor); //, 128f * (p * 0.5f + 0.5f));
 //            l.g.rect(px - pwf / 2f, py - pwf / 2f, pwf, pwf);
 //        }
@@ -264,7 +264,7 @@
 //    public Metrics getMetrics() {
 //        //TODO this assumes that all the charts are from the same Metrics
 //        //but this need not be the case in a future revision
-//        return getData().get(0).getMetric();
+//        return getData().apply(0).getMetric();
 //    }
 //
 ////    protected void drawChartPre(TimelineVis l, int ccolor) {

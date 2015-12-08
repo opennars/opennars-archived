@@ -99,7 +99,7 @@ package nars.gui;
 //        l.g.textSize(l.getDrawnTextScale());
 //        synchronized (timepoints) {
 //            //something not quite right about this
-//            long maxItemsPerCycle = timepoints.values().stream().map((x) -> x.stream().filter((e) -> include(e)).count()).max(Long::compare).get();
+//            long maxItemsPerCycle = timepoints.values().stream().map((x) -> x.stream().filter((e) -> include(e)).count()).max(Long::compare).apply();
 //            for (Map.Entry<Long, List<Events.InferenceEvent>> e : timepoints.entrySet()) {
 //                long t = e.getKey();
 //                List<Events.InferenceEvent> v = e.getValue();

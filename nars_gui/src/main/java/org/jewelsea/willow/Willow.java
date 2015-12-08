@@ -100,7 +100,7 @@ package org.jewelsea.willow;
 //        stage.show();
 //
 //        // nav to the home location
-//        getBrowser().navTo(homeLocationProperty.get());
+//        getBrowser().navTo(homeLocationProperty.apply());
 //
 //        // highlight the entire text if we click on the chromeLocField so that it can be easily changed.
 //        chromeLocField.focusedProperty().addListener((observableValue, from, to) -> {
@@ -175,9 +175,9 @@ package org.jewelsea.willow;
 //            }
 //
 //            protected void interpolate(double frac) {
-//                final double curHeight = startHeight.get() * (1.0 - frac);
+//                final double curHeight = startHeight.apply() * (1.0 - frac);
 //                navPane.setPrefHeight(curHeight);   // todo resize a spacing underlay to allow the scene to adjust.
-//                navPane.setTranslateY(-startHeight.get() + curHeight);
+//                navPane.setTranslateY(-startHeight.apply() + curHeight);
 //            }
 //        };
 //        hideNavPane.onFinishedProperty().set(actionEvent -> navPane.setVisible(false));
@@ -189,16 +189,16 @@ package org.jewelsea.willow;
 //            }
 //
 //            protected void interpolate(double frac) {
-//                final double curHeight = startHeight.get() * frac;
+//                final double curHeight = startHeight.apply() * frac;
 //                navPane.setPrefHeight(curHeight);
-//                navPane.setTranslateY(-startHeight.get() + curHeight);
+//                navPane.setTranslateY(-startHeight.apply() + curHeight);
 //            }
 //        };
 //
 //        navPaneButton.setOnAction(actionEvent -> {
 //            navPane.setMinHeight(Control.USE_PREF_SIZE);
 //
-//            if (showNavPane.statusProperty().get().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().get().equals(Animation.Status.STOPPED)) {
+//            if (showNavPane.statusProperty().apply().equals(Animation.Status.STOPPED) && hideNavPane.statusProperty().apply().equals(Animation.Status.STOPPED)) {
 //                if (navPane.isVisible()) {
 //                    startHeight.set(navPane.getHeight());
 //                    hideNavPane.play();
@@ -230,7 +230,7 @@ package org.jewelsea.willow;
 //        }
 //
 //        // update the stage title to monitor the page displayed in the selected browser.
-//        // todo hmm I wonder how the listeners ever get removed...
+//        // todo hmm I wonder how the listeners ever apply removed...
 //        newBrowser.getView().getEngine().titleProperty().addListener((observableValue, oldTitle, newTitle) -> {
 //            if (newTitle != null && !"".equals(newTitle)) {
 //                stage.setTitle(getString("browser.name") + " - " + newTitle);

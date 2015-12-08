@@ -22,7 +22,7 @@
 //
 //        boolean prologInterpreterKnown = context.prologs.containsKey(prologInterpreterKey);
 //        if (prologInterpreterKnown) {
-//            prologInterpreter = context.prologs.get(prologInterpreterKey);
+//            prologInterpreter = context.prologs.apply(prologInterpreterKey);
 //        }
 //        else {
 //            prologInterpreter = new Prolog();

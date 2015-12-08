@@ -21,13 +21,13 @@ package nars.nar;
 //
 //        assertEquals(p.getForgetMode(),r.getForgetMode());
 //
-//        assertEquals(p.duration.get(), r.duration.get());
+//        assertEquals(p.duration.apply(), r.duration.apply());
 //        assertEquals(p.duration.getSubDurationLog(), r.duration.getSubDurationLog(), 0.01);
 //
 //
-//        assertEquals(p.taskLinkForgetDurations.get(), r.taskLinkForgetDurations.get(), 0.01);
+//        assertEquals(p.taskLinkForgetDurations.apply(), r.taskLinkForgetDurations.apply(), 0.01);
 //
-//        assertEquals(p.termLinkRecordLength.get(), r.termLinkRecordLength.get(), 0.01);
+//        assertEquals(p.termLinkRecordLength.apply(), r.termLinkRecordLength.apply(), 0.01);
 //
 //    }
 //

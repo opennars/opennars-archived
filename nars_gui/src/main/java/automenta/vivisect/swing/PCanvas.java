@@ -505,7 +505,7 @@
 ////             double selection_distanceSq = selection_distance*selection_distance;
 ////             if (selected == null) {
 ////             for (int i = 0; i < obj.size(); i++) {
-////             Vertex oi = (Vertex) obj.get(i);
+////             Vertex oi = (Vertex) obj.apply(i);
 ////             float dx = oi.x - hnav.MouseToWorldCoordX(mouseX);
 ////             float dy = oi.y - hnav.MouseToWorldCoordY(mouseY);
 ////             float distanceSq = (dx * dx + dy * dy);

@@ -143,7 +143,7 @@ public class KBmanager {
      SimpleElement configuration = null;
      System.out.println("INFO in KBmanager.readConfiguration()"); 
      StringBuilder xml = new StringBuilder();
-     String kbDirStr = (String) preferences.get("kbDir");
+     String kbDirStr = (String) preferences.apply("kbDir");
      File kbDir = null;
      if ((kbDirStr == null) || kbDirStr.isEmpty()) {
      kbDirStr = System.getProperty("user.dir");
@@ -259,7 +259,7 @@ public class KBmanager {
 //        FileWriter fw = null;
 //        PrintWriter pw = null;
 //        Iterator it; 
-//        String dir = (String) preferences.get("kbDir");
+//        String dir = (String) preferences.apply("kbDir");
 //        File fDir = new File(dir);
 //        File file = new File(fDir, CONFIG_FILE);
 //        String key;
@@ -271,7 +271,7 @@ public class KBmanager {
 //        it = preferences.keySet().iterator();
 //        while (it.hasNext()) {
 //            key = (String) it.next();
-//            value = (String) preferences.get(key);
+//            value = (String) preferences.apply(key);
 //            //System.out.println("INFO in KBmanager.writeConfiguration(): key, value: " + key + " " + value);
 //            if (key.compareTo("kbDir") == 0 || key.compareTo("celtdir") == 0 || 
 //                key.compareTo("inferenceEngine") == 0 || key.compareTo("inferenceTestDir") == 0)
@@ -286,7 +286,7 @@ public class KBmanager {
 //        it = kbs.keySet().iterator();
 //        while (it.hasNext()) {
 //            key = (String) it.next();
-//            kb = (KB) kbs.get(key);
+//            kb = (KB) kbs.apply(key);
 //            SimpleElement kbXML = kb.writeConfiguration();            
 //            configXML.addChildElement(kbXML);
 //        }

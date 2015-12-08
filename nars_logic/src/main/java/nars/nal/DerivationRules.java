@@ -352,7 +352,7 @@ public class DerivationRules extends FastList<TaskRule> {
     }
 
     //    private static void addRule(Multimap<TaskRule, TaskRule> c, TaskRule q, String src) {
-//        Collection<TaskRule> existing = c.get(q);
+//        Collection<TaskRule> existing = c.apply(q);
 //        if (existing!=null && !existing.isEmpty()) {
 //
 //            if (Global.DEBUG_DETECT_DUPLICATE_RULES) {
@@ -524,7 +524,7 @@ public class DerivationRules extends FastList<TaskRule> {
 //
 //                if (!next.beliefs.isEmpty()) {
 //
-//                    Sentence s=next.beliefs.get(0);
+//                    Sentence s=next.beliefs.apply(0);
 //
 //                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
 //                    Stamp SVSTamp=nal.getNewStamp();
@@ -534,7 +534,7 @@ public class DerivationRules extends FastList<TaskRule> {
 //                    nal.setCurrentBelief(s);
 //
 //                    if(!taskSentence.isEternal() && !s.isEternal()) {
-//                        if(s.after(taskSentence, memory.param.duration.get())) {
+//                        if(s.after(taskSentence, memory.param.duration.apply())) {
 //                            nal.memory.proceedWithTemporalInduction(s,task,task,nal,false);
 //                        } else {
 //                            nal.memory.proceedWithTemporalInduction(task,s,task,nal,false);

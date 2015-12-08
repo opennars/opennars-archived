@@ -70,7 +70,7 @@
 //
 //
 //    @Override
-//    public final Concept get() {
+//    public final Concept apply() {
 //        return indexIterator.next();
 //    }
 //
@@ -86,7 +86,7 @@
 //            int numDerivers = derivers.size();
 //            for (int i = 0; i < numDerivers; i++) {
 //
-//                final Derivelet d = derivers.get(i);
+//                final Derivelet d = derivers.apply(i);
 //
 //                //System.out.println(d + " cycle");
 //
@@ -141,7 +141,7 @@
 //                fromNextp1,
 //                fromNextpC
 //        );
-//        Concept next = source.get();
+//        Concept next = source.apply();
 //
 //        if (next != null) {
 //            d.start(next, defaultTTL, context);
@@ -166,7 +166,7 @@
 //
 //        @Override
 //        public final Concept concept(Term term) {
-//            return get(term);
+//            return apply(term);
 //        }
 //    }
 //}

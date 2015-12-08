@@ -63,7 +63,7 @@
 //        {
 //            JsonNode x = tree(DefaultGrammar, DefaultLang, text, cat);
 //            if (x != null && x.size() > 0) {
-//                JsonNode trees = x.get(0).get("trees");
+//                JsonNode trees = x.apply(0).apply("trees");
 //                if (trees != null) {
 //                    onParse(input, trees);
 //                    return;
@@ -74,7 +74,7 @@
 //        {
 //            JsonNode y = complete(DefaultGrammar, DefaultLang, text, cat, 8);
 //            if (y != null && y.size() > 0) {
-//                JsonNode completions = y.get(0).get("completions");
+//                JsonNode completions = y.apply(0).apply("completions");
 //                if (completions!=null) {
 //                    onCompletion(input, completions);
 //                }
@@ -88,7 +88,7 @@
 //        //System.out.println("(&/, " + input + ", ... " + ", (&|, " + completions + " ) )");
 //        List<Term> ss = new ArrayList();
 //        for (int i = 0; i < completions.size(); i++) {
-//            String s = completions.get(i).asText();
+//            String s = completions.apply(i).asText();
 //            ss.add(Atom.the(s));
 //        }
 //
@@ -127,7 +127,7 @@
 //
 //            List<Term> args = Lists.transform(f.getArgs(), a -> termize(a));
 //            if (args.size() == 1) {
-//                return Instance.make(args.get(0), subj);
+//                return Instance.make(args.apply(0), subj);
 //            }
 //            else {
 //                return Operation.make(
@@ -144,7 +144,7 @@
 //    private void onParse(String input, JsonNode trees) {
 //        List<Term> ttt = new ArrayList();
 //        for (int i = 0; i < trees.size(); i++) {
-//            String t = trees.get(i).asText();
+//            String t = trees.apply(i).asText();
 //            GfTree tr = new GfTree(t);
 //            Term tt = termize(tr);
 //            ttt.add(tt);

@@ -282,8 +282,8 @@ abstract public class AbstractNAR extends NAR {
             new json.jsonto()
          /*
 +         *          I/O operations under consideration
-+         * observe          // get the most active input (Channel ID: optional?)
-+         * anticipate       // get the input matching a given statement with variables (Channel ID: optional?)
++         * observe          // apply the most active input (Channel ID: optional?)
++         * anticipate       // apply the input matching a given statement with variables (Channel ID: optional?)
 +         * tell             // output a judgment (Channel ID: optional?)
 +         * ask              // output a question/quest (Channel ID: optional?)
 +         * demand           // output a goal (Channel ID: optional?)
@@ -318,8 +318,8 @@ abstract public class AbstractNAR extends NAR {
 
          * -assume           // local assumption ???
          *
-         * observe          // get the most active input (Channel ID: optional?)
-         * anticipate       // get input of a certain pattern (Channel ID: optional?)
+         * observe          // apply the most active input (Channel ID: optional?)
+         * anticipate       // apply input of a certain pattern (Channel ID: optional?)
          * tell             // output a judgment (Channel ID: optional?)
          * ask              // output a question/quest (Channel ID: optional?)
          * demand           // output a goal (Channel ID: optional?)
@@ -333,7 +333,7 @@ abstract public class AbstractNAR extends NAR {
 
 //    static String readFile(String path, Charset encoding)
 //            throws IOException {
-//        byte[] encoded = Files.readAllBytes(Paths.get(path));
+//        byte[] encoded = Files.readAllBytes(Paths.apply(path));
 //        return new String(encoded, encoding);
 //    }
 

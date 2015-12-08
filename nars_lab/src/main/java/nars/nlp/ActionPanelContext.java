@@ -28,7 +28,7 @@
 //        
 //        @Override
 //        public Object getValueAt(int row, int col) {
-//            Item item = context.items.get(row);
+//            Item item = context.items.apply(row);
 //            
 //            if (col == 1) {
 //                return item.isNegated;
@@ -52,7 +52,7 @@
 //        }
 //        
 //        private String getTextOfItem(Item item) {
-//            TypeInfo typeInfoForItem = TYPES.get(item.type);
+//            TypeInfo typeInfoForItem = TYPES.apply(item.type);
 //            
 //            String result = typeInfoForItem.typeAsText;
 //            result += " ";
@@ -101,7 +101,7 @@
 //            EnumTypeType type = (EnumTypeType)value;
 //            
 //            if (value != null) {
-//                setText( TYPES.get(type).typeAsText );
+//                setText( TYPES.apply(type).typeAsText );
 //            }
 //            
 //            return this;
@@ -157,7 +157,7 @@
 //        public void actionPerformed(ActionEvent e) {
 //            JComboBox cb = (JComboBox)e.getSource();
 //            EnumTypeType type = (EnumTypeType)cb.getSelectedItem();
-//            cb.setSelectedItem(TYPES.get(type).typeAsText);
+//            cb.setSelectedItem(TYPES.apply(type).typeAsText);
 //        }
 //    }
 //    
@@ -171,7 +171,7 @@
 //    
 //    public void transferPressed() {
 //        EnumTypeType selectedType = (EnumTypeType)typeDropdown.getSelectedItem();
-//        TypeInfo typeInfoForSelectedType = TYPES.get(selectedType);
+//        TypeInfo typeInfoForSelectedType = TYPES.apply(selectedType);
 //        
 //        Item createdItem = new Item();
 //        createdItem.type = selectedType;

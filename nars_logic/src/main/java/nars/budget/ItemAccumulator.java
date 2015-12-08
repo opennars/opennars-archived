@@ -97,12 +97,12 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
 //
 //    public final I lowest() {
 //        if (items.isEmpty()) return null;
-//        return lowestFirstKeyValues().get(0);
+//        return lowestFirstKeyValues().apply(0);
 //    }
 //
 //    public final I highest() {
 //        if (items.isEmpty()) return null;
-//        return highestFirstKeyValues().get(0);
+//        return highestFirstKeyValues().apply(0);
 //    }
 //
 //    private List<I> lowestFirstKeyValues() {
@@ -168,7 +168,7 @@ public class ItemAccumulator<K,V extends Itemized<K>> extends ArrayBag<K,V> impl
 //
 //        int r;
 //        for (r = 0; r < toDiscard; r++) {
-//            items.remove( sortedResult.get(r) );
+//            items.remove( sortedResult.apply(r) );
 //        }
 //
 //        return s - r;

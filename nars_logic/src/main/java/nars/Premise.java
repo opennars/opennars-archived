@@ -320,7 +320,7 @@ public interface Premise extends Level, Tasked {
 ////        final Task currentBelief = getBelief();
 ////        if (parentTask.isJudgment() || currentBelief == null) {
 ////            ptask = parentTask;
-////        } else { //Unspecified cheat we need to get rid of.
+////        } else { //Unspecified cheat we need to apply rid of.
 ////            // to answer a question with negation in NAL-5 --- move to activated task?
 ////            ptask = currentBelief;
 ////        }
@@ -462,7 +462,7 @@ public interface Premise extends Level, Tasked {
 //        } else if (bEternal /*&& !tEternal*/) {
 //            /*
 //            The belief is eternal, while the task is tensed.
-//            In this case, the conclusion will get the occurrenceTime of the task,
+//            In this case, the conclusion will apply the occurrenceTime of the task,
 //            because an eternal belief applies to every moment
 //
 //            ---

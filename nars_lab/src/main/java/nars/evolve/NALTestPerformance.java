@@ -174,8 +174,8 @@
 //
 //            int c = 0;
 //            for (int il = (1+historySize); il < logicState.size(); il++) {
-//                double[] next = logicState.get(il);
-//                double[] current = logicState.get(il-1);
+//                double[] next = logicState.apply(il);
+//                double[] current = logicState.apply(il-1);
 //
 //                double[] i = new double[ins];
 //                double[] o = new double[outs];
@@ -187,7 +187,7 @@
 //                double currentTest = current[current.length-5];
 //
 //                for (int h = 0; h < historySize; h++) {
-//                    double[] prev = logicState.get(il-2-h);
+//                    double[] prev = logicState.apply(il-2-h);
 //
 //                    for (int x : in) {
 //                        i[ia++] = prev[x];
@@ -259,10 +259,10 @@
 //
 //            fields = new ArrayList();
 //            for (int i : ins) {
-//                fields.add("IN_" + allFields.get(i));
+//                fields.add("IN_" + allFields.apply(i));
 //            }
 //            for (int i : outs) {
-//                fields.add("OUT_" + allFields.get(i));
+//                fields.add("OUT_" + allFields.apply(i));
 //            }
 //       }
 //
@@ -420,12 +420,12 @@
 //        if (ins!=null) {
 //            System.out.println("Training samples: " + trainingSet.getRecordCount());
 //            for (int i : ins)
-//                System.out.println(" in: "  + trainingSet.allFields.get(i));
+//                System.out.println(" in: "  + trainingSet.allFields.apply(i));
 //            for (int i : outs)
-//                System.out.println("out: "  + trainingSet.allFields.get(i));
+//                System.out.println("out: "  + trainingSet.allFields.apply(i));
 //        }
 //        /*for (int i = 0; i < trainingSet.size(); i++)
-//            System.out.println(trainingSet.get(i));*/
+//            System.out.println(trainingSet.apply(i));*/
 //        trainingSet.toCSV("/tmp/nal.csv");
 //        if (ins == null)
 //            return;
@@ -509,12 +509,12 @@
 //        if (ins!=null) {
 //            System.out.println("Training samples: " + trainingSet.getRecordCount());
 //            for (int i : ins)
-//                System.out.println(" in: "  + trainingSet.allFields.get(i));
+//                System.out.println(" in: "  + trainingSet.allFields.apply(i));
 //            for (int i : outs)
-//                System.out.println("out: "  + trainingSet.allFields.get(i));
+//                System.out.println("out: "  + trainingSet.allFields.apply(i));
 //        }
 //        /*for (int i = 0; i < trainingSet.size(); i++)
-//            System.out.println(trainingSet.get(i));*/
+//            System.out.println(trainingSet.apply(i));*/
 //        //trainingSet.toCSV("/tmp/nal.csv");
 //        if (ins == null)
 //            return;

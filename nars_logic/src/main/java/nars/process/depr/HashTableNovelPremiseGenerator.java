@@ -41,7 +41,7 @@
 //
 //            SetMultimap<Sentence, Term> s = null;
 //            if (premisesThisCycle != null)
-//                s = premisesThisCycle.get();
+//                s = premisesThisCycle.apply();
 //
 //            if (s == null) {
 //                s = MultimapBuilder.hashKeys().hashSetValues(1).build();

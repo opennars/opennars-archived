@@ -370,12 +370,12 @@ public class CurveBagTest extends AbstractBagTest {
 
         c.put(a);
 
-        //assertEquals(1, putKey.get()); assertEquals(0, removeKey.get());
+        //assertEquals(1, putKey.apply()); assertEquals(0, removeKey.apply());
         assertEquals(1, c.size());
 
         c.put(a);
 
-        //assertEquals(2, putKey.get()); assertEquals(0, removeKey.get());
+        //assertEquals(2, putKey.apply()); assertEquals(0, removeKey.apply());
         assertEquals(1, c.size());
 
 
@@ -405,7 +405,7 @@ public class CurveBagTest extends AbstractBagTest {
 
         c.remove(a.name());
 
-        //assertEquals(3, putKey.get()); assertEquals(1, removeKey.get());
+        //assertEquals(3, putKey.apply()); assertEquals(1, removeKey.apply());
         assertEquals(0, c.size());
 
         c.validate();

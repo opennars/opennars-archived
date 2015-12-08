@@ -40,7 +40,7 @@ public interface Input extends Source<Task> {
 //        Task t;
 //
 //        int i =0;
-//        while (( t = get() ) != null) {
+//        while (( t = apply() ) != null) {
 //            if ((i += m.input(t)) == max) {
 //                return i;
 //            }

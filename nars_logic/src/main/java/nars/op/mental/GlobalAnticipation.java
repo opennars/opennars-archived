@@ -103,7 +103,7 @@
 //            return;
 //        }
 //
-//        final long duration = nal.memory.param.duration.get();
+//        final long duration = nal.memory.param.duration.apply();
 //        ArrayList<Task> derivetasks=new ArrayList<Task>();
 //
 //        for(final Task c : current_tasks) { //a =/> b or (&/ a1...an) =/> b
@@ -122,7 +122,7 @@
 //            int i=0;
 //            boolean matched=true;
 //            int off=0;
-//            long expected_time=lastEvents.get(0).sentence.getOccurrenceTime();
+//            long expected_time=lastEvents.apply(0).sentence.getOccurrenceTime();
 //
 //            for(i=0;i<args.length;i++) {
 //                //handling of intervals:
@@ -140,18 +140,18 @@
 //
 //                //handling of other events, seeing if they match and are right in time
 //
-//                if(!Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, args[i], lastEvents.get(i-off).sentence.term)) { //it didnt match, instead sth different unexpected happened
+//                if(!Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, args[i], lastEvents.apply(i-off).sentence.term)) { //it didnt match, instead sth different unexpected happened
 //                    matched=false; //whether intermediate events should be tolerated or not was a important question when considering this,
 //                    break; //if it should be allowed, the sequential match does not matter only if the events come like predicted.
 //                } else { //however I decided that sequence matters also for now, because then the more accurate hypothesis wins.
 //
-//                    if(lastEvents.get(i-off).sentence.truth.getExpectation()<=0.5f) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
+//                    if(lastEvents.apply(i-off).sentence.truth.getExpectation()<=0.5f) { //it matched according to sequence, but is its expectation bigger than 0.5? todo: decide how truth values of the expected events
 //                        //it didn't happen
 //                        matched=false;
 //                        break;
 //                    }
 //
-//                    long occurence=lastEvents.get(i-off).sentence.getOccurrenceTime();
+//                    long occurence=lastEvents.apply(i-off).sentence.getOccurrenceTime();
 //                    boolean right_in_time=Math.abs(occurence-expected_time) < ((double)duration)/TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
 //                    if(!right_in_time) { //it matched so far, but is the timing right or did it happen when not relevant anymore?
 //                        matched=false;
@@ -175,10 +175,10 @@
 //
 //            //ok it matched, is the consequence also right?
 //            if(matched && lastEvents.size()>args.length-off) {
-//                long occurence=lastEvents.get(args.length-off).sentence.getOccurrenceTime();
+//                long occurence=lastEvents.apply(args.length-off).sentence.getOccurrenceTime();
 //                boolean right_in_time=Math.abs(occurence-expected_time)<((double)duration)/TEMPORAL_PREDICTION_FEEDBACK_ACCURACY_DIV;
 //
-//                if(right_in_time && Variables.hasSubstitute(Symbols.VAR_INDEPENDENT,imp.getPredicate(),lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
+//                if(right_in_time && Variables.hasSubstitute(Symbols.VAR_INDEPENDENT,imp.getPredicate(),lastEvents.apply(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
 //                    //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
 //                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new Truth.DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
 //                    Task t=new Task(s2,new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY,s2.truth));

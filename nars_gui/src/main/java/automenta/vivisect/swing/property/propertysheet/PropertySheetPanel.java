@@ -93,7 +93,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		if (model != null)
 			model.removePropertyChangeListener(this);
 
-		// get the model from the table
+		// apply the model from the table
 		model = (PropertySheetTableModel) table.getModel();
 		model.addPropertyChangeListener(this);
 
@@ -500,7 +500,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		public ToggleModeAction() {
 			super("toggle", IconPool.shared().get(
 			PropertySheet.class.getResource("icons/category.gif")));
-			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.get(
+			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.apply(
 			PropertySheet.class).getString(
 			"PropertySheetPanel.category.shortDescription"));*/
 		}
@@ -520,7 +520,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		public ToggleDescriptionAction() {
 			super("toggleDescription", IconPool.shared().get(
 			PropertySheet.class.getResource("icons/description.gif")));
-			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.get(
+			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.apply(
 			PropertySheet.class).getString(
 			"PropertySheetPanel.description.shortDescription"));*/
 		}
@@ -536,7 +536,7 @@ public class PropertySheetPanel extends JPanel implements PropertySheet, Propert
 		public ToggleSortingAction() {
 			super("toggleSorting", IconPool.shared().get(
 			PropertySheet.class.getResource("icons/sorted.gif")));
-			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.get(
+			/*putValue(Action.SHORT_DESCRIPTION, ResourceManager.apply(
 			PropertySheet.class).getString(
 			"PropertySheetPanel.sorted.shortDescription"));*/
 		}

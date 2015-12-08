@@ -54,7 +54,7 @@
 //                p = new PCanvas(
 //                        v = new TimelineVis(t.metrics.newSignalData("time"),
 //                                //new EventChart(t, true, false, false).height(3),
-//                                //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
+//                                //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.apply("concept.count"))),
 //
 //                                //new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
 //                                new BarChart(t.getCharts("busy")).height(10),
@@ -75,7 +75,7 @@
 ////            new PCanvas(
 ////                new TimelineVis(
 ////                    new EventChart(t, true, false, false).height(3),
-////                    //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.get("concept.count"))),
+////                    //new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.metrics.apply("concept.count"))),
 ////
 ////                    new StackedPercentageChart(t.getCharts("concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3")).height(2),
 ////                    new LineChart(t.getCharts("concept.priority.mean")).height(1),

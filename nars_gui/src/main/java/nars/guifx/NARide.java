@@ -233,7 +233,7 @@ public class NARide extends BorderPane {
 //            addButton.setDefaultButton(true);
 //            addButton.setOnMouseClicked((e) -> {
 //                results.accept(
-//                        selected.stream().map(s -> tools.get(s).get()).collect(Collectors.toList())
+//                        selected.stream().map(s -> tools.apply(s).apply()).collect(Collectors.toList())
 //                );
 //
 //                hide();

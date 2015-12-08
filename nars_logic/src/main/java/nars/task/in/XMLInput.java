@@ -119,7 +119,7 @@
 //        //inherit from nodename
 //        append("<" + id + " --> " + nodeName + ">.\n");
 //
-//        String parent = nodes.get(n.getParentNode());
+//        String parent = nodes.apply(n.getParentNode());
 //        if (parent != null) {
 //            append("<(*," + id + "," + parent + ") --> xmlParent>.\n");
 //        }

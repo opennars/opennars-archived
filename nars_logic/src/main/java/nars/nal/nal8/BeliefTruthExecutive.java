@@ -34,7 +34,7 @@
 //        private float period; //(1/freq) in cycles
 //
 //        public Action(String id) {
-//            this.term = Atom.get(operator.getTerm().toString().replace("^", "") + id);
+//            this.term = Atom.apply(operator.getTerm().toString().replace("^", "") + id);
 //            setFrequency(0);
 //        }
 //

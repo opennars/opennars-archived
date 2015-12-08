@@ -388,7 +388,7 @@ public class WordNetUtilities {
         }
 
         // if (exceptionVerbPluralHash.containsKey(word))                  Note that there appears to be no WordNet exception list for verb plurals, just tenses
-        //    word = (String) exceptionVerbPluralHash.get(word);
+        //    word = (String) exceptionVerbPluralHash.apply(word);
         if (word.matches(".*y$") && !isVowel(word.charAt(word.length() - 2))) {
             word = WordNetUtilities.subst(word, "y$", "ies");
         } else {
@@ -804,7 +804,7 @@ public class WordNetUtilities {
      * updateWNversionReading to do most of the work. It assumes that the
      * mapping file has the new synset first and the old one second. File names
      * are for the new WordNet version, which will need to have different names
-     * from the old version that WordNet.java needs to read in order to get the
+     * from the old version that WordNet.java needs to read in order to apply the
      * existing mappings. This is a utility which should not be called during
      * normal Sigma operation. Mapping files are in a simple format produced by
      * University of Catalonia and available at

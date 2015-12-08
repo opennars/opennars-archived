@@ -37,8 +37,8 @@ public class ConceptComet extends HyperassociativeMap2D {
 //    protected void init() {
 //        resetLearning();
 //        setLearningRate(0.4f);
-//        setRepulsiveWeakness(repulseWeakness.get());
-//        setAttractionStrength(attractionStrength.get());
+//        setRepulsiveWeakness(repulseWeakness.apply());
+//        setAttractionStrength(attractionStrength.apply());
 //        setMaxRepulsionDistance(250);
 //        setEquilibriumDistance(0.05f);
 //    }

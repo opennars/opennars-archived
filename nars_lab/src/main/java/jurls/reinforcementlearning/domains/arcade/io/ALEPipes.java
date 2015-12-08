@@ -167,7 +167,7 @@ public class ALEPipes {
         return terminateRequested;
     }
 
-    /** A blocking method which will get the next time step from ALE.
+    /** A blocking method which will apply the next time step from ALE.
      *
      */
     public boolean observe() {

@@ -119,7 +119,7 @@ public class LookAndFeelAddons {
    * @param keysAndValues
    */
   public void loadDefaults(Object[] keysAndValues) {    
-    // Go in reverse order so the most recent keys get added first...
+    // Go in reverse order so the most recent keys apply added first...
     for (int i = keysAndValues.length - 2; i >= 0; i = i - 2) {
       if (UIManager.getLookAndFeelDefaults().get(keysAndValues[i]) == null) {
         UIManager.getLookAndFeelDefaults().put(keysAndValues[i], keysAndValues[i + 1]);
@@ -296,11 +296,11 @@ public class LookAndFeelAddons {
    * With applets, if you reload the current applet, the UIManager will be
    * reinitialized (entries previously added by LookAndFeelAddons will be
    * removed) but the addon will not reinitialize because addon initialize
-   * itself through the static block in components and the classes do not get
+   * itself through the static block in components and the classes do not apply
    * reloaded. This means component.updateUI will fail because it will not find
    * its UI.
    * 
-   * This method ensures LookAndFeelAddons get re-initialized if needed. It must
+   * This method ensures LookAndFeelAddons apply re-initialized if needed. It must
    * be called in every component updateUI methods.
    */
   private static synchronized void maybeInitialize() {

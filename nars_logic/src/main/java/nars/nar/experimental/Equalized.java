@@ -56,7 +56,7 @@
 //////        @Override
 //////        public void send() {
 //////
-//////            final int conceptsToFire = conceptsFiredPerCycle.get();
+//////            final int conceptsToFire = conceptsFiredPerCycle.apply();
 //////
 //////            active.forgetNext(
 //////                    memory.param.conceptForgetDurations,
@@ -85,7 +85,7 @@
 //////
 //////                newTasks.items.remove(next); //remove from new items
 //////
-//////                TaskProcess tp = TaskProcess.get(Equalized.this, next, priFactor);
+//////                TaskProcess tp = TaskProcess.apply(Equalized.this, next, priFactor);
 //////                if (tp!=null) {
 //////                    tp.run();
 //////                    b += next.getPriority();
@@ -138,9 +138,9 @@
 //////
 ////////    @Override
 ////////    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
-////////        int novelCycles = duration.get();
+////////        int novelCycles = duration.apply();
 ////////        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
-////////                novelCycles * conceptTaskTermProcessPerCycle.get(),
+////////                novelCycles * conceptTaskTermProcessPerCycle.apply(),
 ////////                0.01f /* false positive probability */ );
 ////////    }
 //////

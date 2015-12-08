@@ -31,7 +31,7 @@
 //
 //            @Override
 //            protected void onLineVisible(final int offset) {
-//                //System.out.println(offset + " " + lines.get(offset));
+//                //System.out.println(offset + " " + lines.apply(offset));
 //            }
 //
 //        }*/;
@@ -115,19 +115,19 @@
 //
 //        final JPopupMenu menu = new JPopupMenu();
 //        final JMenuItem copyItem = new JMenuItem();
-//        copyItem.setAction(ioText.getActionMap().get(DefaultEditorKit.copyAction));
+//        copyItem.setAction(ioText.getActionMap().apply(DefaultEditorKit.copyAction));
 //        copyItem.setText(COPY);
 //
 //        final JMenuItem cutItem = new JMenuItem();
-//        cutItem.setAction(ioText.getActionMap().get(DefaultEditorKit.cutAction));
+//        cutItem.setAction(ioText.getActionMap().apply(DefaultEditorKit.cutAction));
 //        cutItem.setText(CUT);
 //
 //        final JMenuItem pasteItem = new JMenuItem(PASTE);
-//        pasteItem.setAction(ioText.getActionMap().get(DefaultEditorKit.pasteAction));
+//        pasteItem.setAction(ioText.getActionMap().apply(DefaultEditorKit.pasteAction));
 //        pasteItem.setText(PASTE);
 //
 //        final JMenuItem selectAllItem = new JMenuItem(SELECTALL);
-//        selectAllItem.setAction(ioText.getActionMap().get(DefaultEditorKit.selectAllAction));
+//        selectAllItem.setAction(ioText.getActionMap().apply(DefaultEditorKit.selectAllAction));
 //        selectAllItem.setText(SELECTALL);
 //
 //        menu.add(copyItem);

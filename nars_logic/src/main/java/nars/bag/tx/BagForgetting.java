@@ -14,7 +14,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V>
 
     protected float forgetCycles;
 
-    /** provides a way for callee to get the current/last affected item,
+    /** provides a way for callee to apply the current/last affected item,
      *  because it may have been removed in the update,
      *  in which case would update() return null*/
     public V current = null;

@@ -142,7 +142,7 @@
 //
 //        @Override
 //        public Graph nextGraph() {
-//            return taskGraph.get();
+//            return taskGraph.apply();
 //
 //        }
 //
@@ -303,7 +303,7 @@
 //            }
 //        }
 //
-//        return displayedGraph.get();
+//        return displayedGraph.apply();
 //    }
 //
 //

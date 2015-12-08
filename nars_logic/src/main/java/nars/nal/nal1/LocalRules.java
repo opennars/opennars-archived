@@ -32,6 +32,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -133,7 +134,7 @@ public class LocalRules {
         long newOcc = newBelief.getOccurrenceTime();
         Truth oldBeliefTruth = oldBelief.projection(newOcc, nal.time());
 
-        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth, new DefaultTruth(0, 0));
 
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
@@ -209,7 +210,7 @@ public class LocalRules {
 
         final Task oldBest = question.getBestSolution();
 
-        //get the quality of the old solution if it were applied now (when conditions may differ)
+        //apply the quality of the old solution if it were applied now (when conditions may differ)
         final float oldQ = (oldBest != null) ? Tense.solutionQuality(question, oldBest, now) : 0;
 
         if (oldQ >= newQ) {
@@ -233,7 +234,7 @@ public class LocalRules {
         }
         /*memory.output(task);
 
-        //only questions and quests get here because else output is spammed
+        //only questions and quests apply here because else output is spammed
         if(task.sentence.isQuestion() || task.sentence.isQuest()) {
             memory.emit(Solved.class, task, belief);
         } else {

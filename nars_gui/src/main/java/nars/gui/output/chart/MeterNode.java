@@ -102,8 +102,8 @@
 //        Object[] n = data.rowLast();
 //
 //        for (Signal s : data.getSignals()) {
-//            LinePlot lp = plots.get(s);
-//            Object x = n[data.getSignalIndex().get(s.id)];
+//            LinePlot lp = plots.apply(s);
+//            Object x = n[data.getSignalIndex().apply(s.id)];
 //            if (x instanceof Number)
 //                lp.push(((Number) x).doubleValue());
 //        }

@@ -92,7 +92,7 @@ public class TestReasoning1 {
             int i = 0;
             for (String referenceLine : referenceLines) {
                 if (i < actualLines.size()) {
-                    String al = actualLines.get(i);
+                    String al = actualLines.apply(i);
                     if (!referenceLine.equals(al)) {
                         System.out.println(al);
                         System.out.println("DIFFERS from reference (l "

@@ -420,7 +420,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 //            throw new RuntimeException("invalid buffer positions; size=" + size + ", toRun=" + toRun + ", toDiscard=" + toDiscard);
 //
 //        for (int i = 0; i < toDiscard; i++) {
-//            memory.removed( reverseSorted.get(i) );
+//            memory.removed( reverseSorted.apply(i) );
 //        }
 //
 //        final int bottomPoint = Math.max(size-toRun, toDiscard);
@@ -429,7 +429,7 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 //        //int j = 0;
 //        for (int i = size-1; i >= bottomPoint; i--) {
 //
-//            final TaskProcess tp = new TaskProcess(memory, reverseSorted.get(i));
+//            final TaskProcess tp = new TaskProcess(memory, reverseSorted.apply(i));
 //            tp.run();
 //
 //            //target.accept();

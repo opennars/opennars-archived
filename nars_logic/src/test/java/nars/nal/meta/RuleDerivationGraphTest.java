@@ -63,7 +63,7 @@ public class RuleDerivationGraphTest {
         //Set<TaskBeliefPair> ks = d.ruleIndex.keySet();
 //        System.out.println("Patterns: keys=" + ks.size() + ", values=" + d.ruleIndex.size());
 //        for (TaskBeliefPair pp : ks) {
-//            System.out.println(pp + " x " + d.ruleIndex.get(pp).size());
+//            System.out.println(pp + " x " + d.ruleIndex.apply(pp).size());
 //
 //        }
 

@@ -71,7 +71,7 @@ public class SubstituteIfUnified extends Substitute {
 //    public boolean test(RuleMatch m, Term b, Term c) {
 //
 //        //Term M = b; //this one got substituted, but with what?
-//        //Term with = m.assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
+//        //Term with = m.assign.apply(M); //with what assign assigned it to (the match between the rule and the premises)
 //        //args[0] now encodes a variable which we want to replace with what M was assigned to
 //        //(relevant for variable elimination rules)
 //

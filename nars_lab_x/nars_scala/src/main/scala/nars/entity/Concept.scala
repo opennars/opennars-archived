@@ -201,7 +201,7 @@ class Concept(@BeanProperty var term: Term, var memory: Memory) extends Item(ter
     var rank2: Float = 0
     var i: Int = 0
     while (i < table.size) {
-      judgment2 = table.get(i).asInstanceOf[Sentence]
+      judgment2 = table.apply(i).asInstanceOf[Sentence]
       rank2 = BudgetFunctions.rankBelief(judgment2)
       if (rank1 >= rank2) {
         if (newSentence.equivalentTo(judgment2)) {
@@ -340,7 +340,7 @@ class Concept(@BeanProperty var term: Term, var memory: Memory) extends Item(ter
   /**
    * Select a isBelief to interact with the given task in inference
    * <p>
-   * get the first qualified one
+   * apply the first qualified one
    * <p>
    * only called in RuleTables.reason
    * @param task The selected task
@@ -350,7 +350,7 @@ class Concept(@BeanProperty var term: Term, var memory: Memory) extends Item(ter
     val taskSentence = task.getSentence
     var belief: Sentence = null
     for (i <- 0 until beliefs.size) {
-      belief = beliefs.get(i)
+      belief = beliefs.apply(i)
       memory.getRecorder.append(" * Selected Belief: " + belief + "\n")
       memory.newStamp = Stamp.make(taskSentence.getStamp, belief.getStamp, memory.getTime)
       if (memory.newStamp != null) {

@@ -103,7 +103,7 @@ public class ExampleFeatureSurf {
 		}
 
 //		System.out.println("Found Features: "+points.size());
-//		System.out.println("First descriptor's first value: "+descriptions.get(0).value[0]);
+//		System.out.println("First descriptor's first value: "+descriptions.apply(0).value[0]);
 
 		return target;
 	}

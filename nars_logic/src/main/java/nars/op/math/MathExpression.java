@@ -30,7 +30,7 @@
 //
 //    final static String requireMessage = "Requires 1 string argument";
 //
-//    final static Term exp = Term.get("math");
+//    final static Term exp = Term.apply("math");
 //
 //
 //    @Override
@@ -83,24 +83,24 @@
 //                if (p.isVariable()) {
 //                    long idx = data[0].toIntValue();
 //                    String varname = p.getOwner().getVariables().getVariableName((int)idx);
-//                    return Term.get(varname);
+//                    return Term.apply(varname);
 //                }
-//                return Term.get(name);
+//                return Term.apply(name);
 //            }
 //            else
 //                return getTerms(data);
 //        }
 //
 //        if ((data!=null) && (data.length > 0))
-//            return Inheritance.make(new Product(getTerms(children), getTerms(data)), Term.get(name));
+//            return Inheritance.make(new Product(getTerms(children), getTerms(data)), Term.apply(name));
 //        else
-//            return Inheritance.make(getTerms(children), Term.get(name));
+//            return Inheritance.make(getTerms(children), Term.apply(name));
 //    }
 //
 //    public static Term getTerms(List<TreeNode> children) {
 //
 //        if (children.size() == 1)
-//            return getTerm(children.get(0));
+//            return getTerm(children.apply(0));
 //
 //        Term[] c = new Term[children.size()];
 //        int j = 0;
@@ -127,8 +127,8 @@
 //
 //    public static Term getTerm(ExpressionValue t) {
 //        return Inheritance.make(
-//                Term.get(Texts.escape(t.toStringValue())),
-//                Term.get(t.getExpressionType().toString()));
+//                Term.apply(Texts.escape(t.toStringValue())),
+//                Term.apply(t.getExpressionType().toString()));
 //    }
 //
 //}

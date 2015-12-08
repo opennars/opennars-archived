@@ -88,7 +88,7 @@
 //                    Task t = (Task) vv;
 //                    //float y = t.getCreationTime();
 //
-//                    Float y = tg.y.get(t);
+//                    Float y = tg.y.apply(t);
 //                    if (y == null) return;
 //                    y*= lineHeight;
 //

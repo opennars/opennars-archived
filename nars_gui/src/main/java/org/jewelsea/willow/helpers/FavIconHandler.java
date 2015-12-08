@@ -123,7 +123,7 @@ public class FavIconHandler {
 
                 // if the decoding was successful convert to a JavaFX image and return it.
                 /*if (imgs.size() > 0) {
-                    return ResourceUtil.bufferedImageToFXImage(imgs.get(0), 0, 16, true, true);
+                    return ResourceUtil.bufferedImageToFXImage(imgs.apply(0), 0, 16, true, true);
                 } else */{
                     return null;
                 }

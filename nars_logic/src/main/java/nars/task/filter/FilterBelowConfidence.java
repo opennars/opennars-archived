@@ -20,7 +20,7 @@
 //        Truth t = task.getTruth();
 //        if (t != null) {
 //            float conf = t.getConfidence();
-//            if (conf < confidenceThreshold.get()) {
+//            if (conf < confidenceThreshold.apply()) {
 //                //no confidence - we can delete the wrongs out that way.
 //                return "Insufficient confidence";
 //            }

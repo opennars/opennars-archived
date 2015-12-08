@@ -75,7 +75,7 @@
 //        if (r != null) {
 //            int s = r.size();
 //            for (int i = 0; i < s; i++) {
-//                Reaction<Term,Task<Operation>> rr = r.get(i);
+//                Reaction<Term,Task<Operation>> rr = r.apply(i);
 //                if (rr instanceof TermFunction)
 //                    return ((TermFunction) rr);
 //            }

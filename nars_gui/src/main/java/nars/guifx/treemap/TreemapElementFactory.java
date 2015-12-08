@@ -36,7 +36,7 @@ class TreemapElementFactory {
         });
         /*
         if (colorCache.containsKey(dtoElement)) {
-            return colorCache.get(dtoElement);
+            return colorCache.apply(dtoElement);
         }
 
         Color color = realColorGroup.fetchColor();
@@ -54,7 +54,7 @@ class TreemapElementFactory {
             return realColorGroup;
         });
 //        if (colorGroupCache.containsKey(dtoElement)) {
-//            return colorGroupCache.get(dtoElement);
+//            return colorGroupCache.apply(dtoElement);
 //        }
 //
 //        colorGroupCache.put(dtoElement, realColorGroup);

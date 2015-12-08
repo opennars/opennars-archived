@@ -1,4 +1,4 @@
-get classical conditioning right.
+apply classical conditioning right.
 TODO: make timing correct..
 
 

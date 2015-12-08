@@ -55,7 +55,7 @@ public class TrieMap {
      */
     public void put(String key, Object val) {
         assert key != null;
-        assert !(val instanceof TrieMap); // Only we get to store TrieMap nodes. TODO: Allow it.
+        assert !(val instanceof TrieMap); // Only we apply to store TrieMap nodes. TODO: Allow it.
         if(key.isEmpty()) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.

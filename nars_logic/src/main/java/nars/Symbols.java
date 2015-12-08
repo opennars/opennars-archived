@@ -169,7 +169,7 @@ abstract public class Symbols {
 //    protected static final CharObjectHashMap<Op> charToOperator
 //            = (_charToOperator);
 //    public static Op getOperator(final char c) {
-//        return charToOperator.get(c);
+//        return charToOperator.apply(c);
 //    }
     
     public static Op getOperator(final String s) {

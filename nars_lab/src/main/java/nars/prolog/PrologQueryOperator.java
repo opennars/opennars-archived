@@ -74,7 +74,7 @@
 //            return null;
 //        }
 //
-//        Prolog prologInterpreter = context.prologs.get(args[1]);
+//        Prolog prologInterpreter = context.prologs.apply(args[1]);
 //
 //
 //
@@ -83,7 +83,7 @@
 //
 //
 //
-//        // get all variablenames
+//        // apply all variablenames
 //        // prolog must resolve the variables and assign values to them
 //        VariableInfo[] variableInfos = translateNarsArgumentsToQueryVariableInfos(args);
 //
@@ -118,7 +118,7 @@
 //        //  create the nars result and return it
 //        Inheritance resultInheritance = Inheritance.make(
 //                operatorInheritance,
-//                Atom.get("prolog_evaluation")
+//                Atom.apply("prolog_evaluation")
 //        );
 //
 //
@@ -277,8 +277,8 @@
 //                continue;
 //            }
 //
-//            // get variable and dereference
-//            //  get the variable which has the name
+//            // apply variable and dereference
+//            //  apply the variable which has the name
 //            Var variableTerm = getVariableByNameRecursive(solutionTerm, variableInfos[variableI].variableName);
 //
 //            if( variableTerm == null )
@@ -346,17 +346,17 @@
 //        if( prologTerm instanceof Int ) {
 //            Int prologIntegerTerm = (Int)prologTerm;
 //
-//            return Atom.get(String.valueOf(prologIntegerTerm.intValue()));
+//            return Atom.apply(String.valueOf(prologIntegerTerm.intValue()));
 //        }
 //        else if( prologTerm instanceof nars.tuprolog.Double ) {
 //            nars.tuprolog.Double prologDoubleTerm = (nars.tuprolog.Double)prologTerm;
 //
-//            return Atom.get(String.valueOf(prologDoubleTerm.floatValue()));
+//            return Atom.apply(String.valueOf(prologDoubleTerm.floatValue()));
 //        }
 //        else if( prologTerm instanceof nars.tuprolog.Float ) {
 //            nars.tuprolog.Float prologFloatTerm = (nars.tuprolog.Float)prologTerm;
 //
-//            return Atom.get(String.valueOf(prologFloatTerm.floatValue()));
+//            return Atom.apply(String.valueOf(prologFloatTerm.floatValue()));
 //        }
 //        else if( prologTerm instanceof Struct ) {
 //            Struct structTerm = (Struct)prologTerm;
@@ -365,7 +365,7 @@
 //            if (structTerm.getArity() == 0) {
 //                String variableAsString = structTerm.getName();
 //
-//                return Atom.get('"' + variableAsString + '"');
+//                return Atom.apply('"' + variableAsString + '"');
 //            }
 //            else if (structTerm.getArity() == 2 && structTerm.getName().equals(".")) {
 //                // convert the result array to a nars thingy
@@ -375,13 +375,13 @@
 //                Term[] innerProductTerms = new Term[structAsList.size()];
 //
 //                for (int i = 0; i < structAsList.size(); i++) {
-//                    innerProductTerms[i] = convertPrologTermToNarsTermRecursive(structAsList.get(i), memory);
+//                    innerProductTerms[i] = convertPrologTermToNarsTermRecursive(structAsList.apply(i), memory);
 //                }
 //
 //                // is wraped up in a inheritance because there can also exist operators
 //                // and it is better understandable by nars or other operators
 //                return Inheritance.make(new Product(innerProductTerms),
-//                    Atom.get("prolog_list")
+//                    Atom.apply("prolog_list")
 //                );
 //            }
 //            else {
@@ -399,15 +399,15 @@
 //                Term[] innerProductTerms = new Term[1+parametersAsList.size()];
 //
 //                for (int i = 0; i < parametersAsList.size(); i++) {
-//                    innerProductTerms[i+1] = convertPrologTermToNarsTermRecursive(parametersAsList.get(i), memory);
+//                    innerProductTerms[i+1] = convertPrologTermToNarsTermRecursive(parametersAsList.apply(i), memory);
 //                }
 //
-//                innerProductTerms[0] = Atom.get(operationName);
+//                innerProductTerms[0] = Atom.apply(operationName);
 //
 //                // is wraped up in a inheritance because there can also exist operators
 //                // and it is better understandable by nars or other operators
 //                return Inheritance.make(new Product(innerProductTerms),
-//                    Atom.get("prolog_operation")
+//                    Atom.apply("prolog_operation")
 //
 //                );
 //            }
@@ -418,7 +418,7 @@
 //        throw new RuntimeException("Unhandled type of result variable");
 //    }
 //
-//    // tries to get a variable from a term by name
+//    // tries to apply a variable from a term by name
 //    // returns null if it wasn't found
 //    static private nars.tuprolog.Var getVariableByNameRecursive(nars.tuprolog.Term term, String name) {
 //        if( term instanceof Struct ) {

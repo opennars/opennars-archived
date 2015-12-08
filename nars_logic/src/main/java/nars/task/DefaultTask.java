@@ -209,7 +209,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
                 log("Input");
         }
 
-        //setTerm((T) memory.concepts.get( term ).getTerm());
+        //setTerm((T) memory.concepts.apply( term ).getTerm());
 
         return this;
     }

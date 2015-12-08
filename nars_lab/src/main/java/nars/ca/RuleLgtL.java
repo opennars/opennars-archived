@@ -57,7 +57,7 @@ public class RuleLgtL {
 			{
 				i = Integer.valueOf(sTok.substring(1));
 				if (i >= 3) {
-					isHist = true; // history, get the states count
+					isHist = true; // history, apply the states count
 					iClo = i;
 				} else
 					isHist = false; // states count is meaningless

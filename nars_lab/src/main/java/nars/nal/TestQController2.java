@@ -58,21 +58,21 @@
 //            add(new ControlSensor(2) {
 //
 //                @Override
-//                public double get() {
+//                public double apply() {
 //                    return n.memory.emotion.busy();
 //                }
 //            });
 //            add(new ControlSensor(2) {
 //
 //                @Override
-//                public double get() {
+//                public double apply() {
 //                    return n.memory.logic.JUDGMENT_PROCESS.count();
 //                }
 //            });
 //            add(new ControlSensor(2) {
 //
 //                @Override
-//                public double get() {
+//                public double apply() {
 //                    return n.memory.logic.TASK_ADD_NOVEL.count();
 //                }
 //            });
@@ -132,7 +132,7 @@
 //            // + conceptNewMean;
 //
 //            //target: 1.0 business
-//            double r = -0.5 + 1.0f / (1.0 + Math.abs(nar.memory.emotion.busyMeter.get() - 1.0));
+//            double r = -0.5 + 1.0f / (1.0 + Math.abs(nar.memory.emotion.busyMeter.apply() - 1.0));
 //            // + nar.memory.logic.JUDGMENT_PROCESS.getValue(null, 0);
 //            return r;
 //            //return conceptNewMean + taskDerivedMean + 1* nar.memory.logic.d("task.solution.best");
@@ -191,7 +191,7 @@
 //                                Texts.n4(n.memory.emotion.busy()) + " ,  " +
 //                                //Texts.n4(r) + " ,  " +
 //                        //Arrays.toString(qn.getOutput()).replace("[", " , ").replace("]"," ")
-//                        n.param.inputActivationFactor.get()
+//                        n.param.inputActivationFactor.apply()
 //                );
 //
 //            }

@@ -18,7 +18,7 @@ object DifferenceExt {
    */
   def make(argList: ArrayList[Term], memory: Memory): Term = {
     if (argList.size == 1) {
-      return argList.get(0)
+      return argList.apply(0)
     }
     if (argList.size != 2) {
       return null

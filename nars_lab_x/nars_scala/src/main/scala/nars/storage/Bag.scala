@@ -73,7 +73,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
   private var mass: Int = _
 
   /**
-   index to get next level, kept in individual objects
+   index to apply next level, kept in individual objects
    */
   private var levelIndex: Int = _
 
@@ -112,7 +112,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
   }
 
       /**
-     * To get the capacity of the concrete subclass
+     * To apply the capacity of the concrete subclass
      * @return Bag capacity, in number of Items allowed
      */
     protected def capacity(): Int
@@ -151,7 +151,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
    * @param key The key of the Item
    * @return The Item with the given key
    */
-  def get(key: String): Type = nameTable.get(key)
+  def apply(key: String): Type = nameTable.apply(key)
 
   /**
    * Add a new Item into the Bag
@@ -202,7 +202,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
         currentLevel = DISTRIBUTOR.pick(levelIndex)
         levelIndex = DISTRIBUTOR.next(levelIndex)
       }
-      currentCounter = if (currentLevel < THRESHOLD) 1 else itemTable.get(currentLevel).size
+      currentCounter = if (currentLevel < THRESHOLD) 1 else itemTable.apply(currentLevel).size
     }
     val selected = takeOutFirst(currentLevel)
     currentCounter -= 1
@@ -217,7 +217,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
    * @return The Item with the key
    */
   def pickOut(key: String): Type = {
-    val picked = nameTable.get(key)
+    val picked = nameTable.apply(key)
     if (picked != null) {
       outOfBase(picked)
       nameTable.remove(key)
@@ -231,7 +231,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
    * @return Whether that level is empty
    */
   protected def emptyLevel(n: Int): Boolean = {
-    ((itemTable.get(n) == null) || itemTable.get(n).isEmpty)
+    ((itemTable.apply(n) == null) || itemTable.apply(n).isEmpty)
   }
 
   /**
@@ -264,7 +264,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
         oldItem = takeOutFirst(outLevel)
       }
     }
-    itemTable.get(inLevel).add(newItem)
+    itemTable.apply(inLevel).add(newItem)
     mass += (inLevel + 1)
     refresh()
     oldItem
@@ -276,8 +276,8 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
    * @return The first Item
    */
   private def takeOutFirst(level: Int): Type = {
-    val selected = itemTable.get(level).get(0)
-    itemTable.get(level).remove(0)
+    val selected = itemTable.apply(level).apply(0)
+    itemTable.apply(level).remove(0)
     mass -= (level + 1)
     refresh()
     selected
@@ -289,7 +289,7 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
    */
   protected def outOfBase(oldItem: Type) {
     val level = getLevel(oldItem)
-    itemTable.get(level).remove(oldItem)
+    itemTable.apply(level).remove(oldItem)
     mass -= (level + 1)
     refresh()
   }
@@ -339,8 +339,8 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
     while (i >= showLevel) {
       if (!emptyLevel(i - 1)) {
         buf = buf.append("\n --- Level " + i + ":\n ")
-        for (j <- 0 until itemTable.get(i - 1).size) {
-          buf = buf.append(itemTable.get(i - 1).get(j).toStringBrief() + "\n ")
+        for (j <- 0 until itemTable.apply(i - 1).size) {
+          buf = buf.append(itemTable.apply(i - 1).apply(j).toStringBrief() + "\n ")
         }
       }
       i -= 1
@@ -359,8 +359,8 @@ abstract class Bag[Type <: Item] protected (protected var memory: Memory) {
     while (i >= showLevel) {
       if (!emptyLevel(i - 1)) {
         buf = buf.append("\n --- LEVEL " + i + ":\n ")
-        for (j <- 0 until itemTable.get(i - 1).size) {
-          buf = buf.append(itemTable.get(i - 1).get(j).toStringLong() + "\n ")
+        for (j <- 0 until itemTable.apply(i - 1).size) {
+          buf = buf.append(itemTable.apply(i - 1).apply(j).toStringLong() + "\n ")
         }
       }
       i -= 1

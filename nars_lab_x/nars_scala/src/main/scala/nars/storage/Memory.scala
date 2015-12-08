@@ -106,7 +106,7 @@ class Memory(var reasoner: Reasoner) {
    * @param name the name of a concept
    * @return a Concept or null
    */
-  def nameToConcept(name: String): Concept = concepts.get(name)
+  def nameToConcept(name: String): Concept = concepts.apply(name)
 
   /**
    * Get a Term for a given name of a Concept or Operator
@@ -116,7 +116,7 @@ class Memory(var reasoner: Reasoner) {
    * @return a Term or null (if no Concept/Operator has this name)
    */
   def nameToListedTerm(name: String): Term = {
-    val concept = concepts.get(name)
+    val concept = concepts.apply(name)
     if (concept != null) {
       return concept.getTerm
     }
@@ -140,7 +140,7 @@ class Memory(var reasoner: Reasoner) {
       return null
     }
     val n = term.getName
-    var concept = concepts.get(n)
+    var concept = concepts.apply(n)
     if (concept == null) {
       concept = new Concept(term, this)
       val created = concepts.putIn(concept)

@@ -64,7 +64,7 @@
 //        }
 //        else {
 //            for (int i = 0; i < resolution; i++) {
-//                setIndex(i, items.get(posToIndex(i)).getPriority());
+//                setIndex(i, items.apply(posToIndex(i)).getPriority());
 //            }
 //            minPriority = index[0];
 //            maxPriority = index[resolution - 1];

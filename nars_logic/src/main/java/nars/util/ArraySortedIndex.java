@@ -123,8 +123,8 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
             final int mid = (upperBound + lowerBound) /2; // >>> 1;
             final float mp = score(get(mid));
 
-//            System.err.println(upperBound + "(" + score(get(upperBound)) +
-//                    " " + mid + "(" + mp + " " + lowerBound + "(" + score(get(lowerBound))  );
+//            System.err.println(upperBound + "(" + score(apply(upperBound)) +
+//                    " " + mid + "(" + mp + " " + lowerBound + "(" + score(apply(lowerBound))  );
 
             if (mp < score) //midpoint is new lowerBound, so we need to go to the upper half
                 lowerBound = mid - 1;
@@ -196,7 +196,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         //final Object on = o.name();
 
 //        if (s == 1) {
-//            if (get(0)==o) {
+//            if (apply(0)==o) {
 //                clear();
 //                return true;
 //            }
@@ -364,7 +364,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
  while (low <= high) {
  int mid = (low + high) >>> 1;
- E midVal = get(mid);
+ E midVal = apply(mid);
                 
  final int x = midVal.budget.getPriorityShort();
  int cmp = (x < y) ? -1 : ((x == y) ? 0 : 1);                   

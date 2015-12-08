@@ -21,15 +21,15 @@ object ImageExt {
     if (argList.size < 2) {
       return null
     }
-    val relation = argList.get(0)
+    val relation = argList.apply(0)
     val argument = new ArrayList[Term]()
     var index = 0
     for (j <- 1 until argList.size) {
-      if (argList.get(j).getName.charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
+      if (argList.apply(j).getName.charAt(0) == Symbols.IMAGE_PLACE_HOLDER) {
         index = j - 1
         argument.add(relation)
       } else {
-        argument.add(argList.get(j))
+        argument.add(argList.apply(j))
       }
     }
     make(argument, index.toShort, memory)
@@ -75,7 +75,7 @@ object ImageExt {
       memory: Memory): Term = {
     val argList = oldImage.cloneComponents()
     val oldIndex = oldImage.getRelationIndex
-    val relation = argList.get(oldIndex)
+    val relation = argList.apply(oldIndex)
     argList.set(oldIndex, component)
     argList.set(index, relation)
     make(argList, index, memory)
@@ -135,7 +135,7 @@ class ImageExt private (n: String, arg: ArrayList[Term], @BeanProperty var relat
    * Get the relation term in the Image
    * @return The term representing a relation
    */
-  def getRelation(): Term = components.get(relationIndex)
+  def getRelation(): Term = components.apply(relationIndex)
 
   /**
    * Get the other term in the Image
@@ -145,7 +145,7 @@ class ImageExt private (n: String, arg: ArrayList[Term], @BeanProperty var relat
     if (components.size != 2) {
       return null
     }
-    if ((relationIndex == 0)) components.get(1) else components.get(0)
+    if ((relationIndex == 0)) components.apply(1) else components.apply(0)
   }
 
   /**
@@ -157,7 +157,7 @@ class ImageExt private (n: String, arg: ArrayList[Term], @BeanProperty var relat
   }
 
   /**
-   * get the operator of the term.
+   * apply the operator of the term.
    * @return the operator of the term
    */
   def operator(): String = Symbols.IMAGE_EXT_OPERATOR

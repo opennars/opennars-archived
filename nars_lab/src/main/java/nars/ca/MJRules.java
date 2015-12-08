@@ -273,14 +273,14 @@ public class MJRules {
 		{
 			RuleLife RLife = new RuleLife();
 			RLife.InitFromString(sRuleDef);
-			sRuleDef = RLife.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RLife.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_GENE: // Generations
 		{
 			RuleGene RGene = new RuleGene();
 			RGene.InitFromString(sRuleDef);
-			sRuleDef = RGene.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RGene.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 
@@ -288,7 +288,7 @@ public class MJRules {
 		{
 			RuleVote RVote = new RuleVote();
 			RVote.InitFromString(sRuleDef);
-			sRuleDef = RVote.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RVote.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 
@@ -296,21 +296,21 @@ public class MJRules {
 		{
 			RuleWLife RWLife = new RuleWLife();
 			RWLife.InitFromString(sRuleDef);
-			sRuleDef = RWLife.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RWLife.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_RTBL: // Rules table
 		{
 			RuleRTab RRtab = new RuleRTab();
 			RRtab.InitFromString(sRuleDef);
-			sRuleDef = RRtab.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RRtab.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_CYCL: // Cyclic CA
 		{
 			RuleCyclic RCyclic = new RuleCyclic();
 			RCyclic.InitFromString(sRuleDef);
-			sRuleDef = RCyclic.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RCyclic.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 
@@ -318,7 +318,7 @@ public class MJRules {
 		{
 			Rule1DTotal R1DTo = new Rule1DTotal();
 			R1DTo.InitFromString(sRuleDef);
-			sRuleDef = R1DTo.GetAsString(); // get possibly corrected rules string
+			sRuleDef = R1DTo.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 
@@ -326,38 +326,38 @@ public class MJRules {
 		{
 			Rule1DBin R1DBin = new Rule1DBin();
 			R1DBin.InitFromString(sRuleDef);
-			sRuleDef = R1DBin.GetAsString(); // get possibly corrected rules string
+			sRuleDef = R1DBin.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_NMBI: {
 			RuleNeumBin RNeumBin = new RuleNeumBin();
 			RNeumBin.InitFromString(sRuleDef);
-			sRuleDef = RNeumBin.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RNeumBin.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_GEBI: // General binary
 		{
 			RuleGenBin RGenBin = new RuleGenBin();
 			RGenBin.InitFromString(sRuleDef);
-			sRuleDef = RGenBin.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RGenBin.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_LGTL: {
 			RuleLgtL RLgtL = new RuleLgtL();
 			RLgtL.InitFromString(sRuleDef);
-			sRuleDef = RLgtL.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RLgtL.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_MARG: {
 			RuleMarg RMarg = new RuleMarg();
 			RMarg.InitFromString(sRuleDef);
-			sRuleDef = RMarg.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RMarg.GetAsString(); // apply possibly corrected rules string
 		}
 			break;
 		case MJRules.GAME_USER:
 			RuleUser RUser = new RuleUser();
 			RUser.InitFromString(sRuleDef);
-			sRuleDef = RUser.GetAsString(); // get possibly corrected rules string
+			sRuleDef = RUser.GetAsString(); // apply possibly corrected rules string
 			break;
 		case MJRules.GAME_SPEC:
 			break;

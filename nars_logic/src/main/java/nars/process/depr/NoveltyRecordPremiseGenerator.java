@@ -168,9 +168,9 @@
 ////        final int links = c.getTermLinks().size();
 ////        if (links == 0) return null;
 ////
-////        int toMatch = memory.param.termLinkMaxMatched.get();
+////        int toMatch = memory.param.termLinkMaxMatched.apply();
 ////
-////        //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
+////        //optimization case: if there is only one termlink, we will never apply anything different from calling repeatedly
 ////        if (links == 1) toMatch = 1;
 ////
 ////        Bag<TermLinkKey, TermLink> tl = c.getTermLinks();
@@ -204,14 +204,14 @@
 ////
 ////
 ////    /** returns the record associated with a termlink, or null if none exists (or if no records exist) */
-////    public Recording get(final TermLink termLink) {
+////    public Recording apply(final TermLink termLink) {
 ////        final Term bTerm = termLink.getTarget();
 ////
 ////        if (records == null) {
 ////            return null;
 ////        }
 ////
-////        Recording r = records.get(bTerm);
+////        Recording r = records.apply(bTerm);
 ////        if (r == null) {
 ////            return null;
 ////        }
@@ -351,7 +351,7 @@
 //////            //  this awkward for-loop with the CircularArrayList replaced an ArrayDeque version because ArrayDeque does not provide indexed access and this required using its Iterator which involved an allocation.  this should be less expensive and it is a critical section
 //////            int size = records.size();
 //////            for (int i = 0; i < size; i++) {
-//////                Recording r = records.get(i);
+//////                Recording r = records.apply(i);
 //////
 //////                if (termLink.termLinkEquals(r.link, true)) {
 //////                    records.removeFast(i);

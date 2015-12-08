@@ -244,7 +244,7 @@
 //     picker.stop();
 //
 //     color c = 0;
-//     int id = picker.get(mouseX, mouseY);
+//     int id = picker.apply(mouseX, mouseY);
 //     switch (id) {
 //     case 0:
 //     c = #ff8800;

@@ -73,7 +73,7 @@
 //
 //            };
 //        else {
-//            if (newNode.get()) {
+//            if (newNode.apply()) {
 //                h.resetLearning();
 //                newNode.set(false);
 //            }

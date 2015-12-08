@@ -360,7 +360,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         return compoundForward(new Budget(), truth, content, nal);
     }
 
-    public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {
+    public static Budget compoundForward(Budget target, Truth truth, final Term content, final Premise nal) {
         final int complexity = content.complexity();
         return budgetInference(target, truthToQuality(truth), complexity, nal);
     }

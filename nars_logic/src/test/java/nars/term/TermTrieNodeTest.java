@@ -27,7 +27,7 @@ public class TermTrieNodeTest  {
 
 
 
-// Given an IP, get the host name
+// Given an IP, apply the host name
 
 
         String[] terms = new String[] {
@@ -82,7 +82,7 @@ public class TermTrieNodeTest  {
 //        System.out.println(trieMap);
 //
 //        for (String t : terms) {
-//            Concept ab = trieMap.get(n.term(t).bytes());
+//            Concept ab = trieMap.apply(n.term(t).bytes());
 //            assertEquals(t, ab.toString());
 //        }
 //
@@ -114,19 +114,19 @@ public class TermTrieNodeTest  {
 ////        trieMap.put("", "Root"); // You can store one value at the empty key if you like.
 ////
 ////        // Test for inserted, nonexistent, and deleted keys.
-////        System.out.println("123 = " + trieMap.get("123"));
-////        System.out.println("Java = " + trieMap.get("Java"));
-////        System.out.println("Melinda = " + trieMap.get("Melinda"));
-////        System.out.println("Moo = " + trieMap.get("Moo"));
-////        System.out.println("Moon = " + trieMap.get("Moon"));
-////        System.out.println("Mo = " + trieMap.get("Mo")); // Should return null.
-////        System.out.println("Empty key = " + trieMap.get("")); // Should return "Root".
-////        System.out.println("Moose = " + trieMap.get("Moose")); // Never added so should return null.
-////        System.out.println("Nothing = " + trieMap.get("Nothing")); // Ditto.
+////        System.out.println("123 = " + trieMap.apply("123"));
+////        System.out.println("Java = " + trieMap.apply("Java"));
+////        System.out.println("Melinda = " + trieMap.apply("Melinda"));
+////        System.out.println("Moo = " + trieMap.apply("Moo"));
+////        System.out.println("Moon = " + trieMap.apply("Moon"));
+////        System.out.println("Mo = " + trieMap.apply("Mo")); // Should return null.
+////        System.out.println("Empty key = " + trieMap.apply("")); // Should return "Root".
+////        System.out.println("Moose = " + trieMap.apply("Moose")); // Never added so should return null.
+////        System.out.println("Nothing = " + trieMap.apply("Nothing")); // Ditto.
 ////        trieMap.put("123", null); // Removes this leaf entry.
-////        System.out.println("After removal, 123 = " + trieMap.get("123")); // Should now return null.
+////        System.out.println("After removal, 123 = " + trieMap.apply("123")); // Should now return null.
 ////        trieMap.put("Moo", null); // Removes this prefix entry. (Special case to test internal logic).
-////        System.out.println("After removal, Moo = " + trieMap.get("Moo")); // Should now return null.
+////        System.out.println("After removal, Moo = " + trieMap.apply("Moo")); // Should now return null.
 ////        trieMap.put("Moon", null); // Internal test of branch pruning.
 //    }
 

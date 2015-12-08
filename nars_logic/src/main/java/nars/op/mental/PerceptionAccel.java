@@ -111,7 +111,7 @@
 //            //measuring its distance to the next event, but for the last event this is obsolete
 //            //thus it are 2*Len-1] terms
 //
-//            Task newEvent = eventbuffer.get(eventbuffer.size() - 1);
+//            Task newEvent = eventbuffer.apply(eventbuffer.size() - 1);
 //            Truth truth = newEvent.getTruth();
 //
 //            evBase.clear();
@@ -124,13 +124,13 @@
 //                    //but the mechanism already looks for length 2 patterns on the occurence of the first event
 //                    break;
 //                }
-//                Task current = eventbuffer.get(j);
+//                Task current = eventbuffer.apply(j);
 //                evBase.addAll(current.getEvidence());
 //
 //                relterms[k++] = current.getTerm();
 //                if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
 //                    truth = TruthFunctions.deduction(truth, current.getTruth());
-//                    Task next = eventbuffer.get(j + 1);
+//                    Task next = eventbuffer.apply(j + 1);
 //
 //                    long dt = next.getOccurrenceTime() - current.getOccurrenceTime();
 //                    relterms[k++] = nal.newInterval(dt);
@@ -154,7 +154,7 @@
 //
 //            //decide on the tense of &/ by looking if the first event happens parallel with the last one
 //            //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-//            boolean after = newEvent.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)));
+//            boolean after = newEvent.after(eventbuffer.apply(eventbuffer.size() - 1 - (Len - 1)));
 //
 //            //critical part: (not checked for correctness yet):
 //            //we now have to look at if the first half + the second half already exists as concept, before we add it

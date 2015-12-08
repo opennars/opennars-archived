@@ -24,7 +24,7 @@ public class TruthWave {
         long min = Long.MAX_VALUE;
         long max = Long.MIN_VALUE;
 
-        //get min and max occurence time
+        //apply min and max occurence time
         for (Task t : beliefs) {
             long o = t.getOccurrenceTime();
             if (o == Stamp.ETERNAL) {

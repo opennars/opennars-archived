@@ -90,7 +90,7 @@ public class DefaultProperty extends AbstractProperty {
 
 	/**
 	 * Reads the value of this Property from the given object. It uses
-	 * reflection and looks for a method starting with "is" or "get" followed by
+	 * reflection and looks for a method starting with "is" or "apply" followed by
 	 * the capitalized Property name.
 	 */
 	public void readFromObject(Object object) {

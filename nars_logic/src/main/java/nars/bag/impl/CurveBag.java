@@ -131,7 +131,7 @@ public class CurveBag<K, V extends Itemized<K>> extends ArrayBag<K, V> {
 //        K key = selector.name();
 //        V item;
 //        if (key != null) {
-//            item = get(key);
+//            item = apply(key);
 //        }
 //        else {
 //            item = peekNext();

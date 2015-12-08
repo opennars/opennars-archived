@@ -308,12 +308,12 @@
 //
 //        }
 //
-//        public Idea get(Termed t) {
-//            return get(Idea.getKey(t.getTerm()));
+//        public Idea apply(Termed t) {
+//            return apply(Idea.getKey(t.getTerm()));
 //        }
 //
 //        public Idea update(Concept c) {
-//            Idea existing = get(c);
+//            Idea existing = apply(c);
 //            if (existing != null) {
 //                existing.update();
 //            }
@@ -321,10 +321,10 @@
 //        }
 //
 //        public Idea add(Concept c) {
-//            Idea existing = get(c);
+//            Idea existing = apply(c);
 //            if (existing == null) {
 //                existing = new Idea(c);
-//                put(Idea.getKey(c), existing); //calculating getKey() twice can be avoided by caching it when it's uesd to get Idea existing above
+//                put(Idea.getKey(c), existing); //calculating getKey() twice can be avoided by caching it when it's uesd to apply Idea existing above
 //            }
 //            else {
 //                existing.add(c);
@@ -333,7 +333,7 @@
 //        }
 //
 //        public Idea remove(Concept c) {
-//            Idea existing = get(c);
+//            Idea existing = apply(c);
 //            if (existing != null) {
 //                existing.remove(c);
 //            }

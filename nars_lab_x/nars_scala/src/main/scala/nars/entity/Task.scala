@@ -65,13 +65,13 @@ class Task(@BeanProperty var sentence: Sentence, b: BudgetValue) extends Item(se
   }
 
   /**
-   * Directly get the content of the sentence
+   * Directly apply the content of the sentence
    * @return The content of the sentence
    */
   def getContent(): Term = sentence.getContent
 
   /**
-   * Directly get the creation time of the sentence
+   * Directly apply the creation time of the sentence
    * @return The creation time of the sentence
    */
   def getCreationTime(): Long = sentence.getStamp.getCreationTime

@@ -16,13 +16,13 @@ public abstract class ControlSensor {
         this.quantization = quantization;
     }
     //called each cycle
-    //called during learning cycle to get the value
+    //called during learning cycle to apply the value
     /** returns next index */
 
     //called each cycle
     public void update() { }
 
-    //called during learning cycle to get the value
+    //called during learning cycle to apply the value
     public abstract double get();
 
     /** returns next index */

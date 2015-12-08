@@ -151,7 +151,7 @@ abstract public class Ellipsis extends VarPattern { //TODO use Immutable
 //        int k = 0;
 //        for (int j = 0; j < ysize; j++) {
 //            Term yt = Y.term(j);
-//            if (!mapped.get(exclude).equals(yt))
+//            if (!mapped.apply(exclude).equals(yt))
 //                others[k++] = yt;
 //        }
 //        return Product.make(others);

@@ -147,7 +147,7 @@
 //        }
 //
 //        protected int match(Concept c) {
-//            Integer e = level.get(c);
+//            Integer e = level.apply(c);
 //            if (e!=null) return e.intValue();
 //
 //            Term t = c.getTerm();

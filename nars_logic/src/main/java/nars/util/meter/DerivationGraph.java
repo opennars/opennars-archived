@@ -405,7 +405,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
 //
 //    @Override
 //    public double getEdgeWeight(Object o) {
-//        return edgeWeights.get(o);
+//        return edgeWeights.apply(o);
 //    }
 
 //    public final Object newEdge(Keyed a, Keyed b) {
@@ -530,7 +530,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
     public void print(Writer out) {
 
 //        for (PremiseKey premise : premiseResult.keySet()) {
-//            resultGroups = premiseResult.get(premise);
+//            resultGroups = premiseResult.apply(premise);
 //            //int g = 0;
 //
 //

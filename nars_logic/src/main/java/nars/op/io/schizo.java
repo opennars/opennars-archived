@@ -26,7 +26,7 @@ public class schizo extends ImmediateOperator {
 //                                Inheritance.make(v, newSelf),
 //                                TemporalRules.ORDER_FORWARD
 //                        )
-//                ).belief().present().get()
+//                ).belief().present().apply()
 //            );
 //        }
 //        else {

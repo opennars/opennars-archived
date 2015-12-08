@@ -369,7 +369,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 //            return false;
 //        
 //        for (int i = 0; i < term.size(); i++) {
-//            final Term c = term.get(i);
+//            final Term c = term.apply(i);
 //            if (!c.equals(t.componentAt(i)))
 //                return false;
 //        }
@@ -635,7 +635,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 //                o.incrementAndGet();
 //        });
 //
-//        return o.get();
+//        return o.apply();
 //    }
 
 

@@ -100,7 +100,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
 //         */
 //        @Override
 //        public boolean executeIfImmediate(Memory memory) {
-////            final Term taskTerm = get();
+////            final Term taskTerm = apply();
 ////            if (taskTerm instanceof Operation) {
 ////                Operation o = (Operation) taskTerm;
 ////                o.setTask((Task<Operation>) this);

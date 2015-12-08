@@ -130,7 +130,7 @@
 //        // - set sentencePart
 //        // - set gui stuff
 //        for (int i = 0; i < countOfSentenceParts; i++) {
-//            ArrayList<NaturalLanguagePerception.LinePart> sentencePart = sentenceParts.get(i);
+//            ArrayList<NaturalLanguagePerception.LinePart> sentencePart = sentenceParts.apply(i);
 //            
 //            String reconstructedString = NaturalLanguagePerception.reconstructString(sentencePart);
 //            sentencePartContexts[i].nlpPart = reconstructedString;

@@ -137,7 +137,7 @@ public class WeightedInterpolationFunction implements ParameterizedFunction {
         nearest.xs.setSubVector(0, xs3);
         nearest.y = y;
 
-        //move the points away from each other to get a homogenous distribution
+        //move the points away from each other to apply a homogenous distribution
         for (Point a : points) {
             for (Point b : points) {
                 if (a != b) {

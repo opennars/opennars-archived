@@ -128,7 +128,7 @@
 //            if (!d.cycle(now)) {
 //
 //                //recycle this derivelet
-//                Concept next = conceptSupply.get();
+//                Concept next = conceptSupply.apply();
 //                if (next != null) {
 //                    d.start(next, defaultTTL, this);
 //                } else {
@@ -253,7 +253,7 @@
 //
 //    //    @Override
 ////    public Concept conceptualize(final Term term, final Budget budget, final boolean createIfMissing) {
-////        Concept existing = get(term);
+////        Concept existing = apply(term);
 ////        if (existing == null) {
 ////            put(existing = newConcept(term, budget, memory));
 ////        }

@@ -62,7 +62,7 @@
 //
 //    public boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal, boolean anticipation) {
 //
-//        stmSize = nal.memory().shortTermMemoryHistory.get();
+//        stmSize = nal.memory().shortTermMemoryHistory.apply();
 //
 //        if (currentTask == null || (!currentTask.isTemporalInductable() && !anticipation)) { //todo refine, add directbool in task
 //            return false;

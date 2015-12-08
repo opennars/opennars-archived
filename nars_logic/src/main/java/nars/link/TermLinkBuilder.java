@@ -262,7 +262,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return templates().size();
     }
 
-    //    public TermLink get(boolean createIfMissing) {
+    //    public TermLink apply(boolean createIfMissing) {
 //        TermLink t = concept.termLinks.GET(name());
 //        if ((t == null) && createIfMissing) {
 //            t = newItem();

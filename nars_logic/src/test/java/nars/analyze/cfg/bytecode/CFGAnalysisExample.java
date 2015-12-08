@@ -78,7 +78,7 @@ public class CFGAnalysisExample implements Opcodes {
                                         + " "
                                         + s
                                         + " : "
-                                        + text.get(i));
+                                        + text.apply(i));
                             }
                             System.err.println();
                         }
@@ -86,7 +86,7 @@ public class CFGAnalysisExample implements Opcodes {
 
                     MethodVisitor mv = new TraceMethodVisitor(t);
                     for (int j = 0; j < method.instructions.size(); ++j) {
-                        Object insn = method.instructions.get(j);
+                        Object insn = method.instructions.apply(j);
                         ((AbstractInsnNode) insn).accept(mv);
                     }
                     mv.visitMaxs(0, 0);

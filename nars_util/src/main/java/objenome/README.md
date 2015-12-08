@@ -27,19 +27,19 @@ An adapted version of the Genetic Programming library [EpochX 2.0](https://githu
 *Container* Dependency Injection
 ======================
 
-**Basic use() autowiring & get() instantiation**
+**Basic use() autowiring & apply() instantiation**
 
 ``` java
 Container c = new Container();
 
 c.use(Part.class, Part0.class);
 
-Part p = c.get(Part.class);
+Part p = c.apply(Part.class);
 ```
 
 **Singleton scope: the()**
 
-the() is similar to get() but involves the Singleton scope.
+the() is similar to apply() but involves the Singleton scope.
 
 ``` java
 //1. Using a java literal as a key.  all the(..) lookups with keys equal to it will return the same singleton instance
@@ -74,7 +74,7 @@ c.usable(ParameterX.class);
 c.use(Connection.class); //wires to setter
 
 /* public ServiceNeedingDAOandParameter(UserDAO userDAO, ParameterX x) */
-service = c.get(ServiceNeedingDAOandParameter.class);
+service = c.apply(ServiceNeedingDAOandParameter.class);
 ```
 
 *Multitainer* injection
@@ -91,9 +91,9 @@ g.any(Part.class, of(Part0.class, Part1.class));
                 
 Objenome o = g.solve(Machine.class);
 
-Machine m = o.get(Machine.class);
+Machine m = o.apply(Machine.class);
 
-Machine maybeDifferent = o.mutate().get(Machine.class); 
+Machine maybeDifferent = o.mutate().apply(Machine.class);
 ```
 
 **Ambiguous choice of implementation, and an unknown constant constructor parameter**
@@ -110,7 +110,7 @@ Objenome o = g.random(Machine.class);
 //  1st solution chooses one of three Part implementations
 //  2nd solution chooses the 'int' parameter of PartN. (Part0 and Part1 take no parameters as their names suggest)
 
-Machine m = o.get(Machine.class);
+Machine m = o.apply(Machine.class);
 ```
 
 
@@ -147,7 +147,7 @@ Objenome o = Objenome.solve(new FindZeros(ExampleScalarFunction.class,
             }            
 }), ExampleScalarFunction.class);
 
-double bestParam = ((Number)o.getSolutions().get(0)).doubleValue();
+double bestParam = ((Number)o.getSolutions().apply(0)).doubleValue();
 ```
         
 **Find constant parameters to maximize a heuristic goal**
@@ -169,7 +169,7 @@ Objenome o = Objenome.solve(new OptimizeMultivariate(ExampleMultivariateFunction
         }    
 }).minimize(), ExampleMultivariateFunction.class);
 
-double bestParam = ((Number)o.getSolutions().get(1)).doubleValue();
+double bestParam = ((Number)o.getSolutions().apply(1)).doubleValue();
 ```
         
 

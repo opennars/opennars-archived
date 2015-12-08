@@ -91,7 +91,7 @@ class TestReasoning {
       var i = 0
       for (referenceLine <- referenceLines) {
         if (i < actualLines.size) {
-          val al = actualLines.get(i)
+          val al = actualLines.apply(i)
           if (referenceLine != al) {
             println(al)
             println("DIFFERS from reference (l " + (i + 1) + "):")

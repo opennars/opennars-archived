@@ -41,8 +41,8 @@ public class NARFacePanel extends HumanoidFacePanel  {
         unhappy = smoothHappy < 0.1;
 
 
-        float conceptPriority; //((Number)nar.memory.logic.get("concept.priority.mean")).floatValue();
-        float taskNewPriority = 0.5f; //((Number)nar.memory.logic.get("task.new.priority.mean")).floatValue();        
+        float conceptPriority; //((Number)nar.memory.logic.apply("concept.priority.mean")).floatValue();
+        float taskNewPriority = 0.5f; //((Number)nar.memory.logic.apply("task.new.priority.mean")).floatValue();
 
         float busy = nar.memory.emotion.busy();
         //max out at 0.5

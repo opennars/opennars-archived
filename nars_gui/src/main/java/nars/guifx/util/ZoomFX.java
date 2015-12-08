@@ -179,8 +179,8 @@ public class ZoomFX extends AnchorPane {
         } else {
             final ArrayRealVector panStart = this.panStart;
 
-            final double dX = (sceneX - panStart.getEntry(0)) / 1f; //(pivotLogicalExtent.widthProperty().get() * zoomFactor.get());
-            final double dY = (sceneY - panStart.getEntry(1)) / 1f; //(pivotLogicalExtent.heightProperty().get() * zoomFactor.get());
+            final double dX = (sceneX - panStart.getEntry(0)) / 1f; //(pivotLogicalExtent.widthProperty().apply() * zoomFactor.apply());
+            final double dY = (sceneY - panStart.getEntry(1)) / 1f; //(pivotLogicalExtent.heightProperty().apply() * zoomFactor.apply());
 
 
             panStart.setEntry(0, sceneX);

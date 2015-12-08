@@ -20,7 +20,7 @@
 //        Global.DEBUG = true;
 //
 //        NAR n = new Default();
-//        n.input(LibraryInput.get(n, "original/Example-MultiStep-edited"));
+//        n.input(LibraryInput.apply(n, "original/Example-MultiStep-edited"));
 //
 //        //new TextOutput(n, System.out);
 //        /*InferenceLogger logger = new InferenceLogger(System.out);

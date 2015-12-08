@@ -20,7 +20,7 @@ public class Counting extends SyncOperator {
 
 //    public Reaction obs;
 //
-//    final static Term CARDINALITY = Atom.get("CARDINALITY");
+//    final static Term CARDINALITY = Atom.apply("CARDINALITY");
 //
 //    @Override public boolean setEnabled(NAR n, boolean enabled) {
 //        Memory memory = n.memory;
@@ -56,7 +56,7 @@ public class Counting extends SyncOperator {
 //                                //now create term <(*,M,cardinality) --> CARDINALITY>.
 //                                Term[] product_args = new Term[] {
 //                                    inh.getPredicate(),
-//                                        Atom.get((Object) cardinality)
+//                                        Atom.apply((Object) cardinality)
 //                                };
 //
 //                                //TODO CARDINALITY can be a static final instance shared by all

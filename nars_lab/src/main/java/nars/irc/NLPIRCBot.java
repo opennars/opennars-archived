@@ -143,9 +143,9 @@
 //
 //        i.loop(corpus, 200);
 //
-//        /*String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/battle.txt"))).split("\\. ");
+//        /*String[] book = String.join(" ", Files.readAllLines(Paths.apply("/home/me/battle.txt"))).split("\\. ");
 //        i.read(book, 1200, 0.5f);*/
-//        String[] book2 = String.join(" ", Files.readAllLines(Paths.get("/home/me/meta.txt"))).split("\\. ");
+//        String[] book2 = String.join(" ", Files.readAllLines(Paths.apply("/home/me/meta.txt"))).split("\\. ");
 //        i.read(book2, 1300, 0.25f);
 //
 //    }
@@ -157,7 +157,7 @@
 //            public void run() {
 //                List<String> lines = null;
 //                try {
-//                    lines = Files.readAllLines(Paths.get(corpus.toURI()));
+//                    lines = Files.readAllLines(Paths.apply(corpus.toURI()));
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                    return;
@@ -248,7 +248,7 @@
 //                //  a = "\"" + input.content.toLowerCase() + "\"";
 //                //String r = "<" + a + " --> " + pattern + ">. :|:\n";
 //
-//                //Term tt = Inheritance.make(wordTerm, Term.get(pattern));
+//                //Term tt = Inheritance.make(wordTerm, Term.apply(pattern));
 //                //char punc = '.';
 //
 //                //Term tt = Operation.make(nar.memory.operate("^say"), new Term[] {wordTerm});

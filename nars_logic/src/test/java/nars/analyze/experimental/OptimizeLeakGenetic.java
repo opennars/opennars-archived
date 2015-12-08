@@ -158,7 +158,7 @@
 //            double x = 0;
 //            double f = 1;
 //            for (int i = 0; i < bits; i++) {
-//                x += f * this.getRepresentation().get(bits * v + i);
+//                x += f * this.getRepresentation().apply(bits * v + i);
 //                f *= 2;
 //            }
 //            x /= Math.pow(2, bits);

@@ -141,7 +141,7 @@ abstract public class WikiBrowser extends BorderPane {
                 script += "$('#section_0').each(linkTransform);";
 
 
-                script += "if (window.mw) { category.add(window.mw.config.get('wgCategories')); }";
+                script += "if (window.mw) { category.add(window.mw.config.apply('wgCategories')); }";
             }
             script += "}, 0);";
 
@@ -325,7 +325,7 @@ abstract public class WikiBrowser extends BorderPane {
         p.setLeft(new HBox(nearButton, backButton));
 
         nearButton.setOnAction(event -> {
-//                SpacePoint location = SpacePoint.get(core.getMyself());
+//                SpacePoint location = SpacePoint.apply(core.getMyself());
 //                if (location == null)
 //                    return;
 //

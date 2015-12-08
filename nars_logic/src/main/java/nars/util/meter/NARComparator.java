@@ -64,7 +64,7 @@
 //
 //
 //    public Set<Task> getTaskSet(NAR n) {
-//        return new LinkedHashSet(outputs.get(n));
+//        return new LinkedHashSet(outputs.apply(n));
 //    }
 //
 //    public Set<Task> getTaskSetA() { return getTaskSet(a);    }

@@ -134,7 +134,7 @@
 //
 //        //TODO use # of termlinks as a guesstimate
 //
-//        return maxSelectionAttempts.get();
+//        return maxSelectionAttempts.apply();
 //    }
 //
 //}

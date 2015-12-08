@@ -35,7 +35,7 @@
 //                        new RealtimeMSClock(),
 //                        new XorShift1024StarRandom(1),
 //                        new InfiniCacheBag(
-//                                s.get()
+//                                s.apply()
 //                        )
 //                ),
 //                1024,

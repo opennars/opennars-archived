@@ -96,31 +96,31 @@
 //        final int n = match.premise.nal();
 //
 //
-//        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
+//        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.apply(taskTerm.op());
 //        if (taskSpecific!=null) {
 //
 //
 //            // <T>,<B>
-//            List<TaskRule> taskSpecificBeliefSpecific = taskSpecific.get(beliefTerm.op());
+//            List<TaskRule> taskSpecificBeliefSpecific = taskSpecific.apply(beliefTerm.op());
 //            if (taskSpecificBeliefSpecific != null)
 //                run(match, taskSpecificBeliefSpecific, n);
 //
 //
 //            // <T>,%
-//            List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
+//            List<TaskRule> taskSpecificBeliefAny = taskSpecific.apply(Op.VAR_PATTERN);
 //            if (taskSpecificBeliefAny != null)
 //                run(match, taskSpecificBeliefAny, n);
 //        }
 //
 //
 //        // %,<B>
-//        List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
+//        List<TaskRule> beliefSpecific = beliefTypeMap.apply(beliefTerm.op());
 //        if (beliefSpecific!=null)
 //            run(match, beliefSpecific, n);
 //
 //
 //        // %,%
-//        List<TaskRule> any = beliefTypeMap.get(Op.VAR_PATTERN);
+//        List<TaskRule> any = beliefTypeMap.apply(Op.VAR_PATTERN);
 //        if (any!=null)
 //            run(match, any, n);
 //
@@ -145,7 +145,7 @@
 ////        final int nr = rules.size();
 ////        for (int i = 0; i < nr; i++) {
 ////
-////            TaskRule r = rules.get(i);
+////            TaskRule r = rules.apply(i);
 ////            if (r.minNAL > level) continue;
 ////
 ////            PostCondition[] pc = run(r, m);

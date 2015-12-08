@@ -244,7 +244,7 @@
 //     */
 //    @Override
 //    public E GET(final K key) {
-//        return nameTable.get(key);
+//        return nameTable.apply(key);
 //    }
 //
 //    /** returns next item in pending queue, which if empty, reloads it */
@@ -327,7 +327,7 @@
 //            return oldItem;
 //        }
 //        else {
-//            return nameTable.get(name);
+//            return nameTable.apply(name);
 //        }
 //
 //    }

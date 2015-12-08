@@ -28,7 +28,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
                         //...
                 );
             }
-            b.get(Budgeted.ActiveConceptPriorityStdDev)
+            b.apply(Budgeted.ActiveConceptPriorityStdDev)
          */
 
         /*

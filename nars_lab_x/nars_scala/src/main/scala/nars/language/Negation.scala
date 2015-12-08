@@ -18,7 +18,7 @@ object Negation {
    */
   def make(t: Term, memory: Memory): Term = {
     if (t.isInstanceOf[Negation]) {
-      return t.asInstanceOf[CompoundTerm].cloneComponents().get(0)
+      return t.asInstanceOf[CompoundTerm].cloneComponents().apply(0)
     }
     val argument = new ArrayList[Term]()
     argument.add(t)

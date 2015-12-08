@@ -435,7 +435,7 @@ public class OWLInput  {
                     Product.make(atom(subject), atom(object))));
         }
 
-//        // get the entity ids for source and target
+//        // apply the entity ids for source and target
 //        long sourceEntityId = getEntityIdFromDb(sourceEntityName);
 //        long targetEntityId = getEntityIdFromDb(targetEntityName);
 //        if (sourceEntityId == -1L || targetEntityId == -1L) {
@@ -445,7 +445,7 @@ public class OWLInput  {
 //        }
 //        log.debug("Saving relation: " + relationName + "("
 //                + sourceEntityName + "," + targetEntityName + ")");
-//        // get the relation id
+//        // apply the relation id
 //        long relationTypeId = 0L;
 //        try {
 //            relationTypeId = jdbcTemplate.queryForInt(
@@ -472,7 +472,7 @@ public class OWLInput  {
     }
 
     /**
-     * Looks up the database to get the entity id given the name of the entity.
+     * Looks up the database to apply the entity id given the name of the entity.
      * If the entity is not found, it returns -1.
      *
      * @return the entity id, or -1 of the entity.

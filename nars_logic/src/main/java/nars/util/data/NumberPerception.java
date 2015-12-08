@@ -62,11 +62,11 @@
 //    }
 //
 //    public DoubleDoublePair getHistory1(Term variable, int offset) {
-//        LongDoubleHashMap dd = data.get(variable);
+//        LongDoubleHashMap dd = data.apply(variable);
 //        long[] h = dd.keysView().toSortedArray();
 //        if (h.length < offset+1) return null;
 //        long t = h[h.length - 1 - offset];
-//        return PrimitiveTuples.pair( (double)t, dd.get(t) );
+//        return PrimitiveTuples.pair( (double)t, dd.apply(t) );
 //    }
 //
 //    private void onObserved(Term variable, long now, double value) {

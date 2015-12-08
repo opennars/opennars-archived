@@ -132,7 +132,7 @@
 //                            if (a.size() != 2) {
 //                                System.err.println("subclass expects 2 arguments");
 //                            } else {
-//                                emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
+//                                emit("<" + a.apply(0) + " --> " + a.apply(1) + ">.");
 //                            }
 //                        }
 //                        break;
@@ -141,7 +141,7 @@
 //                            if (a.size() != 2) {
 //                                System.err.println("instance expects 2 arguments");
 //                            } else {
-//                                emit("<" + a.get(0) + " {-- " + a.get(1) + ">.");
+//                                emit("<" + a.apply(0) + " {-- " + a.apply(1) + ">.");
 //                            }
 //                        }
 //                        break;
@@ -151,33 +151,33 @@
 //                            if (a.size() != 2) {
 //                                System.err.println("relatedInternalConcept expects 2 arguments");
 //                            } else {
-//                                emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
+//                                emit("<" + a.apply(0) + " <-> " + a.apply(1) + ">.");
 //                            }
 //                        }
 //                        break;
 //                    case "disjoint":
 //                        //"(||," <term> {","<term>} ")"      // disjunction
 //                        if (includeDisjoint) {
-//                            emit("<(||," + a.get(0) + "," + a.get(1) + ")>.");
+//                            emit("<(||," + a.apply(0) + "," + a.apply(1) + ")>.");
 //                        }
 //                        break;
 //                    case "disjointRelation":
 //                        if (includeDisjoint) {
-//                            emit("<(||," + a.get(0) + "," + a.get(1) + ")>.");
+//                            emit("<(||," + a.apply(0) + "," + a.apply(1) + ")>.");
 //                        }
 //                        break;
 //                    case "subrelation":
 //                        //for now, use similarity+inheritance but more clear expression is possible
 //                        if (includeSubrelation) {
-//                            //emit("<" + a.get(0) + " <-> " + a.get(1) + ">.");
-//                            emit("<" + a.get(0) + " --> " + a.get(1) + ">.");
+//                            //emit("<" + a.apply(0) + " <-> " + a.apply(1) + ">.");
+//                            emit("<" + a.apply(0) + " --> " + a.apply(1) + ">.");
 //                        }
 //                        break;
 //                    default:
 //                        /*System.out.println("??" + f);
 //                         System.out.println();*/
 //                        if (unknownOperators.containsKey(root)) {
-//                            unknownOperators.put(root, unknownOperators.get(root) + 1);
+//                            unknownOperators.put(root, unknownOperators.apply(root) + 1);
 //                        } else {
 //                            unknownOperators.put(root, 1);
 //                        }
@@ -185,7 +185,7 @@
 //                }
 //
 //                if (knownOperators.containsKey(root)) {
-//                    knownOperators.put(root, knownOperators.get(root) + 1);
+//                    knownOperators.put(root, knownOperators.apply(root) + 1);
 //                } else {
 //                    knownOperators.put(root, 1);
 //                }

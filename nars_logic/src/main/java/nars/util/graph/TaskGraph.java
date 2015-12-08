@@ -134,7 +134,7 @@
 //        }
 //    }
 //
-//    public NARGraph get() {
+//    public NARGraph apply() {
 //        NARGraph g = new NARGraph();
 //        Task previous = null;
 //

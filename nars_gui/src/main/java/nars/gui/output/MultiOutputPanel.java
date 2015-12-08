@@ -99,9 +99,9 @@
 //
 //    public MultiModePanel getModePanel(Object category) {
 //        if (category == null) {
-//            return categories.get("Root");
+//            return categories.apply("Root");
 //        } else {
-//            MultiModePanel p = categories.get(category);
+//            MultiModePanel p = categories.apply(category);
 //            if (p == null) {
 //
 //                p = new MultiModePanel(nar, category);

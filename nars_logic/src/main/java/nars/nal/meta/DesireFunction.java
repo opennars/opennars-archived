@@ -8,48 +8,49 @@ import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
 import java.util.Map;
+import java.util.function.BinaryOperator;
 
 /**
  * Created by me on 8/1/15.
  */
-public enum DesireFunction implements TruthFunction {
+public enum DesireFunction implements BinaryOperator<Truth> {
 
-    Negation() {
-        @Override public Truth get(final Truth T, final Truth B) {
+    Negation{
+        @Override public Truth apply(Truth T, Truth B) {
             return TruthFunctions.negation(T); }
     },
 
-    Strong() {
-        @Override public Truth get(final Truth T, final Truth B) {
+    Strong{
+        @Override public Truth apply(Truth T, Truth B) {
             if (B == null) return null;
             return TruthFunctions.desireStrong(T,B);
         }
     },
-    Weak() {
-        @Override public Truth get(final Truth T, final Truth B) {
+    Weak{
+        @Override public Truth apply(Truth T, Truth B) {
             if (B == null) return null;
             return TruthFunctions.desireWeak(T, B);
         }
     },
-    Induction() {
-        @Override public Truth get(final Truth T, final Truth B) {
+    Induction{
+        @Override public Truth apply(Truth T, Truth B) {
             if (B == null) return null;
             return TruthFunctions.desireInd(T,B);
         }
     },
-    Deduction() {
-        @Override public Truth get(final Truth T, final Truth B) {
+    Deduction{
+        @Override public Truth apply(Truth T, Truth B) {
             if (B==null) return null;
             return TruthFunctions.desireDed(T,B);
         }
     },
-    Identity() {
-        @Override public Truth get(final Truth T, /* N/A: */ final Truth B) {
+    Identity{
+        @Override public Truth apply(Truth T, /* N/A: */ Truth B) {
             return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     },
-    StructuralStrong() {
-        @Override public Truth get(final Truth T, final Truth B) {
+    StructuralStrong{
+        @Override public Truth apply(Truth T, Truth B) {
             return TruthFunctions.desireStrong(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     }
@@ -64,13 +65,16 @@ public enum DesireFunction implements TruthFunction {
             atomToTruthModifier.put(Atom.the(tm.toString()), tm);
     }
 
-    @Override
-    public boolean allowOverlap() {
-        return false;
-    }
-
+ 
     public static DesireFunction get(Term a) {
         return atomToTruthModifier.get(a);
     }
 
+    /**
+     * @param T taskTruth
+     * @param B beliefTruth (possibly null)
+     * @return
+     */
+    @Override
+    public abstract Truth apply(Truth T, Truth B);
 }

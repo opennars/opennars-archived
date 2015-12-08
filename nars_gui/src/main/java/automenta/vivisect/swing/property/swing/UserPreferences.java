@@ -93,7 +93,7 @@ public class UserPreferences {
   }
 
   private static void track(JFileChooser chooser, final String key) {
-    // get the path for the given filechooser
+    // apply the path for the given filechooser
     String path = node().get(key, null);
     if (path != null) {
       File file = new File(path);

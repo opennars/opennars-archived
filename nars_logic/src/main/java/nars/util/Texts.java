@@ -89,7 +89,7 @@ abstract public class Texts {
 //                continue;
 //            }
 //
-//            Character d = map.get(c);
+//            Character d = map.apply(c);
 //            if (d == null)
 //                d = c;
 //            b.append(d);

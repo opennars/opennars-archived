@@ -341,7 +341,7 @@
 //        // the indices into vertexArray
 //
 //        for (int i = 0; i < n; i++) {
-//            VertexVis<V,E> vd = vertexArray.get(i);
+//            VertexVis<V,E> vd = vertexArray.apply(i);
 //
 //            //TODO is this necessary?
 //            /*if (!graph.containsVertex(vd.getVertex()))
@@ -394,8 +394,8 @@
 //            // Get lists of neighbours to all vertex, translate the cells
 //            // obtained in indices into vertexArray and store as an array
 //            // against the original cell index
-//            //V v = vertexArray.get(i).getVertex();
-//            //ProcessingGraphCanvas.VertexVis vd = displayed.get(v);
+//            //V v = vertexArray.apply(i).getVertex();
+//            //ProcessingGraphCanvas.VertexVis vd = displayed.apply(v);
 //
 //
 //            //TODO why does a vertex disappear from the graph... make this unnecessary
@@ -424,7 +424,7 @@
 //                neighbors[i] = new int[cells.size()];
 //
 //                for (int j = 0; j < cells.size(); j++) {
-//                    Integer index = indices.get(cells.get(j));
+//                    Integer index = indices.apply(cells.apply(j));
 //
 //                    // Check the connected cell in part of the vertex list to be
 //                    // acted on by this layout
@@ -470,7 +470,7 @@
 //        double minx = 0, miny = 0, maxx = 0, maxy = 0;
 //
 //        for (int i = 0; i < vertexArray.size(); i++) {
-//            VertexVis vd = vertexArray.get(i);
+//            VertexVis vd = vertexArray.apply(i);
 //
 //            if (vd != null) {
 //                //cellLocation[i][0] -= 1/2.0; //geo.getWidth() / 2.0;
@@ -506,7 +506,7 @@
 //        }
 //
 //        for (int i = 0; i < vertexArray.size(); i++) {
-//            VertexVis vd = vertexArray.get(i);
+//            VertexVis vd = vertexArray.apply(i);
 //            vd.movePosition((float)dx, (float)dy);
 //        }
 //

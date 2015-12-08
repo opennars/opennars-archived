@@ -476,7 +476,7 @@ public class PropertySheetTableModel
   }
 
   /**
-   * Convenience method to get all the properties of one category.
+   * Convenience method to apply all the properties of one category.
    */
   private List getPropertiesForCategory(List localProperties, String category) {
     List categoryProperties = new ArrayList();

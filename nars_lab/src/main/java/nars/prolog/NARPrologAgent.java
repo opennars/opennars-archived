@@ -77,15 +77,15 @@
 //                        //"p(X,Y,Z) :- repeat(3), X<Y.", "p(X,Y,Z) :- X is Y+Z.", "p(X,Y,Z) :- X=a."
 //                )) );
 //
-//        query("listing(inh).").get().all( result -> {
+//        query("listing(inh).").apply().all( result -> {
 //            System.out.println(result);
 //        });
-//        query("inh(a,c).").get().all( result -> {
+//        query("inh(a,c).").apply().all( result -> {
 //            System.out.println(result);
 //        });
-//        //System.out.println(query("?- believe(B).").get().all());
+//        //System.out.println(query("?- believe(B).").apply().all());
 //
-////        query("listing(inh).").get().all(-1 /* sec */, result -> {
+////        query("listing(inh).").apply().all(-1 /* sec */, result -> {
 ////            System.out.println(result.query);
 ////            System.out.println(result.variables);
 ////        });

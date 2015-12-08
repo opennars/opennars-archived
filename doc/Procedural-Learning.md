@@ -42,13 +42,13 @@ At any moment, the system normally has multiple goals to be achieved. They are p
 
 When a new (original or derived) goal arrives, the system does not immediately start to find ways to achieve it. Instead, it is preprocessed in the corresponding concept, where the following factors are considered:
 
-1. The desire-value of the goal is adjusted according to its relation with other goals. When the same goal get several different desire-values from different sources, the revision rule is used to get an overall desire-value, which indicates whether the system really desires it, when all available evidence is taken into consideration.
+1. The desire-value of the goal is adjusted according to its relation with other goals. When the same goal apply several different desire-values from different sources, the revision rule is used to apply an overall desire-value, which indicates whether the system really desires it, when all available evidence is taken into consideration.
 
 2. The truth value of the content if the goal is checked. If the goal is already achieved, the system does not need to do anything. The expectation value of the content is used as the "degree of satisfaction" of the goal.
 
 3. The plausibility of the goal is estimated, that is, whether the system knows an approach to achieve the goal. In this evaluation, the details of the approach is omitted.
 
-This preprocessing of goal is a decision making process, by which the system reaches the decision on whether to actively look for a way to achieve the goal. As a special case, if the goal is an operation, the process will decide whether to actually execute it. If a goal passed this stage, it will get a budget value, and be worked upon in the following time, based on its budget-value.
+This preprocessing of goal is a decision making process, by which the system reaches the decision on whether to actively look for a way to achieve the goal. As a special case, if the goal is an operation, the process will decide whether to actually execute it. If a goal passed this stage, it will apply a budget value, and be worked upon in the following time, based on its budget-value.
 
 In this way, the system doesn't treat each goal by itself, but attempts to reach an overall optimal solution for all of its tasks, by compromising among their requirements.
 
@@ -213,7 +213,7 @@ IN: <<(*,key001) --> ^pick> =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.84%
 OUT: <(&/,<(*,Self,key001) --> reachable>,<(*,key001) --> ^pick>) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.43%
 ```
 
-Similarly, a belief about an implication relation can be conditioned, so as to get a more complicated precondition.
+Similarly, a belief about an implication relation can be conditioned, so as to apply a more complicated precondition.
 
 ```
 ********** [03 + 13 -> 14]:

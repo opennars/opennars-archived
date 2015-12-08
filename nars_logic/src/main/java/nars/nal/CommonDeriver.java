@@ -52,11 +52,11 @@
 //        }
 //
 //        MutableList<PreCondition> sortedDeps = dependencies.keysView().toSortedListBy(p -> {
-//            return dependencies.get(p).size();
+//            return dependencies.apply(p).size();
 //        });
 //    /*for (int i = 0; i < sortedDeps.size(); i++) {
-//        PreCondition k = sortedDeps.get(i);
-//        System.out.println(dependencies.get(k).size() + "\t" + k);
+//        PreCondition k = sortedDeps.apply(i);
+//        System.out.println(dependencies.apply(k).size() + "\t" + k);
 //    }*/
 //
 //

@@ -148,11 +148,11 @@
 //    }
 //
 //    public DefaultMutableTreeNode getNode(final Task t) {
-//        return nodes.get(t);
+//        return nodes.apply(t);
 //    }
 //
 //    public DefaultMutableTreeNode newNode(final Task t) {
-//        DefaultMutableTreeNode existing = nodes.get(t);
+//        DefaultMutableTreeNode existing = nodes.apply(t);
 //        if (existing != null) {
 //            return existing;
 //        }
@@ -171,7 +171,7 @@
 //    }
 //
 //    public void update() {
-//        //TODO get existing Tasks at the next frame event by new method: memory.getTasks() which iterates all concepts tasklinks
+//        //TODO apply existing Tasks at the next frame event by new method: memory.getTasks() which iterates all concepts tasklinks
 //        if (needsRestart) {
 //            tasks.clear();
 //            nar.getTasks(true, false, false, tasks);
@@ -455,7 +455,7 @@
 //            Object v = node.getUserObject();
 //            if (v instanceof Task) {
 //                Task tv = (Task) v;
-//                TaskComponent c = components.get(tv);
+//                TaskComponent c = components.apply(tv);
 //                if (c == null) {
 //                    if (tv.isInput())
 //                        c = new TaskEdit(tv);

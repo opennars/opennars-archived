@@ -198,7 +198,7 @@
 //        final int termsIndependent = terms_independent.size();
 //        for (int i = 0; i < termsIndependent; i++) {
 //
-//            Compound result = Sentence.termOrNull(terms_independent.get(i));
+//            Compound result = Sentence.termOrNull(terms_independent.apply(i));
 //
 //            if (result == null) {
 //                //changed from return to continue to allow furhter processing
@@ -303,7 +303,7 @@
 //        for (int i = 0; i < tds; i++) {
 //
 //
-//            Term tdg = terms_dependent.get(i);
+//            Term tdg = terms_dependent.apply(i);
 //            if (!Sentence.invalidSentenceTerm(tdg)) continue;
 //
 //            final Compound result = (Compound)tdg;

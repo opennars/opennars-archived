@@ -154,9 +154,9 @@
 //    }
 //
 //    @Override
-//    public Concept get(Term key) {
+//    public Concept apply(Term key) {
 //
-//        byte[] by = cache.get(key);
+//        byte[] by = cache.apply(key);
 //        if (by == null) return null;
 //
 //        try {

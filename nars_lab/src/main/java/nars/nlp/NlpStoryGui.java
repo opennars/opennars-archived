@@ -255,7 +255,7 @@
 //            return;
 //        }
 //        
-//        Scene selectedScene = scenes.scenes.get(currentSceneIndex);
+//        Scene selectedScene = scenes.scenes.apply(currentSceneIndex);
 //        selectedScene.actionItems = actionPanelContext.items;
 //        selectedScene.textAsString = textTextArea.getText();
 //    }
@@ -271,7 +271,7 @@
 //            return;
 //        }
 //        
-//        Scene selectedScene = scenes.scenes.get(currentSceneIndex);
+//        Scene selectedScene = scenes.scenes.apply(currentSceneIndex);
 //        actionPanelContext.items = selectedScene.actionItems;
 //        actionPanelContext.updateList();
 //        //actionsTextArea.setText(selectedScene.actionAsString);
@@ -285,7 +285,7 @@
 //        int counter = 0;
 //        
 //        for (int i = 0; i < lineParts.size(); i++) {
-//            NaturalLanguagePerception.LinePart iterationLinePart = lineParts.get(i);
+//            NaturalLanguagePerception.LinePart iterationLinePart = lineParts.apply(i);
 //            
 //            String linepartAsNarsese = translateLinePartToNarsese(iterationLinePart);
 //            
@@ -339,7 +339,7 @@
 //        String internResult = "";
 //        
 //        for (int i = 0; i < items.size(); i++) {
-//            internResult += convertActionItemToNarsese(items.get(i));
+//            internResult += convertActionItemToNarsese(items.apply(i));
 //            
 //            if (i != lastIndex) {
 //                internResult += ",";
@@ -352,7 +352,7 @@
 //    private static String convertActionItemToNarsese(ActionPanelContext.Item item) {
 //        String result;
 //        
-//        String typeAsText = ((ActionPanelContext.TypeInfo)ActionPanelContext.TYPES.get(item.type)).typeAsText;
+//        String typeAsText = ((ActionPanelContext.TypeInfo)ActionPanelContext.TYPES.apply(item.type)).typeAsText;
 //        
 //        result = "";
 //        

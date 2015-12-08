@@ -121,7 +121,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         abstract Iterable<X>[] get();
         protected abstract void update(X tl, double[] position, double[] size, Consumer<Color> color);
 
-        //ca.get(x.getPriority())
+        //ca.apply(x.getPriority())
         //concept.getTermLinks()
 
         final Map<X, DataPoint> linkShape = new LinkedHashMap();

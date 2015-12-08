@@ -47,7 +47,7 @@
 //    }
 //
 //    protected void update() {
-//        TreeMLData chart = data.get(0);
+//        TreeMLData chart = data.apply(0);
 //        
 //        
 //        float length = chart.getEnd() - chart.getStart();;
@@ -88,7 +88,7 @@
 //    @Override
 //    protected void drawData(TimelineVis l, float timeScale, float yScale, float y) {
 //    
-//        TreeMLData chart = data.get(0);
+//        TreeMLData chart = data.apply(0);
 //        
 //        if (!updated) {            
 //            update(); 
@@ -112,7 +112,7 @@
 //                float x2 = t2 * timeScale;
 //                //render window block
 //                
-//                Window win = windows.get((int)w);
+//                Window win = windows.apply((int)w);
 //                
 //                float magMax = Floats.max(win.magnitude);
 //                float yy = yScale;

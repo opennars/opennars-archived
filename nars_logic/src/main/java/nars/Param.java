@@ -159,7 +159,7 @@ public abstract class Param extends Container implements Level {
 //
 //        final JsonSerializer<AtomicDouble> atomicDoubleSerializer = new JsonSerializer<AtomicDouble>() {
 //            @Override public JsonElement serialize(AtomicDouble t, Type type, JsonSerializationContext jsc) {
-//                return new JsonPrimitive(t.get());
+//                return new JsonPrimitive(t.apply());
 //            }
 //        };
 //
@@ -174,7 +174,7 @@ public abstract class Param extends Container implements Level {
 //
 //        b.registerTypeAdapter(AtomicInteger.class, new JsonSerializer<AtomicInteger>() {
 //            @Override public JsonElement serialize(AtomicInteger t, Type type, JsonSerializationContext jsc) {
-//                return new JsonPrimitive(t.get());
+//                return new JsonPrimitive(t.apply());
 //            }
 //        });
 //        b.registerTypeAdapter(AtomicInteger.class, new JsonDeserializer<AtomicInteger>() {

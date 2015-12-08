@@ -42,7 +42,7 @@
 //    public final Map<String,String> sub = new HashMap();
 //
 //    public Englisch() {
-//        //TODO use word tokenization so that word substitutions dont get applied across words.
+//        //TODO use word tokenization so that word substitutions dont apply applied across words.
 //        sub.put("go to", "goto");
 //        //etc..
 //    }
@@ -85,7 +85,7 @@
 //                    continue;
 //                }
 //                int difference = levenshteinDistance(word.replace("ing", ""), mword.replace("ing", ""));
-//                //get longer word:
+//                //apply longer word:
 //                int longerword = Math.max(word.length(), mword.length());
 //                double perc = ((double) difference) / ((double) longerword);
 //                if (perc < 0.3) {

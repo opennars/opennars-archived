@@ -249,7 +249,7 @@ public class RenderClass_v7 extends JPanel implements MouseListener, MouseMotion
 
 		for(int i = 0; i < particleAL.size(); i++){
 
-			// get particle and information
+			// apply particle and information
 			Particle p = particleAL.get(i);
 
 			float xPos = p.xPos;

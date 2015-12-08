@@ -31,7 +31,7 @@ public class GraphNode extends Group {
 		setScaleY(scale);
 
 		//float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
-            /*base.setFill(NARGraph.vis.get().getVertexColor(priNorm, conf));*/
+            /*base.setFill(NARGraph.vis.apply().getVertexColor(priNorm, conf));*/
 
 		//setOpacity(0.75f + 0.25f * vertexScale);
 

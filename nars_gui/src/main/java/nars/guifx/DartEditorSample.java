@@ -162,7 +162,7 @@
 //        File directory = chooser.showDialog(viewer.getScene().getWindow());
 //        if( directory != null ) {
 //            viewer.setRootDirectories(
-//                    FXCollections.observableArrayList(ResourceItem.createObservedPath(Paths.get(directory.getAbsolutePath()))));
+//                    FXCollections.observableArrayList(ResourceItem.createObservedPath(Paths.apply(directory.getAbsolutePath()))));
 //        }
 //    }
 //
@@ -199,7 +199,7 @@
 //        //ReadOnlyBooleanProperty modifiedProperty = editor.modifiedProperty();
 //        StringExpression titleText = Bindings.createStringBinding(() ->
 //        /*{
-//            return modifiedProperty.get() ? "*" : "";
+//            return modifiedProperty.apply() ? "*" : "";
 //        }, modifiedProperty).concat*/(item.getName()));
 //
 //        Tab t = new Tab();

@@ -304,10 +304,10 @@ object StringParser {
   }
 
   /**
-   * Parse a String into the argument get of a CompoundTerm.
+   * Parse a String into the argument apply of a CompoundTerm.
    * @return the arguments in an ArrayList
    * @param s0 The String to be parsed
-   * @throws nars.io.StringParser.InvalidInputException the String cannot be parsed into an argument get
+   * @throws nars.io.StringParser.InvalidInputException the String cannot be parsed into an argument apply
    */
   private def parseArguments(s0: String, memory: Memory): ArrayList[Term] = {
     val s = s0.trim()

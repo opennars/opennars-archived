@@ -77,7 +77,7 @@ public class SingleStepNAR extends AbstractNAR {
 //                    out.println();
 //                    out.println("Rule -> Derivations:");
 //                    for (TaskRule t : ruleDerivations.keySet()) {
-//                        Collection<DerivationGraph.PremiseKey> c = ruleDerivations.get(t);
+//                        Collection<DerivationGraph.PremiseKey> c = ruleDerivations.apply(t);
 //                        out.println(c.size() + "\t" + t);
 //                        c.forEach(x -> {
 //                            out.print(' ');
@@ -93,7 +93,7 @@ public class SingleStepNAR extends AbstractNAR {
 //                    TreeSet<TaskRule> used = new TreeSet();
 //                    TreeSet<TaskRule> unused = new TreeSet();
 //                    for (TaskRule t : Deriver.standard) {
-//                        Collection<DerivationGraph.PremiseKey> x = ruleDerivations.get(t);
+//                        Collection<DerivationGraph.PremiseKey> x = ruleDerivations.apply(t);
 //                        if (x == null || x.isEmpty()) {
 //                            unused.add(t);
 //                        } else {

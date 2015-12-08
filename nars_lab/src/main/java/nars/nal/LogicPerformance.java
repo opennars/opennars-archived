@@ -256,7 +256,7 @@
 //        int analysisDepth = 5;
 //        NAR n = new NAR(new Default());
 //
-//        LibraryInput example = LibraryInput.get(n, "test/nal7.5");
+//        LibraryInput example = LibraryInput.apply(n, "test/nal7.5");
 //
 //        List<OutputCondition> conditions = example.enableConditions(n, 5);
 //

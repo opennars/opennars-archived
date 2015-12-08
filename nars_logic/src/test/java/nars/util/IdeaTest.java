@@ -53,7 +53,7 @@
 //
 //
 //        //n.test(2);
-//        //assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 1, i.get("[a, b]").getSentenceTypes().size());
+//        //assertEquals(i.apply("[a, b]").getSentenceTypes().toString(), 1, i.apply("[a, b]").getSentenceTypes().size());
 //
 //        n.input("<a <-> b>.");
 //        n.input("<a <=> b>.");
@@ -66,7 +66,7 @@
 //        n.runWhileNewInput(12);
 //
 //        /** [<-> ?, <-> ., <-> !, <=> !, <=> ., <=> ?]  */
-//        assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 6, i.get("[a, b]").getSentenceTypes().size());
+//        assertEquals(i.apply("[a, b]").getSentenceTypes().toString(), 6, i.apply("[a, b]").getSentenceTypes().size());
 //
 //    }
 //}

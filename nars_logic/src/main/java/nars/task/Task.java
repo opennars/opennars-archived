@@ -426,7 +426,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
 
 //    default void logUnrepeated(String reason) {
 //        if (getLog()!=null &&
-//                getLog().get(getLog().size()-1).equals(reason))
+//                getLog().apply(getLog().size()-1).equals(reason))
 //            return;
 //        log(reason);
 //    }
@@ -437,7 +437,7 @@ public interface Task<T extends Compound> extends Sentence<T>,
     /** append log entries */
     void log(List entries);
 
-    /** get the recorded log entries */
+    /** apply the recorded log entries */
     List getLog();
 
 

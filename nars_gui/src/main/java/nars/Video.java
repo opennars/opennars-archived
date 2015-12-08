@@ -20,7 +20,7 @@ public class Video {
     public static final Color transparent = new Color(0,0,0,10);
     public static Font FontAwesome;
 
-    //System.out.println(Files.list(Paths.get(getClass().getResource("/").toURI())).collect(Collectors.toList()) );
+    //System.out.println(Files.list(Paths.apply(getClass().getResource("/").toURI())).collect(Collectors.toList()) );
 
 
     static {

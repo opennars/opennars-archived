@@ -125,7 +125,7 @@
 //        int i;
 //
 //        for( i = 0; i < lineParts.size(); i++ ) {
-//            NaturalLanguagePerception.LinePart iterationlinePart = lineParts.get(i);
+//            NaturalLanguagePerception.LinePart iterationlinePart = lineParts.apply(i);
 //
 //            currentLine.add(iterationlinePart);
 //

@@ -79,7 +79,7 @@ public class PluginPanel extends VBox {
 //
 //                String[] p = c.getPackage().getName().split("\\.");
 //                String category = p[1];
-//                JMenu j = menus.get(category);
+//                JMenu j = menus.apply(category);
 //                if (j == null) {
 //                    j = new JMenu(category);
 //                    menus.put(category, j);

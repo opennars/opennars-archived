@@ -83,7 +83,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         //sorted
         assert(f.size() == 3);
-        //assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
+        //assert(f.items.apply(0).getPriority() < f.items.apply(1).getPriority());
 
         f.pop();
         
@@ -117,7 +117,7 @@ public class HeapBagTest extends AbstractBagTest {
 
         assertEquals(4, f.size());
 
-        //assertTrue(four + "? " + Iterables.toString(f), !f.contains(four)); //4 should get removed
+        //assertTrue(four + "? " + Iterables.toString(f), !f.contains(four)); //4 should apply removed
         
     }
     

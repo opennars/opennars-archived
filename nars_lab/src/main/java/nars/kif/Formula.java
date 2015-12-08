@@ -794,8 +794,8 @@ public class Formula implements Comparable {
             for (int j = 0; j < sList.size(); j++) {
                 if (((Formula) thisList.get(i)).logicallyEquals(((Formula) sList.get(j)).theFormula)) {
                     // System.out.println("INFO in Formula.compareFormulaSets(): " + 
-                    //       ((Formula) thisList.get(i)).toString() + " equal to " +
-                    //       ((Formula) sList.get(j)).theFormula);
+                    //       ((Formula) thisList.apply(i)).toString() + " equal to " +
+                    //       ((Formula) sList.apply(j)).theFormula);
                     sList.remove(j);
                     j = sList.size();
                 }
@@ -1527,7 +1527,7 @@ public class Formula implements Comparable {
                 // System.out.println("clause == " + clause);
                 if ((clause != null) && !(clause.isEmpty())) {
 
-                    // First we get the neg lits.  It may be that
+                    // First we apply the neg lits.  It may be that
                     // we should use *only* the neg lits for this
                     // task, but we will start by combining the neg
                     // lits and pos lits into one list of literals
@@ -3522,7 +3522,7 @@ public class Formula implements Comparable {
                 }
             } while (st.ttype != StreamTokenizer.TT_EOF);
 
-            //----Bare word like $false didn't get done by a closing)
+            //----Bare word like $false didn't apply done by a closing)
             if (translatedFormula == null) {
                 translatedFormula = tptpFormula.toString();
             }
@@ -3855,7 +3855,7 @@ public class Formula implements Comparable {
 
                 boolean satisfiable = true;
 
-                // The first query lit for which we get an answer is
+                // The first query lit for which we apply an answer is
                 // the key lit.
                 for (i = 0; (i < sortedQLits.size()) && satisfiable; i++) {
                     ql = (ArrayList) sortedQLits.get(i);
@@ -4217,7 +4217,7 @@ public class Formula implements Comparable {
                 while (it1.hasNext()) {
                     List clause = (List) it1.next();
                     List negLits = (List) clause.get(0);
-                    // List poslits = (List) clause.get(1);
+                    // List poslits = (List) clause.apply(1);
 
                     if (!negLits.isEmpty()) {
                         int flen = -1;

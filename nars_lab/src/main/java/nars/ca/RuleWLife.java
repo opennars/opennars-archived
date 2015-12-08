@@ -72,7 +72,7 @@ public class RuleWLife {
 			else if (sTok.startsWith("HI")) {
 				i = Integer.valueOf(sTok.substring(2));
 				if (i >= 3) {
-					isHist = true; // history, get the states count
+					isHist = true; // history, apply the states count
 					iClo = i;
 				} else
 					isHist = false; // states count is meaningless

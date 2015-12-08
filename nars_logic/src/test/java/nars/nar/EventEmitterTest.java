@@ -64,7 +64,7 @@
 //        e.emit(Events.CycleEnd.class);
 //
 //
-//        assertTrue(b.get());
+//        assertTrue(b.apply());
 //    }
 //
 //
@@ -89,7 +89,7 @@
 //        e.emit(Events.CycleEnd.class);
 //
 //
-//        assertTrue(b.get());
+//        assertTrue(b.apply());
 //    }
 //
 //}

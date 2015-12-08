@@ -164,7 +164,7 @@
 //
 //            //normalize to acceptable values
 //            for (int i = 0; i < param.size(); i++) {
-//                getData()[i] = param.get(i).acceptable(getData()[i]);
+//                getData()[i] = param.apply(i).acceptable(getData()[i]);
 //            }
 //        }
 //
@@ -173,7 +173,7 @@
 //            double[] d = g.getData();
 //
 //            for (int i = 0; i < param.size(); i++) {
-//                IntegerParameter p = param.get(i);
+//                IntegerParameter p = param.apply(i);
 //                d[i] = r(p.getMin(), p.getMax());
 //            }
 //
@@ -181,30 +181,30 @@
 //        }
 //
 //        public int i(String name) {
-//            int idx = paramIndex.get(name);
-//            return (int) (getData()[idx] = param.get(idx).acceptable(getData()[idx]));
+//            int idx = paramIndex.apply(name);
+//            return (int) (getData()[idx] = param.apply(idx).acceptable(getData()[idx]));
 //        }
 //
 //        public int i(String name, int defaultValue) {
-//            Integer idx = paramIndex.get(name);
+//            Integer idx = paramIndex.apply(name);
 //            if (idx == null) {
 //                return defaultValue;
 //            }
-//            return (int) (getData()[idx] = param.get(idx).acceptable(getData()[idx]));
+//            return (int) (getData()[idx] = param.apply(idx).acceptable(getData()[idx]));
 //        }
 //
 //        public double d(String name) {
-//            int idx = paramIndex.get(name);
-//            return getData()[idx] = param.get(idx).acceptable(getData()[idx]);
+//            int idx = paramIndex.apply(name);
+//            return getData()[idx] = param.apply(idx).acceptable(getData()[idx]);
 //        }
 //
 //        public void set(String name, double value) {
-//            int idx = paramIndex.get(name);
-//            getData()[idx] = param.get(idx).acceptable(value);
+//            int idx = paramIndex.apply(name);
+//            getData()[idx] = param.apply(idx).acceptable(value);
 //        }
 //
 //        public void random(int index) {
-//            IntegerParameter p = param.get(index);
+//            IntegerParameter p = param.apply(index);
 //            getData()[index] = p.getRandom();
 //        }
 //
@@ -221,7 +221,7 @@
 //            int duration = i("cyclesPerDuration");
 //            int bagLevels = i("bagLevels");
 //
-//            //int prolog = get("prologEnable");
+//            //int prolog = apply("prologEnable");
 //            Default b;
 //
 //            if (builderType == 0) {

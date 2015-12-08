@@ -54,7 +54,7 @@ public class Scale2x
      * Scales an image and returns a twice as large image.<br>
      * This assumes the input image is of the dimensions specified in the Scale2x constructor.<br>
      * The returned image is a reference to the internal scale target in this Scale2x, so it
-     * will get changed if you call this method again, so don't hold on to it for too long.<br>
+     * will apply changed if you call this method again, so don't hold on to it for too long.<br>
      * In other words:<br>
      * <code>Image i0 = scale2x.scale(image0);<br>
      * Image i1 = scale2x.scale(image1);<br>

@@ -908,26 +908,26 @@ class MJBoard extends Panel implements Runnable {
 		switch (CrrGame) {
 		case MJRules.GAME_LIFE: // Standard Conway-like game
 			RLife.InitFromString(sRuleDef);
-			sRuleDef = RLife.GetAsString(); // get possibly corrected rules
+			sRuleDef = RLife.GetAsString(); // apply possibly corrected rules
 			// string
 			break;
 
 		case MJRules.GAME_VOTE: // Vote for life
 			RVote.InitFromString(sRuleDef);
-			sRuleDef = RVote.GetAsString(); // get possibly corrected rules
+			sRuleDef = RVote.GetAsString(); // apply possibly corrected rules
 			// string
 			break;
 
 		case MJRules.GAME_GENE: // Generations
 			RGene.InitFromString(sRuleDef);
-			sRuleDef = RGene.GetAsString(); // get possibly corrected rules
+			sRuleDef = RGene.GetAsString(); // apply possibly corrected rules
 			// string
 			SetStatesCount(RGene.iClo);
 			break;
 
 		case MJRules.GAME_WLIF: // Weighted life
 			RWLife.InitFromString(sRuleDef);
-			sRuleDef = RWLife.GetAsString(); // get possibly corrected rules
+			sRuleDef = RWLife.GetAsString(); // apply possibly corrected rules
 			// string
 			if (RWLife.isHist)
 				SetStatesCount(RWLife.iClo);
@@ -935,14 +935,14 @@ class MJBoard extends Panel implements Runnable {
 
 		case MJRules.GAME_RTBL: // Rules table
 			RRtab.InitFromString(sRuleDef);
-			sRuleDef = RRtab.GetAsString(); // get possibly corrected rules
+			sRuleDef = RRtab.GetAsString(); // apply possibly corrected rules
 			// string
 			SetStatesCount(RRtab.iClo);
 			break;
 
 		case MJRules.GAME_CYCL: // Cyclic CA
 			RCyclic.InitFromString(sRuleDef);
-			sRuleDef = RCyclic.GetAsString(); // get possibly corrected rules
+			sRuleDef = RCyclic.GetAsString(); // apply possibly corrected rules
 			// string
 			SetStatesCount(RCyclic.iClo);
 			break;
@@ -950,7 +950,7 @@ class MJBoard extends Panel implements Runnable {
 		case MJRules.GAME_1DTO: // 1D totalistic
 			GameType = MJRules.GAMTYP_1D; // this one is 1-dimensional
 			R1DTo.InitFromString(sRuleDef);
-			sRuleDef = R1DTo.GetAsString(); // get possibly corrected rules
+			sRuleDef = R1DTo.GetAsString(); // apply possibly corrected rules
 			// string
 			if (R1DTo.isHist)
 				SetStatesCount(R1DTo.iClo);
@@ -959,27 +959,27 @@ class MJBoard extends Panel implements Runnable {
 		case MJRules.GAME_1DBI: // 1D binary
 			GameType = MJRules.GAMTYP_1D; // this one is 1-dimensional
 			R1DBin.InitFromString(sRuleDef);
-			sRuleDef = R1DBin.GetAsString(); // get possibly corrected rules
+			sRuleDef = R1DBin.GetAsString(); // apply possibly corrected rules
 			// string
 			break;
 
 		case MJRules.GAME_NMBI:
 			RNeumBin.InitFromString(sRuleDef);
-			sRuleDef = RNeumBin.GetAsString(); // get possibly corrected rules
+			sRuleDef = RNeumBin.GetAsString(); // apply possibly corrected rules
 			// string
 			SetStatesCount(RNeumBin.iClo);
 			break;
 
 		case MJRules.GAME_GEBI: // General binary
 			RGenBin.InitFromString(sRuleDef);
-			sRuleDef = RGenBin.GetAsString(); // get possibly corrected rules
+			sRuleDef = RGenBin.GetAsString(); // apply possibly corrected rules
 			// string
 			SetStatesCount(RGenBin.iClo);
 			break;
 
 		case MJRules.GAME_LGTL:
 			RLgtL.InitFromString(sRuleDef);
-			sRuleDef = RLgtL.GetAsString(); // get possibly corrected rules
+			sRuleDef = RLgtL.GetAsString(); // apply possibly corrected rules
 			// string
 			if (RLgtL.isHist)
 				SetStatesCount(RLgtL.iClo);
@@ -987,7 +987,7 @@ class MJBoard extends Panel implements Runnable {
 
 		case MJRules.GAME_MARG:
 			RMarg.InitFromString(sRuleDef);
-			sRuleDef = RMarg.GetAsString(); // get possibly corrected rules
+			sRuleDef = RMarg.GetAsString(); // apply possibly corrected rules
 			// string
 			if (RMarg.isHist)
 				SetStatesCount(RMarg.iClo);
@@ -995,7 +995,7 @@ class MJBoard extends Panel implements Runnable {
 
 		case MJRules.GAME_USER:
 			RUser.InitFromString(sRuleDef);
-			sRuleDef = RUser.GetAsString(); // get possibly corrected rules
+			sRuleDef = RUser.GetAsString(); // apply possibly corrected rules
 			// string
 			SetStatesCount(RUser.iClo);
 			break;

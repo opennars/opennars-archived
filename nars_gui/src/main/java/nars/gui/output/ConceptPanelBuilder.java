@@ -142,7 +142,7 @@
 //        while (ci.hasNext()) {
 //            Concept c = ci.next();
 //            ci.remove();
-//            ConceptPanel cp = concept.get(c);
+//            ConceptPanel cp = concept.apply(c);
 //            if (cp == null) {
 //                continue;
 //            }
@@ -190,7 +190,7 @@
 //    }
 //
 //    public ConceptPanel getPanel(Concept c) {
-//        return concept.get(c);
+//        return concept.apply(c);
 //    }
 //
 //    public ConceptPanel getFirstPanelOrCreateNew(Concept c, boolean label, boolean full, int chartSize) {
@@ -644,7 +644,7 @@
 //        }
 //
 //        public String stringify(K k) {
-//            String s = stringified.get(k);
+//            String s = stringified.apply(k);
 //            if (s == null) {
 //                s = _stringify(k);
 //                stringified.put(k, s);
@@ -700,7 +700,7 @@
 //                setToolTipText("Min=" + min + ", Max=" + max);
 //            }
 //
-//            return (changed.get());
+//            return (changed.apply());
 //        }
 //
 //        abstract protected void render(Graphics2D g);

@@ -49,7 +49,7 @@
 ////                System.out.println(c);
 ////            });
 ////
-////            standard = (DerivationRules) cache.get(key);
+////            standard = (DerivationRules) cache.apply(key);
 ////
 ////            if (standard == null || !standard.isValid()) {
 ////                try {
@@ -59,7 +59,7 @@
 ////
 //////                    //GenericJBossMarshaller
 //////
-////                    ByteBuffer b = new JavaSerializationMarshaller().objectToBuffer(standard.get(0));
+////                    ByteBuffer b = new JavaSerializationMarshaller().objectToBuffer(standard.apply(0));
 ////                    System.out.println(b.getLength());
 ////                    System.out.println(b);
 ////

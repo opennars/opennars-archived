@@ -446,7 +446,7 @@ public class NSlider extends NControl {
 
             n.denormalized(e.getX() / canvas.getWidth());
 
-            //System.out.println(dx + " " + dy + " " + value.get());
+            //System.out.println(dx + " " + dy + " " + value.apply());
 
             e.consume();
         }

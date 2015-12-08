@@ -21,7 +21,7 @@
 //
 //        int maxCycles = 500;
 //        int maxNAL = 5;
-//        int seeds = 32; //iterate seeds to be sure we get everything, eventually it will converge
+//        int seeds = 32; //iterate seeds to be sure we apply everything, eventually it will converge
 //
 //        for (int seed = 1; seed < seeds; seed++) {
 //            for (String s : LibraryInput.getPaths("test1"/*, "test2"*/)) {

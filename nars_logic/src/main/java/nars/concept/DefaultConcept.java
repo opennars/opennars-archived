@@ -312,7 +312,7 @@ public class DefaultConcept extends AtomConcept {
 //
 //            T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
 //
-//            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
+//            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.apply()) {
 //*/
 //
 //                questionFromGoal(goal, nal);
@@ -482,7 +482,7 @@ public class DefaultConcept extends AtomConcept {
      * Pending Question directly asked about the term
      *
      * Note: since this is iterated frequently, an array should be used. To
-     * avoid iterator allocation, use .get(n) in a for-loop
+     * avoid iterator allocation, use .apply(n) in a for-loop
      */
     /**
      * Return the questions, called in ComposionalRules in

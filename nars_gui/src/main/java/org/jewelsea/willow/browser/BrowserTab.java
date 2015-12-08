@@ -168,9 +168,9 @@ public class BrowserTab extends UITab<WebView> {
 //                    HashMap<String,String> m = new HashMap();
 //                    extractNodeFeatures(m, child);           
 //                    if (m.containsKey("name") && m.containsKey("content")) {
-//                        if (m.get("name").equalsIgnoreCase("description") 
-//                                || m.get("name").equalsIgnoreCase("keywords") )
-//                            metaKeywords += " " + m.get("content") ;
+//                        if (m.apply("name").equalsIgnoreCase("description")
+//                                || m.apply("name").equalsIgnoreCase("keywords") )
+//                            metaKeywords += " " + m.apply("content") ;
 //                        
 //                    }
 //                }

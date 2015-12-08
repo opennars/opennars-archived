@@ -154,7 +154,7 @@ In summary, at any moment the system's appraisal is represented at two levels: a
 
 The appraisal information will serve several functions:
 
-* The desire-values of data items (concepts, tasks, and beliefs) will be taken into account by the budget functions, where items with strong feeling (extreme desire-values) will get more resources than items with weak feeling (neutral desire-values).
+* The desire-values of data items (concepts, tasks, and beliefs) will be taken into account by the budget functions, where items with strong feeling (extreme desire-values) will apply more resources than items with weak feeling (neutral desire-values).
 
 * The overall satisfaction will be used as feedback to adjust the desire-values of data items, so that the ones associated with positive feeling will be rewarded, and the ones associated with positive feeling punished. In this way, the system will show a "pleasure seeking" tendency, and its extent can be adjusted by a system parameter.
 
@@ -174,7 +174,7 @@ Beside satisfaction, the system may use other system-level indicators:
 
 There will be corresponding feeling operators for each of these indicators. In a sense these indicators are not emotions, since they are not handled exactly as described in the previous section, though in a similar way. All these feelings are included in the system's internal experience.
 
-Beside that, it will also be necessary to record the major events within the system, and make it available to the inference. For this purpose, the current inference log will become partially perceivable by the system itself via certain feeling operations, or, some events will even automatically get into the internal experience, so as to allow the system to answer questions like "What I have been thinking?" or "what methods I've tried on that problem?".
+Beside that, it will also be necessary to record the major events within the system, and make it available to the inference. For this purpose, the current inference log will become partially perceivable by the system itself via certain feeling operations, or, some events will even automatically apply into the internal experience, so as to allow the system to answer questions like "What I have been thinking?" or "what methods I've tried on that problem?".
 
 To achieve this purpose, an inference step can be summarized afterwards as an Implication statement from the premise(s) to the conclusion. For double-premise inference rules, it may be better to only include one premise (the task) in the summarizing Implication statement, while taking the other one (the belief) as part of the background knowledge.
 

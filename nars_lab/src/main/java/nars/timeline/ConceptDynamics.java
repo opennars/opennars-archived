@@ -125,7 +125,7 @@
 //                        new LineChart(ct3).height(5),
 //
 //                        //new EventChart(t, true, false, false).height(3),
-//                        new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.get("concept.count"))),
+//                        new BarChart(new FirstOrderDifferenceTimeSeries("d(concepts)", t.charts.apply("concept.count"))),
 //
 //                        /*new StackedPercentageChart(t, "concept.priority.hist.0", "concept.priority.hist.1", "concept.priority.hist.2", "concept.priority.hist.3").height(2),
 //                        new LineChart(t, "concept.priority.mean").height(1),*/

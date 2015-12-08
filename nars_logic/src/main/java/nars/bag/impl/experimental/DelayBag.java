@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * system functions more like a neural net than NARS so has different dynamics.
  *
  * Forgetting is a separate process which runs in parallel. When memory starts
- * to get low, the process removes low ''durability' items. (My attention
+ * to apply low, the process removes low ''durability' items. (My attention
  * allocation is different to Pei's).  *
  * The latency period simulates the recovery period for neurons whereby a neuron
  * cannot fire after previously firing for the specified recovery period.

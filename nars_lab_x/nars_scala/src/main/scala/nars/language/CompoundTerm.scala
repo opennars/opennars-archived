@@ -148,10 +148,10 @@ object CompoundTerm {
   def makeSetName(opener: Char, arg: ArrayList[Term], closer: Char): String = {
     val name = new StringBuffer()
     name.append(opener)
-    name.append(arg.get(0).getName)
+    name.append(arg.apply(0).getName)
     for (i <- 1 until arg.size) {
       name.append(Symbols.ARGUMENT_SEPARATOR)
-      name.append(arg.get(i).getName)
+      name.append(arg.apply(i).getName)
     }
     name.append(closer)
     name.toString
@@ -170,13 +170,13 @@ object CompoundTerm {
     name.append(Symbols.COMPOUND_TERM_OPENER)
     name.append(op)
     name.append(Symbols.ARGUMENT_SEPARATOR)
-    name.append(arg.get(relationIndex).getName)
+    name.append(arg.apply(relationIndex).getName)
     for (i <- 0 until arg.size) {
       name.append(Symbols.ARGUMENT_SEPARATOR)
       if (i == relationIndex) {
         name.append(Symbols.IMAGE_PLACE_HOLDER)
       } else {
-        name.append(arg.get(i).getName)
+        name.append(arg.apply(i).getName)
       }
     }
     name.append(Symbols.COMPOUND_TERM_CLOSER)
@@ -194,7 +194,7 @@ object CompoundTerm {
     }
     val arr = new ArrayList[Term](original.size)
     for (i <- 0 until original.size) {
-      arr.add(original.get(i).asInstanceOf[Term].clone().asInstanceOf[Term])
+      arr.add(original.apply(i).asInstanceOf[Term].clone().asInstanceOf[Term])
     }
     arr
   }
@@ -250,7 +250,7 @@ object CompoundTerm {
       } else {
         val list2 = t.asInstanceOf[CompoundTerm].cloneComponents()
         for (i <- 0 until list2.size) {
-          list.add(index + i, list2.get(i))
+          list.add(index + i, list2.apply(i))
         }
       }
     }
@@ -283,7 +283,7 @@ abstract class CompoundTerm protected (protected val components: ArrayList[Term]
   protected var isConstant_ : Boolean = true
 
   /**
-   * Abstract method to get the operator of the compound
+   * Abstract method to apply the operator of the compound
    * @return The operator in a String
    */
   def operator(): String
@@ -397,17 +397,17 @@ abstract class CompoundTerm protected (protected val components: ArrayList[Term]
   def isCommutative(): Boolean = false
 
   /**
-   * get the number of components
+   * apply the number of components
    * @return the size of the component list
    */
   def size(): Int = components.size
 
   /**
-   * get a component by index
+   * apply a component by index
    * @param i index of the component
    * @return the component
    */
-  def componentAt(i: Int): Term = components.get(i)
+  def componentAt(i: Int): Term = components.apply(i)
 
   /**
    * Get the component list
@@ -482,7 +482,7 @@ abstract class CompoundTerm protected (protected val components: ArrayList[Term]
           if (term.getName.length == 1) {
             new Variable(term.getName.charAt(0) + "" + (map.size + 1))
           } else {
-            var var1 = map.get(term.asInstanceOf[Variable]).asInstanceOf[Variable]
+            var var1 = map.apply(term.asInstanceOf[Variable]).asInstanceOf[Variable]
             if (var1 == null) {
               var1 = new Variable(term.getName.charAt(0) + "" + (map.size + 1))
             }
@@ -509,7 +509,7 @@ abstract class CompoundTerm protected (protected val components: ArrayList[Term]
     var t2: Term = null
     for (i <- 0 until size) {
       t1 = componentAt(i)
-      t2 = subs.get(t1)
+      t2 = subs.apply(t1)
       if (t2 != null) {
         components.set(i, t2.clone().asInstanceOf[Term])
       } else if (t1.isInstanceOf[CompoundTerm]) {

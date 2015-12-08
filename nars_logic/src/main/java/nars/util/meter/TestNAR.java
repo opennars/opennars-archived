@@ -196,7 +196,7 @@ public class TestNAR  {
 //        final Task expectedSolution = nar.task(solution);
 //
 //        nar.memory.eventAnswer.on(qa -> {
-//             if (!solved.get() && qa.getTwo().equals(expectedSolution)) {
+//             if (!solved.apply() && qa.getTwo().equals(expectedSolution)) {
 //                 solved.set(true);
 //             }
 //        });

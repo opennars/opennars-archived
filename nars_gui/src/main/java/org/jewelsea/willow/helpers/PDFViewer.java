@@ -130,7 +130,7 @@ package org.jewelsea.willow.helpers;///*
 //    JMenu docMenu;
 //
 //    /**
-//     * utility method to get an icon from the resources of this class
+//     * utility method to apply an icon from the resources of this class
 //     *
 //     * @param name the name of the icon
 //     * @return the icon, or null if the icon wasn't found.

@@ -298,7 +298,7 @@ public class InternalExperience {
 
     private void nonInnate(Sentence belief, Task task, Premise nal, Operator op) {
         //the operators which dont have a innate belief
-        //also get a chance to reveal its effects to the system this way
+        //also apply a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
                     $.oper(op, Product.only(belief.getTerm())),

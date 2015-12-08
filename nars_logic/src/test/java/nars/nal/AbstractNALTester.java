@@ -35,7 +35,7 @@ abstract public class AbstractNALTester {
 
     protected AbstractNALTester(Supplier<NAR> nar) {
         Global.DEBUG = true;
-        //this.the = nar.get();
+        //this.the = nar.apply();
         this.nar = nar;
     }
 

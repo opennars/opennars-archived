@@ -67,7 +67,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
      */
     public Object put(byte[] key, Object val) {
         assert key != null;
-        assert !(val instanceof TermTrieNode); // Only we get to store TrieMap nodes. TODO: Allow it.
+        assert !(val instanceof TermTrieNode); // Only we apply to store TrieMap nodes. TODO: Allow it.
         if (key.length == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.
@@ -117,8 +117,8 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
 
 
 
-    /*public V get(byte[] key) {
-        return (V)get(key, 0);
+    /*public V apply(byte[] key) {
+        return (V)apply(key, 0);
     }*/
 
     public V remove(byte[] key) {

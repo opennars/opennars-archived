@@ -8,7 +8,6 @@ import nars.nal.TaskRule;
 import nars.nal.meta.BeliefFunction;
 import nars.nal.meta.DesireFunction;
 import nars.nal.meta.PreCondition;
-import nars.nal.meta.TruthFunction;
 import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Statement;
@@ -16,11 +15,15 @@ import nars.term.Term;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.BinaryOperator;
+
 /**
  * first resolution of the conclusion's pattern term
  */
 public final class Solve extends PreCondition {
-
+    public final static Set<BinaryOperator<nars.truth.Truth>> allowOverlap=new CopyOnWriteArraySet<>();
     public final Term term;
     @Deprecated public final TaskRule rule;
 
@@ -196,7 +199,7 @@ public final class Solve extends PreCondition {
             return id;
         }
 
-        TruthFunction getTruth(char punc) {
+        BinaryOperator<nars.truth.Truth> getTruth(char punc) {
 
             switch (punc) {
 
@@ -241,15 +244,16 @@ public final class Solve extends PreCondition {
             }
 
 
-            final nars.truth.Truth truth;
-            TruthFunction tf;
 
+            BinaryOperator<nars.truth.Truth> tf;
+
+            nars.truth.Truth truth;
             if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
                 tf = getTruth(punct);
                 if (tf == null)
                     return false;
 
-                truth = tf.get(T, B);
+                truth = tf.apply(T, B);
 
                 if (truth == null) {
                     //no truth value function was applicable but it was necessary, abort
@@ -263,7 +267,7 @@ public final class Solve extends PreCondition {
 
 
             /** filter cyclic double-premise results  */
-            if (tf != null && !tf.allowOverlap()) {
+            if (tf != null && !allowOverlap.contains(tf)) {
                 if (m.premise.isCyclic()) {
                     //                if (Global.DEBUG && Global.DEBUG_REMOVED_CYCLIC_DERIVATIONS) {
                     //                    match.removeCyclic(outcome, premise, truth, punct);

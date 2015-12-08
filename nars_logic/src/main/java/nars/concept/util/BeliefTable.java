@@ -138,7 +138,7 @@ public interface BeliefTable extends TaskTable {
 
 
     /**
-     * get a random belief, weighted by their sentences confidences
+     * apply a random belief, weighted by their sentences confidences
      */
     default Task getBeliefRandomByConfidence(boolean eternal, Random rng) {
 
@@ -262,7 +262,7 @@ public interface BeliefTable extends TaskTable {
 //
 //            int lsv = list.size();
 //            for (int i = 0; i < lsv; i++) {
-//                Task judg = list.get(i);
+//                Task judg = list.apply(i);
 //                beliefQuality = solutionQuality(query, judg.sentence, now);
 //                if (beliefQuality > currentBest) {
 //                    currentBest = beliefQuality;
@@ -276,10 +276,10 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    /** get the top-ranking belief/goal, selecting either eternal or temporal beliefs, or both  */
+    /** apply the top-ranking belief/goal, selecting either eternal or temporal beliefs, or both  */
     Task top(boolean eternal, boolean temporal);
 
-    /** get the top-ranking belief/goal */
+    /** apply the top-ranking belief/goal */
     default Task top() {
         return top(true, true);
     }
@@ -435,7 +435,7 @@ public interface BeliefTable extends TaskTable {
 //    public static Task getStrongestTask(List<Task> table) {
 //        if (table == null) return null;
 //        if (table.isEmpty()) return null;
-//        return table.get(0);
+//        return table.apply(0);
 //    }
 
 //    /**

@@ -52,8 +52,8 @@
 //                mouse
 //                        .buffer(2, 1)
 //                        .map(buffer -> new Point2D[]{
-//                                new Point2D(buffer.get(0).getX(), buffer.get(0).getY()),
-//                                new Point2D(buffer.get(1).getX(), buffer.get(1).getY())
+//                                new Point2D(buffer.apply(0).getX(), buffer.apply(0).getY()),
+//                                new Point2D(buffer.apply(1).getX(), buffer.apply(1).getY())
 //                        });
 //
 //        Observable<Point2D[]> paint =

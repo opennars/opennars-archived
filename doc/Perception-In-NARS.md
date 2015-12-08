@@ -77,7 +77,7 @@ The development of perception in NARS will be more like what happens in a baby t
 
 To realize perception in the OpenNARS implementation, the following steps will be taken.
 
-1. Identify a proper testing domain. The system should be able to get continues input, probably both in some Narsese channels and some non-Narsese channels together. Natural language channels are possible, too, but maybe at a later stage.
+1. Identify a proper testing domain. The system should be able to apply continues input, probably both in some Narsese channels and some non-Narsese channels together. Natural language channels are possible, too, but maybe at a later stage.
 
 2. Implement the necessary sensors and actuators as NARS operations. NARS allows multiple levels of granularity of a certain modality. Take vision for instance, it is fine to have operations corresponding to the sensation of pixels, as well as more complicated operations that directly recognize objects of certain type, or a mixture of them.
 

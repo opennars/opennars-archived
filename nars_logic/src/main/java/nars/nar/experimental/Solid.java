@@ -319,7 +319,7 @@
 //
 //    @Override
 //    public Concept concept(Term term) {
-//        return concepts.get(term);
+//        return concepts.apply(term);
 //    }
 //
 //    @Override

@@ -87,7 +87,7 @@ abstract public class Deriver  {
 //        DerivationRules r = this.rules;
 //        int s = r.size();
 //        for (int i = 0; i < s; i++) {
-//            r.get(i).index(memory.index);
+//            r.apply(i).index(memory.index);
 //        }
 //    }
 }

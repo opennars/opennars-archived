@@ -117,7 +117,7 @@
 //                poolValues.put(f, f.value(xs));
 //            }
 //
-//            Arrays.sort(pool, (ParameterizedFunction o1, ParameterizedFunction o2) -> (int) Math.signum(Math.abs(poolValues.get(o1) - y) - Math.abs(poolValues.get(o2) - y)));
+//            Arrays.sort(pool, (ParameterizedFunction o1, ParameterizedFunction o2) -> (int) Math.signum(Math.abs(poolValues.apply(o1) - y) - Math.abs(poolValues.apply(o2) - y)));
 //        }
 //    }
 //

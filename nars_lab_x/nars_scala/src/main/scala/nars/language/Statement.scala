@@ -227,11 +227,11 @@ abstract class Statement protected (components: ArrayList[Term]) extends Compoun
    * Return the first component of the statement
    * @return The first component
    */
-  def getSubject(): Term = components.get(0)
+  def getSubject(): Term = components.apply(0)
 
   /**
    * Return the second component of the statement
    * @return The second component
    */
-  def getPredicate(): Term = components.get(1)
+  def getPredicate(): Term = components.apply(1)
 }

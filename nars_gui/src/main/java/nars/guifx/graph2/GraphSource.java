@@ -225,7 +225,7 @@ abstract public class GraphSource<V extends Termed, N extends TermNode<V>, E /* 
 ////            //active.clear();
 ////
 ////
-////            ((Default)nar).core.concepts().forEach(maxNodes.get(), c -> {
+////            ((Default)nar).core.concepts().forEach(maxNodes.apply(), c -> {
 ////
 ////
 ////

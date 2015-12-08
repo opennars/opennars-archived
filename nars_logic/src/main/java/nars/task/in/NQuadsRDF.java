@@ -150,9 +150,9 @@ abstract public class NQuadsRDF {
 //
 //            if (items.size() >= 3) {
 //
-//                Atom subj = resource(items.get(0));
-//                Atom pred = resource(items.get(1));
-//                Term obj = resourceOrValue(items.get(2));
+//                Atom subj = resource(items.apply(0));
+//                Atom pred = resource(items.apply(1));
+//                Term obj = resourceOrValue(items.apply(2));
 //                if (subj != null && obj != null && pred != null) {
 //                    if (!subj.equals(obj))  { //avoid equal subj & obj, if only namespace differs
 //                        //try {

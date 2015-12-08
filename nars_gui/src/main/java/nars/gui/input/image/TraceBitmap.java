@@ -114,7 +114,7 @@ package nars.gui.input.image;
 //		// The edge image is actually an optional parameter.  If you don't need it just pass in null
 //		canny.process(gray,0.1f,0.3f,edgeImage);
 //
-//		// First get the contour created by canny
+//		// First apply the contour created by canny
 //		List<EdgeContour> edgeContours = canny.getContours();
 //		// The 'edgeContours' is a tree graph that can be difficult to process.  An alternative is to extract
 //		// the contours from the binary image, which will produce a single loop for each connected cluster of pixels.

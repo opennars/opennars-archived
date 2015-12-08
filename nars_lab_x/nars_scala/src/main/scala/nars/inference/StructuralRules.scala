@@ -390,7 +390,7 @@ object StructuralRules {
         if (oldContent.isInstanceOf[Conjunction]) {
           content = CompoundTerm.make(oldContent, componentList, memory)
         } else if ((oldContent.isInstanceOf[Implication]) || (oldContent.isInstanceOf[Equivalence])) {
-          content = Statement.make(oldContent.asInstanceOf[Statement], componentList.get(0), componentList.get(1), 
+          content = Statement.make(oldContent.asInstanceOf[Statement], componentList.apply(0), componentList.apply(1),
             memory)
         }
       }

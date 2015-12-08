@@ -178,7 +178,7 @@ class BudgetValue extends Cloneable {
   }
 
   /**
-   * Whether the budget should get any processing at all
+   * Whether the budget should apply any processing at all
    * <p>
    * to be revised to depend on how busy the system is
    * @return The decision on whether to process the Item

@@ -7,7 +7,7 @@ import javax.swing.event.SwingPropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 
 
-/** A Bean that "handles" an DefaultSurfaceModel, editors  get ginded to this source to display an attribute.
+/** A Bean that "handles" an DefaultSurfaceModel, editors  apply ginded to this source to display an attribute.
  * @author eric
  *
  */

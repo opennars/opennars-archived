@@ -497,7 +497,7 @@ public class NarseseTest {
 //        String a = "<a --> b>.\n'comment1234\n<b-->c>.";
 //        List<Task> l = tasks(a);
 //        assertEquals(3, l.size());
-//        Operation op = ((Task<Operation>)l.get(1)).getTerm();
+//        Operation op = ((Task<Operation>)l.apply(1)).getTerm();
 //        ensureIsEcho(op);
 //        assertEquals("[\"comment1234\"]", op.argString());
 //    }
@@ -1106,12 +1106,12 @@ public class NarseseTest {
 ////    }
 //
 //    /**
-//     * Parse a String into the argument get of a CompoundTerm.
+//     * Parse a String into the argument apply of a CompoundTerm.
 //     *
 //     * @return the arguments in an ArrayList
 //     * @param s0 The String to be parsed
 //     * @throws nars.io.StringParser.InvalidInputException the String cannot be
-//     * parsed into an argument get
+//     * parsed into an argument apply
 //     */
 //    private ArrayList<Term> parseArguments(String s0) throws InvalidInputException {
 //        String s = s0.trim();
@@ -1232,6 +1232,6 @@ public class NarseseTest {
 //        if (l.size() != 1) {
 //            throw new RuntimeException("expected 1 task, got " + l.size());
 //        }
-//        return l.get(0);
+//        return l.apply(0);
 //    }
 //}

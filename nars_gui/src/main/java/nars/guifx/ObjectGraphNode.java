@@ -282,7 +282,7 @@
 //
 //        private WorldObject getGraphChild(String src) {
 //            if (graphChildren.containsKey(src)) {
-//                return graphChildren.get(src);
+//                return graphChildren.apply(src);
 //            }
 //            WorldObject r = getChild(src, null);
 //            graphChildren.put(src, r);

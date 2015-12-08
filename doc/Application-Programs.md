@@ -29,7 +29,7 @@ Originally built just to be able to visualize the existing NAL8 examples, it is 
 
 * "Deactivate switch" deactivates it.
 
-* perceive/name lets you define new places, you can let NARS go there with "Go-To named" or force the goal "be somewhere" on it in which case NARS will try to get there whatever it involves to make this possible.
+* perceive/name lets you define new places, you can let NARS go there with "Go-To named" or force the goal "be somewhere" on it in which case NARS will try to apply there whatever it involves to make this possible.
 
 **Request Goal: Force NARS to desire something.**
 
@@ -47,7 +47,7 @@ Originally built just to be able to visualize the existing NAL8 examples, it is 
 
 * make closed: same for closing
 
-* be chatty: let NARS gain some defined experience in which case it will get desire to apply the say operator in different situations. (experimental, but works, communication as a desire, see more in: [NaturalLanguageProcessing](https://github.com/opennars/opennars/wiki/Natural-Language-Processing) wiki page)
+* be chatty: let NARS gain some defined experience in which case it will apply desire to apply the say operator in different situations. (experimental, but works, communication as a desire, see more in: [NaturalLanguageProcessing](https://github.com/opennars/opennars/wiki/Natural-Language-Processing) wiki page)
 
 Predefine knowledge: Contains some knowledge one can tell it about, like for example common sense in which case it will have evidence that it is somewhere after it goes there, that it holds something after it picks it, made to speed up learning a bit.
 
@@ -57,7 +57,7 @@ Need of resources: if "need pizza" is activated, a hunger goal will show up in N
 
 * Allow joy in action inserts forced actions as goal, in which case they will gain desire of forced actions directly, which distracts NARS from doing what you want often as consequence, but allows it to like repeating what it was forced to do. Don't allow joy deactivates this mode.
 
-* Tell object categories will suggest a category to objects which get placed, like when {key0} is placed, NARS will get the information <{key0} --> key>, what this means NARS needs to find out, but it helps NARS to categorize keys together for example, and not just objects by what actions leaded to what changes in the environment (in which case NARS would develop its own concept of key, but this can happen despite the given information, but the similarity of the own concept to key will likely be recognized)
+* Tell object categories will suggest a category to objects which apply placed, like when {key0} is placed, NARS will apply the information <{key0} --> key>, what this means NARS needs to find out, but it helps NARS to categorize keys together for example, and not just objects by what actions leaded to what changes in the environment (in which case NARS would develop its own concept of key, but this can happen despite the given information, but the similarity of the own concept to key will likely be recognized)
 
 * Load/Save: Save the state of TestChamber into a file, or load examples we provided.
 

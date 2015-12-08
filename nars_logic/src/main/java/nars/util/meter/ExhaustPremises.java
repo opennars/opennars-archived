@@ -41,13 +41,13 @@ public class ExhaustPremises extends TestNAR {
 
         //nar.trace();
 
-        //1. get termlink graph results on each independently
+        //1. apply termlink graph results on each independently
         //  measure cycles to stabilization
         //  assert connected
         termlinkAnalysis(nar.task(stask1));
         termlinkAnalysis(nar.task(stask2));
 
-        //2. get the combined termlink graph resultnig from direct conceptualization of both concepts in this test NAR
+        //2. apply the combined termlink graph resultnig from direct conceptualization of both concepts in this test NAR
         System.out.println("COMBINED PREMISE TERMLINK GRAPH");
         NAR c = new Default(1024,1,1,3);
         termlinkAnalysis(c, nar.task(stask1), nar.task(stask2));

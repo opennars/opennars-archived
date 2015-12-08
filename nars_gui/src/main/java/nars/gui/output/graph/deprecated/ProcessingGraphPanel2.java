@@ -140,7 +140,7 @@
 //                    }
 //                    else {
 //                        update();
-//                        ssl.setText(ProcessingGraphPanel.this.items.get(i).toString());
+//                        ssl.setText(ProcessingGraphPanel.this.items.apply(i).toString());
 //                    }
 //                }
 //            });
@@ -263,7 +263,7 @@
 //        }
 //        else {
 //            displayed = new ArrayList(1);
-//            displayed.add(items.get(sentenceIndex));
+//            displayed.add(items.apply(sentenceIndex));
 //        }
 //        return displayed;
 //    }

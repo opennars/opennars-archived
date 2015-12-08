@@ -40,7 +40,7 @@ public abstract class feel extends SyncOperator implements Mental {
 
     
     /**
-     * To get the current value of an internal sensor
+     * To apply the current value of an internal sensor
      *
      * @param value The value to be checked, in [0, 1]
      * @param memory The memory in which the operation is executed

@@ -317,7 +317,7 @@ public static class LabeledCanvasNode<N extends Termed> extends TermNode<N> {
 
 
             //if (term instanceof Term) {
-            g.setFill(color); /*colors.get(
+            g.setFill(color); /*colors.apply(
                         ,
                         //c==null ? 0 : c.getPriority()) //this can work if re-rendered
                         0.5 //otherwise jus use medium

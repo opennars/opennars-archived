@@ -87,8 +87,8 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 
         //System.out.println(p + " " + np + " " + minPri + " " + maxPri);
 
-        //gfx.setStroke(colors.get(np));
-        //gfx.setStroke(colors.get(np, te/(te+ta)));
+        //gfx.setStroke(colors.apply(np));
+        //gfx.setStroke(colors.apply(np, te/(te+ta)));
 
         final GraphicsContext gfx = this.gfx;
 
@@ -100,7 +100,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
         }
 
         /*
-            colors.get(
+            colors.apply(
                 (t.term.op().ordinal()%colors.cc.length)/((double) Op.values().length),
                 p
             )
@@ -239,7 +239,7 @@ public class CanvasEdgeRenderer implements SpaceGrapher.EdgeRenderer<TermEdge> {
 //    }
 //
 
-    //if (edgeDirty.get()) {
+    //if (edgeDirty.apply()) {
     //edgeDirty.set(false);
 
 //        if (floorGraphics == null) floorGraphics = floorCanvas.getGraphicsContext2D();

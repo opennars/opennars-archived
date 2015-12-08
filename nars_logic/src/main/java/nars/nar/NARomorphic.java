@@ -154,7 +154,7 @@
 //        public void input(Task t, @Nullable InputReaction callback) {
 //            Node n;
 //            if (t!=null) {
-//                n = get(t.getTerm(), t.getBudget());
+//                n = apply(t.getTerm(), t.getBudget());
 //            }
 //            else {
 //                n = null;
@@ -172,13 +172,13 @@
 //        }
 //
 //        /** return the subterm matching 't' */
-//        public Node get(final Term t) {
-//            return index.get(t);
+//        public Node apply(final Term t) {
+//            return index.apply(t);
 //        }
 //
 //        /** return existing subterm matching 't' or add it if doesnt exist */
-//        public Node get(final Term t, final Budget b) {
-//            Node n = get(t);
+//        public Node apply(final Term t, final Budget b) {
+//            Node n = apply(t);
 //            if (n != null)
 //                return n;
 //

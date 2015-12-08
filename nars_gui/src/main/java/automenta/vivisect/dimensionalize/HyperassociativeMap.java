@@ -252,7 +252,7 @@ abstract public class HyperassociativeMap<K,V>  {
             final Map<N, ArrayRealVector> newCoordinates = new HashMap<N, ArrayRealVector>();
             for (final N node : graph.vertexSet()) {
                 if (coordinates.containsKey(node)) {
-                    newCoordinates.put(node, coordinates.get(node));
+                    newCoordinates.put(node, coordinates.apply(node));
                 } else {
                     newCoordinates.put(node, randomCoordinates(dimensions));
                 }
@@ -344,7 +344,7 @@ abstract public class HyperassociativeMap<K,V>  {
     }
 
 
-    /** added to equilibrium distance to get target alignment distance */
+    /** added to equilibrium distance to apply target alignment distance */
     public double getRadius(V vertex) {
         return 0;
     }
@@ -406,7 +406,7 @@ abstract public class HyperassociativeMap<K,V>  {
         //N neighbor = s == nodeToQuery ? t : s;
         V neighbor = other;
 
-//        Double existingWeight = neighbors.get(neighbor);
+//        Double existingWeight = neighbors.apply(neighbor);
 //
 //        //double currentWeight = getEdgeWeight(neighborEdge);
 //
@@ -675,7 +675,7 @@ abstract public class HyperassociativeMap<K,V>  {
         //vertices.forEach((Consumer<N>) node -> {
 //
 //                    for (int i = 0; i < vertices.size(); i++) {
-//            N node = vertices.get(i);
+//            N node = vertices.apply(i);
 
             final ArrayRealVector newPosition = align(node, reusableNeighborData, vertices);
 

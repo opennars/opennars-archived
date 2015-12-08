@@ -156,7 +156,7 @@
 //    protected void updateBeliefs() {
 //        if (presentJudgments) {
 //            long now = nar.time();
-//            durationCycles = (nar.param).duration.get();
+//            durationCycles = (nar.param).duration.apply();
 //            if (now - lastFlush > (long)(durationCycles/ forgetCyclePeriod) ) {
 //
 //                Set<Sentence> toRemove = new HashSet();
@@ -530,7 +530,7 @@
 //            int arity = s.getArity();
 //            String predicate = s.getName();
 //            if (arity == 0) {
-//                return Atom.get(unpescape(predicate));
+//                return Atom.apply(unpescape(predicate));
 //            }
 //            if (arity == 1) {
 //                switch (predicate) {
@@ -594,7 +594,7 @@
 //        }
 //        else if (term instanceof nars.tuprolog.Number) {
 //            nars.tuprolog.Number n = (nars.tuprolog.Number)term;
-//            return Atom.get('"' + String.valueOf(n.doubleValue()) + '"');
+//            return Atom.apply('"' + String.valueOf(n.doubleValue()) + '"');
 //        }
 //
 //        return null;
@@ -614,7 +614,7 @@
 //                new Stamp(nar.memory, tense));
 //    }
 //
-//    /** reflect a result to NARS, and remember it so that it doesn't get reprocessed here later */
+//    /** reflect a result to NARS, and remember it so that it doesn't apply reprocessed here later */
 //    public Term answer(Task question, Term t, nars.tuprolog.Term pt) {
 //        if (reportAnswers)
 //            System.err.println("Prolog answer: " + t);

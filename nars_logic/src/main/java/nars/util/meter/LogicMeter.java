@@ -279,7 +279,7 @@ public class LogicMeter extends FrameReaction {
 //
 //        
 //        {
-//            //DataSet rule = TASKLINK_REASON.get();
+//            //DataSet rule = TASKLINK_REASON.apply();
 //            put("rule.fire.tasklink.pri.mean", TASKLINK_FIRE.mean());
 //            put("rule.fire.tasklinks", TASKLINK_FIRE.getHits());
 //            
@@ -294,7 +294,7 @@ public class LogicMeter extends FrameReaction {
 //        {            
 //            putHits(CONTRAPOSITION);
 //            
-//            //put("rule.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
+//            //put("rule.contrapositions.complexity.mean", CONTRAPOSITION.apply().mean());
 //            
 //            putHits(BELIEF_REVISION);
 //            put("rule.ded_2nd_layer_variable_unification_terms", DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.getHits());
@@ -304,7 +304,7 @@ public class LogicMeter extends FrameReaction {
 //            putHits(ANALOGY);
 //        }
 //        {
-//            DataSet d = DERIVATION_LATENCY.get();
+//            DataSet d = DERIVATION_LATENCY.apply();
 //            double min = d.min();
 //            if (!Double.isFinite(min)) min = 0;
 //            double max = d.max();
@@ -326,7 +326,7 @@ public class LogicMeter extends FrameReaction {
 //            put("task.executed", TASK_EXECUTED.getHits());
 //            
 //            put("task.immediate.process", TASK_IMMEDIATE_PROCESS.getHits());
-//            //put("task.immediate_processed.pri.mean", TASK_IMMEDIATE_PROCESS.get().mean());
+//            //put("task.immediate_processed.pri.mean", TASK_IMMEDIATE_PROCESS.apply().mean());
 //        }
 //        {
 //            put("task.link_to", LINK_TO_TASK.getHits());
@@ -340,7 +340,7 @@ public class LogicMeter extends FrameReaction {
 //        
 //        {
 //            putHits(SOLUTION_BEST);
-//            put("task.solved.best.pri.mean", SOLUTION_BEST.get().mean());
+//            put("task.solved.best.pri.mean", SOLUTION_BEST.apply().mean());
 //        }
 //        
 //        
@@ -367,7 +367,7 @@ public class LogicMeter extends FrameReaction {
 //        put(s.getName(), s.getHits());
 //    }
 //    public void putMean(final ValueMeter s) {
-//        put(s.getName(), s.get().mean());
+//        put(s.getName(), s.apply().mean());
 //    }
 
 

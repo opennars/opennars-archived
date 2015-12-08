@@ -146,7 +146,7 @@ public class Versioned<X> extends FasterIntArrayList /*Comparable<Versioned>*/ {
     }
 
 //    public int setInt(IntToIntFunction f) {
-//        Integer x = (Integer) get();
+//        Integer x = (Integer) apply();
 //        Integer y = f.valueOf(x);
 //        set(y);
 //    }

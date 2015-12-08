@@ -51,11 +51,11 @@
 //        this("localhost");
 //    }
 //
-//    public JsonNode get(String url) {
-//        return get(new HttpGet(url));
+//    public JsonNode apply(String url) {
+//        return apply(new HttpGet(url));
 //    }
 //
-//    public JsonNode get(HttpUriRequest req) {
+//    public JsonNode apply(HttpUriRequest req) {
 //
 //        try {
 //            CloseableHttpResponse resp = http.execute(req);
@@ -72,7 +72,7 @@
 //
 //    protected void exe(String url, Consumer<JsonNode> recv) {
 //        exe.submit( () -> {
-//            recv.accept(get(url));
+//            recv.accept(apply(url));
 //        } );
 //    }
 //
@@ -82,7 +82,7 @@
 //    }
 //    public JsonNode treeRandom(String grammar) {
 //        //http://localhost:41296/grammars/Foods.pgf?command=random
-//        return get(getBaseURL() + "/grammars/" + grammar + ".pgf?command=random");
+//        return apply(getBaseURL() + "/grammars/" + grammar + ".pgf?command=random");
 //    }
 //
 //    public JsonNode linearize(String grammar, String lang, String tree)  {
@@ -101,7 +101,7 @@
 //            //httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 //            uu += URLEncodedUtils.format(nvps, (String)null);
 //
-//        return get(uu);
+//        return apply(uu);
 //        //        }
 ////        catch (UnsupportedEncodingException e) {
 ////            return null;
@@ -134,7 +134,7 @@
 //        //httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 //        uu += URLEncodedUtils.format(nvps, (String)null);
 //
-//        return get(uu);
+//        return apply(uu);
 //    }
 //
 //    public JsonNode tree(String grammar, String lang, String linearized) {
@@ -164,7 +164,7 @@
 //        //httpPost.setEntity(new UrlEncodedFormEntity(nvps));
 //        uu += URLEncodedUtils.format(nvps, (String)null);
 //
-//        return get(uu);
+//        return apply(uu);
 //    }
 //
 ////    public String linearize(String tree) {

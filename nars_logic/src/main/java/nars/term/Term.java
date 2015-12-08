@@ -238,7 +238,7 @@ public interface Term extends Termed, Cloneable, Comparable, Termlike, Serializa
 //            /*if (this.op()!=Op.VAR_PATTERN) {
 //                throw new RuntimeException("variable is not pattern");
 //            }*/
-//            return subs.get(this);
+//            return subs.apply(this);
 //        }
 //
 //        return this;

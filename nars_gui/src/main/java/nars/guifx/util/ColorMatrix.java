@@ -80,8 +80,8 @@ public class ColorMatrix {
 //    }
 
 
-//    public Color get(double p, double opacity) {
-//        Color c = get(p);
+//    public Color apply(double p, double opacity) {
+//        Color c = apply(p);
 //        if (opacity == 1f) return c;
 //        if (opacity < 0.01) return Color.TRANSPARENT;
 //        return new Color(c.getRed(), c.getGreen(), c.getBlue(), opacity);

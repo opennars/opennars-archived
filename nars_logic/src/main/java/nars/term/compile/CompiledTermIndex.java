@@ -25,7 +25,7 @@
 //    public final Map<Term, Term> terms = new HashMap();
 //
 //    @Override
-//    public Termed get(Term t) {
+//    public Termed apply(Term t) {
 //        return terms.computeIfAbsent(t, this::compile);
 //    }
 //
@@ -80,8 +80,8 @@
 //    public static void main(String[] args) {
 //        CompiledTermIndex i = new CompiledTermIndex() {
 //            @Override
-//            public Termed get(Term t) {
-//                Termed u = super.get(t);
+//            public Termed apply(Term t) {
+//                Termed u = super.apply(t);
 //                System.out.println(t);
 //                System.out.println(u);
 //                System.out.println(u.hashCode());
@@ -89,6 +89,6 @@
 //                return u;
 //            }
 //        };
-//        i.get(Atom.the("xyzxyzxyz"));
+//        i.apply(Atom.the("xyzxyzxyz"));
 //    }
 //}

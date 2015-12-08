@@ -42,21 +42,21 @@
 //        System.out.print(experiment + " ");
 //
 //        for (int i = 0; i < trainingSet.size(); i++) {
-//            MLDataPair g = trainingSet.get(i);
+//            MLDataPair g = trainingSet.apply(i);
 //            int test = (int)g.getInput().getData(1);
 //            double success = g.getInput().getData(0);
 //            int cycles = (int)g.getIdeal().getData(0);
 //
-//            if ((success == 1.0) && (testTimes.get(test) == null)) {
+//            if ((success == 1.0) && (testTimes.apply(test) == null)) {
 //                testTimes.put(test, cycles);
 //            }
 //
 //            totalTests = Math.max(test, totalTests);
 //        }
 //        for (Integer t : testTimes.keySet()) {
-//            if (experiments.get(t) == null)
+//            if (experiments.apply(t) == null)
 //                experiments.put(t, new TreeMap());
-//            experiments.get(t).put(experiment, testTimes.get(t));
+//            experiments.apply(t).put(experiment, testTimes.apply(t));
 //        }
 //
 //        trainingSet.toCSV("/tmp/" + experiment + ".csv");
@@ -84,10 +84,10 @@
 //        System.out.println("\nExperiment Comparison:");
 //
 //        for (int i : experiments.keySet())  {
-//            Map<String, Integer> e = experiments.get(i);
+//            Map<String, Integer> e = experiments.apply(i);
 //
 //
-//            //System.out.printMeaning("  " + ep.get(i) + ": ");
+//            //System.out.printMeaning("  " + ep.apply(i) + ": ");
 //
 //            TreeSet<Integer> cyclesUnique = new TreeSet(e.values());
 //            int min = cyclesUnique.first();
@@ -104,7 +104,7 @@
 //                    if (time == min)  {
 //                        best.add(exp);
 //                        try {
-//                            bestCount.put(exp, bestCount.get(exp) + 1);
+//                            bestCount.put(exp, bestCount.apply(exp) + 1);
 //                        }
 //                        catch (NullPointerException nn) {
 //                            bestCount.put(exp, 1);
@@ -113,7 +113,7 @@
 //                    if (time == max) {
 //                        worst.add(exp);
 //                        try {
-//                            worstCount.put(exp, worstCount.get(exp) + 1);
+//                            worstCount.put(exp, worstCount.apply(exp) + 1);
 //                        }
 //                        catch (NullPointerException nn) {
 //                            worstCount.put(exp, 1);
@@ -129,7 +129,7 @@
 //
 //        System.out.println("Winnings:");
 //        for (String k : bestCount.keySet()) {
-//            System.out.println("  " + k + " " + bestCount.get(k));
+//            System.out.println("  " + k + " " + bestCount.apply(k));
 //        }
 //        System.out.println();
 //        System.out.println();

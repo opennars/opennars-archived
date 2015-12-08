@@ -1192,10 +1192,10 @@ public class FaceGUI extends BaseClass {
 //			    int n = shape[i][j][k];
 //			    v.set(pts[s][n][0], pts[s][n][1], pts[s][n][2]);
 //			    v.transform(n < noRotateIndex ? m1 : m2);
-//			    x[k] = (int)v.get(0);
-//			    y[k] = (int)v.get(1);
+//			    x[k] = (int)v.apply(0);
+//			    y[k] = (int)v.apply(1);
 //			    if (doShadeLocal)
-//				z[k] = (int)v.get(2);
+//				z[k] = (int)v.apply(2);
 //			}
 //
 //			if (type == POLYGON && nk == 2) {
@@ -1204,10 +1204,10 @@ public class FaceGUI extends BaseClass {
 //				int n = shape[i][j][k];
 //				v.set(pts[1-s][n][0],pts[1-s][n][1],pts[1-s][n][2]);
 //				v.transform(n < noRotateIndex ? m1 : m2);
-//				x[3-k] = (int)v.get(0);
-//				y[3-k] = (int)v.get(1);
+//				x[3-k] = (int)v.apply(0);
+//				y[3-k] = (int)v.apply(1);
 //				if (doShadeLocal)
-//				    z[3-k] = (int)v.get(2);
+//				    z[3-k] = (int)v.apply(2);
 //			    }
 //			}
 //

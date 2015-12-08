@@ -56,7 +56,7 @@ public abstract class NControl extends StackPane {
                 redraw();
             });
             //((DoubleProperty)widthProperty()).bind( canvas.widthProperty() );
-            //setWidth(bp.get().getWidth());
+            //setWidth(bp.apply().getWidth());
         } else {
             setWidth(w);
         }

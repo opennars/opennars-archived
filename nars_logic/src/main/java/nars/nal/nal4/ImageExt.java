@@ -84,7 +84,7 @@ public class ImageExt extends Image {
 
 
     /**
-     * get the operate of the term.
+     * apply the operate of the term.
      * @return the operate of the term
      */
     @Override

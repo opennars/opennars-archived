@@ -52,7 +52,7 @@ public class Rule1DTotal {
 			else if (sTok.startsWith("C")) {
 				iTmp = Integer.valueOf(sTok.substring(1));
 				if (iTmp >= 3) {
-					isHist = true; // history, get the states count
+					isHist = true; // history, apply the states count
 					iClo = iTmp;
 				} else
 					isHist = false; // states count is meaningless

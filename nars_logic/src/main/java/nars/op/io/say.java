@@ -137,7 +137,7 @@ public class say extends NullOperator {
 //
 //    private List<Task> isWord(Term t, boolean b) {
 //        return Arrays.asList(memory.newTask(Inheritance.make(t, WORD)).judgment().
-//                truth(b, 0.9f).present().get());
+//                truth(b, 0.9f).present().apply());
 //    }
 //
 //    private Compound asWord(Term t) {
@@ -190,7 +190,7 @@ public class say extends NullOperator {
 //    private List<Task> isQuiet() {
 //        return Arrays.asList( memory.newTask(
 //                Inheritance.make(memory.self(), QUIET)
-//        ).judgment().present().truth(1.0f, 0.9f).get());
+//        ).judgment().present().truth(1.0f, 0.9f).apply());
 //    }
 //
 //    private List<Task> isSpoken(Term t) {
@@ -199,7 +199,7 @@ public class say extends NullOperator {
 //                Inheritance.make(
 //                        Product.make(t, memory.self()),
 //                        SAID)
-//        ).judgment().present().truth(1.0f, 0.9f).get());
+//        ).judgment().present().truth(1.0f, 0.9f).apply());
 //    }
 //
 //    private List<Task> isIncoherent(List<Object> ic) {
@@ -212,7 +212,7 @@ public class say extends NullOperator {
 //                Inheritance.make(
 //                        Product.make(SetExt.make(c), memory.self()),
 //                        INCOHERENT)
-//        ).judgment().present().truth(1.0f, 0.9f).get());
+//        ).judgment().present().truth(1.0f, 0.9f).apply());
 //
 //    }
 //

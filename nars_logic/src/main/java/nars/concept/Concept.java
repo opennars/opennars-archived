@@ -354,7 +354,7 @@ public interface Concept extends Termed, Itemized<Term> {
 //                return getMemory().concept(term.getTerm());
 //            }
 //        });
-//        return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
+//        return filter(termToConcept, Concept.class); //should remove null's (unless they never apply included anyway), TODO Check that)
 //    }
 
 

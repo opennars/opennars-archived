@@ -714,7 +714,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 //
 //
 //    public boolean contains(K key) {
-//        return get(key)!=null;
+//        return apply(key)!=null;
 //    }
 //
 //    public Bagged<E> getBagged(K key) {
@@ -729,7 +729,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 //    }
 //
 //    @Override
-//    public E get(K key) {
+//    public E apply(K key) {
 //        Bagged<E> b = getBagged(key);
 //        if (b!=null)
 //            return b.value;
@@ -811,12 +811,12 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 //        @Override public boolean hasNext() {
 //            return pos < max;
 //        }
-//        @Override public E next() { return queue.get(pos++).value;        }
+//        @Override public E next() { return queue.apply(pos++).value;        }
 //    }
 //    private final class ReverseQueueIterator implements Iterator<E> {
 //        int pos = queue.size()-1;
 //        @Override public boolean hasNext() { return pos >0;         }
-//        @Override public E next() { return queue.get(pos--).value;         }
+//        @Override public E next() { return queue.apply(pos--).value;         }
 //    }
 //
 //    private final class HashSetIterator implements Iterator<E> {

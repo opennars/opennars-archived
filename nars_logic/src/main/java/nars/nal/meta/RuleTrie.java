@@ -88,7 +88,7 @@ public class RuleTrie extends Deriver {
 
             @Override
             public int hashOf(List<PreCondition> sequence, int index) {
-                //return sequence.get(index).hashCode();
+                //return sequence.apply(index).hashCode();
 
                 PreCondition pp = sequence.get(index);
                 return conds.getIfAbsentPutWithKey(pp, (p) -> 1 + conds.size());
