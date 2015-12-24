@@ -2,12 +2,12 @@ package nars.budget;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.Symbols;
+import nars.UtilityFunctions;
 import nars.util.Texts;
 import nars.util.data.Util;
 
 import javax.annotation.Nullable;
 
-import static nars.nal.UtilityFunctions.*;
 import static nars.util.data.Util.mean;
 
 /**

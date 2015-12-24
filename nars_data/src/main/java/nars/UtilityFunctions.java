@@ -18,9 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.nal;
+package nars;
 
-import nars.Global;
 import nars.util.data.Util;
 
 import static java.lang.Math.pow;

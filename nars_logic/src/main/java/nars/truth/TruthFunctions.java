@@ -20,7 +20,7 @@
  */
 package nars.truth;
 
-import nars.nal.UtilityFunctions;
+import nars.UtilityFunctions;
 
 import static java.lang.Math.abs;
 
