@@ -20,14 +20,10 @@
  */
 package nars.task;
 
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
-import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;

@@ -70,7 +70,7 @@ public class RuleMatch extends FindSubst {
         }
     }
 
-    @Override public ImmediateTermTransform getTransform(Operator t) {
+    public ImmediateTermTransform getTransform(Operator t) {
         return transforms.get(t);
     }
 

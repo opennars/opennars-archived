@@ -23,13 +23,13 @@ package nars;
 
 import com.gs.collections.api.tuple.Twin;
 import nars.concept.Concept;
+import nars.nal.TermIndex;
 import nars.nal.nal8.Execution;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
 import nars.time.Clock;
 import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.event.DefaultTopic;

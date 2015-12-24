@@ -1,11 +1,11 @@
 package nars.nal;
 
 import nars.MapIndex;
-import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.TermMetadata;
 import nars.term.TermVector;
 import nars.term.compound.Compound;
+import nars.term.match.PatternCompound;
 
 import java.util.HashMap;
 
@@ -21,7 +21,7 @@ public class PatternIndex extends MapIndex {
 
 
     @Override
-    protected <T extends Term> Compound<T> compileCompound(Compound<T> x, TermContainer subs) {
+    protected Compound compileCompound(Compound x, TermContainer subs) {
 
         /*if (!(x instanceof AbstractCompoundPattern)) {
             if (x instanceof Compound) {

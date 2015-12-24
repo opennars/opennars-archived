@@ -1,4 +1,4 @@
-package nars.nal.nal7;
+package nars;
 
 /**
  * Created by me on 12/9/15.

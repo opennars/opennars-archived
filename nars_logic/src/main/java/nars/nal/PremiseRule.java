@@ -15,7 +15,6 @@ import nars.nal.op.*;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.constraint.MatchConstraint;

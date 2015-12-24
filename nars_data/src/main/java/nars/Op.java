@@ -2,7 +2,6 @@ package nars;
 
 
 import com.gs.collections.api.tuple.primitive.IntIntPair;
-import nars.nal.nal7.Order;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;

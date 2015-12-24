@@ -3,6 +3,7 @@ package nars.term.compile;
 import javassist.scopedpool.SoftValueHashMap;
 import nars.MapIndex;
 import nars.NAR;
+import nars.nal.TermIndex;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;

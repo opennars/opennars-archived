@@ -4,7 +4,6 @@ import com.gs.collections.impl.list.mutable.FastList;
 import nars.$;
 import nars.Global;
 import nars.MapIndex;
-import nars.term.compile.TermIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

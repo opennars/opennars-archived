@@ -2,9 +2,9 @@ package nars.nal;
 
 import nars.$;
 import nars.Op;
+import nars.Order;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal7.Order;
 import nars.nal.nal7.Parallel;
 import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;

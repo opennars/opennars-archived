@@ -8,21 +8,57 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
+    <packaging>jar</packaging>
+    <name>OpenNARS Data</name>
     <artifactId>nars_data</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <url>http://maven.apache.org</url>
+    <version>1.7-SNAPSHOT</version>
+    <url>https://github.com/opennars/opennars</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
         <dependency>
-        <groupId>com.github.0xCopy.prautobeans</groupId>
-        <artifactId>prautobeans-lib</artifactId>
+            <groupId>com.github.0xCopy.prautobeans</groupId>
+            <artifactId>prautobeans-lib</artifactId>
             <version>1.0-pre1</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>nars_util</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
+
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>1.0.0-beta-4584</version>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
             <plugin>
                 <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
                 <artifactId>maven-java-formatter-plugin</artifactId>

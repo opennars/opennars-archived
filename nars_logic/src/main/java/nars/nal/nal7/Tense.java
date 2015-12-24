@@ -1,6 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Memory;
+import nars.Order;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;

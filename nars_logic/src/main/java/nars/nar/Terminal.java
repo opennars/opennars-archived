@@ -4,10 +4,10 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
+import nars.nal.TermIndex;
 import nars.task.Task;
 import nars.task.flow.FIFOTaskPerception;
 import nars.term.Term;
-import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
 
 import java.util.function.Consumer;

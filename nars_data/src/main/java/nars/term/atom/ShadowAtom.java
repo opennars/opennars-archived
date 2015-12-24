@@ -1,7 +1,6 @@
-package nars.nal.nal7;
+package nars.term.atom;
 
 import nars.Op;
-import nars.term.atom.AbstractStringAtom;
 
 /**
  * Atom which is invisible to most if not all reasoner
