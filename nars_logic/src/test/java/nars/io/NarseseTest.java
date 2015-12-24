@@ -1,13 +1,13 @@
 package nars.io;
 
 import nars.*;
-import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.op.io.echo;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 import nars.term.variable.Variable;
 import org.junit.Test;
 

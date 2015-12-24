@@ -21,10 +21,10 @@
 package nars.testchamber.operator;
 
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 import nars.testchamber.TestChamber;
 
 /**

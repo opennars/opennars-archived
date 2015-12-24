@@ -2,7 +2,6 @@ package nars.op.software;
 
 import nars.NAR;
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
@@ -10,6 +9,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;

@@ -10,6 +10,7 @@ import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 import nars.term.transform.Subst;
 import nars.util.meter.TestNAR;
 import org.junit.Test;

@@ -4,8 +4,8 @@ import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.budget.TaskAccumulator;
 import nars.concept.Concept;
-import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.nal7.Tense;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;

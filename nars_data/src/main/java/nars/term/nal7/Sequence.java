@@ -1,4 +1,4 @@
-package nars.nal.nal7;
+package nars.term.nal7;
 
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.$;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static nars.Symbols.COMPOUND_TERM_OPENER;
-import static nars.nal.nal7.Tense.appendInterval;
+import static nars.term.nal7.Tense.appendInterval;
 
 /**
  * Sequential Conjunction (&/)
@@ -240,7 +240,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
     public static Term makeSequence(Term[] a, boolean allowReduction) {
 
         //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = Interval.intervalCount(a);
+        int intervalsPresent = intervalCount(a);
 
         if (intervalsPresent == 0) {
             if (allowReduction && (a.length == 1)) return a[0]; //TODO combine this with singleton condition at end of this method

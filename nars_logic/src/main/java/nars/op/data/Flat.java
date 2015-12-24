@@ -2,10 +2,10 @@ package nars.op.data;
 
 import nars.$;
 import nars.Op;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 
 import java.util.ArrayList;
 import java.util.List;

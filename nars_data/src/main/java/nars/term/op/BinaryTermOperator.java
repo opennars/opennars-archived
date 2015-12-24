@@ -1,4 +1,4 @@
-package nars.nal.op;
+package nars.term.op;
 
 import nars.term.Term;
 import nars.term.compound.Compound;

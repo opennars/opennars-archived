@@ -303,7 +303,7 @@ public class UnitBudget implements Budget {
      * @param v The increasing percent
      */
     public void orQuality(float v) {
-        quality = or(quality, v);
+        quality = UtilityFunctions.or(quality, v);
     }
 
     /**
@@ -312,7 +312,7 @@ public class UnitBudget implements Budget {
      * @param v The decreasing percent
      */
     public void andQuality(float v) {
-        quality = and(quality, v);
+        quality = UtilityFunctions.and(quality, v);
     }
 
 //    /**

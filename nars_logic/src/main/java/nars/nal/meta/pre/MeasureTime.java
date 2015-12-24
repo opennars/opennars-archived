@@ -3,9 +3,9 @@ package nars.nal.meta.pre;
 import nars.$;
 import nars.Premise;
 import nars.nal.RuleMatch;
-import nars.nal.nal7.Tense;
 import nars.task.Temporal;
 import nars.term.Term;
+import nars.term.nal7.Tense;
 
 /**
  * Created by me on 8/15/15.

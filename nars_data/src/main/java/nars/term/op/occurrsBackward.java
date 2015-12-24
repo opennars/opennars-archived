@@ -1,4 +1,4 @@
-package nars.nal.op;
+package nars.term.op;
 
 
 public class occurrsBackward extends occurrsForward {

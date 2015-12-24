@@ -1,4 +1,4 @@
-package nars.nal.op;
+package nars.term.op;
 
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;

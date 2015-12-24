@@ -1,8 +1,8 @@
 package nars.task;
 
 import nars.NAR;
-import nars.nal.nal7.Tense;
 import nars.nar.Default;
+import nars.term.nal7.Tense;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

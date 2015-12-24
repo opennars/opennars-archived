@@ -20,7 +20,9 @@
  */
 package nars.task;
 
-import nars.*;
+import nars.Global;
+import nars.Order;
+import nars.Symbols;
 import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
@@ -29,7 +31,9 @@ import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
-import nars.truth.*;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
+import nars.truth.Truthed;
 
 import java.io.Serializable;
 import java.lang.ref.Reference;
@@ -588,9 +592,9 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         }
 
         switch (Tense.order(currentTime, getOccurrenceTime(), duration)) {
-            case Forward:
+            case Order.Forward:
                 return Symbols.TENSE_FUTURE;
-            case Backward:
+            case Order.Backward:
                 return Symbols.TENSE_PAST;
             default:
                 return Symbols.TENSE_PRESENT;

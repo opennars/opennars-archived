@@ -3,10 +3,10 @@ package nars.task;
 import nars.$;
 import nars.Premise;
 import nars.budget.Budget;
-import nars.nal.nal7.Tense;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import nars.truth.Truth;
 
 /** dummy task useful for recording the known components of an aborted derivation */

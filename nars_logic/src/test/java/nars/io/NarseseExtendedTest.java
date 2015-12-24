@@ -3,16 +3,16 @@ package nars.io;
 import nars.Narsese;
 import nars.Op;
 import nars.Symbols;
-import nars.nal.nal7.Tense;
 import nars.nar.Terminal;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import org.junit.Test;
 
 import static nars.io.NarseseTest.task;
 import static nars.io.NarseseTest.term;
-import static nars.nal.nal7.Tense.*;
+import static nars.term.nal7.Tense.*;
 import static org.junit.Assert.*;
 
 /**

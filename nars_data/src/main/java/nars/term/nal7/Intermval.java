@@ -1,4 +1,4 @@
-package nars.nal.nal7;
+package nars.term.nal7;
 
 import nars.term.TermMetadata;
 

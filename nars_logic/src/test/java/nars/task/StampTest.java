@@ -1,6 +1,6 @@
 package nars.task;
 
-import nars.nal.nal7.Tense;
+import nars.term.nal7.Tense;
 import org.junit.Test;
 
 import java.util.Arrays;

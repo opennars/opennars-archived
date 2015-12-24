@@ -7,10 +7,10 @@ package nars.process;
 import nars.NAR;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
-import nars.nal.nal7.Tense;
 import nars.task.Task;
 import nars.term.Termed;
 import nars.term.Terms;
+import nars.term.nal7.Tense;
 
 import java.util.function.Consumer;
 

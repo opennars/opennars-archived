@@ -83,8 +83,8 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (dif < 0) dif = 0;  
         
         
-        float priority = or(dif, tb.getPriority());
-        float durability = aveAri(dif, tb.getDurability());
+        float priority = UtilityFunctions.or(dif, tb.getPriority());
+        float durability = UtilityFunctions.aveAri(dif, tb.getDurability());
         float quality = truthToQuality(truth);
         
         /*
@@ -293,7 +293,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget value of the conclusion
      */
     public static Budget backwardWeak(Truth truth, ConceptProcess nal) {
-        return budgetInference(w2c(1) * truthToQuality(truth), 1, nal);
+        return budgetInference(UtilityFunctions.w2c(1) * truthToQuality(truth), 1, nal);
     }
 
     /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
@@ -334,7 +334,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackwardWeak(Term content, ConceptProcess nal) {
-        return budgetInference(w2c(1), content.complexity(), nal);
+        return budgetInference(UtilityFunctions.w2c(1), content.complexity(), nal);
     }
 
     static Budget budgetInference(float qual, int complexity, ConceptProcess nal) {
@@ -378,11 +378,11 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         BagBudget<Termed> termLink = nal.getTermLink();
         if (termLink!=null) {
-            priority = or(priority, termLink.getPriority());
-            durability = and(durability, termLink.getDurability()); //originaly was 'AND'
+            priority = UtilityFunctions.or(priority, termLink.getPriority());
+            durability = UtilityFunctions.and(durability, termLink.getDurability()); //originaly was 'AND'
             float targetActivation = termLink.getPriority();
             if (targetActivation >= 0) {
-                termLink.orPriority(or(quality, targetActivation));
+                termLink.orPriority(UtilityFunctions.or(quality, targetActivation));
                 termLink.orDurability(quality);
             }
         }

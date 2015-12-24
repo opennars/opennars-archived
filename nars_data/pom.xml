@@ -30,6 +30,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>1.0.0-beta-4584</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

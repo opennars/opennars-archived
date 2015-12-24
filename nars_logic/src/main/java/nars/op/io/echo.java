@@ -1,8 +1,8 @@
 package nars.op.io;
 
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.ImmediateOperator;
+import nars.term.op.Operator;
 
 /**
  * explicitly repeated input (repetition of the content of input ECHO commands)

@@ -1,9 +1,9 @@
 package nars.task;
 
 import nars.Memory;
-import nars.nal.nal7.Interval;
-import nars.nal.nal7.Tense;
 import nars.term.compound.Compound;
+import nars.term.nal7.Interval;
+import nars.term.nal7.Tense;
 
 /**
  * interface for the temporal information about the

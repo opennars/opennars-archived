@@ -1,4 +1,4 @@
-package nars.nal.op;
+package nars.term.op;
 
 
 import com.gs.collections.api.block.procedure.Procedure2;

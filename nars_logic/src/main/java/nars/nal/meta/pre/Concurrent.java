@@ -3,8 +3,8 @@ package nars.nal.meta.pre;
 import nars.Premise;
 import nars.nal.RuleMatch;
 import nars.nal.meta.PreCondition;
-import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.nal7.Tense;
 
 /**
  * Created by me on 8/15/15.

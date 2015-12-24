@@ -112,9 +112,9 @@ public interface Budget extends Prioritized, Budgeted {
 
 
     default boolean equalsByPrecision(Budget t, float epsilon) {
-        return  equal(getPriority(), t.getPriority(), epsilon) &&
-                equal(getDurability(), t.getDurability(), epsilon) &&
-                equal(getQuality(), t.getQuality(), epsilon);
+        return  Util.equal(getPriority(), t.getPriority(), epsilon) &&
+                Util.equal(getDurability(), t.getDurability(), epsilon) &&
+                Util.equal(getQuality(), t.getQuality(), epsilon);
     }
 
 
@@ -128,7 +128,7 @@ public interface Budget extends Prioritized, Budgeted {
      * @param v The increasing percent
      */
     default void orPriority(float v) {
-        setPriority( or(getPriority(), v) );
+        setPriority( UtilityFunctions.or(getPriority(), v) );
     }
 
 //    /**
@@ -176,7 +176,7 @@ public interface Budget extends Prioritized, Budgeted {
      * @return The summary value
      */
     default float summary() {
-        return aveGeo(getPriority(), getDurability(), getQuality());
+        return UtilityFunctions.aveGeo(getPriority(), getDurability(), getQuality());
     }
 
     Budget clone();
@@ -199,7 +199,7 @@ public interface Budget extends Prioritized, Budgeted {
      */
     default boolean summaryNotLessThan(float min) {
         if (min == 0f) return true;
-        return aveGeoNotLessThan(min, getPriority(), getDurability(), getQuality());
+        return UtilityFunctions.aveGeoNotLessThan(min, getPriority(), getDurability(), getQuality());
     }
 
     /**
@@ -208,7 +208,7 @@ public interface Budget extends Prioritized, Budgeted {
      * @param v The increasing percent
      */
     default void orDurability(float v) {
-        setDurability(or(getDurability(), v));
+        setDurability(UtilityFunctions.or(getDurability(), v));
     }
 
     /**
@@ -217,7 +217,7 @@ public interface Budget extends Prioritized, Budgeted {
      * @param v The decreasing percent
      */
     default void andDurability(float v) {
-        setDurability(and(getDurability(), v));
+        setDurability(UtilityFunctions.and(getDurability(), v));
     }
 
 
@@ -233,7 +233,7 @@ public interface Budget extends Prioritized, Budgeted {
      * AND's (multiplies) priority with another value
      */
     default void andPriority(float v) {
-        setPriority(and(getPriority(), v));
+        setPriority(UtilityFunctions.and(getPriority(), v));
     }
 
 

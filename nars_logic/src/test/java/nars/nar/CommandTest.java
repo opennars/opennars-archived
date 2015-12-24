@@ -4,10 +4,10 @@ import nars.NAR;
 import nars.Symbols;
 import nars.concept.Concept;
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.op.Operator;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;

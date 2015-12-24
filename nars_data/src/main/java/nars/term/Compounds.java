@@ -1,20 +1,16 @@
-package nars.nal;
+package nars.term;
 
 import nars.$;
 import nars.Op;
 import nars.Order;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal7.Parallel;
-import nars.nal.nal7.Sequence;
 import nars.task.MutableTask;
 import nars.task.Task;
-import nars.term.Statement;
-import nars.term.Term;
-import nars.term.TermContainer;
-import nars.term.Terms;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
+import nars.term.nal7.Parallel;
+import nars.term.nal7.Sequence;
 import nars.truth.Truth;
 
 import java.io.IOException;

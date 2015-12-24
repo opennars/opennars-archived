@@ -3,12 +3,12 @@ package nars.op.mental;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.concept.Concept;
-import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 import nars.util.event.On;
 
 import java.util.concurrent.atomic.AtomicInteger;

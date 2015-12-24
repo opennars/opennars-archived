@@ -1,7 +1,7 @@
 package nars.truth;
 
-import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.nal7.Tense;
 import nars.util.Texts;
 
 /** chart-like representation of a belief state at each time cycle in a range of time */

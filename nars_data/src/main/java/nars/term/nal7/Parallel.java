@@ -1,4 +1,4 @@
-package nars.nal.nal7;
+package nars.term.nal7;
 
 import nars.Op;
 import nars.term.Term;
@@ -25,14 +25,14 @@ public class Parallel extends GenericCompound implements Intermval {
     public static Term makeParallel(Term[] a) {
 
         //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = Interval.intervalCount(a);
+        int intervalsPresent = intervalCount(a);
         int subterms = a.length - intervalsPresent;
 
         if (subterms == 0)
             return null;
 
         if (subterms == 1)
-            return Interval.firstNonIntervalIn(a); //unwrap the only non-interval subterm
+            return firstNonIntervalIn(a); //unwrap the only non-interval subterm
 
         if (intervalsPresent == 0)
             return new Parallel(a); //no intervals need to be removed

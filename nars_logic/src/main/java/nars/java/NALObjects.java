@@ -8,12 +8,12 @@ import javassist.util.proxy.ProxyObject;
 import nars.$;
 import nars.Global;
 import nars.NAR;
-import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
+import nars.term.op.Operator;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

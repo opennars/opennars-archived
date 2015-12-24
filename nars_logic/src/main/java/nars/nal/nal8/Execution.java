@@ -8,6 +8,7 @@ import nars.budget.UnitBudget;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 import nars.util.event.Topic;
 
 import java.util.Collections;

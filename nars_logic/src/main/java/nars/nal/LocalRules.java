@@ -27,11 +27,11 @@ import nars.Op;
 import nars.Premise;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 

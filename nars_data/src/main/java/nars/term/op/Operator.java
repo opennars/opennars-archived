@@ -1,10 +1,10 @@
-package nars.nal.nal8;
+package nars.term.op;
 
 import nars.$;
 import nars.Op;
-import nars.nal.Compounds;
 import nars.task.MutableTask;
 import nars.task.Task;
+import nars.term.Compounds;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.atom.Atomic;

@@ -7,11 +7,8 @@ import nars.concept.Concept;
 import nars.concept.util.ConceptBuilder;
 import nars.nal.Level;
 import nars.nal.TermIndex;
-import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.AbstractOperator;
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.PatternAnswer;
 import nars.nal.nal8.operator.TermFunction;
 import nars.task.MutableTask;
@@ -25,6 +22,9 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.CyclesInterval;
+import nars.term.nal7.Tense;
+import nars.term.op.Operator;
 import nars.term.variable.Variable;
 import nars.time.Clock;
 import nars.util.data.Util;
@@ -46,7 +46,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import static nars.Symbols.*;
-import static nars.nal.nal7.Tense.ETERNAL;
+import static nars.term.nal7.Tense.ETERNAL;
 
 
 /**
