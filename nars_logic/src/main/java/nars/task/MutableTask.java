@@ -4,10 +4,10 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal7.Tense;
 import nars.process.ConceptProcess;
 import nars.term.Termed;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
@@ -208,7 +208,7 @@ public class MutableTask extends AbstractTask {
     }
 
     public MutableTask tense(Tense t, Memory memory) {
-        occurr(Tense.getOccurrenceTime(memory.time(), t, memory));
+        occurr(Tense.getOccurrenceTime(memory.time(), t, memory.duration()));
         return this;
     }
 
@@ -335,10 +335,10 @@ public class MutableTask extends AbstractTask {
         return this;
     }
 
-//    public TaskSeed solution(Task solutionBelief, Memory memory) {
-//        setBestSolution(solutionBelief, memory);
-//        return this;
-//    }
+    public Task solution(Task solutionBelief) {
+        setBestSolution(solutionBelief);
+        return this;
+    }
 
     public MutableTask occurr(long occurrenceTime) {
         setOccurrenceTime(occurrenceTime);
@@ -362,7 +362,7 @@ public class MutableTask extends AbstractTask {
 //
 
     public MutableTask budgetCompoundForward(Compound result, ConceptProcess p) {
-        BudgetFunctions.compoundForward(this, getTruth(), result, p);
+        ConceptProcess.compoundForward(this, getTruth(), result, p);
         return this;
     }
 
@@ -421,7 +421,7 @@ public class MutableTask extends AbstractTask {
     }
 
     public MutableTask budgetCompoundForward(ConceptProcess premise) {
-        BudgetFunctions.compoundForward(
+        ConceptProcess.compoundForward(
                 getBudget(), getTruth(),
                 term(), premise);
         return this;

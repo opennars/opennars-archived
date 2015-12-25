@@ -2,10 +2,10 @@ package nars.link;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
+import nars.term.nal7.CyclesInterval;
 import nars.term.variable.Variable;
 
 import java.util.Set;

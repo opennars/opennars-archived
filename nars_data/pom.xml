@@ -3,45 +3,74 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+
+    <name>OpenNARS Data</name>
+    <artifactId>nars_data</artifactId>
+    <version>1.7-SNAPSHOT</version>
+
     <parent>
         <groupId>opennars</groupId>
-        <artifactId>opennars</artifactId>
-        <version>1.7-SNAPSHOT</version>
+        <artifactId>nars</artifactId>
+        <version>${opennars.release}</version>
     </parent>
-    <artifactId>nars_data</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <url>http://maven.apache.org</url>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+
+    <packaging>jar</packaging>
+
+
     <dependencies>
         <dependency>
-        <groupId>com.github.0xCopy.prautobeans</groupId>
-        <artifactId>prautobeans-lib</artifactId>
+            <groupId>com.github.0xCopy.prautobeans</groupId>
+            <artifactId>prautobeans-lib</artifactId>
             <version>1.0-pre1</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>nars_util</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>1.0.0-beta-4584</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
+
+
+            <!--<plugin>-->
+            <!--<groupId>com.googlecode.maven-java-formatter-plugin</groupId>-->
+            <!--<artifactId>maven-java-formatter-plugin</artifactId>-->
+            <!--<version>0.4</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>format</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<compilerSource>1.8</compilerSource>-->
+            <!--<compilerCompliance>1.8</compilerCompliance>-->
+            <!--<compilerTargetPlatform>1.8</compilerTargetPlatform>-->
+            <!--&lt;!&ndash;<configFile>${project.basedir}/../fmt/ugh.xml</configFile>&ndash;&gt;-->
+            <!--&lt;!&ndash;<configFile>${project.basedir}/../fmt/gwt-format.xml</configFile>&ndash;&gt;-->
+            <!--&lt;!&ndash;http://code.google.com/p/google-web-toolkit/source/browse/trunk/eclipse/settings/code-style/gwt-format.xml</configFile>&ndash;&gt;&ndash;&gt;-->
+            <!--<lineEnding>LF</lineEnding>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
+
             <plugin>
-                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-                <artifactId>maven-java-formatter-plugin</artifactId>
-                <version>0.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
-                    <compilerSource>1.8</compilerSource>
-                    <compilerCompliance>1.8</compilerCompliance>
-                    <compilerTargetPlatform>1.8</compilerTargetPlatform>
-                    <!--<configFile>${project.basedir}/../fmt/ugh.xml</configFile>-->
-                    <!--<configFile>${project.basedir}/../fmt/gwt-format.xml</configFile>-->
-                    <!--http://code.google.com/p/google-web-toolkit/source/browse/trunk/eclipse/settings/code-style/gwt-format.xml</configFile>&ndash;&gt;-->
-                    <lineEnding>LF</lineEnding>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
                 </configuration>
             </plugin>
             <plugin>
@@ -58,6 +87,31 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
-    </build>
-</project>
+
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>1.0.0-beta-4584</version>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+    </plugins>
+</build>
+        </project>

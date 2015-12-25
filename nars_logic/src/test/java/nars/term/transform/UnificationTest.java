@@ -4,6 +4,7 @@ import com.gs.collections.impl.factory.Sets;
 import nars.Global;
 import nars.NAR;
 import nars.Op;
+import nars.nal.meta.FindSubst;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.compound.Compound;

@@ -1,11 +1,11 @@
 package nars.op.data;
 
 import nars.NAR;
-import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.compound.Compound;
+import nars.term.nal7.Sequence;
 
 import java.util.Map;
 

@@ -1,8 +1,8 @@
 package nars.util.meter.condition;
 
 import nars.NAR;
-import nars.nal.nal7.Tense;
 import nars.term.atom.Atom;
+import nars.term.nal7.Tense;
 
 /**
  * measures the occurrence of an execution within certain

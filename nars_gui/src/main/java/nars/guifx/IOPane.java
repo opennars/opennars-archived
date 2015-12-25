@@ -12,11 +12,11 @@ import nars.NAR;
 import nars.Op;
 import nars.guifx.demo.TaskButton;
 import nars.guifx.util.NSlider;
-import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 import nars.util.event.On;
 import org.jetbrains.annotations.NotNull;
 

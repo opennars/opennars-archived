@@ -21,17 +21,15 @@
 package nars.nal;
 
 import com.gs.collections.impl.tuple.Tuples;
-import nars.Memory;
-import nars.NAR;
-import nars.Op;
-import nars.Premise;
+import nars.*;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal7.Tense;
+import nars.budget.UnitBudget;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -120,13 +118,22 @@ public class LocalRules {
 //        return revised;
 //    }
 
+    public static boolean overlapping(Task a, Task b) {
+
+
+        if (a == b) return true;
+        if (b == null) return false;
+
+        return Tense.overlapping(a.getEvidence(), b.getEvidence());
+    }
+
 
     /** creates a revision task (but does not input it)
      *  if failed, returns null
      * */
     public static Task getRevision(Task newBelief, Task oldBelief, long now) {
 
-        if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
+        if (newBelief.equals(oldBelief) || overlapping(newBelief, oldBelief))
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
@@ -185,12 +192,12 @@ public class LocalRules {
 
             Premise.unify(Op.VAR_INDEP, u, nal.memory.random, (st) -> {
 
-                MutableTask ss = sol.solution((Compound) st,
+                MutableTask ss = solution(sol, (Compound) st,
                         sol.getPunctuation(),
                         originalTruth,
                         sol.getOccurrenceTime(),
                         question,
-                        memory
+                        memory.time()
                 );
 
                 eachSolutions.accept(ss);
@@ -210,10 +217,27 @@ public class LocalRules {
 
     }
 
+    public static MutableTask solution(Task base, Compound t, char newPunc, Truth newTruth, long newOcc, Task question, long now) {
+
+        MutableTask tt = new MutableTask(t, newPunc)
+                .truth(newTruth)
+                .budget(base.getBudget())
+                .time(now, newOcc);
+
+        tt.setParents(base.getParentTaskRef(), base.getParentBeliefRef());
+
+
+        tt.setEvidence(base.getEvidence());
+        //tt.log(getLog());
+        tt.log(new Task.Solution(question));
+        return tt;
+    }
+
+
     public static void processSolution(Task question, NAR nal, Task sol, Memory memory, long now) {
 
         //use sol.getTruth() in case sol was changed since input to this method:
-        float newQ = Tense.solutionQuality(question, sol, sol.getTruth(), now);
+        float newQ = solutionQuality(question, sol, sol.getTruth(), now);
 //        if (newQ == 0) {
 //            memory.emotion.happy(0, questionTask, nal);
 //            return null;
@@ -222,7 +246,7 @@ public class LocalRules {
         Task oldBest = question.getBestSolution();
 
         //get the quality of the old solution if it were applied now (when conditions may differ)
-        float oldQ = (oldBest != null) ? Tense.solutionQuality(question, oldBest, now) : 0;
+        float oldQ = (oldBest != null) ? solutionQuality(question, oldBest, now) : 0;
 
         if (oldQ >= newQ) {
             //old solution was better
@@ -232,13 +256,13 @@ public class LocalRules {
         //else, new solution is btter
         memory.emotion.happy(newQ - oldQ, question);
 
-        question.setBestSolution(sol, memory);
+        question.setBestSolution(sol);
 
         memory.logic.SOLUTION_BEST.set(newQ);
 
 
         //TODO solutionEval calculates the same solutionQuality as here, avoid this unnecessary redundancy
-        Budget budget = Tense.solutionEval(question, sol, nal.time());
+        Budget budget = solutionEval(question, sol, nal.time());
 
         if (!(question.isQuestion() || question.isQuest())) {
             System.err.println("err");
@@ -282,6 +306,91 @@ public class LocalRules {
             //defer this event until after frame ends so reasoning in this cycle may continue
             memory.eventAnswer.emit(Tuples.twin(question, finalSol));
         });
+    }
+
+    /**
+     * Evaluate the quality of the judgment as a solution to a problem
+     *
+     * @param problem A goal or question
+     * @param solution The solution to be evaluated
+     * @return The quality of the judgment as the solution
+     */
+    public static float solutionQuality(Task problem, Task solution, long time) {
+
+        if (!Tense.matchingOrder(problem, solution)) {
+            return 0;
+        }
+
+        return solutionQualityMatchingOrder(problem, solution, time);
+    }
+
+    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time) {
+        return solutionQualityMatchingOrder(problem, solution, time, problem.hasQueryVar() );
+    }
+
+    /**
+     this method is used if the order is known to be matching, so it is not checked
+     */
+    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time, boolean hasQueryVar) {
+
+        /*if ((problem == null) || (solution == null)) {
+            throw new RuntimeException("problem or solution is null");
+        }*/
+
+        long poc = problem.getOccurrenceTime();
+        Truth truth = poc != solution.getOccurrenceTime() ? solution.projection(poc, time) : solution.getTruth();
+
+        //if (problem.hasQueryVar()) {
+        return hasQueryVar ? truth.getExpectation() / solution.term().complexity() : truth.getConfidence();
+    }
+
+    public static float solutionQuality(boolean hasQueryVar, long occTime, Task solution, Truth projectedTruth, long time) {
+        return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
+    }
+
+    public static float solutionQuality(Task problem, Task solution, Truth truth, long time) {
+        return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
+    }
+
+    /**
+     * Evaluate the quality of a belief as a solution to a problem, then reward
+     * the belief and de-prioritize the problem
+     *
+     * @param task  The problem (question or goal) to be solved
+     * @param solution The belief as solution
+     * @param task     The task to be immediately processed, or null for continued
+     *                 process
+     * @return The budget for the new task which is the belief activated, if
+     * necessary
+     */
+    public static Budget solutionEval(Task task, Task solution, long time) {
+        //boolean feedbackToLinks = false;
+        /*if (task == null) {
+            task = nal.getCurrentTask();
+            feedbackToLinks = true;
+        }*/
+        boolean judgmentTask = task.isJudgment();
+        float quality = solutionQuality(task, solution, time);
+        if (quality <= 0)
+            return null;
+
+        Budget budget = null;
+        if (judgmentTask) {
+            task.getBudget().orPriority(quality);
+        } else {
+            float taskPriority = task.getPriority();
+
+            budget = new UnitBudget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
+            task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
+        }
+        /*
+        if (feedbackToLinks) {
+            TaskLink tLink = nal.getCurrentTaskLink();
+            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
+            TermLink bLink = nal.getCurrentBeliefLink();
+            bLink.incPriority(quality);
+        }*/
+        return budget;
     }
 
 

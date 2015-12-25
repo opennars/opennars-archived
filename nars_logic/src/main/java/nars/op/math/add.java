@@ -16,11 +16,11 @@
  */
 package nars.op.math;
 
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 
 /**
  * Count the number of elements in a set

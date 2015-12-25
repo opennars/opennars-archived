@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.$;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
@@ -14,6 +13,7 @@ import nars.op.software.scheme.expressions.SymbolExpression;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 
 import java.util.List;
 import java.util.stream.Collectors;

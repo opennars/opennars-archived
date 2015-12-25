@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <prerequisites>
-        <maven>3.3.3</maven>
+        <!--<maven>3.3.3</maven>-->
         <!--parralell builds-->
     </prerequisites>
 
     <groupId>opennars</groupId>
-    <artifactId>opennars</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <artifactId>nars</artifactId>
+    <version>${opennars.release}</version>
     <packaging>pom</packaging>
 
     <name>OpenNARS</name>
@@ -47,10 +47,10 @@
         <module>nars_util</module>
         <module>nars_data</module>
         <module>nars_logic</module>
-        <module>nars_lab</module>
-        <module>nars_web</module>
         <module>nars_gui</module>
+        <module>nars_web</module>
         <module>nars_perf</module>
+        <module>nars_lab</module>
   </modules>
 
     <build>
@@ -71,7 +71,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19</version>
                 <configuration>
+
                     <includes>
+
                         <!-- because they dont all have the pattern: ____Test.java yet -->
                         <include>**/*.java</include>
                     </includes>
@@ -85,6 +87,16 @@
                     <useFile>false</useFile>
                     <redirectTestOutputToFile>false</redirectTestOutputToFile>
                     <testFailureIgnore>true</testFailureIgnore>
+
+                    <parallel>methods</parallel>
+                    <!--<useUnlimitedThreads>true</useUnlimitedThreads>-->
+                    <reuseForks>true</reuseForks>
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <!--<parallelOptimized>true</parallelOptimized>-->
+                    <printSummary>true</printSummary>
+                    <runOrder>balanced</runOrder>
+                    <trimStackTrace>true</trimStackTrace>
+
                 </configuration>
             </plugin>
 
@@ -223,23 +235,43 @@
         <dependencies>
             <dependency>
                 <groupId>opennars</groupId>
+                <artifactId>nars</artifactId>
+                <version>${opennars.release}</version>
+            </dependency>
+            <dependency>
+                <groupId>opennars</groupId>
                 <artifactId>nars_util</artifactId>
-                <version>1.7-SNAPSHOT</version>
+                <version>${opennars.release}</version>
+            </dependency>
+            <dependency>
+                <groupId>opennars</groupId>
+                <artifactId>nars_data</artifactId>
+                <version>${opennars.release}</version>
             </dependency>
             <dependency>
                 <groupId>opennars</groupId>
                 <artifactId>nars_logic</artifactId>
-                <version>1.7-SNAPSHOT</version>
+                <version>${opennars.release}</version>
+            </dependency>
+            <dependency>
+                <groupId>opennars</groupId>
+                <artifactId>nars_data</artifactId>
+                <version>${opennars.release}</version>
             </dependency>
             <dependency>
                 <groupId>opennars</groupId>
                 <artifactId>nars_gui</artifactId>
-                <version>1.7-SNAPSHOT</version>
+                <version>${opennars.release}</version>
             </dependency>
             <dependency>
                 <groupId>opennars</groupId>
                 <artifactId>nars_web</artifactId>
-                <version>1.7-SNAPSHOT</version>
+                <version>${opennars.release}</version>
+            </dependency>
+            <dependency>
+                <groupId>opennars</groupId>
+                <artifactId>nars_perf</artifactId>
+                <version>${opennars.release}</version>
             </dependency>
 
             <dependency>
@@ -272,11 +304,7 @@
                 <artifactId>guava</artifactId>
                 <version>19.0</version>
             </dependency>
-            <dependency>
-                <groupId>org.javolution</groupId>
-                <artifactId>javolution-core-java</artifactId>
-                <version>6.0.0</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.javabits.jgrapht</groupId>
                 <artifactId>jgrapht-core</artifactId>

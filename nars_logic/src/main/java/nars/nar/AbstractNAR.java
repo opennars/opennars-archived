@@ -11,6 +11,7 @@ import nars.concept.DefaultConcept;
 import nars.java.jclass;
 import nars.nal.Deriver;
 import nars.nal.PremiseRule;
+import nars.nal.TermIndex;
 import nars.nal.nal8.AbstractOperator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
@@ -31,7 +32,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
 import nars.time.Clock;
 import nars.util.data.random.XorShift128PlusRandom;
 

@@ -2,10 +2,10 @@ package nars.rdfowl;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal8.Operator;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

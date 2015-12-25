@@ -18,11 +18,11 @@ package nars.task.in;
 
 import com.google.common.collect.Lists;
 import nars.*;
-import nars.nal.nal7.Sequence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Sequence;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
 

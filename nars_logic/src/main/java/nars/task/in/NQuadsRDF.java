@@ -2,12 +2,12 @@ package nars.task.in;
 
 import nars.$;
 import nars.NAR;
-import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.parser.NxParser;
 

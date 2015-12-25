@@ -3,14 +3,14 @@ package nars.nal.nal8.operator;
 import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.Symbols;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Execution;
-import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
+import nars.term.op.Operator;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.Texts;
@@ -88,11 +88,12 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                Operator.feedback(
+                Execution.feedback(
                     new MutableTask(inh).
                         judgment().
                         truth(getResultFrequency(), getResultConfidence()).
-                        tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
+                        tense(getResultTense(), nar.memory),
+                        opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
             );
 
             /*float equal = equals(lastTerm, y);

@@ -2,7 +2,7 @@ package nars.bag;
 
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
-import nars.nal.nal7.Tense;
+import nars.term.nal7.Tense;
 
 import java.util.function.Supplier;
 

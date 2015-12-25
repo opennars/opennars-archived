@@ -8,6 +8,9 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Parallel;
+import nars.term.nal7.Sequence;
+import nars.term.nal7.Tense;
 import org.junit.Test;
 
 import java.util.Arrays;

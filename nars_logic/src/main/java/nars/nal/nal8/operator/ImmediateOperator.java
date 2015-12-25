@@ -2,12 +2,12 @@ package nars.nal.nal8.operator;
 
 
 import nars.$;
-import nars.nal.Compounds;
-import nars.nal.nal8.Operator;
 import nars.task.Task;
+import nars.term.Compounds;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.op.Operator;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */

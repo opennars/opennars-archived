@@ -1,8 +1,8 @@
 package nars;
 
 import nars.bag.impl.MapCacheBag;
+import nars.nal.TermIndex;
 import nars.term.*;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 
 import java.io.PrintStream;

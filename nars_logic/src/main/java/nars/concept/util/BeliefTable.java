@@ -4,8 +4,8 @@ import com.google.common.collect.Iterators;
 import nars.Memory;
 import nars.budget.BudgetMerge;
 import nars.concept.Concept;
-import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.nal7.Tense;
 import nars.truth.Truth;
 import nars.truth.TruthWave;
 import nars.truth.Truthed;
@@ -17,8 +17,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-
-import static nars.nal.UtilityFunctions.or;
 
 /**
  * A model storing, ranking, and projecting beliefs or goals (tasks with TruthValue).

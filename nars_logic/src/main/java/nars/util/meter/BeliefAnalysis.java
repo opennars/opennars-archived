@@ -3,8 +3,8 @@ package nars.util.meter;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.concept.util.BeliefTable;
-import nars.nal.nal7.Tense;
 import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import nars.truth.TruthWave;
 
 /** utility class for analyzing the belief/goal state of a concept */

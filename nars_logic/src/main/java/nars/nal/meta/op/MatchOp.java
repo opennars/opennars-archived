@@ -1,7 +1,7 @@
 package nars.nal.meta.op;
 
+import nars.nal.meta.FindSubst;
 import nars.term.Term;
-import nars.term.transform.FindSubst;
 
 /**
  * Created by me on 12/1/15.

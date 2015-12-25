@@ -3,8 +3,8 @@ package nars.concept.util;
 import nars.Global;
 import nars.Memory;
 import nars.concept.Concept;
-import nars.nal.nal7.Tense;
 import nars.task.Task;
+import nars.term.nal7.Tense;
 import nars.util.data.Util;
 
 import static nars.nal.LocalRules.getRevision;

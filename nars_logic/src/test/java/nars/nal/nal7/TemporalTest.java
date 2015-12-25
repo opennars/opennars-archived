@@ -3,6 +3,7 @@ package nars.nal.nal7;
 import nars.NAR;
 import nars.nar.Default;
 import nars.task.Task;
+import nars.term.nal7.Tense;
 import org.junit.Assert;
 import org.junit.Test;
 

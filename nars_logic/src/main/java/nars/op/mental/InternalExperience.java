@@ -3,12 +3,12 @@ package nars.op.mental;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.budget.Budget;
-import nars.nal.nal7.Interval;
-import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
+import nars.term.nal7.Interval;
+import nars.term.nal7.Tense;
+import nars.term.op.Operator;
 import nars.truth.Truth;
 
 import java.util.Arrays;

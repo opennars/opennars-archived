@@ -11,13 +11,11 @@ import nars.nal.meta.PreCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
 import nars.nal.meta.pre.*;
-import nars.nal.op.*;
+import nars.op.*;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.atom.Atom;
-import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 import nars.term.constraint.MatchConstraint;
 import nars.term.constraint.NoCommonSubtermsConstraint;
 import nars.term.constraint.NotEqualsConstraint;
@@ -35,7 +33,7 @@ import java.util.function.BiConsumer;
  * A rule which matches a Premise and produces a Task
  * contains: preconditions, predicates, postconditions, post-evaluations and metainfo
  */
-public class PremiseRule extends GenericCompound implements Level {
+public class PremiseRule implements Level {
 
 
     public static final Class<? extends ImmediateTermTransform>[] Operators = new Class[] {
@@ -87,22 +85,25 @@ public class PremiseRule extends GenericCompound implements Level {
     private final String str;
     protected String source;
     public MatchTaskBelief match;
+    public final Compound term;
 
     public final Compound getPremise() {
-        return (Compound) term(0);
+        return (Compound) term.term(0);
     }
 
     public final Compound getConclusion() {
-        return (Compound) term(1);
+        return (Compound) term.term(1);
     }
 
-    @Override
-    public Term clone(Term[] replaced) {
-        return new PremiseRule((Compound)replaced[0], (Compound)replaced[1]);
+    public PremiseRule clone(Term[] replaced) {
+        return new PremiseRule((Compound)
+                term.clone(new Term[] { (Compound)replaced[0], (Compound)replaced[1] } )
+        );
     }
 
-    public PremiseRule(Compound premises, Compound result) {
-        super(Op.PRODUCT, premises, result );
+    public PremiseRule(Compound term /* Compound premises, Compound result*/) {
+        //super(Op.PRODUCT, premises, result );
+        this.term = term;
         str = super.toString();
     }
 
@@ -143,9 +144,8 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
-    @Override
-    public final Compound normalized() {
-        return transform(uppercaseAtomsToPatternVariables);
+    public final PremiseRule normalized() {
+        return new PremiseRule(term.transform(uppercaseAtomsToPatternVariables));
     }
 
 
@@ -219,6 +219,10 @@ public class PremiseRule extends GenericCompound implements Level {
         return pattern.term(1);
     }
 
+    public final Term term(int n) {
+        return term.term(n);
+    }
+
     /** deduplicate and generate match-optimized compounds for rules */
     public void compile(TermIndex patterns) {
         Term[] premisePattern = ((Compound) term(0)).terms();
@@ -268,7 +272,7 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
     public final PremiseRule normalizeRule() {
-        return (PremiseRule) new TaskRuleVariableNormalization(this).get();
+        return new PremiseRule( new TaskRuleVariableNormalization(term).get() );
     }
 
 
@@ -599,7 +603,7 @@ public class PremiseRule extends GenericCompound implements Level {
         Term[] newConclusion = getConclusion().terms().clone();
         newConclusion[0] = newR;
 
-        return new PremiseRule(newPremise, $.p( newConclusion ));
+        return new PremiseRule($.p(newPremise, $.p( newConclusion )));
     }
 
 //    /**

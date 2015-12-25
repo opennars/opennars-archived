@@ -5,12 +5,12 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.concept.Concept;
-import nars.nal.nal7.Interval;
-import nars.nal.nal7.Sequence;
-import nars.nal.nal7.Tense;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
+import nars.term.nal7.Interval;
+import nars.term.nal7.Sequence;
+import nars.term.nal7.Tense;
 import nars.truth.DefaultTruth;
 import nars.truth.Stamp;
 import nars.truth.Truth;
@@ -189,7 +189,7 @@ public abstract class AbstractTask extends Item<Task>
 
         if (truth == null && isJudgmentOrGoal()) {
             //apply the default truth value for specified punctuation
-            truth = new DefaultTruth(punc, memory);
+            truth = new DefaultTruth(punc, memory.getDefaultConfidence(punc));
         }
 
 
@@ -632,7 +632,7 @@ public abstract class AbstractTask extends Item<Task>
      * @param judg The solution to be remembered
      */
     @Override
-    public final void setBestSolution(Task judg, Memory memory) {
+    public final void setBestSolution(Task judg) {
         bestSolution = reference(judg);
         //InternalExperience.experienceFromBelief(memory, this, judg);
     }
@@ -707,7 +707,7 @@ public abstract class AbstractTask extends Item<Task>
     @Override
     @Deprecated
     public String toString() {
-        return appendTo(null, null).toString();
+        return appendTo(null).toString();
     }
 
     @Override
