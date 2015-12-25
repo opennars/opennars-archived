@@ -674,7 +674,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     /** calculates projection truth quality without creating new TruthValue instances */
     default float projectionTruthQuality(Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
-        return t.projectionQuality(getOccurrenceTime(), getConfidence(), targetTime, currentTime, problemHasQueryVar);
+        return t.projectionQuality(getOccurrenceTime(), getConfidence(), term().complexity(), targetTime, currentTime, problemHasQueryVar);
     }
 
     final class ExpectationComparator implements Comparator<Task>, Serializable {

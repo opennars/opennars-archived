@@ -7,7 +7,6 @@ package nars.task.in;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Narsese;
 import nars.task.Task;
 import nars.task.flow.TaskQueue;
 
@@ -180,7 +179,7 @@ public class LibraryInput extends TextInput {
 
         List<Object[]> rr = Global.newArrayList();
 
-        Narsese.tasksRaw(script, rr::add);
+        Memory.tasksRaw(script, rr::add);
 
         return rr;
     }
@@ -192,7 +191,7 @@ public class LibraryInput extends TextInput {
             if (o instanceof Task) y.add((Task)o);
             else {
                 Object[] z = (Object[])o;
-                y.add(Narsese.decodeTask(m, z));
+                y.add(Memory.decodeTask(m, z));
             }
         }
         return y;

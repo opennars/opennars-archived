@@ -10,11 +10,11 @@ import nars.bag.BagBudget;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
+import nars.nal.LocalRules;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.Terms;
-import nars.term.nal7.Tense;
 import nars.truth.Truth;
 
 import java.util.function.Consumer;
@@ -90,7 +90,7 @@ public abstract class ConceptProcess extends AbstractPremise {
     @Override public final void updateBelief(Task nextBelief) {
         if (nextBelief!=currentBelief) {
             currentBelief = nextBelief;
-            cyclic = (nextBelief != null) && Tense.overlapping(getTask(), nextBelief);
+            cyclic = (nextBelief != null) && LocalRules.overlapping(getTask(), nextBelief);
         }
     }
 

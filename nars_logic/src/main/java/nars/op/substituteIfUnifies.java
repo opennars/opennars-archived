@@ -1,9 +1,9 @@
-package nars.term.op;
+package nars.op;
 
 import nars.Op;
+import nars.nal.meta.FindSubst;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
 import nars.util.data.random.XorShift128PlusRandom;
 
 import java.util.Random;

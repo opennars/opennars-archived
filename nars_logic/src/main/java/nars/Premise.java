@@ -4,6 +4,7 @@ import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.nal.Level;
 import nars.nal.LocalRules;
+import nars.nal.meta.FindSubst;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.Tasked;
@@ -11,7 +12,6 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.nal7.Tense;
-import nars.term.transform.FindSubst;
 import nars.term.transform.MapSubst;
 import nars.truth.DefaultTruth;
 

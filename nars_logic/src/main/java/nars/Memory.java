@@ -21,16 +21,23 @@
 package nars;
 
 
+import com.github.fge.grappa.run.ParseRunner;
+import com.github.fge.grappa.run.ParsingResult;
 import com.gs.collections.api.tuple.Twin;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.TermIndex;
 import nars.nal.nal8.Execution;
 import nars.process.ConceptProcess;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
+import nars.term.compound.Compound;
+import nars.term.nal7.Tense;
 import nars.time.Clock;
+import nars.truth.Truth;
 import nars.util.data.random.XorShift128PlusRandom;
 import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
@@ -41,9 +48,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -155,6 +164,151 @@ public class Memory extends Param {
 
     }
 
+    public static Task makeTask(Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+
+//        if (p == null)
+//            throw new RuntimeException("character is null");
+//
+//        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
+//            t = new DefaultTruth(p);
+//
+        int blen = b!=null ? b.length : 0;
+//        if ((blen > 0) && (Float.isNaN(b[0])))
+//            blen = 0;
+//
+
+        if (!(content instanceof Compound)) {
+            return null;
+        }
+
+        if (t == null) {
+            t = memory.newDefaultTruth(p);
+        }
+
+        MutableTask ttt =
+                new MutableTask(content)
+                                .punctuation(p)
+                                .truth(t)
+                                .time(
+                                    memory.time(), //creation time
+                                    Tense.getOccurrenceTime(
+                                        memory.time(),
+                                        tense,
+                                        memory.duration()
+                                    ));
+
+        switch (blen) {
+            case 0:     /* do not set, Memory will apply defaults */ break;
+            case 1:
+                if ((p == Symbols.QUEST || p==Symbols.QUESTION)) {
+                    ttt.budget(b[0],
+                            memory.getDefaultDurability(p),
+                            memory.getDefaultQuality(p));
+
+                } else {
+                    ttt.budget(b[0],
+                            memory.getDefaultDurability(p));
+                }
+                break;
+            case 2:     ttt.budget(b[1], b[0]); break;
+            default:    ttt.budget(b[2], b[1], b[0]); break;
+        }
+
+        return ttt;
+    }
+
+    /**
+     * gets a stream of raw immutable task-generating objects
+     * which can be re-used because a Memory can generate them
+     * ondemand
+     */
+    public static void tasks(String input, Consumer<Task> c, Memory m) {
+        tasksRaw(input, o -> {
+            Task t = decodeTask(m, o);
+            if (t == null) {
+                m.eventError.emit("Invalid task: " + input);
+            } else {
+                c.accept(t);
+            }
+        });
+    }
+
+    /** supplies the source array of objects that can construct a Task */
+    public static void tasksRaw(String input, Consumer<Object[]> c) {
+
+        ParsingResult r = Narsese.the().inputParser.run(input);
+
+        int size = r.getValueStack().size();
+
+        for (int i = size-1; i >= 0; i--) {
+            Object o = r.getValueStack().peek(i);
+
+            if (o instanceof Task) {
+                //wrap the task in an array
+                c.accept(new Object[] { o });
+            }
+            else if (o instanceof Object[]) {
+                c.accept((Object[])o);
+            }
+            else {
+                throw new RuntimeException("Unrecognized input result: " + o);
+            }
+        }
+    }
+
+    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+        return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
+    }
+
+    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
+        return new MutableTask(content, punctuation)
+                .truth(truth)
+                .budget(p, d, q)
+                .parent(parent)
+                .occurr(occ);
+    }
+
+    /**
+     * parse one task
+     */
+    public static Task task(ParseRunner singleTaskParser, String input, Memory memory) throws Narsese.NarseseException {
+        ParsingResult r;
+        try {
+            r = singleTaskParser.run(input);
+        }
+        catch (Throwable ge) {
+            //ge.printStackTrace();
+            throw new Narsese.NarseseException(ge.toString() + ' ' + ge.getCause() + ": parsing: " + input);
+        }
+
+        if (r == null)
+            throw new Narsese.NarseseException("null parse: " + input);
+
+
+        try {
+            return decodeTask(memory, (Object[])r.getValueStack().peek() );
+        }
+        catch (Exception e) {
+            throw Narsese.newParseException(input, r, e);
+        }
+    }
+
+    /** returns null if the Task is invalid (ex: invalid term) */
+    public static Task decodeTask(Memory m, Object[] x) {
+        if (x.length == 1 && x[0] instanceof Task)
+            return (Task)x[0];
+        return makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
+    }
+
+    /** returns number of tasks created */
+    public static int tasks(String input, Collection<Task> c, Memory m) {
+        int[] i = new int[1];
+        tasks(input, t -> {
+            c.add(t);
+            i[0]++;
+        }, m);
+        return i[0];
+    }
 
 
     @Override

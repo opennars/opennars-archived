@@ -1,7 +1,7 @@
 package nars.term.constraint;
 
 import nars.term.Term;
-import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 
 
 @FunctionalInterface
@@ -13,5 +13,5 @@ public interface MatchConstraint {
      * @param f match context
      * @return true if match is INVALID, false if VALID (reversed)
      */
-    boolean invalid(Term assignee, Term value, FindSubst f);
+    boolean invalid(Term assignee, Term value, Subst f);
 }

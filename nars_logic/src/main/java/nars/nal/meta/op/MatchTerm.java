@@ -4,10 +4,10 @@ import com.google.common.collect.ListMultimap;
 import com.gs.collections.api.map.ImmutableMap;
 import com.gs.collections.impl.factory.Maps;
 import nars.Global;
+import nars.nal.meta.FindSubst;
 import nars.term.Term;
 import nars.term.constraint.AndConstraint;
 import nars.term.constraint.MatchConstraint;
-import nars.term.transform.FindSubst;
 
 import java.util.Map;
 

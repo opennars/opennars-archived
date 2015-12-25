@@ -3,7 +3,7 @@ package nars.term.constraint;
 import nars.Global;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 
 import java.util.Set;
 
@@ -17,7 +17,7 @@ final public class NoCommonSubtermsConstraint implements MatchConstraint {
     }
 
     @Override
-    public boolean invalid(Term x, Term y, FindSubst f) {
+    public boolean invalid(Term x, Term y, Subst f) {
         Term B = f.getXY(b);
         if (B != null) {
             Set<Term> tmpSet = Global.newHashSet(0);

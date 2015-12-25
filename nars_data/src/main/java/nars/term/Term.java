@@ -23,7 +23,6 @@ package nars.term;
 
 import nars.Op;
 import nars.Order;
-import nars.term.transform.FindSubst;
 import nars.term.transform.Subst;
 import nars.term.visit.SubtermVisitor;
 
@@ -297,7 +296,7 @@ public interface Term extends Termed, Comparable, Termlike {
         return y;
     }
 
-    default Term applyOrSelf(FindSubst f) {
+    default Term applyOrSelf(Subst f) {
         Term y = f.getXY(this);
         if (y == null)
             return this;

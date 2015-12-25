@@ -4,6 +4,7 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
 import nars.term.*;
 import nars.term.op.Operator;
+import nars.term.transform.Subst;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -95,6 +96,25 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return toString(false);
     }
 
+    @Override
+    public boolean match(Compound y, Subst subst) {
+        return false;
+    }
+
+    @Override
+    public boolean matchSubterms(Compound Y, Subst subst) {
+        return false;
+    }
+
+    @Override
+    public boolean matchLinear(TermContainer y, Subst subst) {
+        return false;
+    }
+
+    @Override
+    public boolean matchSubterm(int Xn, TermContainer Y, Subst subst) {
+        return false;
+    }
 
 
     @Override
@@ -239,10 +259,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         return terms.term(i);
     }
 
-    @Override
-    public Term termOr(int index, Term resultIfInvalidIndex) {
-        return terms.termOr(index, resultIfInvalidIndex);
-    }
+
 
     @Override
     public final boolean containsTerm(Term target) {

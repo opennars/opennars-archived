@@ -1,4 +1,4 @@
-package nars.term.match;
+package nars.nal.meta.match;
 
 import com.google.common.collect.Iterators;
 import nars.term.Term;

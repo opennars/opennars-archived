@@ -5,7 +5,6 @@ import nars.Symbols;
 import nars.term.Termed;
 
 import java.io.IOException;
-import java.time.temporal.Temporal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,32 +104,6 @@ public enum Tense  {
         return order(b - a, durationCycles);
     }
 
-    public static boolean concurrent(Temporal a, Temporal b, int durationCycles) {
-        return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
-    }
-
-    /**
-     * whether two times are concurrent with respect ao a specific duration ("present moment") # of cycles
-     */
-    public static boolean concurrent(long a, long b, int perceptualDuration) {
-        //since Stamp.ETERNAL is Integer.MIN_VALUE,
-        //avoid any overflow errors by checking eternal first
-
-        if (a == ETERNAL) {
-            //if both are eternal, consider concurrent.  this is consistent with the original
-            //method of calculation which compared equivalent integer values only
-            return (b == ETERNAL);
-        } else if (b == ETERNAL) {
-            return false; //a==b was compared above
-        } else {
-            return order(a, b, perceptualDuration) == ORDER_CONCURRENT;
-        }
-    }
-
-    public static boolean before(long a, long b, int perceptualDuration) {
-        return after(b, a, perceptualDuration);
-    }
-
     /** true if B is after A */
     public static boolean after(long a, long b, int perceptualDuration) {
         if (a == ETERNAL || b == ETERNAL)
@@ -175,25 +148,6 @@ public enum Tense  {
     public static void appendInterval(Appendable p, long iii) throws IOException {
         p.append(Symbols.INTERVAL_PREFIX);
         p.append(Long.toString(iii));
-    }
-
-    /** inner between: time difference of later.start() - earlier.end() */
-    public static int between(Temporal task, Temporal belief) {
-        long tStart = task.start();
-        long bStart = belief.start();
-
-        Temporal earlier = tStart <= bStart ? task : belief;
-        Temporal later = earlier == task ? belief : task;
-
-        long a = earlier.end();
-        long b = later.start();
-
-        return (int)(b-a);
-    }
-
-    /** true if there is a non-zero overlap interval of the tasks */
-    public static boolean overlaps(Task a, Task b) {
-        return overlaps(a.start(), a.end(), b.start(), b.end());
     }
 
     public static boolean overlaps(long xStart, long xEnd, long yStart, long yEnd) {

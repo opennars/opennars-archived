@@ -4,14 +4,10 @@ import nars.$;
 import nars.Op;
 import nars.Order;
 import nars.Symbols;
-import nars.budget.Budget;
-import nars.task.MutableTask;
-import nars.task.Task;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.term.nal7.Parallel;
 import nars.term.nal7.Sequence;
-import nars.truth.Truth;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -187,17 +183,7 @@ public class Compounds {
         return args;
     }
 
-    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
-        return spawn(parent, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
-    }
 
-    public static Task spawn(Task parent, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return new MutableTask(content, punctuation)
-                .truth(truth)
-                .budget(p, d, q)
-                .parent(parent)
-                .occurr(occ);
-    }
 
     //    private static Term junction(Op o, Collection<Term> t) {
 //        return junction(o, Terms.toArray(t));

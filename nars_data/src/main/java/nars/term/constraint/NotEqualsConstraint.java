@@ -1,7 +1,7 @@
 package nars.term.constraint;
 
 import nars.term.Term;
-import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 
 
 final public class NotEqualsConstraint implements MatchConstraint {
@@ -13,7 +13,7 @@ final public class NotEqualsConstraint implements MatchConstraint {
     }
 
     @Override
-    public boolean invalid(Term x, Term y, FindSubst f) {
+    public boolean invalid(Term x, Term y, Subst f) {
         Term canNotEqual = f.getXY(b);
         if (canNotEqual != null) {
             return y.equals(canNotEqual);

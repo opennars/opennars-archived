@@ -240,7 +240,7 @@ public class Sequence<T extends Term> extends GenericCompound<T> implements Inte
     public static Term makeSequence(Term[] a, boolean allowReduction) {
 
         //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = intervalCount(a);
+        int intervalsPresent = Interval.intervalCount(a);
 
         if (intervalsPresent == 0) {
             if (allowReduction && (a.length == 1)) return a[0]; //TODO combine this with singleton condition at end of this method

@@ -1,4 +1,4 @@
-package nars.term.match;
+package nars.nal.meta.match;
 
 import nars.Global;
 import nars.term.Term;

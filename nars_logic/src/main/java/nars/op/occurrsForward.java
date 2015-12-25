@@ -1,18 +1,19 @@
-package nars.term.op;
+package nars.op;
 
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.$;
 import nars.Op;
-import nars.nal.PremiseAware;
 import nars.nal.RuleMatch;
-import nars.nal.nal7.Sequence;
 import nars.process.ConceptProcess;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
+import nars.term.nal7.Sequence;
+import nars.term.transform.PremiseAware;
+import nars.term.transform.Subst;
 
 /**
  * occurrsRelative(target, variable, direction)
@@ -40,18 +41,20 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
 //        //r.value("&&", null);
     }
 
-    //HACK
-    @Override public Term function(Compound p) {
-        throw new RuntimeException("should only be called during RuleMatch");
-    }
+//    //HACK
+//    @Override public Term function(Compound p) {
+//        throw new RuntimeException("should only be called during RuleMatch");
+//    }
 
     @Override
-    public Term function(Compound p, RuleMatch r) {
+    public Term function(Compound p, Subst r) {
         final Term[] xx = p.terms();
 
         Term term = xx[0];
 
-        ConceptProcess premise = r.premise;
+        RuleMatch rm = (RuleMatch) r;
+
+        ConceptProcess premise = rm.premise;
 
         if (premise.isEternal()) {
             //continue with derivation but dont apply shift
@@ -78,7 +81,7 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
                     int iiLen = ii.length;
 
                     if (iiLen > 0) {
-                        r.occurrenceShift.set(
+                        rm.occurrenceShift.set(
                                 ii[iiLen - 1]
                         );
                         //positive ? interval : -interval);
@@ -96,7 +99,7 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
 
         long durationsDelta = (positive ? +1 : -1) * direction;
 
-        r.occurrenceAdd(durationsDelta);
+        rm.occurrenceAdd(durationsDelta);
 
 
         return term;

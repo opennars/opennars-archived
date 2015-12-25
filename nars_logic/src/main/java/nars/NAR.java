@@ -209,13 +209,13 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
      * parses and forms a Task from a string but doesnt input it
      */
     public Task task(String taskText) {
-        return Narsese.the().task(taskText, memory);
+        return Memory.task(taskText, memory);
     }
 
 
     public List<Task> tasks(String parse) {
         List<Task> result = Global.newArrayList(1);
-        Narsese.the().tasks(parse, result, memory);
+        Memory.tasks(parse, result, memory);
         return result;
     }
 

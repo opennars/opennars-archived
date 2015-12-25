@@ -1,7 +1,7 @@
 package nars.nal.meta.op;
 
+import nars.nal.meta.FindSubst;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
 
 /**
  * sets the term to its parent, and the parent to a hardcoded value (its parent)

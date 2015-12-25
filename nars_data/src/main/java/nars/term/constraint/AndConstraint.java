@@ -1,7 +1,7 @@
 package nars.term.constraint;
 
 import nars.term.Term;
-import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class AndConstraint implements MatchConstraint {
     }
 
     @Override
-    public boolean invalid(Term assignee, Term value, FindSubst f) {
+    public boolean invalid(Term assignee, Term value, Subst f) {
         for (MatchConstraint m : subConst) {
             if (m.invalid(assignee, value, f))
                 return true;

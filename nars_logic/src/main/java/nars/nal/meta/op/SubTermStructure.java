@@ -1,8 +1,8 @@
 package nars.nal.meta.op;
 
 import nars.Op;
+import nars.nal.meta.FindSubst;
 import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
 
 /**
  * requires a specific subterm to have minimum bit structure

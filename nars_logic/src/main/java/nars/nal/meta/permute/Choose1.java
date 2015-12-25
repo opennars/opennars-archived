@@ -1,7 +1,8 @@
-package nars.term.transform;
+package nars.nal.meta.permute;
 
+import nars.nal.meta.FindSubst;
+import nars.nal.meta.match.CollectionEllipsisMatch;
 import nars.term.Term;
-import nars.term.match.CollectionEllipsisMatch;
 
 import java.util.Set;
 

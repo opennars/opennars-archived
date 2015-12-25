@@ -27,9 +27,9 @@ import nars.term.TermContainer;
 import nars.term.TermVector;
 import nars.term.Terms;
 import nars.term.match.Ellipsis;
-import nars.term.op.ImmediateTermTransform;
-import nars.term.op.Operator;
-import nars.term.transform.*;
+import nars.term.transform.CompoundTransform;
+import nars.term.transform.Subst;
+import nars.term.transform.VariableNormalization;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -147,18 +147,18 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         Term result = apply(sub);
 
         //apply any known immediate transform operators
-        if (Op.isOperation(result)) {
+        /*if (Op.isOperation(result)) {
             ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
             if (tf!=null) {
                 return applyImmediateTransform(f, result, tf);
             }
-        }
+        }*/
 
         return result;
     }
 
 
-    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
+/*    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
 
         //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
         Compound args = Operator.opArgs((Compound) result);
@@ -169,7 +169,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
             return tf.function(args);
         }
 
-    }
+    }*/
 
     default Term apply(List<Term> sub) {
         /*if (subterms().equivalent(sub))
@@ -515,19 +515,20 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * implementations may assume that y's .op() already matches this, and that
      * equality has already determined to be false.
      * */
-    default boolean match(Compound y, FindSubst subst) {
-
-        //TODO in compiled Compound's for patterns, include
-        //# of PATTERN_VAR so that at this point, if
-        //# vars of the expected pattern are zero,
-        //and since it doesnt equal, there is no match to test
-
-        if (!Ellipsis.hasEllipsis(this)) { //PRECOMPUTABLE
-            return matchCompoundEx(y) && matchSubterms(y, subst);
-        } else {
-            return subst.matchCompoundWithEllipsis(this, y);
-        }
-    }
+    boolean match(Compound y, Subst subst);
+//    boolean match(Compound y, Subst subst) {
+//
+//        //TODO in compiled Compound's for patterns, include
+//        //# of PATTERN_VAR so that at this point, if
+//        //# vars of the expected pattern are zero,
+//        //and since it doesnt equal, there is no match to test
+//
+//        if (!Ellipsis.hasEllipsis(this)) { //PRECOMPUTABLE
+//            return matchCompoundEx(y) && matchSubterms(y, subst);
+//        } else {
+//            return subst.matchCompoundWithEllipsis(this, y);
+//        }
+//    }
 
     /**
      * default implementation
@@ -536,34 +537,36 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * this implementation can assume that Y has the same size as this, same op.
      * any additional metadata checks are performed in matchCompoundEx() which by default returns true
      */
-    default boolean matchSubterms(Compound Y, FindSubst subst) {
-
-        int size = Y.size();
-
-        if (size == 1) {
-            return matchSubterm(0, Y, subst);
-        } else {
-            return isCommutative() ? subst.matchPermute(this, Y) : matchLinear(Y.subterms(), subst);
-        }
-    }
-
-    default boolean matchLinear(TermContainer y, FindSubst subst) {
-//        int s = size();
-//        if (s == 2) {
-//            //HACK - match smallest (least specific) first
-//            int v0 = term(0).volume();
-//            int v1 = term(1).volume();
-//            return v0 <= v1 ? matchSubterm(0, y, subst) &&
-//                    matchSubterm(1, y, subst) : matchSubterm(1, y, subst) &&
-//                    matchSubterm(0, y, subst);
+    boolean matchSubterms(Compound Y, Subst subst);
+//    boolean matchSubterms(Compound Y, Subst subst) {{
+//
+//        int size = Y.size();
+//
+//        if (size == 1) {
+//            return matchSubterm(0, Y, subst);
 //        } else {
-            return subst.matchLinear(this, y, 0, size());
+//            return isCommutative() ? subst.matchPermute(this, Y) : matchLinear(Y.subterms(), subst);
 //        }
-    }
+//    }
 
-    default boolean matchSubterm(int Xn, TermContainer Y, FindSubst subst) {
-        return subst.match(term(Xn), Y.term(Xn));
+    @Override
+    default T termOr(int index, T resultIfInvalidIndex) {
+        return subterms().termOr(index, resultIfInvalidIndex);
     }
+    /*@Override
+    default T termAnd(int index, T resultIfInvalidIndex) {
+        return subterms().termAnd(index, resultIfInvalidIndex);
+    }*/
+
+    boolean matchLinear(TermContainer y, Subst subst);
+//    boolean matchLinear(TermContainer y, Subst subst) {
+//            return subst.matchLinear(this, y, 0, size());
+//    }
+
+    boolean matchSubterm(int Xn, TermContainer Y, Subst subst);
+//    boolean matchSubterm(int Xn, TermContainer Y, Subst subst){
+//        return subst.match(term(Xn), Y.term(Xn));
+//    }
 
     /** implementatoins may assume that y has:
      *      equal op()

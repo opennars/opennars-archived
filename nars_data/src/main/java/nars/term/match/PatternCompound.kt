@@ -4,9 +4,10 @@ import nars.term.Term
 import nars.term.TermVector
 import nars.term.compound.Compound
 import nars.term.compound.GenericCompound
-import nars.term.transform.FindSubst
+import nars.term.transform.Subst
 
-public class PatternCompound(seed: Compound<Term>, subterms: TermVector<Term>) : GenericCompound<Term>(seed.op(), subterms, seed.relation()) {
+public class PatternCompound(seed: Compound<Term>, subterms: TermVector<Term>) :
+        GenericCompound<Term>(seed.op(), subterms, seed.relation()) {
 
 
     val sizeCached: Int
@@ -31,15 +32,12 @@ public class PatternCompound(seed: Compound<Term>, subterms: TermVector<Term>) :
     }
 
 
-    override fun termOr(index: Int, resultIfInvalidIndex: Term?): Term? {
-        return null;
-    }
 
     override fun terms(): Array<Term> {
         return termsCached
     }
 
-    override fun match(y: Compound<Term>, subst: FindSubst): Boolean {
+    override fun match(y: Compound<Term>, subst: Subst): Boolean {
         if (!prematch(y)) return false
 
 

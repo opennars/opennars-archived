@@ -1,6 +1,6 @@
 package nars.nal.meta.op;
 
-import nars.term.transform.FindSubst;
+import nars.nal.meta.FindSubst;
 
 /**
  * selects the ith sibling subterm of the current parent

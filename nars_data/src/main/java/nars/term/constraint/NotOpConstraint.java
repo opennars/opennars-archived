@@ -2,7 +2,7 @@ package nars.term.constraint;
 
 import nars.Op;
 import nars.term.Term;
-import nars.term.transform.FindSubst;
+import nars.term.transform.Subst;
 
 /**
  * Created by me on 12/13/15.
@@ -20,7 +20,7 @@ public final class NotOpConstraint implements MatchConstraint {
     }
 
     @Override
-    public boolean invalid(Term assignee, Term value, FindSubst f) {
+    public boolean invalid(Term assignee, Term value, Subst f) {
         return value.op().isA(op);
     }
     @Override

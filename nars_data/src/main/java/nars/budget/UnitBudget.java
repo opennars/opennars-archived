@@ -20,12 +20,11 @@
  */
 package nars.budget;
 
-import nars.nal.nal7.Tense;
+import nars.UtilityFunctions;
+import nars.term.nal7.Tense;
 import nars.truth.Truth;
 import nars.util.data.Util;
 
-import static nars.nal.UtilityFunctions.and;
-import static nars.nal.UtilityFunctions.or;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).

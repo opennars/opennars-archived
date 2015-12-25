@@ -1,6 +1,8 @@
-package nars.term.transform;
+package nars.nal.meta.permute;
 
+import nars.nal.meta.FindSubst;
 import nars.term.TermContainer;
+import nars.term.transform.ShuffledSubterms;
 
 /**
  * Created by me on 12/22/15.

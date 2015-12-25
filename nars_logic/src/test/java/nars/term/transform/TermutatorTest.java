@@ -2,6 +2,11 @@ package nars.term.transform;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.meta.FindSubst;
+import nars.nal.meta.permute.Choose1;
+import nars.nal.meta.permute.Choose2;
+import nars.nal.meta.permute.CommutivePermutations;
+import nars.nal.meta.permute.Termutator;
 import nars.term.Term;
 import nars.util.data.random.XorShift128PlusRandom;
 import org.junit.Test;

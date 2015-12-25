@@ -13,11 +13,6 @@ import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.DefaultValueStack;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.nal.PremiseRule;
-import nars.nal.nal8.operator.ImmediateOperator;
-import nars.op.io.echo;
-import nars.task.MutableTask;
-import nars.task.Task;
 import nars.term.Compounds;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -32,10 +27,8 @@ import nars.util.Texts;
 import nars.util.data.list.FasterList;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static nars.Op.*;
 import static nars.Symbols.*;
@@ -48,7 +41,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
     //These should be set to something like RecoveringParseRunner for performance
-    private final ParseRunner inputParser = new ListeningParseRunner3(Input());
+    public final ParseRunner inputParser = new ListeningParseRunner3(Input());
     private final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     private final ParseRunner singleTermParser = new ListeningParseRunner3(Term());
     //private final ParseRunner singleTaskRuleParser = new ListeningParseRunner3(TaskRule());
@@ -59,58 +52,6 @@ public class Narsese extends BaseParser<Object>  {
 
     public static final Narsese the() {
         return parsers.get();
-    }
-
-    public static Task makeTask(Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
-
-//        if (p == null)
-//            throw new RuntimeException("character is null");
-//
-//        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
-//            t = new DefaultTruth(p);
-//
-        int blen = b!=null ? b.length : 0;
-//        if ((blen > 0) && (Float.isNaN(b[0])))
-//            blen = 0;
-//
-
-        if (!(content instanceof Compound)) {
-            return null;
-        }
-
-        if (t == null) {
-            t = memory.newDefaultTruth(p);
-        }
-
-        MutableTask ttt =
-                new MutableTask((Compound)content)
-                                .punctuation(p)
-                                .truth(t)
-                                .time(
-                                    memory.time(), //creation time
-                                    Tense.getOccurrenceTime(
-                                        tense,
-                                        memory
-                                    ));
-
-        switch (blen) {
-            case 0:     /* do not set, Memory will apply defaults */ break;
-            case 1:
-                if ((p == Symbols.QUEST || p==Symbols.QUESTION)) {
-                    ttt.budget(b[0],
-                            memory.getDefaultDurability(p),
-                            memory.getDefaultQuality(p));
-
-                } else {
-                    ttt.budget(b[0],
-                            memory.getDefaultDurability(p));
-                }
-                break;
-            case 2:     ttt.budget(b[1], b[0]); break;
-            default:    ttt.budget(b[2], b[1], b[0]); break;
-        }
-
-        return ttt;
     }
 
 
@@ -133,14 +74,14 @@ public class Narsese extends BaseParser<Object>  {
         //use a var to count how many rule conditions so that they can be pulled off the stack without reallocating an arraylist
         return sequence(
                 STATEMENT_OPENER, s(),
-                push(PremiseRule.class),
+                push(premiseRuleMarker),
 
                 Term(), //cause
 
                 zeroOrMore( sepArgSep(), Term() ),
                 s(), TASK_RULE_FWD, s(),
 
-                push(PremiseRule.class), //stack marker
+                push(premiseRuleMarker), //stack marker
 
                 Term(), //effect
 
@@ -151,19 +92,23 @@ public class Narsese extends BaseParser<Object>  {
         );
     }
 
+    //TODO do this without stack markers
+    @Deprecated private final Object premiseRuleMarker = new Object();
 
-    public PremiseRule popTaskRule() {
+
+    /** the result of this is passed as the term parameter to PremiseRule instance */
+    public Compound popTaskRule() {
         //(Term)pop(), (Term)pop()
 
         List<Term> r = Global.newArrayList(1);
         List<Term> l = Global.newArrayList(1);
 
         Object popped;
-        while ( (popped = pop()) != PremiseRule.class) { //lets go back till to the start now
+        while ( (popped = pop()) != premiseRuleMarker) { //lets go back till to the start now
             r.add((Term)popped);
         }
 
-        while ( (popped = pop()) != PremiseRule.class) {
+        while ( (popped = pop()) != premiseRuleMarker) {
             l.add((Term)popped);
         }
 
@@ -188,7 +133,7 @@ public class Narsese extends BaseParser<Object>  {
             return null;
         }
 
-        return new PremiseRule(premise, conclusion);
+        return $.p /*PremiseRule*/(premise, conclusion);
     }
 
     public Rule LineComment() {
@@ -212,7 +157,7 @@ public class Narsese extends BaseParser<Object>  {
 
                 zeroOrMore(noneOf("\n")),
 
-                push( ImmediateOperator.command(echo.class, match()) ) );
+                push( $.oper(Operator.the("echo"), (Term)Atom.the(match())  ) ) );
     }
 
 //    public Rule PauseInput() {
@@ -985,61 +930,7 @@ public class Narsese extends BaseParser<Object>  {
 //    }
 
 
-    /** returns number of tasks created */
-    public static int tasks(String input, Collection<Task> c, Memory m) {
-        int[] i = new int[1];
-        tasks(input, t -> {
-            c.add(t);
-            i[0]++;
-        }, m);
-        return i[0];
-    }
-
-    /**
-     * gets a stream of raw immutable task-generating objects
-     * which can be re-used because a Memory can generate them
-     * ondemand
-     */
-    public static void tasks(String input, Consumer<Task> c, Memory m) {
-        tasksRaw(input, o -> {
-            Task t = decodeTask(m, o);
-            if (t == null) {
-                m.eventError.emit("Invalid task: " + input);
-            } else {
-                c.accept(t);
-            }
-        });
-    }
-
-
-    /** supplies the source array of objects that can construct a Task */
-    public static void tasksRaw(String input, Consumer<Object[]> c) {
-
-        ParsingResult r = the().inputParser.run(input);
-
-        int size = r.getValueStack().size();
-
-        for (int i = size-1; i >= 0; i--) {
-            Object o = r.getValueStack().peek(i);
-
-            if (o instanceof Task) {
-                //wrap the task in an array
-                c.accept(new Object[] { o });
-            }
-            else if (o instanceof Object[]) {
-                c.accept((Object[])o);
-            }
-            else {
-                throw new RuntimeException("Unrecognized input result: " + o);
-            }
-        }
-    }
-
-
-
-
-
-        //r.getValueStack().clear();
+    //r.getValueStack().clear();
 
 //        r.getValueStack().iterator().forEachRemaining(x -> {
 //            if (x instanceof Task)
@@ -1049,38 +940,6 @@ public class Narsese extends BaseParser<Object>  {
 //            }
 //        });
 
-
-    /**
-     * parse one task
-     */
-    public Task task(String input, Memory memory) throws NarseseException {
-        ParsingResult r;
-        try {
-            r = singleTaskParser.run(input);
-        }
-        catch (Throwable ge) {
-            //ge.printStackTrace();
-            throw new NarseseException(ge.toString() + ' ' + ge.getCause() + ": parsing: " + input);
-        }
-
-        if (r == null)
-            throw new NarseseException("null parse: " + input);
-
-
-        try {
-            return decodeTask(memory, (Object[])r.getValueStack().peek() );
-        }
-        catch (Exception e) {
-            throw newParseException(input, r, e);
-        }
-    }
-
-    /** returns null if the Task is invalid (ex: invalid term) */
-    public static Task decodeTask(Memory m, Object[] x) {
-        if (x.length == 1 && x[0] instanceof Task)
-            return (Task)x[0];
-        return makeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
-    }
 
     /** parse one term and normalize it if successful */
     public <T extends Term> T term(String s) {

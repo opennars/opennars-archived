@@ -1,4 +1,4 @@
-package nars.term.transform;
+package nars.nal.meta.permute;
 
 import nars.term.Termlike;
 
