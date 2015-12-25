@@ -30,6 +30,10 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         this(op, subterms, 0);
     }
 
+    public GenericCompound(GenericCompound toCopy) {
+        this(toCopy.op(), toCopy.subterms(), toCopy.relation());
+    }
+
     public GenericCompound(Op op, T[] subterms, int relation) {
 
         this.op = op;
