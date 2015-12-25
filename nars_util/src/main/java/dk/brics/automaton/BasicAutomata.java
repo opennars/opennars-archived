@@ -29,6 +29,8 @@
 
 package dk.brics.automaton;
 
+import dk.brics.automaton.AbstractAutomaton.CharAutomaton;
+
 import java.util.*;
 
 /**
@@ -41,8 +43,8 @@ final class BasicAutomata {
 	/** 
 	 * Returns a new (deterministic) automaton with the empty language. 
 	 */
-	static Automaton makeEmpty() {
-		Automaton a = new Automaton();
+	static AbstractAutomaton makeEmpty() {
+		AbstractAutomaton a = new CharAutomaton();
 		State s = new State();
 		a.initial = s;
 		a.deterministic = true;
@@ -52,8 +54,8 @@ final class BasicAutomata {
 	/** 
 	 * Returns a new (deterministic) automaton that accepts only the empty string. 
 	 */
-	static Automaton makeEmptyString() {
-		Automaton a = new Automaton("");
+	static AbstractAutomaton makeEmptyString() {
+		AbstractAutomaton a = new CharAutomaton("");
 		a.deterministic = true;
 		return a;
 	}
@@ -61,12 +63,12 @@ final class BasicAutomata {
 	/** 
 	 * Returns a new (deterministic) automaton that accepts all strings. 
 	 */
-	static Automaton makeAnyString()	{
-		Automaton a = new Automaton();
+	static AbstractAutomaton makeAnyString()	{
+		AbstractAutomaton a = new CharAutomaton();
 		State s = new State();
 		a.initial = s;
 		s.accept = true;
-		s.transitions.add(new Transition(Character.MIN_VALUE, Character.MAX_VALUE, s));
+		s.transitions.add(new CharTransition(Character.MIN_VALUE, Character.MAX_VALUE, s));
 		a.deterministic = true;
 		return a;
 	}
@@ -74,15 +76,15 @@ final class BasicAutomata {
 	/** 
 	 * Returns a new (deterministic) automaton that accepts any single character. 
 	 */
-	static Automaton makeAnyChar() {
+	static AbstractAutomaton makeAnyChar() {
 		return makeCharRange(Character.MIN_VALUE, Character.MAX_VALUE);
 	}
 	
 	/** 
 	 * Returns a new (deterministic) automaton that accepts a single character of the given value. 
 	 */
-	static Automaton makeChar(char c) {
-		Automaton a = new Automaton(Character.toString(c));
+	static AbstractAutomaton makeChar(char c) {
+		AbstractAutomaton a = new CharAutomaton(Character.toString(c));
 		a.deterministic = true;
 		return a;
 	}
@@ -91,16 +93,16 @@ final class BasicAutomata {
 	 * Returns a new (deterministic) automaton that accepts a single char 
 	 * whose value is in the given interval (including both end points). 
 	 */
-	static Automaton makeCharRange(char min, char max) {
+	static AbstractAutomaton makeCharRange(char min, char max) {
 		if (min == max)
 			return makeChar(min);
-		Automaton a = new Automaton();
+		AbstractAutomaton a = new CharAutomaton();
 		State s1 = new State();
 		State s2 = new State();
 		a.initial = s1;
 		s2.accept = true;
 		if (min <= max)
-			s1.transitions.add(new Transition(min, max, s2));
+			s1.transitions.add(new CharTransition(min, max, s2));
 		a.deterministic = true;
 		return a;
 	}
@@ -108,16 +110,16 @@ final class BasicAutomata {
 	/** 
 	 * Returns a new (deterministic) automaton that accepts a single character in the given set. 
 	 */
-	static Automaton makeCharSet(CharSequence set) {
+	static AbstractAutomaton makeCharSet(CharSequence set) {
 		if (set.length() == 1)
 			return makeChar(set.charAt(0));
-		Automaton a = new Automaton();
+		AbstractAutomaton a = new CharAutomaton();
 		State s1 = new State();
 		State s2 = new State();
 		a.initial = s1;
 		s2.accept = true;
 		for (int i = 0; i < set.length(); i++)
-			s1.transitions.add(new Transition(set.charAt(i), s2));
+			s1.transitions.add(new CharTransition(set.charAt(i), s2));
 		a.deterministic = true;
 		a.reduce();
 		return a;
@@ -132,7 +134,7 @@ final class BasicAutomata {
 		if (x.length() == n)
 			s.setAccept(true);
 		else
-			s.addTransition(new Transition('0', '9', anyOfRightLength(x, n + 1)));
+			s.addTransition(new CharTransition('0', '9', anyOfRightLength(x, n + 1)));
 		return s;
 	}
 	
@@ -148,9 +150,9 @@ final class BasicAutomata {
 			if (zeros)
 				initials.add(s);
 			char c = x.charAt(n);
-			s.addTransition(new Transition(c, atLeast(x, n + 1, initials, zeros && c == '0')));
+			s.addTransition(new CharTransition(c, atLeast(x, n + 1, initials, zeros && c == '0')));
 			if (c < '9')
-				s.addTransition(new Transition((char)(c + 1), '9', anyOfRightLength(x, n + 1)));
+				s.addTransition(new CharTransition((char)(c + 1), '9', anyOfRightLength(x, n + 1)));
 		}
 		return s;
 	}
@@ -165,9 +167,9 @@ final class BasicAutomata {
 			s.setAccept(true);
 		else {
 			char c = x.charAt(n);
-			s.addTransition(new Transition(c, atMost(x, (char)n + 1)));
+			s.addTransition(new CharTransition(c, atMost(x, (char)n + 1)));
 			if (c > '0')
-				s.addTransition(new Transition('0', (char)(c - 1), anyOfRightLength(x, n + 1)));
+				s.addTransition(new CharTransition('0', (char)(c - 1), anyOfRightLength(x, n + 1)));
 		}
 		return s;
 	}
@@ -187,12 +189,12 @@ final class BasicAutomata {
 			char cx = x.charAt(n);
 			char cy = y.charAt(n);
 			if (cx == cy)
-				s.addTransition(new Transition(cx, between(x, y, n + 1, initials, zeros && cx == '0')));
+				s.addTransition(new CharTransition(cx, between(x, y, n + 1, initials, zeros && cx == '0')));
 			else { // cx<cy
-				s.addTransition(new Transition(cx, atLeast(x, n + 1, initials, zeros && cx == '0')));
-				s.addTransition(new Transition(cy, atMost(y, n + 1)));
+				s.addTransition(new CharTransition(cx, atLeast(x, n + 1, initials, zeros && cx == '0')));
+				s.addTransition(new CharTransition(cy, atMost(y, n + 1)));
 				if (cx + 1 < cy)
-					s.addTransition(new Transition((char)(cx + 1), (char)(cy - 1), anyOfRightLength(x, n + 1)));
+					s.addTransition(new CharTransition((char)(cx + 1), (char)(cy - 1), anyOfRightLength(x, n + 1)));
 			}
 		}
 		return s;
@@ -209,8 +211,8 @@ final class BasicAutomata {
 	 * @exception IllegalArgumentException if min>max or if numbers in the interval cannot be expressed
 	 *                                     with the given fixed number of digits
 	 */
-	static Automaton makeInterval(int min, int max, int digits) throws IllegalArgumentException {
-		Automaton a = new Automaton();
+	static AbstractAutomaton makeInterval(int min, int max, int digits) throws IllegalArgumentException {
+		AbstractAutomaton a = new CharAutomaton();
 		String x = Integer.toString(min);
 		String y = Integer.toString(max);
 		if (min > max || (digits > 0 && y.length() > digits))
@@ -238,7 +240,7 @@ final class BasicAutomata {
 				if (a.initial != p)
 					pairs.add(new StatePair(a.initial, p));
 			a.addEpsilons(pairs);
-			a.initial.addTransition(new Transition('0', a.initial));
+			a.initial.addTransition(new CharTransition('0', a.initial));
 			a.deterministic = false;
 		} else
 			a.deterministic = true;
@@ -249,8 +251,8 @@ final class BasicAutomata {
 	/** 
 	 * Returns a new (deterministic) automaton that accepts the single given string.
 	 */
-	static Automaton makeString(String s) {
-		Automaton a = new Automaton(s);
+	static AbstractAutomaton makeString(String s) {
+		AbstractAutomaton a = new CharAutomaton(s);
 		a.deterministic = true;
 		return a;
 	}
@@ -261,11 +263,11 @@ final class BasicAutomata {
      * so the input array is modified. 
      * @see StringUnionOperations
      */
-    static Automaton makeStringUnion(CharSequence... strings) {
+    static AbstractAutomaton makeStringUnion(CharSequence... strings) {
         if (strings.length == 0)
             return makeEmpty();
         Arrays.sort(strings, StringUnionOperations.LEXICOGRAPHIC_ORDER);
-        Automaton a = new Automaton();
+        AbstractAutomaton a = new CharAutomaton();
         a.setInitialState(StringUnionOperations.build(strings));
         a.setDeterministic(true);
         a.reduce();
@@ -278,7 +280,7 @@ final class BasicAutomata {
 	 * that are not larger than the given value.
 	 * @param n string representation of maximum value
 	 */
-	static Automaton makeMaxInteger(String n) {
+	static AbstractAutomaton makeMaxInteger(String n) {
 		int i = 0;
 		while (i < n.length() && n.charAt(i) == '0')
 			i++;
@@ -288,7 +290,7 @@ final class BasicAutomata {
 			b.append("[0-9]{1,").append(n.length() - i - 1).append("}|");
 		maxInteger(n.substring(i), 0, b);
 		b.append(')');
-		return Automaton.minimize((new RegExp(b.toString())).toAutomaton());
+		return AbstractAutomaton.minimize((new RegExp(b.toString())).toAutomaton());
 	}
 
 	private static void maxInteger(String n, int i, StringBuilder b) {
@@ -308,7 +310,7 @@ final class BasicAutomata {
 	 * that are not less that the given value.
 	 * @param n string representation of minimum value
 	 */
-	static Automaton makeMinInteger(String n) {
+	static AbstractAutomaton makeMinInteger(String n) {
 		int i = 0;
 		while (i + 1 < n.length() && n.charAt(i) == '0')
 			i++;
@@ -316,7 +318,7 @@ final class BasicAutomata {
 		b.append("0*");
 		minInteger(n.substring(i), 0, b);
 		b.append("[0-9]*");
-		return Automaton.minimize((new RegExp(b.toString())).toAutomaton());
+		return AbstractAutomaton.minimize((new RegExp(b.toString())).toAutomaton());
 	}
 	
 	private static void minInteger(String n, int i, StringBuilder b) {
@@ -337,8 +339,8 @@ final class BasicAutomata {
 	 * Surrounding whitespace is permitted.
 	 * @param i max number of necessary digits
 	 */
-	static Automaton makeTotalDigits(int i) {
-		return Automaton.minimize((new RegExp("[ \t\n\r]*[-+]?0*([0-9]{0," + i + "}|((([0-9]\\.*){0," + i + "})&@\\.@)0*)[ \t\n\r]*")).toAutomaton());
+	static AbstractAutomaton makeTotalDigits(int i) {
+		return AbstractAutomaton.minimize((new RegExp("[ \t\n\r]*[-+]?0*([0-9]{0," + i + "}|((([0-9]\\.*){0," + i + "})&@\\.@)0*)[ \t\n\r]*")).toAutomaton());
 	}
 	
 	/**
@@ -347,8 +349,8 @@ final class BasicAutomata {
 	 * Surrounding whitespace is permitted.
 	 * @param i max number of necessary fraction digits
 	 */
-	static Automaton makeFractionDigits(int i) {
-		return Automaton.minimize((new RegExp("[ \t\n\r]*[-+]?[0-9]+(\\.[0-9]{0," + i + "}0*)?[ \t\n\r]*")).toAutomaton());
+	static AbstractAutomaton makeFractionDigits(int i) {
+		return AbstractAutomaton.minimize((new RegExp("[ \t\n\r]*[-+]?[0-9]+(\\.[0-9]{0," + i + "}0*)?[ \t\n\r]*")).toAutomaton());
 	}
 	
 	/**
@@ -356,7 +358,7 @@ final class BasicAutomata {
 	 * Surrounding whitespace is permitted.
 	 * @param value string representation of integer
 	 */
-	static Automaton makeIntegerValue(String value) {
+	static AbstractAutomaton makeIntegerValue(String value) {
 		boolean minus = false;
     	int i = 0;
     	while (i < value.length()) {
@@ -371,13 +373,13 @@ final class BasicAutomata {
 		b.append(value.substring(i));
 		if (b.length() == 0)
 			b.append('0');
-		Automaton s;
+		AbstractAutomaton s;
 		if (minus)
-			s = Automaton.makeChar('-');
+			s = AbstractAutomaton.makeChar('-');
 		else
-			s = Automaton.makeChar('+').optional();
-		Automaton ws = Datatypes.getWhitespaceAutomaton();
-		return Automaton.minimize(ws.concatenate(s.concatenate(Automaton.makeChar('0').repeat()).concatenate(Automaton.makeString(b.toString()))).concatenate(ws));		
+			s = AbstractAutomaton.makeChar('+').optional();
+		AbstractAutomaton ws = Datatypes.getWhitespaceAutomaton();
+		return AbstractAutomaton.minimize(ws.concatenate(s.concatenate(AbstractAutomaton.makeChar('0').repeat()).concatenate(AbstractAutomaton.makeString(b.toString()))).concatenate(ws));
 	}
 	
 	/**
@@ -385,7 +387,7 @@ final class BasicAutomata {
 	 * Surrounding whitespace is permitted.
 	 * @param value string representation of decimal number
 	 */
-	static Automaton makeDecimalValue(String value) {
+	static AbstractAutomaton makeDecimalValue(String value) {
 		boolean minus = false;
     	int i = 0;
     	while (i < value.length()) {
@@ -414,41 +416,41 @@ final class BasicAutomata {
     	}
 		if (b1.length() == 0)
 			b1.append('0');
-		Automaton s;
+		AbstractAutomaton s;
 		if (minus)
-			s = Automaton.makeChar('-');
+			s = AbstractAutomaton.makeChar('-');
 		else
-			s = Automaton.makeChar('+').optional();
-		Automaton d;
+			s = AbstractAutomaton.makeChar('+').optional();
+		AbstractAutomaton d;
 		if (b2.length() == 0)
-			d = Automaton.makeChar('.').concatenate(Automaton.makeChar('0').repeat(1)).optional();
+			d = AbstractAutomaton.makeChar('.').concatenate(AbstractAutomaton.makeChar('0').repeat(1)).optional();
 		else
-			d = Automaton.makeChar('.').concatenate(Automaton.makeString(b2.toString())).concatenate(Automaton.makeChar('0').repeat());
-		Automaton ws = Datatypes.getWhitespaceAutomaton();
-		return Automaton.minimize(ws.concatenate(s.concatenate(Automaton.makeChar('0').repeat()).concatenate(Automaton.makeString(b1.toString())).concatenate(d)).concatenate(ws));
+			d = AbstractAutomaton.makeChar('.').concatenate(AbstractAutomaton.makeString(b2.toString())).concatenate(AbstractAutomaton.makeChar('0').repeat());
+		AbstractAutomaton ws = Datatypes.getWhitespaceAutomaton();
+		return AbstractAutomaton.minimize(ws.concatenate(s.concatenate(AbstractAutomaton.makeChar('0').repeat()).concatenate(AbstractAutomaton.makeString(b1.toString())).concatenate(d)).concatenate(ws));
 	}
 	
 	/**
 	 * Constructs deterministic automaton that matches strings that contain the given substring.
 	 */
-	static Automaton makeStringMatcher(String s) {
-		Automaton a = new Automaton();
+	static AbstractAutomaton makeStringMatcher(String s) {
+		AbstractAutomaton a = new CharAutomaton();
 		State[] states = new State[s.length() + 1];
 		states[0] = a.initial;
 		for (int i = 0; i < s.length(); i++)
 			states[i+1] = new State();
 		State f = states[s.length()];
 		f.accept = true;
-		f.transitions.add(new Transition(Character.MIN_VALUE, Character.MAX_VALUE, f));
+		f.transitions.add(new CharTransition(Character.MIN_VALUE, Character.MAX_VALUE, f));
 		for (int i = 0; i < s.length(); i++) {
 			Collection<Character> done = new HashSet<>();
 			char c = s.charAt(i);
-			states[i].transitions.add(new Transition(c, states[i+1]));
+			states[i].transitions.add(new CharTransition(c, states[i+1]));
 			done.add(c);
 			for (int j = i; j >= 1; j--) {
 				char d = s.charAt(j-1);
 				if (!done.contains(d) && s.substring(0, j-1).equals(s.substring(i-j+1, i))) {
-					states[i].transitions.add(new Transition(d, states[j]));
+					states[i].transitions.add(new CharTransition(d, states[j]));
 					done.add(d);
 				}
 			}
@@ -470,7 +472,7 @@ final class BasicAutomata {
 						to = da[k]-1;
 						k++;
 					}
-					states[i].transitions.add(new Transition((char)from, (char)to, states[0]));
+					states[i].transitions.add(new CharTransition((char)from, (char)to, states[0]));
 					from = to+2;
 				}
 			}

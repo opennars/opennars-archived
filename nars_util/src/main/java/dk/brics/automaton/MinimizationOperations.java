@@ -40,15 +40,15 @@ final class MinimizationOperations {
 
 	/**
 	 * Minimizes (and determinizes if not already deterministic) the given automaton.
-	 * @see Automaton#setMinimization(int)
+	 * @see AbstractAutomaton#setMinimization(int)
 	 */
-	public static void minimize(Automaton a) {
+	public static void minimize(AbstractAutomaton a) {
 		if (!a.isSingleton()) {
-			switch (Automaton.minimization) {
-			case Automaton.MINIMIZE_HUFFMAN:
+			switch (AbstractAutomaton.minimization) {
+			case AbstractAutomaton.MINIMIZE_HUFFMAN:
 				minimizeHuffman(a);
 				break;
-			case Automaton.MINIMIZE_BRZOZOWSKI:
+			case AbstractAutomaton.MINIMIZE_BRZOZOWSKI:
 				minimizeBrzozowski(a);
 				break;
 			default:
@@ -58,9 +58,9 @@ final class MinimizationOperations {
 		a.recomputeHashCode();
 	}
 	
-	private static boolean statesAgree(Transition[][] transitions, boolean[][] mark, int n1, int n2) {
-		Transition[] t1 = transitions[n1];
-		Transition[] t2 = transitions[n2];
+	private static boolean statesAgree(CharTransition[][] transitions, boolean[][] mark, int n1, int n2) {
+		CharTransition[] t1 = transitions[n1];
+		CharTransition[] t2 = transitions[n2];
 		for (int k1 = 0, k2 = 0; k1 < t1.length && k2 < t2.length;) {
 			if (t1[k1].max < t2[k2].min)
 				k1++;
@@ -85,9 +85,9 @@ final class MinimizationOperations {
 		return true;
 	}
 
-	private static void addTriggers(Transition[][] transitions, List<ArrayList<HashSet<IntPair>>> triggers, int n1, int n2) {
-		Transition[] t1 = transitions[n1];
-		Transition[] t2 = transitions[n2];
+	private static void addTriggers(CharTransition[][] transitions, List<ArrayList<HashSet<IntPair>>> triggers, int n1, int n2) {
+		CharTransition[] t1 = transitions[n1];
+		CharTransition[] t2 = transitions[n2];
 		for (int k1 = 0, k2 = 0; k1 < t1.length && k2 < t2.length;) {
 			if (t1[k1].max < t2[k2].min)
 				k1++;
@@ -139,11 +139,11 @@ final class MinimizationOperations {
 	/** 
 	 * Minimizes the given automaton using Huffman's algorithm. 
 	 */
-	private static void minimizeHuffman(Automaton a) {
+	private static void minimizeHuffman(AbstractAutomaton a) {
 		a.determinize();
 		a.totalize();
 		Set<State> ss = a.getStates();
-		Transition[][] transitions = new Transition[ss.size()][];
+		CharTransition[][] transitions = new CharTransition[ss.size()][];
 		State[] states = ss.toArray(new State[ss.size()]);
 		boolean[][] mark = new boolean[states.length][states.length];
 		ArrayList<ArrayList<HashSet<IntPair>>> triggers = new ArrayList<>();
@@ -195,8 +195,8 @@ final class MinimizationOperations {
 		for (int n = 0; n < numclasses; n++) {
 			State s = newstates[n];
 			s.accept = states[s.number].accept;
-			for (Transition t : states[s.number].transitions)
-				s.transitions.add(new Transition(t.min, t.max, newstates[t.to.number]));
+			for (CharTransition t : states[s.number].transitions)
+				s.transitions.add(new CharTransition(t.min, t.max, newstates[t.to.number]));
 		}
 		a.removeDeadTransitions();
 	}
@@ -204,7 +204,7 @@ final class MinimizationOperations {
 	/** 
 	 * Minimizes the given automaton using Brzozowski's algorithm. 
 	 */
-	private static void minimizeBrzozowski(Automaton a) {
+	private static void minimizeBrzozowski(AbstractAutomaton a) {
 		if (a.isSingleton())
 			return;
 		BasicOperations.determinize(a, SpecialOperations.reverse(a));
@@ -214,11 +214,11 @@ final class MinimizationOperations {
 	/** 
 	 * Minimizes the given automaton using Hopcroft's algorithm. 
 	 */
-	private static void minimizeHopcroft(Automaton a) {
+	private static void minimizeHopcroft(AbstractAutomaton a) {
 		a.determinize();
-		Set<Transition> tr = a.initial.getTransitions();
+		Set<CharTransition> tr = a.initial.getTransitions();
 		if (tr.size() == 1) {
-			Transition t = tr.iterator().next();
+			CharTransition t = tr.iterator().next();
 			if (t.to == a.initial && t.min == Character.MIN_VALUE && t.max == Character.MAX_VALUE)
 				return;
 		}
@@ -370,8 +370,8 @@ final class MinimizationOperations {
 		// build transitions and set acceptance
 		for (State s : newstates) {
 			s.accept = states[s.number].accept;
-			for (Transition t : states[s.number].transitions)
-				s.transitions.add(new Transition(t.min, t.max, newstates[t.to.number]));
+			for (CharTransition t : states[s.number].transitions)
+				s.transitions.add(new CharTransition(t.min, t.max, newstates[t.to.number]));
 		}
 		a.removeDeadTransitions();
 	}

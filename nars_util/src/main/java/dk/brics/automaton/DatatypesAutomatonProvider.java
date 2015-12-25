@@ -60,7 +60,7 @@ public class DatatypesAutomatonProvider implements AutomatonProvider {
 	}
 	
 	@Override
-	public Automaton getAutomaton(String name) {
+	public AbstractAutomaton getAutomaton(String name) {
 		if ((enable_unicodeblocks && Datatypes.isUnicodeBlockName(name))
 				|| (enable_unicodecategories && Datatypes.isUnicodeCategoryName(name))
 				|| (enable_xml && Datatypes.isXMLName(name)))

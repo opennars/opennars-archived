@@ -218,7 +218,7 @@ public class RegExp {
 	 * Constructs new <code>Automaton</code> from this <code>RegExp</code>. 
 	 * Same as <code>toAutomaton(null)</code> (empty automaton map).
 	 */
-	public Automaton toAutomaton() {
+	public AbstractAutomaton toAutomaton() {
 		return toAutomaton(null, null, true);
 	}
 	
@@ -226,7 +226,7 @@ public class RegExp {
 	 * Constructs new <code>Automaton</code> from this <code>RegExp</code>. 
 	 * Same as <code>toAutomaton(null,minimize)</code> (empty automaton map).
 	 */
-	public Automaton toAutomaton(boolean minimize) {
+	public AbstractAutomaton toAutomaton(boolean minimize) {
 		return toAutomaton(null, null, minimize);
 	}
 	
@@ -238,7 +238,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that is not available from the automaton provider
 	 */
-	Automaton toAutomaton(AutomatonProvider automaton_provider) throws IllegalArgumentException {
+	AbstractAutomaton toAutomaton(AutomatonProvider automaton_provider) throws IllegalArgumentException {
 		return toAutomaton(null, automaton_provider, true);
 	}
 		
@@ -250,7 +250,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that is not available from the automaton provider
 	 */
-	Automaton toAutomaton(AutomatonProvider automaton_provider, boolean minimize) throws IllegalArgumentException {
+	AbstractAutomaton toAutomaton(AutomatonProvider automaton_provider, boolean minimize) throws IllegalArgumentException {
 		return toAutomaton(null, automaton_provider, minimize);
 	}
 		
@@ -263,7 +263,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that does not occur in the automaton map
 	 */
-	public Automaton toAutomaton(Map<String, Automaton> automata) throws IllegalArgumentException {
+	public AbstractAutomaton toAutomaton(Map<String, AbstractAutomaton> automata) throws IllegalArgumentException {
 		return toAutomaton(automata, null, true);
 	}
 	
@@ -276,7 +276,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that does not occur in the automaton map
 	 */
-	Automaton toAutomaton(Map<String, Automaton> automata, boolean minimize) throws IllegalArgumentException {
+	AbstractAutomaton toAutomaton(Map<String, AbstractAutomaton> automata, boolean minimize) throws IllegalArgumentException {
 		return toAutomaton(automata, null, minimize);
 	}
 	
@@ -306,11 +306,11 @@ public class RegExp {
 //		return a;
 //	}
 		
-	private Automaton toAutomaton(Map<String, Automaton> automata, 
-			AutomatonProvider automaton_provider,
-			boolean minimize) throws IllegalArgumentException {
-		List<Automaton> list;
-		Automaton a = null;
+	private AbstractAutomaton toAutomaton(Map<String, AbstractAutomaton> automata,
+										  AutomatonProvider automaton_provider,
+										  boolean minimize) throws IllegalArgumentException {
+		List<AbstractAutomaton> list;
+		AbstractAutomaton a = null;
 		switch (kind) {
 		case REGEXP_UNION:
 			list = new ArrayList<>();
@@ -369,7 +369,7 @@ public class RegExp {
 			a = BasicAutomata.makeAnyString();
 			break;
 		case REGEXP_AUTOMATON:
-			Automaton aa = null;
+			AbstractAutomaton aa = null;
 			if (automata != null)
 				aa = automata.get(s);
 			if (aa == null && automaton_provider != null) {
@@ -386,7 +386,7 @@ public class RegExp {
 		return a;
 	}
 
-	private static void findLeaves(RegExp exp, Kind kind, List<Automaton> list, Map<String, Automaton> automata,
+	private static void findLeaves(RegExp exp, Kind kind, List<AbstractAutomaton> list, Map<String, AbstractAutomaton> automata,
 								   AutomatonProvider automaton_provider,
 								   boolean minimize) {
 		if (exp.kind == kind) {

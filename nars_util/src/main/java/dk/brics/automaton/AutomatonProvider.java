@@ -43,5 +43,5 @@ interface AutomatonProvider {
 	 * @return automaton
 	 * @throws IOException if errors occur
 	 */
-	Automaton getAutomaton(String name);
+	AbstractAutomaton getAutomaton(String name);
 }

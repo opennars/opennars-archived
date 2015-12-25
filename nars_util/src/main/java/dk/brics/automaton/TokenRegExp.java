@@ -56,50 +56,50 @@ class TokenRegExp extends RegExp {
 	}
 
 	@Override
-	public Automaton toAutomaton() {
+	public AbstractAutomaton toAutomaton() {
 		return toAutomaton(false);
 	}
 
 	@Override
-	public Automaton toAutomaton(boolean minimize) {
-		Automaton a = super.toAutomaton(minimize);
+	public AbstractAutomaton toAutomaton(boolean minimize) {
+		AbstractAutomaton a = super.toAutomaton(minimize);
 		setInfo(a);
 		return a;
 	}
 
 	@Override
-	public Automaton toAutomaton(AutomatonProvider automaton_provider)
+	public AbstractAutomaton toAutomaton(AutomatonProvider automaton_provider)
 			throws IllegalArgumentException {
-		Automaton a = super.toAutomaton(automaton_provider);
+		AbstractAutomaton a = super.toAutomaton(automaton_provider);
 		setInfo(a);
 		return a;
 	}
 
 	@Override
-	public Automaton toAutomaton(AutomatonProvider automaton_provider,
-			boolean minimize) throws IllegalArgumentException {
-		Automaton a = super.toAutomaton(automaton_provider, minimize);
+	public AbstractAutomaton toAutomaton(AutomatonProvider automaton_provider,
+										 boolean minimize) throws IllegalArgumentException {
+		AbstractAutomaton a = super.toAutomaton(automaton_provider, minimize);
 		setInfo(a);
 		return a;
 	}
 
 	@Override
-	public Automaton toAutomaton(Map<String, Automaton> automata)
+	public AbstractAutomaton toAutomaton(Map<String, AbstractAutomaton> automata)
 			throws IllegalArgumentException {
-		Automaton a = super.toAutomaton(automata);
+		AbstractAutomaton a = super.toAutomaton(automata);
 		setInfo(a);
 		return a;
 	}
 
 	@Override
-	public Automaton toAutomaton(Map<String, Automaton> automata,
-			boolean minimize) throws IllegalArgumentException {
-		Automaton a = super.toAutomaton(automata, minimize);
+	public AbstractAutomaton toAutomaton(Map<String, AbstractAutomaton> automata,
+										 boolean minimize) throws IllegalArgumentException {
+		AbstractAutomaton a = super.toAutomaton(automata, minimize);
 		setInfo(a);
 		return a;
 	}
 	
-	private void setInfo(Automaton a) {
+	private void setInfo(AbstractAutomaton a) {
 		if(info != null) {
 			for(State s : a.getAcceptStates()) {
 				s.setInfo(info);

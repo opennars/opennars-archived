@@ -32,7 +32,7 @@ package dk.brics.automaton;
 import java.io.Serializable;
 import java.util.Comparator;
 
-final class TransitionComparator implements Comparator<Transition>, Serializable {
+final class TransitionComparator implements Comparator<AbstractTransition>, Serializable {
 
 
 	public final static TransitionComparator toFirstFalse = new TransitionComparator(false);
@@ -48,18 +48,18 @@ final class TransitionComparator implements Comparator<Transition>, Serializable
 	 * Compares by (min, reverse max, to) or (to, min, reverse max). 
 	 */
 	@Override
-	public int compare(Transition t1, Transition t2) {
+	public int compare(AbstractTransition t1, AbstractTransition t2) {
 		if (to_first) {
 			int c = compareNum(t1, t2);
 			if (c!=0) return c;
 		}
-		if (t1.min < t2.min)
+		if (t1.min() < t2.min())
 			return -1;
-		if (t1.min > t2.min)
+		if (t1.min() > t2.min())
 			return 1;
-		if (t1.max > t2.max)
+		if (t1.max() > t2.max())
 			return -1;
-		if (t1.max < t2.max)
+		if (t1.max() < t2.max())
 			return 1;
 		if (!to_first) {
 			return compareNum(t1, t2);
@@ -67,7 +67,7 @@ final class TransitionComparator implements Comparator<Transition>, Serializable
 		return 0;
 	}
 
-	public int compareNum(Transition t1, Transition t2) {
+	public int compareNum(AbstractTransition t1, AbstractTransition t2) {
 		if (t1.to != t2.to) {
             if (t1.to == null)
                 return -1;

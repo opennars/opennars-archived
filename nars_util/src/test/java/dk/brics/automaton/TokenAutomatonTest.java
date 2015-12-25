@@ -12,7 +12,7 @@ public class TokenAutomatonTest {
     @Test
     public void testMatch() {
         final Object TOKEN_ID = new Object();
-        final Automaton a = new TokenRegExp("ABC", TOKEN_ID).toAutomaton();
+        final AbstractAutomaton a = new TokenRegExp("ABC", TOKEN_ID).toAutomaton();
         final TokenAutomaton ta = new TokenAutomaton(a);
         final String input = "ABC";
         final TokenDetails details = new TokenDetails();
@@ -28,7 +28,7 @@ public class TokenAutomatonTest {
     @Test
     public void testMatchWithContext() {
         final Object TOKEN_ID = new Object();
-        final Automaton a = new TokenRegExp("ABC", TOKEN_ID).toAutomaton();
+        final AbstractAutomaton a = new TokenRegExp("ABC", TOKEN_ID).toAutomaton();
         final TokenAutomaton ta = new TokenAutomaton(a);
         final String input = "XABCX";
         final TokenDetails details = new TokenDetails();
@@ -44,7 +44,7 @@ public class TokenAutomatonTest {
     @Test
     public void testNoMatch() {
         final Object TOKEN_ID = new Object();
-        final Automaton a = new TokenRegExp("ABC", TOKEN_ID).toAutomaton();
+        final AbstractAutomaton a = new TokenRegExp("ABC", TOKEN_ID).toAutomaton();
         final TokenAutomaton ta = new TokenAutomaton(a);
         final String input = "XYZ";
         final TokenDetails details = new TokenDetails();
@@ -57,7 +57,7 @@ public class TokenAutomatonTest {
     @Test
     public void testUnderflow() {
         final Object TOKEN_ID = new Object();
-        final Automaton a = new TokenRegExp("ABC(DE)?", TOKEN_ID).toAutomaton();
+        final AbstractAutomaton a = new TokenRegExp("ABC(DE)?", TOKEN_ID).toAutomaton();
         final TokenAutomaton ta = new TokenAutomaton(a);
         final String input = "ABC";
         final TokenDetails details = new TokenDetails();
@@ -70,7 +70,7 @@ public class TokenAutomatonTest {
     @Test
     public void testUnderflowWithEndOfInput() {
         final Object TOKEN_ID = new Object();
-        final Automaton a = new TokenRegExp("ABC(DE)?", TOKEN_ID).toAutomaton();
+        final AbstractAutomaton a = new TokenRegExp("ABC(DE)?", TOKEN_ID).toAutomaton();
         final TokenAutomaton ta = new TokenAutomaton(a);
         final String input = "ABC";
         final TokenDetails details = new TokenDetails();
@@ -87,9 +87,9 @@ public class TokenAutomatonTest {
     public void testPriority() {
         final Object KEYWORD_FOO = "KEYWORD_FOO";
         final Object IDENTIFIER = "IDENTIFIER";
-        final Automaton a = new TokenRegExp("foo", KEYWORD_FOO).toAutomaton(true);
-        final Automaton b = new TokenRegExp("[a-z]+", IDENTIFIER).toAutomaton(true);
-        final Automaton c =b.minus(a).union(a);
+        final AbstractAutomaton a = new TokenRegExp("foo", KEYWORD_FOO).toAutomaton(true);
+        final AbstractAutomaton b = new TokenRegExp("[a-z]+", IDENTIFIER).toAutomaton(true);
+        final AbstractAutomaton c =b.minus(a).union(a);
 
 
         System.out.println(a.info);

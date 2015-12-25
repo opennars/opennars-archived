@@ -46,7 +46,7 @@ class RunAutomaton implements Serializable {
 	final boolean[] accept;
 	private final int initial;
 	final int[] transitions; // delta(state,c) = transitions[state*points.length + getCharClass(c)]
-	final char[] points; // char interval start points
+	final int[] points; // char interval start points
 	private int[] classmap; // map from char number to class class
 	final Object[] info;
 
@@ -83,17 +83,17 @@ class RunAutomaton implements Serializable {
 			for (int j = 0; j < points.length; j++) {
 				int k = transitions[i * points.length + j];
 				if (k != -1) {
-					char min = points[j];
-					char max;
+					int min = points[j];
+					int max;
 					if (j + 1 < points.length)
-						max = (char)(points[j + 1] - 1);
+						max = (points[j + 1] - 1);
 					else
 						max = Character.MAX_VALUE;
 					b.append(' ');
-					Transition.appendCharString(min, b);
+					CharTransition.appendCharString(min, b);
 					if (min != max) {
 						b.append('-');
-						Transition.appendCharString(max, b);
+						CharTransition.appendCharString(max, b);
 					}
 					b.append(" -> ").append(k).append('\n');
 				}
@@ -136,7 +136,7 @@ class RunAutomaton implements Serializable {
 	 * Returns array of character class interval start points. The array should
 	 * not be modified by the caller.
 	 */
-	public char[] getCharIntervals() {
+	public int[] getCharIntervals() {
 		return points.clone();
 	}
 
@@ -152,11 +152,11 @@ class RunAutomaton implements Serializable {
 	 * <code>Automaton</code>. Same as <code>RunAutomaton(a, true)</code>.
 	 * @param a an automaton
 	 */
-	RunAutomaton(Automaton a) {
+	RunAutomaton(AbstractAutomaton a) {
 		this(a, true, false);
 	}
 	
-	RunAutomaton(Automaton a, boolean tableize) {
+	RunAutomaton(AbstractAutomaton a, boolean tableize) {
 		this(a, tableize, false);
 	}
 
@@ -210,11 +210,11 @@ class RunAutomaton implements Serializable {
 	 * @param ordered if true, gets the automaton's states in an ordered
 	 * collection
 	 */
-	RunAutomaton(Automaton a, boolean tableize, boolean ordered) {
+	RunAutomaton(AbstractAutomaton a, boolean tableize, boolean ordered) {
 		a.determinize();
 		points = a.getStartPoints();
-		Set<State> states = a.getStates(ordered);
-		Automaton.setStateNumbers(states);
+		Set<State<?>> states = a.getStates(ordered);
+		AbstractAutomaton.setStateNumbers(states);
 		initial = a.initial.number;
 		size = states.size();
 		accept = new boolean[size];

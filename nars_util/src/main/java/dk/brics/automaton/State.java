@@ -40,12 +40,12 @@ import java.util.Set;
  * <tt>Automaton</tt> state. 
  * @author Anders M&oslash;ller &lt;<a href="mailto:amoeller@cs.au.dk">amoeller@cs.au.dk</a>&gt;
  */
-public class State implements Serializable, Comparable<State> {
+public class State<A extends AbstractTransition> implements Serializable, Comparable<State> {
 	
 	private static int next_id = 0;
 
 	boolean accept;
-	Set<Transition> transitions;
+	Set<A> transitions;
 	Object info;
 	int number;
 	private final int id;
@@ -70,7 +70,7 @@ public class State implements Serializable, Comparable<State> {
 	 * Subsequent changes are reflected in the automaton.
 	 * @return transition set
 	 */
-	public Set<Transition> getTransitions()	{
+	public Set<A> getTransitions()	{
 		return transitions;
 	}
 	
@@ -78,7 +78,7 @@ public class State implements Serializable, Comparable<State> {
 	 * Adds an outgoing transition.
 	 * @param t transition
 	 */
-	void addTransition(Transition t)	{
+	void addTransition(A t)	{
 		transitions.add(t);
 	}
 	
@@ -124,9 +124,9 @@ public class State implements Serializable, Comparable<State> {
 	 * @return destination state, null if no matching outgoing transition
 	 * @see #step(char, Collection)
 	 */
-	public State step(char c) {
-		for (Transition t : transitions)
-			if (t.min <= c && c <= t.max)
+	public State step(int c) {
+		for (A t : transitions)
+			if (t.min() <= c && c <= t.max())
 				return t.to;
 		return null;
 	}
@@ -138,12 +138,12 @@ public class State implements Serializable, Comparable<State> {
 	 * @see #step(char)
 	 */
 	public void step(char c, Collection<State> dest) {
-		for (Transition t : transitions)
-			if (t.min <= c && c <= t.max)
+		for (A t : transitions)
+			if (t.min() <= c && c <= t.max())
 				dest.add(t.to);
 	}
 
-	void addEpsilon(State to) {
+	void addEpsilon(State<A> to) {
 		if (to.accept)
 			accept = true;
 
@@ -151,8 +151,8 @@ public class State implements Serializable, Comparable<State> {
 	}
 	
 	/** Returns transitions sorted by (min, reverse max, to) or (to, min, reverse max) */
-	Transition[] getSortedTransitionArray(boolean to_first) {
-		Transition[] e = transitions.toArray(new Transition[transitions.size()]);
+	AbstractTransition[] getSortedTransitionArray(boolean to_first) {
+		AbstractTransition[] e = transitions.toArray(new AbstractTransition[transitions.size()]);
 		Arrays.sort(e, to_first ? TransitionComparator.toFirstTrue : TransitionComparator.toFirstFalse);
 		return e;
 	}
@@ -162,13 +162,13 @@ public class State implements Serializable, Comparable<State> {
 	 * @param to_first if true, order by (to, min, reverse max); otherwise (min, reverse max, to)
 	 * @return transition list
 	 */
-	Transition[] getSortedTransitions(boolean to_first)	{
+	AbstractTransition[] getSortedTransitions(boolean to_first)	{
 		return getSortedTransitionArray(to_first);
 	}
 	
 	/** 
 	 * Returns string describing this state. Normally invoked via 
-	 * {@link Automaton#toString()}. 
+	 * {@link AbstractAutomaton#toString()}.
 	 */
 	@Override
 	public String toString() {
@@ -182,7 +182,7 @@ public class State implements Serializable, Comparable<State> {
 			b.append(info);
 		}
 		b.append('\n');
-		for (Transition t : transitions)
+		for (AbstractTransition t : transitions)
 			b.append("  ").append(t).append('\n');
 		return b.toString();
 	}

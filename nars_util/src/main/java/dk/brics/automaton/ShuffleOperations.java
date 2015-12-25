@@ -49,12 +49,12 @@ final class ShuffleOperations {
 	 * <dl><dt><b>Author:</b></dt><dd>Torben Ruby 
 	 * &lt;<a href="mailto:ruby@daimi.au.dk">ruby@daimi.au.dk</a>&gt;</dd></dl>
 	 */
-	public static Automaton shuffle(Automaton a1, Automaton a2) {
+	public static AbstractAutomaton shuffle(AbstractAutomaton a1, AbstractAutomaton a2) {
 		a1.determinize();
 		a2.determinize();
-		Transition[][] transitions1 = Automaton.getSortedTransitions(a1.getStates());
-		Transition[][] transitions2 = Automaton.getSortedTransitions(a2.getStates());
-		Automaton c = new Automaton();
+		CharTransition[][] transitions1 = AbstractAutomaton.getSortedTransitions(a1.getStates());
+		CharTransition[][] transitions2 = AbstractAutomaton.getSortedTransitions(a2.getStates());
+		AbstractAutomaton c = new AbstractAutomaton();
 		Deque<StatePair> worklist = new LinkedList<>();
 		Map<StatePair, StatePair> newstates = new HashMap<>();
 		State s = new State();
@@ -65,8 +65,8 @@ final class ShuffleOperations {
 		while (worklist.size() > 0) {
 			p = worklist.removeFirst();
 			p.s.accept = p.s1.accept && p.s2.accept;
-			Transition[] t1 = transitions1[p.s1.number];
-			for (Transition aT1 : t1) {
+			CharTransition[] t1 = transitions1[p.s1.number];
+			for (CharTransition aT1 : t1) {
 				StatePair q = new StatePair(aT1.to, p.s2);
 				StatePair r = newstates.get(q);
 				if (r == null) {
@@ -75,10 +75,10 @@ final class ShuffleOperations {
 					newstates.put(q, q);
 					r = q;
 				}
-				p.s.transitions.add(new Transition(aT1.min, aT1.max, r.s));
+				p.s.transitions.add(new CharTransition(aT1.min, aT1.max, r.s));
 			}
-			Transition[] t2 = transitions2[p.s2.number];
-			for (Transition aT2 : t2) {
+			CharTransition[] t2 = transitions2[p.s2.number];
+			for (CharTransition aT2 : t2) {
 				StatePair q = new StatePair(p.s1, aT2.to);
 				StatePair r = newstates.get(q);
 				if (r == null) {
@@ -87,7 +87,7 @@ final class ShuffleOperations {
 					newstates.put(q, q);
 					r = q;
 				}
-				p.s.transitions.add(new Transition(aT2.min, aT2.max, r.s));
+				p.s.transitions.add(new CharTransition(aT2.min, aT2.max, r.s));
 			}
 		}
 		c.deterministic = false;
@@ -107,11 +107,11 @@ final class ShuffleOperations {
 	 * Complexity: proportional to the product of the numbers of states (if <code>a</code>
 	 * is already deterministic).
 	 */ 
-	static String shuffleSubsetOf(Collection<Automaton> ca, Automaton a, Character suspend_shuffle, Character resume_shuffle) {
+	static String shuffleSubsetOf(Collection<AbstractAutomaton> ca, AbstractAutomaton a, Character suspend_shuffle, Character resume_shuffle) {
 		if (ca.size() == 0)
 			return null;
 		if (ca.size() == 1) {
-			Automaton a1 = ca.iterator().next();
+			AbstractAutomaton a1 = ca.iterator().next();
 			if (a1.isSingleton()) {
 				if (a.run(a1.singleton))
 					return null;
@@ -122,11 +122,11 @@ final class ShuffleOperations {
 				return null;
 		}
 		a.determinize();
-		Transition[][][] ca_transitions = new Transition[ca.size()][][];
+		CharTransition[][][] ca_transitions = new CharTransition[ca.size()][][];
 		int i = 0;
-		for (Automaton a1 : ca)
-			ca_transitions[i++] = Automaton.getSortedTransitions(a1.getStates());
-		Transition[][] a_transitions = Automaton.getSortedTransitions(a.getStates());
+		for (AbstractAutomaton a1 : ca)
+			ca_transitions[i++] = AbstractAutomaton.getSortedTransitions(a1.getStates());
+		CharTransition[][] a_transitions = AbstractAutomaton.getSortedTransitions(a.getStates());
 		Comparator tc = TransitionComparator.toFirstFalse;
 		ShuffleConfiguration init = new ShuffleConfiguration(ca, a);
 		LinkedList<ShuffleConfiguration> pending = new LinkedList<>();
@@ -154,19 +154,19 @@ final class ShuffleOperations {
 					sb2.append(sb.charAt(j));
 				return sb2.toString();
 			}
-			Transition[] ta2 = a_transitions[c.a_state.number];
+			CharTransition[] ta2 = a_transitions[c.a_state.number];
 			for (int i1 = 0; i1 < ca.size(); i1++) {
 				if (c.shuffle_suspended)
 					i1 = c.suspended1;
-				loop: for (Transition t1 : ca_transitions[i1][c.ca_states[i1].number]) {
-					List<Transition> lt = new ArrayList<>();
+				loop: for (CharTransition t1 : ca_transitions[i1][c.ca_states[i1].number]) {
+					List<CharTransition> lt = new ArrayList<>();
 					int j = Arrays.binarySearch(ta2, t1, tc);
 					if (j < 0)
 						j = -j - 1;
 					if (j > 0 && ta2[j - 1].max >= t1.min)
 						j--;
 					while (j < ta2.length) {
-						Transition t2 = ta2[j++];
+						CharTransition t2 = ta2[j++];
 						char min = t1.min;
 						char max = t1.max;
 						if (t2.min > min)
@@ -175,14 +175,14 @@ final class ShuffleOperations {
 							max = t2.max;
 						if (min <= max) {
 							add(suspend_shuffle, resume_shuffle, pending, visited, c, i1, t1, t2, min, max);
-							lt.add(new Transition(min, max, null));
+							lt.add(new CharTransition(min, max, null));
 						} else
 							break;
 					}
-					Transition[] at = lt.toArray(new Transition[lt.size()]);
+					CharTransition[] at = lt.toArray(new CharTransition[lt.size()]);
 					Arrays.sort(at, tc);
 					char min = t1.min;
-					for (Transition anAt : at) {
+					for (CharTransition anAt : at) {
 						if (anAt.min > min)
 							break;
 						if (anAt.max >= t1.max)
@@ -213,9 +213,9 @@ final class ShuffleOperations {
 		return null;
 	}
 
-	private static void add(Character suspend_shuffle, Character resume_shuffle, 
-			                LinkedList<ShuffleConfiguration> pending, Set<ShuffleConfiguration> visited, 
-			                ShuffleConfiguration c, int i1, Transition t1, Transition t2, char min, char max) {
+	private static void add(Character suspend_shuffle, Character resume_shuffle,
+							LinkedList<ShuffleConfiguration> pending, Set<ShuffleConfiguration> visited,
+							ShuffleConfiguration c, int i1, CharTransition t1, CharTransition t2, char min, char max) {
 		final char HIGH_SURROGATE_BEGIN = '\uD800'; 
 		final char HIGH_SURROGATE_END = '\uDBFF'; 
 		if (suspend_shuffle != null && min <= suspend_shuffle && suspend_shuffle <= max && min != max) {
@@ -269,10 +269,10 @@ final class ShuffleOperations {
 		@SuppressWarnings("unused")
 		private ShuffleConfiguration() {}
 		
-		private ShuffleConfiguration(Collection<Automaton> ca, Automaton a) {
+		private ShuffleConfiguration(Collection<AbstractAutomaton> ca, AbstractAutomaton a) {
 			ca_states = new State[ca.size()];
 			int i = 0;
-			for (Automaton a1 : ca)
+			for (AbstractAutomaton a1 : ca)
 				ca_states[i++] = a1.getInitialState();
 			a_state = a.getInitialState();
 			computeHash();

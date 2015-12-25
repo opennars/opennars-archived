@@ -293,7 +293,7 @@ final class StringUnionOperations {
 		int i = 0;
 		char [] labels = s.labels;
 		for (State target : s.states) {
-			converted.addTransition(new Transition(labels[i++], convert(target, visited)));
+			converted.addTransition(new CharTransition(labels[i++], convert(target, visited)));
 		}
 
 		return converted;

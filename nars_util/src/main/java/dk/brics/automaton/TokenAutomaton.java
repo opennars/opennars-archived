@@ -123,15 +123,15 @@ class TokenAutomaton extends RunAutomaton {
 		return false;
 	}
 	
-	public TokenAutomaton(Automaton a, boolean tableize, boolean ordered) {
+	public TokenAutomaton(AbstractAutomaton a, boolean tableize, boolean ordered) {
 		super(a, tableize, ordered);
 	}	
 		
-	public TokenAutomaton(Automaton a, boolean tableize) {
+	public TokenAutomaton(AbstractAutomaton a, boolean tableize) {
 		super(a, tableize);
 	}
 	
-	TokenAutomaton(Automaton a) {
+	TokenAutomaton(AbstractAutomaton a) {
 		super(a);
 	}
 		
