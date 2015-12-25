@@ -5,17 +5,14 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
-import nars.java.AtomObject;
-import nars.nal.Compounds;
-import nars.nal.nal7.CyclesInterval;
-import nars.task.MutableTask;
+import nars.term.Compounds;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
 import nars.term.match.VarPattern;
+import nars.term.nal7.CyclesInterval;
 import nars.term.op.Operator;
 import nars.term.variable.Variable;
-import nars.truth.Truth;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
@@ -40,18 +37,18 @@ public abstract class $  {
         //        catch (InvalidInputException e) { }
     }
 
-    public static final <C extends Compound> MutableTask $(String term, char punc) {
-        C t = Narsese.the().term(term);
-        if (t == null) return null;
-        return new MutableTask(t)
-                .punctuation(punc)
-                .eternal();
-                //.normalized();
-    }
-
-    public static <O> AtomObject<O> ref(String term, O instance) {
-        return new AtomObject(term, instance);
-    }
+//    public static final <C extends Compound> MutableTask $(String term, char punc) {
+//        C t = Narsese.the().term(term);
+//        if (t == null) return null;
+//        return new MutableTask(t)
+//                .punctuation(punc)
+//                .eternal();
+//                //.normalized();
+//    }
+//
+//    public static <O> AtomObject<O> ref(String term, O instance) {
+//        return new AtomObject(term, instance);
+//    }
 
     public static Atom the(String id) {
         return Atom.the(id);
@@ -221,17 +218,17 @@ public abstract class $  {
 //        return Terms.term(op, args);
 //    }
 
-    public static MutableTask belief(Compound term, Truth copyFrom) {
-        return belief(term, copyFrom.getFrequency(), copyFrom.getConfidence());
-    }
-
-    public static MutableTask belief(Compound term, float freq, float conf) {
-        return new MutableTask(term).belief().truth(freq, conf);
-    }
-
-    public static MutableTask goal(Compound term, float freq, float conf) {
-        return new MutableTask(term).goal().truth(freq, conf);
-    }
+//    public static MutableTask belief(Compound term, Truth copyFrom) {
+//        return belief(term, copyFrom.getFrequency(), copyFrom.getConfidence());
+//    }
+//
+//    public static MutableTask belief(Compound term, float freq, float conf) {
+//        return new MutableTask(term).belief().truth(freq, conf);
+//    }
+//
+//    public static MutableTask goal(Compound term, float freq, float conf) {
+//        return new MutableTask(term).goal().truth(freq, conf);
+//    }
 
     public static Term implafter(Term condition, Term consequence) {
         return Compounds.the(IMPLICATION_AFTER, condition, consequence);

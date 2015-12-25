@@ -22,10 +22,9 @@ package nars.truth;
 
 import nars.Global;
 import nars.Symbols;
-import nars.nal.nal7.Tense;
-import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
+import nars.term.nal7.Tense;
 import nars.util.Texts;
 import nars.util.data.Util;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -202,23 +201,22 @@ public interface Truth extends MetaTruth<Float> {
         return setFrequency(1.0f - getFrequency());
     }
 
-    default float projectionQuality(Task s, long targetTime, long currentTime, boolean problemHasQueryVar) {
+    default float projectionQuality(long occurrenceTime, float confidence, int complexity, long targetTime, long currentTime, boolean problemHasQueryVar) {
         float freq = getFrequency();
         float conf = getConfidence();
 
-        if (!Tense.isEternal(s.getOccurrenceTime()) && (targetTime != s.getOccurrenceTime())) {
+        if (!Tense.isEternal(occurrenceTime) && (targetTime != occurrenceTime)) {
             conf = TruthFunctions.eternalizedConfidence(conf);
             if (targetTime != Tense.ETERNAL) {
-                long occurrenceTime = s.getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-                float projectedConfidence = factor * s.getConfidence();
+                float projectedConfidence = factor * confidence;
                 if (projectedConfidence > conf) {
                     conf = projectedConfidence;
                 }
             }
         }
 
-        return problemHasQueryVar ? Truth.expectation(freq, conf) / s.term().complexity() : conf;
+        return problemHasQueryVar ? Truth.expectation(freq, conf) / complexity : conf;
 
     }
 

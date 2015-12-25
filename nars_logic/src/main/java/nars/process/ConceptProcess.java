@@ -5,14 +5,21 @@
 package nars.process;
 
 import nars.NAR;
+import nars.UtilityFunctions;
 import nars.bag.BagBudget;
+import nars.budget.Budget;
+import nars.budget.UnitBudget;
 import nars.concept.Concept;
 import nars.task.Task;
+import nars.term.Term;
 import nars.term.Termed;
 import nars.term.Terms;
 import nars.term.nal7.Tense;
+import nars.truth.Truth;
 
 import java.util.function.Consumer;
+
+import static nars.budget.BudgetFunctions.truthToQuality;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -117,6 +124,154 @@ public abstract class ConceptProcess extends AbstractPremise {
         }
 
         return total;
+    }
+
+
+    /* ----- Task derivation in LocalRules and SyllogisticRules ----- */
+    /**
+     * Forward logic result and adjustment
+     *
+     * @param truth The truth value of the conclusion
+     * @return The budget value of the conclusion
+     */
+    public static Budget forward(Truth truth, ConceptProcess nal) {
+        return budgetInference(truthToQuality(truth), 1, nal);
+    }
+
+    /**
+     * Backward logic result and adjustment, stronger case
+     *
+     * @param truth The truth value of the belief deriving the conclusion
+     * @param nal Reference to the memory
+     * @return The budget value of the conclusion
+     */
+    public static Budget backward(Truth truth, ConceptProcess nal) {
+        return budgetInference(truthToQuality(truth), 1, nal);
+    }
+
+    /**
+     * Backward logic result and adjustment, weaker case
+     *
+     * @param truth The truth value of the belief deriving the conclusion
+     * @param nal Reference to the memory
+     * @return The budget value of the conclusion
+     */
+    public static Budget backwardWeak(Truth truth, ConceptProcess nal) {
+        return budgetInference(UtilityFunctions.w2c(1) * truthToQuality(truth), 1, nal);
+    }
+
+    /* ----- Task derivation in CompositionalRules and StructuralRules ----- */
+    /**
+     * Forward logic with CompoundTerm conclusion
+     *
+     * @param truth The truth value of the conclusion
+     * @param content The content of the conclusion
+     * @param nal Reference to the memory
+     * @return The budget of the conclusion
+     */
+    public static Budget compoundForward(Truth truth, Term content, ConceptProcess nal) {
+        return compoundForward(new UnitBudget(), truth, content, nal);
+    }
+
+    public static Budget compoundForward(Budget target, Truth truth, Term content, ConceptProcess nal) {
+        int complexity = content.complexity();
+        return budgetInference(target, truthToQuality(truth), complexity, nal);
+    }
+
+
+
+    /**
+     * Backward logic with CompoundTerm conclusion, stronger case
+     *
+     * @param content The content of the conclusion
+     * @return The budget of the conclusion
+     */
+    public static Budget compoundBackward(Term content, ConceptProcess nal) {
+        return budgetInference(1.0f, content.complexity(), nal);
+    }
+
+    /**
+     * Backward logic with CompoundTerm conclusion, weaker case
+     *
+     * @param content The content of the conclusion
+     * @param nal Reference to the memory
+     * @return The budget of the conclusion
+     */
+    public static Budget compoundBackwardWeak(Term content, ConceptProcess nal) {
+        return budgetInference(UtilityFunctions.w2c(1), content.complexity(), nal);
+    }
+
+    static Budget budgetInference(float qual, int complexity, ConceptProcess nal) {
+        return budgetInference(new UnitBudget(), qual, complexity, nal );
+    }
+
+    /**
+     * Common processing for all logic step
+     *
+     * @param qual Quality of the logic
+     * @param complexity Syntactic complexity of the conclusion
+     * @param nal Reference to the memory
+     * @return Budget of the conclusion task
+     */
+    static Budget budgetInference(Budget target, float qual, int complexity, ConceptProcess nal) {
+        float complexityFactor = complexity > 1 ?
+
+                // sqrt factor (experimental)
+                // (float) (1f / Math.sqrt(Math.max(1, complexity))) //experimental, reduces dur and qua by sqrt of complexity (more slowly)
+
+                // linear factor (original)
+                (1.0f / Math.max(1, complexity))
+
+                : 1.0f;
+
+        return budgetInference(target, qual, complexityFactor, nal);
+    }
+
+    static Budget budgetInference(Budget target, float qual, float complexityFactor, ConceptProcess nal) {
+
+        BagBudget<Task> taskLink =
+                nal instanceof ConceptProcess ? nal.getTaskLink() : null;
+
+        Budget t =
+                (taskLink !=null) ? taskLink :  nal.getTask().getBudget();
+
+
+        float priority = t.getPriority();
+        float durability = t.getDurability() * complexityFactor;
+        float quality = qual * complexityFactor;
+
+        BagBudget<Termed> termLink = nal.getTermLink();
+        if (termLink!=null) {
+            priority = UtilityFunctions.or(priority, termLink.getPriority());
+            durability = UtilityFunctions.and(durability, termLink.getDurability()); //originaly was 'AND'
+            float targetActivation = termLink.getPriority();
+            if (targetActivation >= 0) {
+                termLink.orPriority(UtilityFunctions.or(quality, targetActivation));
+                termLink.orDurability(quality);
+            }
+        }
+
+        return target.budget(priority, durability, quality);
+
+
+        /* ORIGINAL: https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/inference/BudgetFunctions.java
+            Item t = memory.currentTaskLink;
+            if (t == null) {
+                t = memory.currentTask;
+            }
+            float priority = t.getPriority();
+            float durability = t.getDurability() / complexity;
+            float quality = qual / complexity;
+            TermLink termLink = memory.currentBeliefLink;
+            if (termLink != null) {
+                priority = or(priority, termLink.getPriority());
+                durability = and(durability, termLink.getDurability());
+                float targetActivation = memory.getConceptActivation(termLink.getTarget());
+                termLink.incPriority(or(quality, targetActivation));
+                termLink.incDurability(quality);
+            }
+            return new BudgetValue(priority, durability, quality);
+         */
     }
 
 

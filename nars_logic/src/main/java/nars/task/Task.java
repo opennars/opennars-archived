@@ -26,14 +26,12 @@ import nars.Symbols;
 import nars.budget.Budgeted;
 import nars.budget.UnitBudget;
 import nars.concept.Concept;
-import nars.nal.nal7.Tense;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
-import nars.truth.Truthed;
+import nars.term.nal7.Tense;
+import nars.truth.*;
 
 import java.io.Serializable;
 import java.lang.ref.Reference;
@@ -183,21 +181,6 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     /** called when a Concept processes this Task */
     void onConcept(Concept/*<T>*/ equivalentInstance);
 
-    default <X extends Compound> MutableTask solution(X t, char newPunc, Truth newTruth, long newOcc, Task question, Memory memory) {
-
-        MutableTask tt = new MutableTask(t, newPunc)
-            .truth(newTruth)
-            .budget(getPriority(), getDurability(), getQuality())
-            .time(memory.time(), newOcc);
-
-        tt.setParents(getParentTaskRef(), getParentBeliefRef());
-
-
-        tt.setEvidence(getEvidence());
-        //tt.log(getLog());
-        tt.log(new Solution(question));
-        return tt;
-    }
 
     char getPunctuation();
 
@@ -250,19 +233,19 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     }
 
     default StringBuilder appendTo(StringBuilder sb) {
-        return appendTo(sb, null);
+        return appendTo(sb);
     }
 
     default Task name() {
         return this;
     }
 
-    default CharSequence toString(NAR nar, boolean showStamp) {
-        return toString(nar.memory, showStamp);
-    }
+//    default CharSequence toString(NAR nar, boolean showStamp) {
+//        return toString(showStamp);
+//    }
 
-    default CharSequence toString(Memory memory, boolean showStamp) {
-        return appendTo(new StringBuilder(), memory, showStamp);
+    default CharSequence toString(boolean showStamp) {
+        return appendTo(new StringBuilder(), showStamp, Tense.TIMELESS, 0);
     }
 
     @Override
@@ -281,7 +264,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
 
     final class Solution extends AtomicReference<Task> {
-        Solution(Task referent) {
+        public Solution(Task referent) {
             super(referent);
         }
 
@@ -298,35 +281,37 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
 
 
-    default StringBuilder toString(/**@Nullable*/ Memory memory) {
-        return appendTo(null, memory);
+    default StringBuilder toString(long now, int duration) {
+        return appendTo(null, now, duration);
     }
 
-    default StringBuilder appendTo(StringBuilder sb, /**@Nullable*/ Memory memory) {
+    default StringBuilder appendTo(StringBuilder sb, long now, int duration) {
         if (sb == null) sb = new StringBuilder();
-        return appendTo(sb, memory, false);
+        return appendTo(sb, false, now, duration);
     }
 
     @Deprecated
-    default String toStringWithoutBudget(Memory memory) {
+    default String toStringWithoutBudget(long now, int duration) {
         StringBuilder b = new StringBuilder();
-        appendTo(b, memory, true, false,
+        appendTo(b, true, false,
                 false, //budget
-                false//log
+                false, //log
+                now, duration
         );
         return b.toString();
     }
 
     @Deprecated
-    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean showStamp) {
+    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ boolean showStamp, long now, int duration) {
         boolean notCommand = getPunctuation()!=Symbols.COMMAND;
-        return appendTo(buffer, memory, true, showStamp && notCommand,
+        return appendTo(buffer, true, showStamp && notCommand,
                 notCommand, //budget
-                showStamp //log
+                showStamp, //log
+                now, duration
         );
     }
 
-    default StringBuilder appendTo(StringBuilder buffer, /**@Nullable*/ Memory memory, boolean term, boolean showStamp, boolean showBudget, boolean showLog) {
+    default StringBuilder appendTo(StringBuilder buffer, boolean term, boolean showStamp, boolean showBudget, boolean showLog, long now, int duration) {
 
 
         String contentName;
@@ -334,8 +319,8 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         contentName = term && t != null ? t.toString() : "";
 
         CharSequence tenseString;
-        if (memory!=null) {
-            tenseString = getTense(memory.time(), memory.duration());
+        if (now!=Tense.TIMELESS) {
+            tenseString = getTense(now, duration);
         }
         else {
             //TODO dont bother craeting new StringBuilder and calculating the entire length etc.. just append it to a reusable StringReader?
@@ -492,7 +477,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     /** if unnormalized, returns a normalized version of the task,
      *  null if not normalizable
      */
-    Task normalize(Memory memory);
+    //Task normalize(Memory memory);
 
 
     default void ensureValidParentTaskRef() {
@@ -508,7 +493,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     void discountConfidence();
 
 
-    void setBestSolution(Task belief, Memory memory);
+    void setBestSolution(Task belief);
 
 
 
@@ -592,9 +577,9 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
         }
 
         switch (Tense.order(currentTime, getOccurrenceTime(), duration)) {
-            case Order.Forward:
+            case Forward:
                 return Symbols.TENSE_FUTURE;
-            case Order.Backward:
+            case Backward:
                 return Symbols.TENSE_PAST;
             default:
                 return Symbols.TENSE_PRESENT;
@@ -689,7 +674,7 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     /** calculates projection truth quality without creating new TruthValue instances */
     default float projectionTruthQuality(Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
-        return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
+        return t.projectionQuality(getOccurrenceTime(), getConfidence(), targetTime, currentTime, problemHasQueryVar);
     }
 
     final class ExpectationComparator implements Comparator<Task>, Serializable {

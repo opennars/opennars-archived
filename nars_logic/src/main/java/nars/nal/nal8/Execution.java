@@ -1,10 +1,11 @@
 package nars.nal.nal8;
 
-import nars.$;
 import nars.Memory;
 import nars.NAR;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.UnitBudget;
+import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.compound.Compound;
@@ -109,9 +110,8 @@ public class Execution implements Runnable {
 
         Memory memory = nar.memory;
 
-        nar.input($.belief(operation.term(),
-
-                operation.getTruth()).
+        nar.input(new MutableTask(operation.term(), Symbols.JUDGMENT).
+                truth(operation.getTruth()).
                 //1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
 
                         budget(b).
@@ -121,6 +121,15 @@ public class Execution implements Runnable {
         );
 
         memory.logic.TASK_EXECUTED.hit();
+    }
+
+    /**
+     * applies certain data to a feedback task relating to its causing operation's task
+     */
+    public static Task feedback(MutableTask feedback, Task goal, float priMult, float durMult) {
+        return feedback.budget(goal.getBudget()).
+                budgetScaled(priMult, durMult).
+                parent(goal);
     }
 
 }

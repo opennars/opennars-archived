@@ -2,8 +2,6 @@ package nars.term.op;
 
 import nars.$;
 import nars.Op;
-import nars.task.MutableTask;
-import nars.task.Task;
 import nars.term.Compounds;
 import nars.term.Term;
 import nars.term.atom.Atom;
@@ -101,14 +99,6 @@ public final class Operator<T extends Term> extends Atomic { //implements Term {
         return Compounds.the(Op.IMAGE_EXT, argument, index + 1);
     }
 
-    /**
-     * applies certain data to a feedback task relating to its causing operation's task
-     */
-    public static Task feedback(MutableTask feedback, Task goal, float priMult, float durMult) {
-        return feedback.budget(goal.getBudget()).
-                budgetScaled(priMult, durMult).
-                parent(goal);
-    }
 
     public static Term[] opArgsArray(Compound term) {
         return opArgs(term).terms();

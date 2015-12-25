@@ -22,19 +22,14 @@ package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.PremiseAware;
-import nars.nal.RuleMatch;
-import nars.nal.nal8.Operator;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.TermVector;
 import nars.term.Terms;
 import nars.term.match.Ellipsis;
 import nars.term.op.ImmediateTermTransform;
-import nars.term.transform.CompoundTransform;
-import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
-import nars.term.transform.VariableNormalization;
+import nars.term.op.Operator;
+import nars.term.transform.*;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -169,7 +164,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         Compound args = Operator.opArgs((Compound) result);
 
         if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
-            return ((PremiseAware)tf).function(args, (RuleMatch)f);
+            return ((PremiseAware)tf).function(args, (Subst)f);
         } else {
             return tf.function(args);
         }

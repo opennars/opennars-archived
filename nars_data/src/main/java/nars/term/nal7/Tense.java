@@ -1,18 +1,11 @@
 package nars.term.nal7;
 
-import nars.Memory;
 import nars.Order;
 import nars.Symbols;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
-import nars.budget.UnitBudget;
-import nars.nal.UtilityFunctions;
-import nars.task.Task;
-import nars.task.Temporal;
 import nars.term.Termed;
-import nars.truth.Truth;
 
 import java.io.IOException;
+import java.time.temporal.Temporal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,90 +81,6 @@ public enum Tense  {
 //        return false;
 //    }
 
-    /**
-     * Evaluate the quality of the judgment as a solution to a problem
-     *
-     * @param problem A goal or question
-     * @param solution The solution to be evaluated
-     * @return The quality of the judgment as the solution
-     */
-    public static float solutionQuality(Task problem, Task solution, long time) {
-
-        if (!matchingOrder(problem, solution)) {
-            return 0;
-        }
-
-        return solutionQualityMatchingOrder(problem, solution, time);
-    }
-
-    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time) {
-        return solutionQualityMatchingOrder(problem, solution, time, problem.hasQueryVar() );
-    }
-
-    /**
-        this method is used if the order is known to be matching, so it is not checked
-     */
-    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time, boolean hasQueryVar) {
-
-        /*if ((problem == null) || (solution == null)) {
-            throw new RuntimeException("problem or solution is null");
-        }*/
-
-        long poc = problem.getOccurrenceTime();
-        Truth truth = poc != solution.getOccurrenceTime() ? solution.projection(poc, time) : solution.getTruth();
-
-        //if (problem.hasQueryVar()) {
-        return hasQueryVar ? truth.getExpectation() / solution.term().complexity() : truth.getConfidence();
-    }
-
-    public static float solutionQuality(boolean hasQueryVar, long occTime, Task solution, Truth projectedTruth, long time) {
-        return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
-    }
-
-    public static float solutionQuality(Task problem, Task solution, Truth truth, long time) {
-        return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
-    }
-
-    /**
-     * Evaluate the quality of a belief as a solution to a problem, then reward
-     * the belief and de-prioritize the problem
-     *
-     * @param task  The problem (question or goal) to be solved
-     * @param solution The belief as solution
-     * @param task     The task to be immediately processed, or null for continued
-     *                 process
-     * @return The budget for the new task which is the belief activated, if
-     * necessary
-     */
-    public static Budget solutionEval(Task task, Task solution, long time) {
-        //boolean feedbackToLinks = false;
-        /*if (task == null) {
-            task = nal.getCurrentTask();
-            feedbackToLinks = true;
-        }*/
-        boolean judgmentTask = task.isJudgment();
-        float quality = solutionQuality(task, solution, time);
-        if (quality <= 0)
-            return null;
-
-        Budget budget = null;
-        if (judgmentTask) {
-            task.getBudget().orPriority(quality);
-        } else {
-            float taskPriority = task.getPriority();
-
-            budget = new UnitBudget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
-            task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
-        }
-        /*
-        if (feedbackToLinks) {
-            TaskLink tLink = nal.getCurrentTaskLink();
-            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = nal.getCurrentBeliefLink();
-            bLink.incPriority(quality);
-        }*/
-        return budget;
-    }
 
     public static Order order(float timeDiff, int durationCycles) {
         float halfDuration = durationCycles / 2.0f;
@@ -233,13 +142,13 @@ public enum Tense  {
         return t <= TIMELESS; /* includes ETERNAL */
     }
 
-    public static long getOccurrenceTime(Tense tense, Memory m) {
-        return getOccurrenceTime(m.time(), tense, m.duration());
-    }
-
-    public static long getOccurrenceTime(long creationTime, Tense tense, Memory m) {
-        return getOccurrenceTime(creationTime, tense, m.duration());
-    }
+//    public static long getOccurrenceTime(Tense tense, Memory m) {
+//        return getOccurrenceTime(m.time(), tense, m.duration());
+//    }
+//
+//    public static long getOccurrenceTime(long creationTime, Tense tense, int duration) {
+//        return getOccurrenceTime(creationTime, tense, duration);
+//    }
 
     public static long getOccurrenceTime(long creationTime, Tense tense, int duration) {
 
@@ -311,14 +220,7 @@ public enum Tense  {
         return false;
     }
 
-    public static boolean overlapping(Task a, Task b) {
 
-
-        if (a == b) return true;
-        if (b == null) return false;
-
-        return overlapping(a.getEvidence(), b.getEvidence());
-    }
 
     @Override
     public String toString() {

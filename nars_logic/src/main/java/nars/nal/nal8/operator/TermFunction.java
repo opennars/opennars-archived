@@ -88,11 +88,12 @@ public abstract class TermFunction<O> extends SyncOperator {
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         return Lists.newArrayList(
-                Operator.feedback(
+                Execution.feedback(
                     new MutableTask(inh).
                         judgment().
                         truth(getResultFrequency(), getResultConfidence()).
-                        tense(getResultTense(), nar.memory), opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
+                        tense(getResultTense(), nar.memory),
+                        opTask, feedbackPriorityMultiplier, feedbackDurabilityMultiplier)
             );
 
             /*float equal = equals(lastTerm, y);
