@@ -3,19 +3,20 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>opennars</groupId>
-        <artifactId>opennars</artifactId>
-        <version>1.7-SNAPSHOT</version>
-    </parent>
-    <packaging>jar</packaging>
+
     <name>OpenNARS Data</name>
     <artifactId>nars_data</artifactId>
     <version>1.7-SNAPSHOT</version>
-    <url>https://github.com/opennars/opennars</url>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+
+    <parent>
+        <groupId>opennars</groupId>
+        <artifactId>nars</artifactId>
+        <version>${opennars.release}</version>
+    </parent>
+
+    <packaging>jar</packaging>
+
+
     <dependencies>
         <dependency>
             <groupId>com.github.0xCopy.prautobeans</groupId>
@@ -27,7 +28,6 @@
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>nars_util</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -39,6 +39,54 @@
     </dependencies>
     <build>
         <plugins>
+
+
+            <!--<plugin>-->
+            <!--<groupId>com.googlecode.maven-java-formatter-plugin</groupId>-->
+            <!--<artifactId>maven-java-formatter-plugin</artifactId>-->
+            <!--<version>0.4</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>format</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<compilerSource>1.8</compilerSource>-->
+            <!--<compilerCompliance>1.8</compilerCompliance>-->
+            <!--<compilerTargetPlatform>1.8</compilerTargetPlatform>-->
+            <!--&lt;!&ndash;<configFile>${project.basedir}/../fmt/ugh.xml</configFile>&ndash;&gt;-->
+            <!--&lt;!&ndash;<configFile>${project.basedir}/../fmt/gwt-format.xml</configFile>&ndash;&gt;-->
+            <!--&lt;!&ndash;http://code.google.com/p/google-web-toolkit/source/browse/trunk/eclipse/settings/code-style/gwt-format.xml</configFile>&ndash;&gt;&ndash;&gt;-->
+            <!--<lineEnding>LF</lineEnding>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.0xCopy.prautobeans</groupId>
+                <artifactId>prautobeans-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>prautobeans</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -64,42 +112,6 @@
                 </executions>
             </plugin>
 
-
-            <!--<plugin>-->
-                <!--<groupId>com.googlecode.maven-java-formatter-plugin</groupId>-->
-                <!--<artifactId>maven-java-formatter-plugin</artifactId>-->
-                <!--<version>0.4</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>format</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<compilerSource>1.8</compilerSource>-->
-                    <!--<compilerCompliance>1.8</compilerCompliance>-->
-                    <!--<compilerTargetPlatform>1.8</compilerTargetPlatform>-->
-                    <!--&lt;!&ndash;<configFile>${project.basedir}/../fmt/ugh.xml</configFile>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<configFile>${project.basedir}/../fmt/gwt-format.xml</configFile>&ndash;&gt;-->
-                    <!--&lt;!&ndash;http://code.google.com/p/google-web-toolkit/source/browse/trunk/eclipse/settings/code-style/gwt-format.xml</configFile>&ndash;&gt;&ndash;&gt;-->
-                    <!--<lineEnding>LF</lineEnding>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <plugin>
-                <groupId>com.github.0xCopy.prautobeans</groupId>
-                <artifactId>prautobeans-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>prautobeans</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-</project>
+    </plugins>
+</build>
+        </project>

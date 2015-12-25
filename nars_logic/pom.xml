@@ -2,17 +2,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>opennars</groupId>
-        <artifactId>opennars</artifactId>
-        <version>1.7-SNAPSHOT</version>
-    </parent>
-
     <artifactId>nars_logic</artifactId>
 
     <packaging>jar</packaging>
     <name>OpenNARS Logic Reasoner</name>
-    <url>https://github.com/opennars/opennars</url>
+
+    <parent>
+        <groupId>opennars</groupId>
+        <artifactId>nars</artifactId>
+        <version>${opennars.release}</version>
+    </parent>
 
 
     <scm>
@@ -40,28 +39,6 @@
 
         <plugins>
 
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19</version>
-                <configuration>
-                    <parallel>methods</parallel>
-                    <threadCount>3</threadCount>
-                    <!--<useUnlimitedThreads>true</useUnlimitedThreads>-->
-                    <reuseForks>true</reuseForks>
-                    <testFailureIgnore>true</testFailureIgnore>
-                    <!--<parallelOptimized>true</parallelOptimized>-->
-                    <useFile>true</useFile>
-                    <disableXmlReport>true</disableXmlReport>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <printSummary>true</printSummary>
-                    <runOrder>balanced</runOrder>
-                    <trimStackTrace>true</trimStackTrace>
-
-
-                </configuration>
-            </plugin>
             <!--<plugin>-->
             <!--<groupId>org.codehaus.mojo</groupId>-->
             <!--<artifactId>chronos-surefire-maven-plugin</artifactId>-->
@@ -283,15 +260,13 @@
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>nars_data</artifactId>
-            <version>1.7-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.bcel</groupId>-->
+            <!--<artifactId>bcel</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
 
         <dependency>
@@ -356,29 +331,29 @@
                     <linkXRef>true</linkXRef>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jxr-plugin</artifactId>-->
+                <!--<version>2.5</version>-->
+            <!--</plugin>-->
 
         </plugins>
     </reporting>
 
-    <repositories>
-        <repository>
-            <id>CSLTH</id>
-            <name>CS LTH maven repo</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <url>http://maven.cs.lth.se/content/repositories/public/</url>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>CSLTH</id>-->
+            <!--<name>CS LTH maven repo</name>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+            <!--</releases>-->
+            <!--<snapshots>-->
+                <!--<enabled>true</enabled>-->
+                <!--<updatePolicy>daily</updatePolicy>-->
+            <!--</snapshots>-->
+            <!--<url>http://maven.cs.lth.se/content/repositories/public/</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
 
 
 </project>

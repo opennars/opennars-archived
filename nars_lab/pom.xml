@@ -2,33 +2,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>nars_lab</artifactId>
+    <name>OpenNARS Lab</name>
+    <packaging>jar</packaging>
+
     <parent>
         <groupId>opennars</groupId>
-        <artifactId>opennars</artifactId>
-        <version>1.7-SNAPSHOT</version>
+        <artifactId>nars</artifactId>
+        <version>${opennars.release}</version>
     </parent>
 
 
-    <artifactId>nars_lab</artifactId>
-    <packaging>jar</packaging>
 
-    <name>OpenNARS Lab</name>
-    <url>https://github.com/opennars/opennars</url>
     <dependencies>
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>nars_util</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>nars_logic</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>nars_gui</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>opennars</groupId>-->
