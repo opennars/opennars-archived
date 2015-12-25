@@ -220,11 +220,11 @@ final public class Datatypes {
 	};
 	
 	static {
-		automata = new HashMap<String,Automaton>();
+		automata = new HashMap<>();
 		ws = Automaton.minimize(Automaton.makeCharSet(" \t\n\r").repeat());
-		unicodeblock_names = new HashSet<String>(Arrays.asList(unicodeblock_names_array));
-		unicodecategory_names = new HashSet<String>(Arrays.asList(unicodecategory_names_array));
-		xml_names = new HashSet<String>(Arrays.asList(xml_names_array));
+		unicodeblock_names = new HashSet<>(Arrays.asList(unicodeblock_names_array));
+		unicodecategory_names = new HashSet<>(Arrays.asList(unicodecategory_names_array));
+		xml_names = new HashSet<>(Arrays.asList(xml_names_array));
 	}
 	
 	private Datatypes() {}
@@ -432,21 +432,21 @@ final public class Datatypes {
 	/**
 	 * Checks whether the given string is the name of a Unicode block (see {@link #get(String)}).
 	 */
-	public static boolean isUnicodeBlockName(String name) {
+	static boolean isUnicodeBlockName(String name) {
 		return unicodeblock_names.contains(name);
 	}
 	
 	/**
 	 * Checks whether the given string is the name of a Unicode category (see {@link #get(String)}).
 	 */
-	public static boolean isUnicodeCategoryName(String name) {
+	static boolean isUnicodeCategoryName(String name) {
 		return unicodecategory_names.contains(name);
 	}
 	
 	/**
 	 * Checks whether the given string is the name of an XML / XML Schema automaton (see {@link #get(String)}).
 	 */
-	public static boolean isXMLName(String name) {
+	static boolean isXMLName(String name) {
 		return xml_names.contains(name);
 	}
 	
@@ -482,7 +482,7 @@ final public class Datatypes {
 		if (dir == null)
 			dir = "build";
 		try {
-			a.store((new FileOutputStream(dir + "/" + name + ".aut")));
+			a.store((new FileOutputStream(dir + '/' + name + ".aut")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -661,7 +661,7 @@ final public class Datatypes {
 		put(m, "BYTE", Automaton.makeMaxInteger("127"));
 		put(m, "BYTE_NEG", Automaton.makeMaxInteger("128"));
 		
-		Map<String,Automaton> u = new HashMap<String,Automaton>();
+		Map<String,Automaton> u = new HashMap<>();
 		u.putAll(t);
 		u.putAll(m);
 		String[] xsdexps2 = {
@@ -790,7 +790,7 @@ final public class Datatypes {
 	                                      .union(Automaton.makeChar('\udbff').concatenate(Automaton.makeCharRange('\udc00', '\udffd')))));
 
 		System.out.println("Building Unicode category automata...");
-		Map<String,Set<Integer>> categories = new HashMap<String,Set<Integer>>();
+		Map<String,Set<Integer>> categories = new HashMap<>();
 		try {
 			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new FileReader("src/Unicode.txt")));
 			st.resetSyntax();
@@ -805,14 +805,14 @@ final public class Datatypes {
 				String cat = st.sval;
 				Set<Integer> c = categories.get(cat);
 				if (c == null) {
-					c = new TreeSet<Integer>();
+					c = new TreeSet<>();
 					categories.put(cat, c);
 				}
 				c.add(cp);
 				String ccat = cat.substring(0, 1);
 				c = categories.get(ccat);
 				if (c == null) {
-					c = new TreeSet<Integer>();
+					c = new TreeSet<>();
 					categories.put(ccat, c);
 				}
 				c.add(cp);
@@ -821,10 +821,10 @@ final public class Datatypes {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		List<Automaton> assigned = new ArrayList<Automaton>();
+		Collection<Automaton> assigned = new ArrayList<>();
 		for (Map.Entry<String,Set<Integer>> me : categories.entrySet()) {
-			List<Automaton> la1 = new ArrayList<Automaton>();
-			List<Automaton> la2 = new ArrayList<Automaton>();
+			Collection<Automaton> la1 = new ArrayList<>();
+			Collection<Automaton> la2 = new ArrayList<>();
 			for (Integer cp : me.getValue()) {
 				la1.add(makeCodePoint(cp));
 				if (la1.size() == 50) {
@@ -852,7 +852,7 @@ final public class Datatypes {
 	}
 
 	private static Map<String,Automaton> buildMap(String[] exps) {
-		Map<String,Automaton> map = new HashMap<String,Automaton>();
+		Map<String,Automaton> map = new HashMap<>();
 		int i = 0;
 		while (i + 1 < exps.length) 
 			put(map, exps[i++], new RegExp(exps[i++]).toAutomaton(map));

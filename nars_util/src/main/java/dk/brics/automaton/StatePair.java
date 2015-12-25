@@ -33,10 +33,10 @@ package dk.brics.automaton;
  * Pair of states.
  * @author Anders M&oslash;ller &lt;<a href="mailto:amoeller@cs.au.dk">amoeller@cs.au.dk</a>&gt;
  */
-public class StatePair {
+final class StatePair {
 	State s;
-	State s1;
-	State s2;
+	final State s1;
+	final State s2;
 	
 	StatePair(State s, State s1, State s2) {
 		this.s = s;
@@ -49,7 +49,7 @@ public class StatePair {
 	 * @param s1 first state
 	 * @param s2 second state
 	 */
-	public StatePair(State s1, State s2) {
+	StatePair(State s1, State s2) {
 		this.s1 = s1;
 		this.s2 = s2;
 	}

@@ -34,7 +34,8 @@ import java.io.IOException;
 /**
  * Automaton provider for <code>RegExp.</code>{@link RegExp#toAutomaton(AutomatonProvider)}
  */
-public interface AutomatonProvider {
+@FunctionalInterface
+interface AutomatonProvider {
 	
 	/**
 	 * Returns automaton of the given name.
@@ -42,5 +43,5 @@ public interface AutomatonProvider {
 	 * @return automaton
 	 * @throws IOException if errors occur
 	 */
-	public Automaton getAutomaton(String name) throws IOException;
+	Automaton getAutomaton(String name);
 }

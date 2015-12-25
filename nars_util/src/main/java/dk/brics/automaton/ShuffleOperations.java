@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * Automata operations involving shuffling.
  */
-final public class ShuffleOperations {
+final class ShuffleOperations {
 	
 	private ShuffleOperations() {}
 
@@ -55,8 +55,8 @@ final public class ShuffleOperations {
 		Transition[][] transitions1 = Automaton.getSortedTransitions(a1.getStates());
 		Transition[][] transitions2 = Automaton.getSortedTransitions(a2.getStates());
 		Automaton c = new Automaton();
-		LinkedList<StatePair> worklist = new LinkedList<StatePair>();
-		HashMap<StatePair, StatePair> newstates = new HashMap<StatePair, StatePair>();
+		Deque<StatePair> worklist = new LinkedList<>();
+		Map<StatePair, StatePair> newstates = new HashMap<>();
 		State s = new State();
 		c.initial = s;
 		StatePair p = new StatePair(s, a1.initial, a2.initial);
@@ -66,8 +66,8 @@ final public class ShuffleOperations {
 			p = worklist.removeFirst();
 			p.s.accept = p.s1.accept && p.s2.accept;
 			Transition[] t1 = transitions1[p.s1.number];
-			for (int n1 = 0; n1 < t1.length; n1++) {
-				StatePair q = new StatePair(t1[n1].to, p.s2);
+			for (Transition aT1 : t1) {
+				StatePair q = new StatePair(aT1.to, p.s2);
 				StatePair r = newstates.get(q);
 				if (r == null) {
 					q.s = new State();
@@ -75,11 +75,11 @@ final public class ShuffleOperations {
 					newstates.put(q, q);
 					r = q;
 				}
-				p.s.transitions.add(new Transition(t1[n1].min, t1[n1].max, r.s));
+				p.s.transitions.add(new Transition(aT1.min, aT1.max, r.s));
 			}
 			Transition[] t2 = transitions2[p.s2.number];
-			for (int n2 = 0; n2 < t2.length; n2++) {
-				StatePair q = new StatePair(p.s1, t2[n2].to);
+			for (Transition aT2 : t2) {
+				StatePair q = new StatePair(p.s1, aT2.to);
 				StatePair r = newstates.get(q);
 				if (r == null) {
 					q.s = new State();
@@ -87,7 +87,7 @@ final public class ShuffleOperations {
 					newstates.put(q, q);
 					r = q;
 				}
-				p.s.transitions.add(new Transition(t2[n2].min, t2[n2].max, r.s));
+				p.s.transitions.add(new Transition(aT2.min, aT2.max, r.s));
 			}
 		}
 		c.deterministic = false;
@@ -107,7 +107,7 @@ final public class ShuffleOperations {
 	 * Complexity: proportional to the product of the numbers of states (if <code>a</code>
 	 * is already deterministic).
 	 */ 
-	public static String shuffleSubsetOf(Collection<Automaton> ca, Automaton a, Character suspend_shuffle, Character resume_shuffle) {
+	static String shuffleSubsetOf(Collection<Automaton> ca, Automaton a, Character suspend_shuffle, Character resume_shuffle) {
 		if (ca.size() == 0)
 			return null;
 		if (ca.size() == 1) {
@@ -127,10 +127,10 @@ final public class ShuffleOperations {
 		for (Automaton a1 : ca)
 			ca_transitions[i++] = Automaton.getSortedTransitions(a1.getStates());
 		Transition[][] a_transitions = Automaton.getSortedTransitions(a.getStates());
-		TransitionComparator tc = new TransitionComparator(false);
+		Comparator tc = TransitionComparator.toFirstFalse;
 		ShuffleConfiguration init = new ShuffleConfiguration(ca, a);
-		LinkedList<ShuffleConfiguration> pending = new LinkedList<ShuffleConfiguration>();
-		Set<ShuffleConfiguration> visited = new HashSet<ShuffleConfiguration>();
+		LinkedList<ShuffleConfiguration> pending = new LinkedList<>();
+		Set<ShuffleConfiguration> visited = new HashSet<>();
 		pending.add(init);
 		visited.add(init);
 		while (!pending.isEmpty()) {
@@ -159,7 +159,7 @@ final public class ShuffleOperations {
 				if (c.shuffle_suspended)
 					i1 = c.suspended1;
 				loop: for (Transition t1 : ca_transitions[i1][c.ca_states[i1].number]) {
-					List<Transition> lt = new ArrayList<Transition>();
+					List<Transition> lt = new ArrayList<>();
 					int j = Arrays.binarySearch(ta2, t1, tc);
 					if (j < 0)
 						j = -j - 1;
@@ -182,12 +182,12 @@ final public class ShuffleOperations {
 					Transition[] at = lt.toArray(new Transition[lt.size()]);
 					Arrays.sort(at, tc);
 					char min = t1.min;
-					for (int k = 0; k < at.length; k++) {
-						if (at[k].min > min)
+					for (Transition anAt : at) {
+						if (anAt.min > min)
 							break;
-						if (at[k].max >= t1.max)
+						if (anAt.max >= t1.max)
 							continue loop;
-						min = (char)(at[k].max + 1);
+						min = (char) (anAt.max + 1);
 					}
 					ShuffleConfiguration nc = new ShuffleConfiguration(c, i1, t1.to, min);
 					StringBuilder sb = new StringBuilder();
@@ -255,21 +255,21 @@ final public class ShuffleOperations {
 		}
 	}
 
-	static class ShuffleConfiguration {
+	private static class ShuffleConfiguration {
 		
-		ShuffleConfiguration prev;
-		State[] ca_states;
-		State a_state;
+		private ShuffleConfiguration prev;
+		private State[] ca_states;
+		private State a_state;
 		char min;
-		int hash;
-		boolean shuffle_suspended;
-		boolean surrogate;
-		int suspended1;
+		private int hash;
+		private boolean shuffle_suspended;
+		private boolean surrogate;
+		private int suspended1;
 		
 		@SuppressWarnings("unused")
 		private ShuffleConfiguration() {}
 		
-		ShuffleConfiguration(Collection<Automaton> ca, Automaton a) {
+		private ShuffleConfiguration(Collection<Automaton> ca, Automaton a) {
 			ca_states = new State[ca.size()];
 			int i = 0;
 			for (Automaton a1 : ca)
@@ -278,7 +278,7 @@ final public class ShuffleOperations {
 			computeHash();
 		}
 		
-		ShuffleConfiguration(ShuffleConfiguration c, int i1, State s1, char min) {
+		private ShuffleConfiguration(ShuffleConfiguration c, int i1, State s1, char min) {
 			prev = c;
 			ca_states = c.ca_states.clone();
 			a_state = c.a_state;
@@ -287,7 +287,7 @@ final public class ShuffleOperations {
 			computeHash();
 		}
 
-		ShuffleConfiguration(ShuffleConfiguration c, int i1, State s1, State s2, char min) {
+		private ShuffleConfiguration(ShuffleConfiguration c, int i1, State s1, State s2, char min) {
 			prev = c;
 			ca_states = c.ca_states.clone();
 			a_state = c.a_state;
@@ -320,12 +320,13 @@ final public class ShuffleOperations {
 		}
 		
 		private void computeHash() {
-			hash = 0;
-			for (int i = 0; i < ca_states.length; i++)
-				hash ^= ca_states[i].hashCode();
+			int hash = 0;
+			State[] c = this.ca_states;
+			for (State aC : c) hash ^= aC.hashCode();
 			hash ^= a_state.hashCode() * 100;
 			if (shuffle_suspended || surrogate)
 				hash += suspended1;
+			this.hash = hash;
 		}
 	}
 }

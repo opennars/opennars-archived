@@ -31,7 +31,10 @@
 package dk.brics.automaton;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /** 
  * <tt>Automaton</tt> state. 
@@ -39,28 +42,27 @@ import java.util.*;
  */
 public class State implements Serializable, Comparable<State> {
 	
-	static final long serialVersionUID = 30001;
-	
+	private static int next_id = 0;
+
 	boolean accept;
 	Set<Transition> transitions;
 	Object info;
 	int number;
-	int id;
-	static int next_id;
-	
+	private final int id;
+
 	/** 
 	 * Constructs a new state. Initially, the new state is a reject state. 
 	 */
 	public State() {
-		resetTransitions();
 		id = next_id++;
+		resetTransitions();
 	}
 	
 	/** 
 	 * Resets transition set. 
 	 */
 	final void resetTransitions() {
-		transitions = new HashSet<Transition>();
+		transitions = new LinkedHashSet<>();
 	}
 	
 	/** 
@@ -76,7 +78,7 @@ public class State implements Serializable, Comparable<State> {
 	 * Adds an outgoing transition.
 	 * @param t transition
 	 */
-	public void addTransition(Transition t)	{
+	void addTransition(Transition t)	{
 		transitions.add(t);
 	}
 	
@@ -144,14 +146,14 @@ public class State implements Serializable, Comparable<State> {
 	void addEpsilon(State to) {
 		if (to.accept)
 			accept = true;
-		for (Transition t : to.transitions)
-			transitions.add(t);
+
+		to.transitions.forEach( transitions::add );
 	}
 	
 	/** Returns transitions sorted by (min, reverse max, to) or (to, min, reverse max) */
 	Transition[] getSortedTransitionArray(boolean to_first) {
 		Transition[] e = transitions.toArray(new Transition[transitions.size()]);
-		Arrays.sort(e, new TransitionComparator(to_first));
+		Arrays.sort(e, to_first ? TransitionComparator.toFirstTrue : TransitionComparator.toFirstFalse);
 		return e;
 	}
 	
@@ -160,8 +162,8 @@ public class State implements Serializable, Comparable<State> {
 	 * @param to_first if true, order by (to, min, reverse max); otherwise (min, reverse max, to)
 	 * @return transition list
 	 */
-	public List<Transition> getSortedTransitions(boolean to_first)	{
-		return Arrays.asList(getSortedTransitionArray(to_first));
+	Transition[] getSortedTransitions(boolean to_first)	{
+		return getSortedTransitionArray(to_first);
 	}
 	
 	/** 
@@ -177,11 +179,11 @@ public class State implements Serializable, Comparable<State> {
 		else
 			b.append(" [reject]: ");
 		if(info != null) {
-			b.append(info.toString());
+			b.append(info);
 		}
-		b.append("\n");
+		b.append('\n');
 		for (Transition t : transitions)
-			b.append("  ").append(t.toString()).append("\n");
+			b.append("  ").append(t).append('\n');
 		return b.toString();
 	}
 	
@@ -191,22 +193,22 @@ public class State implements Serializable, Comparable<State> {
 	 */
 	@Override
 	public int compareTo(State s) {
-		return s.id - id;
+		return Integer.compare(s.id, id);
 	}
 
-	/**
-	 * See {@link Object#equals(Object)}.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	/**
-	 * See {@link Object#hashCode()}.
-	 */
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+//	/**
+//	 * See {@link Object#equals(Object)}.
+//	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		return super.equals(obj);
+//	}
+//
+//	/**
+//	 * See {@link Object#hashCode()}.
+//	 */
+//	@Override
+//	public int hashCode() {
+//		return super.hashCode();
+//	}
 }

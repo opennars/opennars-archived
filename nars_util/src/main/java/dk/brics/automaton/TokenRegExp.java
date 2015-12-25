@@ -39,9 +39,9 @@ import java.util.Map;
  * 
  * @author Kevin Krumwiede
  */
-public class TokenRegExp extends RegExp {
+class TokenRegExp extends RegExp {
 	
-	protected final Object info;
+	private final Object info;
 
 	public TokenRegExp(String s, int syntax_flags, Object info)
 			throws IllegalArgumentException {
@@ -49,7 +49,7 @@ public class TokenRegExp extends RegExp {
 		this.info = info;
 	}
 
-	public TokenRegExp(String s, Object info)
+	TokenRegExp(String s, Object info)
 			throws IllegalArgumentException {
 		super(s);
 		this.info = info;
@@ -99,7 +99,7 @@ public class TokenRegExp extends RegExp {
 		return a;
 	}
 	
-	protected void setInfo(Automaton a) {
+	private void setInfo(Automaton a) {
 		if(info != null) {
 			for(State s : a.getAcceptStates()) {
 				s.setInfo(info);

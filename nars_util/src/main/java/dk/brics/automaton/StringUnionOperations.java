@@ -1,9 +1,6 @@
 package dk.brics.automaton;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
+import java.util.*;
 
 /**
  * Operations for building minimal deterministic automata from sets of strings. 
@@ -11,27 +8,24 @@ import java.util.IdentityHashMap;
  * 
  * @author Dawid Weiss
  */
-final public class StringUnionOperations {
+final class StringUnionOperations {
 
 	/**
 	 * Lexicographic order of input sequences.
 	 */
-	public final static Comparator<CharSequence> LEXICOGRAPHIC_ORDER = new Comparator<CharSequence>() {
-		@Override
-		public int compare(CharSequence s1, CharSequence s2) {
-			final int lens1 = s1.length();
-			final int lens2 = s2.length();
-			final int max = Math.min(lens1, lens2);
+	final static Comparator<CharSequence> LEXICOGRAPHIC_ORDER = (s1, s2) -> {
+        final int lens1 = s1.length();
+        final int lens2 = s2.length();
+        final int max = Math.min(lens1, lens2);
 
-			for (int i = 0; i < max; i++) {
-				final char c1 = s1.charAt(i);
-				final char c2 = s2.charAt(i);
-				if (c1 != c2)
-					return c1 - c2;
-			}
-			return lens1 - lens2;
-		}
-	};
+        for (int i = 0; i < max; i++) {
+            final char c1 = s1.charAt(i);
+            final char c2 = s2.charAt(i);
+            if (c1 != c2)
+                return Character.compare(c1, c2);
+        }
+        return Integer.compare(lens1, lens2);
+    };
 
 	/**
 	 * State with <code>char</code> labels on transitions.
@@ -48,7 +42,7 @@ final public class StringUnionOperations {
 		 * Labels of outgoing transitions. Indexed identically to {@link #states}.
 		 * Labels must be sorted lexicographically.
 		 */
-		char[] labels = NO_LABELS;
+		private char[] labels = NO_LABELS;
 
 		/**
 		 * States reachable from outgoing transitions. Indexed identically to
@@ -60,14 +54,14 @@ final public class StringUnionOperations {
 		 * <code>true</code> if this state corresponds to the end of at least one
 		 * input sequence.
 		 */
-		boolean is_final;
+		private boolean is_final;
 
 		/**
 		 * Returns the target state of a transition leaving this state and labeled
 		 * with <code>label</code>. If no such transition exists, returns
 		 * <code>null</code>.
 		 */
-		public State getState(char label) {
+		private State getState(char label) {
 			final int index = Arrays.binarySearch(labels, label);
 			return index >= 0 ? states[index] : null; 
 		}
@@ -110,7 +104,7 @@ final public class StringUnionOperations {
 		 * Return <code>true</code> if this state has any children (outgoing
 		 * transitions).
 		 */
-		public boolean hasChildren() {
+		private boolean hasChildren() {
 			return labels.length > 0;
 		}
 
@@ -149,7 +143,7 @@ final public class StringUnionOperations {
 		 * Create a new outgoing transition labeled <code>label</code> and return
 		 * the newly created target state for this transition.
 		 */
-		State newState(char label) {
+		private State newState(char label) {
 			assert Arrays.binarySearch(labels, label) < 0 : "State already has transition labeled: "
 				+ label;
 
@@ -163,7 +157,7 @@ final public class StringUnionOperations {
 		/**
 		 * Return the most recent transitions's target state.
 		 */
-		State lastChild() {
+		private State lastChild() {
 			assert hasChildren() : "No outgoing transitions.";
 			return states[states.length - 1];
 		}
@@ -172,7 +166,7 @@ final public class StringUnionOperations {
 		 * Return the associated state if the most recent transition
 		 * is labeled with <code>label</code>.
 		 */
-		State lastChild(char label) {
+		private State lastChild(char label) {
 			final int index = labels.length - 1;
 			State s = null;
 			if (index >= 0 && labels[index] == label) {
@@ -186,7 +180,7 @@ final public class StringUnionOperations {
 		 * Replace the last added outgoing transition's target state with the given
 		 * state.
 		 */
-		void replaceLastChild(State state) {
+		private void replaceLastChild(State state) {
 			assert hasChildren() : "No outgoing transitions.";
 			states[states.length - 1] = state;
 		}
@@ -228,12 +222,12 @@ final public class StringUnionOperations {
 	/**
 	 * "register" for state interning.
 	 */
-	private HashMap<State, State> register = new HashMap<State, State>();
+	private Map<State, State> register = new HashMap<>();
 
 	/**
 	 * Root automaton state.
 	 */
-	private State root = new State();
+	private final State root = new State();
 
 	/**
 	 * Previous sequence added to the automaton in {@link #add(CharSequence)}.
@@ -245,12 +239,12 @@ final public class StringUnionOperations {
 	 * lexicographically larger or equal compared to any previous sequences
 	 * added to this automaton (the input must be sorted).
 	 */
-	public void add(CharSequence current) {
-		assert register != null : "Automaton already built.";
-		assert current.length() > 0 : "Input sequences must not be empty.";
-		assert previous == null || LEXICOGRAPHIC_ORDER.compare(previous, current) <= 0 : 
-			"Input must be sorted: " + previous + " >= " + current;
-		assert setPrevious(current);
+	private void add(CharSequence current) {
+//		assert register != null : "Automaton already built.";
+//		assert current.length() > 0 : "Input sequences must not be empty.";
+//		assert previous == null || LEXICOGRAPHIC_ORDER.compare(previous, current) <= 0 :
+//			"Input must be sorted: " + previous + " >= " + current;
+//		assert setPrevious(current);
 
 		// Descend in the automaton (find matching prefix). 
 		int pos = 0, max = current.length();
@@ -272,7 +266,7 @@ final public class StringUnionOperations {
 	 * 
 	 * @return Root automaton state.
 	 */
-	public State complete() {
+	private State complete() {
 		if (this.register == null)
 			throw new IllegalStateException();
 

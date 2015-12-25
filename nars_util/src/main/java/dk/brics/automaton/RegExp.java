@@ -29,7 +29,6 @@
 
 package dk.brics.automaton;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -101,7 +100,7 @@ import java.util.*;
  * */
 public class RegExp {
 	
-	enum Kind {
+	private enum Kind {
 		REGEXP_UNION,
 		REGEXP_CONCATENATION,
 		REGEXP_INTERSECTION,
@@ -123,37 +122,37 @@ public class RegExp {
 	/** 
 	 * Syntax flag, enables intersection (<tt>&amp;</tt>). 
 	 */
-	public static final int INTERSECTION = 0x0001;
+	private static final int INTERSECTION = 0x0001;
 	
 	/** 
 	 * Syntax flag, enables complement (<tt>~</tt>). 
 	 */
-	public static final int COMPLEMENT = 0x0002;
+	private static final int COMPLEMENT = 0x0002;
 	
 	/** 
 	 * Syntax flag, enables empty language (<tt>#</tt>). 
 	 */
-	public static final int EMPTY = 0x0004;
+	private static final int EMPTY = 0x0004;
 	
 	/** 
 	 * Syntax flag, enables anystring (<tt>@</tt>). 
 	 */
-	public static final int ANYSTRING = 0x0008;
+	private static final int ANYSTRING = 0x0008;
 	
 	/** 
 	 * Syntax flag, enables named automata (<tt>&lt;</tt>identifier<tt>&gt;</tt>). 
 	 */
-	public static final int AUTOMATON = 0x0010;
+	private static final int AUTOMATON = 0x0010;
 	
 	/** 
 	 * Syntax flag, enables numerical intervals (<tt>&lt;<i>n</i>-<i>m</i>&gt;</tt>). 
 	 */
-	public static final int INTERVAL = 0x0020;
+	private static final int INTERVAL = 0x0020;
 	
 	/** 
 	 * Syntax flag, enables all optional regexp syntax. 
 	 */
-	public static final int ALL = 0xffff;
+	private static final int ALL = 0xffff;
 	
 	/** 
 	 * Syntax flag, enables no optional regexp syntax. 
@@ -161,16 +160,17 @@ public class RegExp {
 	public static final int NONE = 0x0000;
 	
 
-	Kind kind;
-	RegExp exp1, exp2;
-	String s;
-	char c;
-	int min, max, digits;
-	char from, to;
+	private Kind kind;
+	private RegExp exp1, exp2;
+	private String s;
+	private char c;
+	private int min, max, digits;
+	private char from;
+	private char to;
 	
-	String b;
-	int flags;
-	int pos;
+	private String b;
+	private int flags;
+	private int pos;
 	
 	RegExp() {}
 	
@@ -190,7 +190,7 @@ public class RegExp {
 	 * @param syntax_flags boolean 'or' of optional syntax constructs to be enabled
 	 * @exception IllegalArgumentException if an error occured while parsing the regular expression
 	 */
-	public RegExp(String s, int syntax_flags) throws IllegalArgumentException {
+	RegExp(String s, int syntax_flags) throws IllegalArgumentException {
 		b = s;
 		flags = syntax_flags;
 		RegExp e;
@@ -238,7 +238,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that is not available from the automaton provider
 	 */
-	public Automaton toAutomaton(AutomatonProvider automaton_provider) throws IllegalArgumentException {
+	Automaton toAutomaton(AutomatonProvider automaton_provider) throws IllegalArgumentException {
 		return toAutomaton(null, automaton_provider, true);
 	}
 		
@@ -250,7 +250,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that is not available from the automaton provider
 	 */
-	public Automaton toAutomaton(AutomatonProvider automaton_provider, boolean minimize) throws IllegalArgumentException {
+	Automaton toAutomaton(AutomatonProvider automaton_provider, boolean minimize) throws IllegalArgumentException {
 		return toAutomaton(null, automaton_provider, minimize);
 	}
 		
@@ -276,7 +276,7 @@ public class RegExp {
 	 * @exception IllegalArgumentException if this regular expression uses
 	 *   a named identifier that does not occur in the automaton map
 	 */
-	public Automaton toAutomaton(Map<String, Automaton> automata, boolean minimize) throws IllegalArgumentException {
+	Automaton toAutomaton(Map<String, Automaton> automata, boolean minimize) throws IllegalArgumentException {
 		return toAutomaton(automata, null, minimize);
 	}
 	
@@ -313,14 +313,14 @@ public class RegExp {
 		Automaton a = null;
 		switch (kind) {
 		case REGEXP_UNION:
-			list = new ArrayList<Automaton>();
+			list = new ArrayList<>();
 			findLeaves(exp1, Kind.REGEXP_UNION, list, automata, automaton_provider, minimize);
 			findLeaves(exp2, Kind.REGEXP_UNION, list, automata, automaton_provider, minimize);
 			a = BasicOperations.union(list);
 			a.minimize();
 			break;
 		case REGEXP_CONCATENATION:
-			list = new ArrayList<Automaton>();
+			list = new ArrayList<>();
 			findLeaves(exp1, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider, minimize);
 			findLeaves(exp2, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider, minimize);
 			a = BasicOperations.concatenate(list);
@@ -372,14 +372,11 @@ public class RegExp {
 			Automaton aa = null;
 			if (automata != null)
 				aa = automata.get(s);
-			if (aa == null && automaton_provider != null)
-				try {
-					aa = automaton_provider.getAutomaton(s);
-				} catch (IOException e) {
-					throw new IllegalArgumentException(e);
-				}
+			if (aa == null && automaton_provider != null) {
+                aa = automaton_provider.getAutomaton(s);
+            }
 			if (aa == null)
-				throw new IllegalArgumentException("'" + s + "' not found");
+				throw new IllegalArgumentException('\'' + s + "' not found");
 			a = aa.clone(); // always clone here (ignore allow_mutate)
 			break;
 		case REGEXP_INTERVAL:
@@ -389,9 +386,9 @@ public class RegExp {
 		return a;
 	}
 
-	private void findLeaves(RegExp exp, Kind kind, List<Automaton> list, Map<String, Automaton> automata, 
-			AutomatonProvider automaton_provider,
-			boolean minimize) {
+	private static void findLeaves(RegExp exp, Kind kind, List<Automaton> list, Map<String, Automaton> automata,
+								   AutomatonProvider automaton_provider,
+								   boolean minimize) {
 		if (exp.kind == kind) {
 			findLeaves(exp.exp1, kind, list, automata, automaton_provider, minimize);
 			findLeaves(exp.exp2, kind, list, automata, automaton_provider, minimize);
@@ -407,84 +404,84 @@ public class RegExp {
 		return toStringBuilder(new StringBuilder()).toString();
 	}
 
-	StringBuilder toStringBuilder(StringBuilder b) {
+	private CharSequence toStringBuilder(StringBuilder b) {
 		switch (kind) {
 		case REGEXP_UNION:
-			b.append("(");
+			b.append('(');
 			exp1.toStringBuilder(b);
-			b.append("|");
+			b.append('|');
 			exp2.toStringBuilder(b);
-			b.append(")");
+			b.append(')');
 			break;
 		case REGEXP_CONCATENATION:
 			exp1.toStringBuilder(b);
 			exp2.toStringBuilder(b);
 			break;
 		case REGEXP_INTERSECTION:
-			b.append("(");
+			b.append('(');
 			exp1.toStringBuilder(b);
-			b.append("&");
+			b.append('&');
 			exp2.toStringBuilder(b);
-			b.append(")");
+			b.append(')');
 			break;
 		case REGEXP_OPTIONAL:
-			b.append("(");
+			b.append('(');
 			exp1.toStringBuilder(b);
 			b.append(")?");
 			break;
 		case REGEXP_REPEAT:
-			b.append("(");
+			b.append('(');
 			exp1.toStringBuilder(b);
 			b.append(")*");
 			break;
 		case REGEXP_REPEAT_MIN:
-			b.append("(");
+			b.append('(');
 			exp1.toStringBuilder(b);
 			b.append("){").append(min).append(",}");
 			break;
 		case REGEXP_REPEAT_MINMAX:
-			b.append("(");
+			b.append('(');
 			exp1.toStringBuilder(b);
-			b.append("){").append(min).append(",").append(max).append("}");
+			b.append("){").append(min).append(',').append(max).append('}');
 			break;
 		case REGEXP_COMPLEMENT:
 			b.append("~(");
 			exp1.toStringBuilder(b);
-			b.append(")");
+			b.append(')');
 			break;
 		case REGEXP_CHAR:
-			b.append("\\").append(c);
+			b.append('\\').append(c);
 			break;
 		case REGEXP_CHAR_RANGE:
-			b.append("[\\").append(from).append("-\\").append(to).append("]");
+			b.append("[\\").append(from).append("-\\").append(to).append(']');
 			break;
 		case REGEXP_ANYCHAR:
-			b.append(".");
+			b.append('.');
 			break;
 		case REGEXP_EMPTY:
-			b.append("#");
+			b.append('#');
 			break;
 		case REGEXP_STRING:
-			b.append("\"").append(s).append("\"");
+			b.append('"').append(s).append('"');
 			break;
 		case REGEXP_ANYSTRING:
-			b.append("@");
+			b.append('@');
 			break;
 		case REGEXP_AUTOMATON:
-			b.append("<").append(s).append(">");
+			b.append('<').append(s).append('>');
 			break;
 		case REGEXP_INTERVAL:
 			String s1 = Integer.toString(min);
 			String s2 = Integer.toString(max);
-			b.append("<");
+			b.append('<');
 			if (digits > 0)
 				for (int i = s1.length(); i < digits; i++)
 					b.append('0');
-			b.append(s1).append("-");
+			b.append(s1).append('-');
 			if (digits > 0)
 				for (int i = s2.length(); i < digits; i++)
 					b.append('0');
-			b.append(s2).append(">");
+			b.append(s2).append('>');
 			break;
 		}
 		return b;
@@ -494,12 +491,12 @@ public class RegExp {
 	 * Returns set of automaton identifiers that occur in this regular expression. 
 	 */
 	public Set<String> getIdentifiers() {
-		HashSet<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		getIdentifiers(set);
 		return set;
 	}
 
-	void getIdentifiers(Set<String> set) {
+	private void getIdentifiers(Set<String> set) {
 		switch (kind) {
 		case REGEXP_UNION:
 		case REGEXP_CONCATENATION:
@@ -521,7 +518,7 @@ public class RegExp {
 		}
 	}
 
-	static RegExp makeUnion(RegExp exp1, RegExp exp2) {
+	private static RegExp makeUnion(RegExp exp1, RegExp exp2) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_UNION;
 		r.exp1 = exp1;
@@ -529,7 +526,7 @@ public class RegExp {
 		return r;
 	}
 
-	static RegExp makeConcatenation(RegExp exp1, RegExp exp2) {
+	private static RegExp makeConcatenation(RegExp exp1, RegExp exp2) {
 		if ((exp1.kind == Kind.REGEXP_CHAR || exp1.kind == Kind.REGEXP_STRING) && 
 			(exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
 			return makeString(exp1, exp2);
@@ -565,7 +562,7 @@ public class RegExp {
 		return makeString(b.toString());
 	}
 
-	static RegExp makeIntersection(RegExp exp1, RegExp exp2) {
+	private static RegExp makeIntersection(RegExp exp1, RegExp exp2) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_INTERSECTION;
 		r.exp1 = exp1;
@@ -573,21 +570,21 @@ public class RegExp {
 		return r;
 	}
 
-	static RegExp makeOptional(RegExp exp) {
+	private static RegExp makeOptional(RegExp exp) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_OPTIONAL;
 		r.exp1 = exp;
 		return r;
 	}
 
-	static RegExp makeRepeat(RegExp exp) {
+	private static RegExp makeRepeat(RegExp exp) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_REPEAT;
 		r.exp1 = exp;
 		return r;
 	}
 
-	static RegExp makeRepeat(RegExp exp, int min) {
+	private static RegExp makeRepeat(RegExp exp, int min) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_REPEAT_MIN;
 		r.exp1 = exp;
@@ -595,7 +592,7 @@ public class RegExp {
 		return r;
 	}
 
-	static RegExp makeRepeat(RegExp exp, int min, int max) {
+	private static RegExp makeRepeat(RegExp exp, int min, int max) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_REPEAT_MINMAX;
 		r.exp1 = exp;
@@ -604,21 +601,21 @@ public class RegExp {
 		return r;
 	}
 
-	static RegExp makeComplement(RegExp exp) {
+	private static RegExp makeComplement(RegExp exp) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_COMPLEMENT;
 		r.exp1 = exp;
 		return r;
 	}
 
-	static RegExp makeChar(char c) {
+	private static RegExp makeChar(char c) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_CHAR;
 		r.c = c;
 		return r;
 	}
 
-	static RegExp makeCharRange(char from, char to) {
+	private static RegExp makeCharRange(char from, char to) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_CHAR_RANGE;
 		r.from = from;
@@ -626,39 +623,39 @@ public class RegExp {
 		return r;
 	}
 
-	static RegExp makeAnyChar() {
+	private static RegExp makeAnyChar() {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_ANYCHAR;
 		return r;
 	}
 
-	static RegExp makeEmpty() {
+	private static RegExp makeEmpty() {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_EMPTY;
 		return r;
 	}
 
-	static RegExp makeString(String s) {
+	private static RegExp makeString(String s) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_STRING;
 		r.s = s;
 		return r;
 	}
 
-	static RegExp makeAnyString() {
+	private static RegExp makeAnyString() {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_ANYSTRING;
 		return r;
 	}
 
-	static RegExp makeAutomaton(String s) {
+	private static RegExp makeAutomaton(String s) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_AUTOMATON;
 		r.s = s;
 		return r;
 	}
 
-	static RegExp makeInterval(int min, int max, int digits) {
+	private static RegExp makeInterval(int min, int max, int digits) {
 		RegExp r = new RegExp();
 		r.kind = Kind.REGEXP_INTERVAL;
 		r.min = min;
@@ -695,28 +692,28 @@ public class RegExp {
 		return (flags & flag) != 0;
 	}
 
-	final RegExp parseUnionExp() throws IllegalArgumentException {
+	private RegExp parseUnionExp() throws IllegalArgumentException {
 		RegExp e = parseInterExp();
 		if (match('|'))
 			e = makeUnion(e, parseUnionExp());
 		return e;
 	}
 
-	final RegExp parseInterExp() throws IllegalArgumentException {
+	private RegExp parseInterExp() throws IllegalArgumentException {
 		RegExp e = parseConcatExp();
 		if (check(INTERSECTION) && match('&'))
 			e = makeIntersection(e, parseInterExp());
 		return e;
 	}
 
-	final RegExp parseConcatExp() throws IllegalArgumentException {
+	private RegExp parseConcatExp() throws IllegalArgumentException {
 		RegExp e = parseRepeatExp();
 		if (more() && !peek(")|") && (!check(INTERSECTION) || !peek("&")))
 			e = makeConcatenation(e, parseConcatExp());
 		return e;
 	}
 
-	final RegExp parseRepeatExp() throws IllegalArgumentException {
+	private RegExp parseRepeatExp() throws IllegalArgumentException {
 		RegExp e = parseComplExp();
 		while (peek("?*+{")) {
 			if (match('?'))
@@ -752,14 +749,14 @@ public class RegExp {
 		return e;
 	}
 
-	final RegExp parseComplExp() throws IllegalArgumentException {
+	private RegExp parseComplExp() throws IllegalArgumentException {
 		if (check(COMPLEMENT) && match('~'))
 			return makeComplement(parseComplExp());
 		else
 			return parseCharClassExp();
 	}
 
-	final RegExp parseCharClassExp() throws IllegalArgumentException {
+	private RegExp parseCharClassExp() throws IllegalArgumentException {
 		if (match('[')) {
 			boolean negate = false;
 			if (match('^'))
@@ -774,14 +771,14 @@ public class RegExp {
 			return parseSimpleExp();
 	}
 
-	final RegExp parseCharClasses() throws IllegalArgumentException {
+	private RegExp parseCharClasses() throws IllegalArgumentException {
 		RegExp e = parseCharClass();
 		while (more() && !peek("]"))
 			e = makeUnion(e, parseCharClass());
 		return e;
 	}
 
-	final RegExp parseCharClass() throws IllegalArgumentException {
+	private RegExp parseCharClass() throws IllegalArgumentException {
 		char c = parseCharExp();
 		if (match('-'))
 			if (peek("]"))
@@ -792,7 +789,7 @@ public class RegExp {
 			return makeChar(c);
 	}
 
-	final RegExp parseSimpleExp() throws IllegalArgumentException {
+	private RegExp parseSimpleExp() throws IllegalArgumentException {
 		if (match('.'))
 			return makeAnyChar();
 		else if (check(EMPTY) && match('#'))
@@ -854,7 +851,7 @@ public class RegExp {
 			return makeChar(parseCharExp());
 	}
 
-	final char parseCharExp() throws IllegalArgumentException {
+	private char parseCharExp() throws IllegalArgumentException {
 		match('\\');
 		return next();
 	}

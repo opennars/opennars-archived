@@ -35,17 +35,17 @@ package dk.brics.automaton;
  * @author Kevin Krumwiede
  * @see TokenAutomaton#find(CharSequence, int, boolean, TokenDetails)
  */
-public class TokenDetails {
+class TokenDetails {
 	/**
 	 * Indicates that no match is possible.
 	 */
-	public static final Object NO_MATCH = "NO_MATCH";
+	static final Object NO_MATCH = "NO_MATCH";
 	
 	/**
 	 * Indicates that a match extends to the end of the character sequence and
 	 * could be longer.
 	 */
-	public static final Object UNDERFLOW = "UNDERFLOW";
+	static final Object UNDERFLOW = "UNDERFLOW";
 	
 	/**
 	 * The character sequence containing the token.

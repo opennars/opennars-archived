@@ -39,7 +39,7 @@ import java.util.regex.MatchResult;
  * @see RunAutomaton#newMatcher(CharSequence)
  * @see RunAutomaton#newMatcher(CharSequence, int, int)
  */
-public class AutomatonMatcher implements MatchResult {
+class AutomatonMatcher implements MatchResult {
 
 	AutomatonMatcher(final CharSequence chars, final RunAutomaton automaton) {
 		this.chars = chars;
@@ -63,18 +63,18 @@ public class AutomatonMatcher implements MatchResult {
 	 */
 	public boolean find() {
 		int begin;
-		switch(getMatchStart()) {
+		switch(matchStart) {
 			case -2:
 			return false;
 			case -1:
 			begin = 0;
 				break;
 			default:
-			begin = getMatchEnd();
+				begin = matchEnd;
 				// This occurs when a previous find() call matched the empty string. This can happen when the pattern is a* for example.
-				if(begin == getMatchStart()) {
+				if(begin == matchStart) {
 					begin += 1;
-					if(begin > getChars().length()) {
+					if(begin > chars.length()) {
 						setMatch(-2, -2);
 						return false;
 					}
@@ -90,11 +90,11 @@ public class AutomatonMatcher implements MatchResult {
 			match_start = -1;
 			match_end = -1;
 		}
-		int l = getChars().length();
+		int l = chars.length();
 		while (begin < l) {
 			int p = automaton.getInitialState();
 			for (int i = begin; i < l; i++) {
-				final int new_state = automaton.step(p, getChars().charAt(i));
+				final int new_state = automaton.step(p, chars.charAt(i));
 				if (new_state == -1) {
 				    break;
 				} else if (automaton.isAccept(new_state)) {

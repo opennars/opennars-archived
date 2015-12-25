@@ -38,18 +38,16 @@ import java.io.Serializable;
  * and a destination state.
  * @author Anders M&oslash;ller &lt;<a href="mailto:amoeller@cs.au.dk">amoeller@cs.au.dk</a>&gt;
  */
-public class Transition implements Serializable, Cloneable {
-	
-	static final long serialVersionUID = 40001;
-	
+public final class Transition implements Serializable, Cloneable {
+
 	/* 
 	 * CLASS INVARIANT: min<=max
 	 */
 	
 	char min;
-	char max;
+	final char max;
 	
-	State to;
+	final State to;
 	
 	/** 
 	 * Constructs a new singleton interval transition. 
@@ -143,7 +141,7 @@ public class Transition implements Serializable, Cloneable {
 			else if (c < 0x100)
 				b.append("00").append(s);
 			else if (c < 0x1000)
-				b.append("0").append(s);
+				b.append('0').append(s);
 			else
 				b.append(s);
 		}
@@ -158,7 +156,7 @@ public class Transition implements Serializable, Cloneable {
 		StringBuilder b = new StringBuilder();
 		appendCharString(min, b);
 		if (min != max) {
-			b.append("-");
+			b.append('-');
 			appendCharString(max, b);
 		}
 		b.append(" -> ").append(to.number);
@@ -169,7 +167,7 @@ public class Transition implements Serializable, Cloneable {
 		b.append(" -> ").append(to.number).append(" [label=\"");
 		appendCharString(min, b);
 		if (min != max) {
-			b.append("-");
+			b.append('-');
 			appendCharString(max, b);
 		}
 		b.append("\"]\n");

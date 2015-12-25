@@ -29,16 +29,12 @@
 
 package dk.brics.automaton;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-
 /**
  * An automaton that can be used as a lexical analyzer.
  * 
  * @author Kevin Krumwiede
  */
-public class TokenAutomaton extends RunAutomaton {
+class TokenAutomaton extends RunAutomaton {
 	private static final long serialVersionUID = 1L;
 
 	private static final int NO_ACCEPT = -1;
@@ -96,7 +92,7 @@ public class TokenAutomaton extends RunAutomaton {
 			}
 		}
 		// stepped to end of sequence
-		if(endOfInput == false && this.hasTransitions(s)) {
+		if(!endOfInput && this.hasTransitions(s)) {
 			details.info = TokenDetails.UNDERFLOW;
 			return false;
 		}
@@ -118,7 +114,7 @@ public class TokenAutomaton extends RunAutomaton {
 	/**
 	 * Returns true if the given state has any transitions.
 	 */
-	protected boolean hasTransitions(int state) {
+	private boolean hasTransitions(int state) {
 		if(!accept[state]) return true;
 		int l = (state + 1) * points.length;
 		for(int i = state * points.length; i < l; ++i) {
@@ -135,12 +131,12 @@ public class TokenAutomaton extends RunAutomaton {
 		super(a, tableize);
 	}
 	
-	public TokenAutomaton(Automaton a) {
+	TokenAutomaton(Automaton a) {
 		super(a);
 	}
 		
-	public static TokenAutomaton load(InputStream stream) throws IOException, ClassNotFoundException {
-		ObjectInputStream s = new ObjectInputStream(stream);
-		return (TokenAutomaton) s.readObject();
-	}
+//	public static TokenAutomaton load(InputStream stream) throws IOException, ClassNotFoundException {
+//		ObjectInputStream s = new ObjectInputStream(stream);
+//		return (TokenAutomaton) s.readObject();
+//	}
 }

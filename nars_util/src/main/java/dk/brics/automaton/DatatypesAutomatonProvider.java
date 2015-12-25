@@ -34,7 +34,9 @@ package dk.brics.automaton;
  */
 public class DatatypesAutomatonProvider implements AutomatonProvider {
 	
-	private boolean enable_unicodeblocks, enable_unicodecategories, enable_xml;
+	private final boolean enable_unicodeblocks;
+	private final boolean enable_unicodecategories;
+	private final boolean enable_xml;
 	
 	/**
 	 * Constructs a new automaton provider that recognizes all names
