@@ -2,6 +2,8 @@ package nars.term.transform;
 
 import nars.$;
 import nars.Global;
+import nars.term.Term;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 
@@ -58,7 +60,7 @@ public class VariableNormalization extends VariableTransform {
     public static final VariableTransform singleVariableNormalization = new VariableTransform() {
 
         @Override
-        public Variable apply(Compound containing, Variable current, int depth) {
+        public Variable apply(Compound containing, Term current, int depth) {
             //      (containing, current, depth) ->
             return $.v(current.op(), 1);
         }
@@ -71,28 +73,28 @@ public class VariableNormalization extends VariableTransform {
     boolean renamed = false;
 
 
-    public static VariableNormalization normalize(Compound target) {
-        return new VariableNormalization(target, null);
+    public static VariableNormalization normalize(Compound target, TermIndex index) {
+        return new VariableNormalization(target, null, index);
     }
 
     /** allows using the single variable normalization,
      * which is safe if the term doesnt contain pattern variables */
-    public static VariableNormalization normalizeFast(Compound target) {
+    public static VariableNormalization normalizeFast(Compound target, TermIndex index) {
         return new VariableNormalization(target, target.vars() == 1 ?
-                singleVariableNormalization : null);
+                singleVariableNormalization : null, index);
     }
 
 
-    public VariableNormalization(Compound target) {
-        this(target, null);
+    public VariableNormalization(Compound target, TermIndex index) {
+        this(target, null, index);
     }
 
-    public VariableNormalization(Compound target, CompoundTransform tx) {
+    public VariableNormalization(Compound c, CompoundTransform tx, TermIndex index) {
 
         if (tx == null) tx = this;
 
 
-        result = target.transform(tx);
+        result = index.transform(c, tx);
 
     }
 
@@ -101,12 +103,12 @@ public class VariableNormalization extends VariableTransform {
     }
 
     @Override
-    public Variable apply(Compound ct, Variable v, int depth) {
+    public Variable apply(Compound ct, Term v, int depth) {
 
         Map<Variable, Variable> rename = this.rename;
 
         return rename.computeIfAbsent(resolve(v), (_vname) -> {
-            Variable rvv = newVariable(v, rename.size()+1);
+            Variable rvv = newVariable((Variable)v, rename.size()+1);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= rvv.equals(v);//!Byted.equals(rvv, v);
             return rvv;
@@ -115,8 +117,8 @@ public class VariableNormalization extends VariableTransform {
     }
 
     /** allows subclasses to provide a different name of a variable */
-    protected Variable resolve(Variable v) {
-        return v;
+    protected Variable resolve(Term v) {
+        return (Variable)v;
     }
 
     /** if already normalized, alreadyNormalized will be non-null with the value */

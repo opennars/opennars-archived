@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 
 import static com.google.common.collect.Iterators.concat;
 
-public interface Concept extends Termed, Supplier<Term> {
+public interface Concept extends Term, Supplier<Term> {
 
     Bag<Task> getTaskLinks();
     Bag<Termed> getTermLinks();

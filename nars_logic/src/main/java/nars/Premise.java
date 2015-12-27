@@ -3,125 +3,18 @@ package nars;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.nal.Level;
-import nars.nal.LocalRules;
 import nars.nal.nal7.Tense;
-import nars.task.MutableTask;
 import nars.task.Task;
 import nars.task.Tasked;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.term.compound.Compound;
-import nars.term.transform.FindSubst;
-import nars.term.transform.MapSubst;
 import nars.truth.DefaultTruth;
-
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Consumer;
 
 /**
  * Defines the conditions used in an instance of a derivation
  */
 public interface Premise extends Level, Tasked {
 
-    /**
-     * The task and belief have the same content
-     * <p>
-     * called in RuleTables.reason
-     *
-     * @param question The task
-     * @param solution The belief
-     * @return null if no match
-     */
-    static Task match(Task question, Task solution, NAR nar, Consumer<Task> eachSolution) {
-
-        if (question.isQuestion() || question.isGoal()) {
-            if (Tense.matchingOrder(question, solution)) {
-                Term[] u = {question.term(), solution.term()};
-                unify(Op.VAR_QUERY, u, nar.memory.random, (st) -> {
-                    Task s;
-                    if (!st.equals(solution.term())) {
-                        s = MutableTask.clone(solution).term((Compound)st);
-                    } else {
-                        s = solution;
-                    }
-                    LocalRules.trySolution(question, s, nar, eachSolution);
-                });
-            }
-        }
-
-        return solution;
-    }
-
-    /**
-     * To unify two terms
-     *
-     * @param varType The varType of variable that can be substituted
-     * @param t       The first and second term as an array, which will have been modified upon returning true
-     * @return Whether the unification is possible.  't' will refer to the unified terms
-     * <p>
-     * only sets the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
-     */
-    static void unify(Op varType, Term[] t, Random random, Consumer<Term> solution) {
-
-        FindSubst f = new FindSubst(varType, random) {
-
-            @Override public boolean onMatch() {
-
-                //TODO combine these two blocks to use the same sub-method
-
-                Term a = t[0];
-                Term aa = a;
-
-                //FORWARD
-                if (a instanceof Compound) {
-
-                    aa = a.applyOrSelf(this);
-
-                    if (aa == null) return false;
-
-                    Op aaop = aa.op();
-                    if (a.op() == Op.VAR_QUERY && (aaop == Op.VAR_INDEP || aaop == Op.VAR_DEP))
-                        return false;
-
-                }
-
-                Term b = t[1];
-                Term bb = b;
-
-                //REVERSE
-                if (b instanceof Compound) {
-                    bb = applySubstituteAndRenameVariables(
-                            ((Compound) b),
-                            (Map<Term, Term>)yx //inverse map
-                    );
-
-                    if (bb == null) return false;
-
-                    Op bbop = bb.op();
-                    if (b.op() == Op.VAR_QUERY && (bbop == Op.VAR_INDEP || bbop == Op.VAR_DEP))
-                        return false;
-                }
-
-                t[0] = aa;
-                t[1] = bb;
-
-                solution.accept(t[1]);
-
-                return false; //just the first
-            }
-
-            Term applySubstituteAndRenameVariables(Compound t, Map<Term,Term> subs) {
-                if ((subs == null) || (subs.isEmpty())) {
-                    //no change needed
-                    return t;
-                }
-                return t.apply(new MapSubst(subs));
-            }
-
-        };
-        f.matchAll(t[0], t[1]);
-    }
 
 
 //    /**

@@ -231,12 +231,9 @@ public class Memory extends Param {
         if (t instanceof Concept)
             return ((Concept)t);
 
-        Term u = t.term().normalized();
-        if (u == null) return null;
-
-        Termed tt = index.get(u);
-        if (tt instanceof Concept)
-            return ((Concept)tt);
+        Termed u = t.term().normalized(index);
+        if (u instanceof Concept)
+            return ((Concept)u);
         return null;
     }
 

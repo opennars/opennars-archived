@@ -38,10 +38,10 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
             return Op.INTERVAL;
         }
 
-        @Override public boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
-            //do nothing, just continue
-            return true;
-        }
+//        @Override public boolean applyTo(Subst f, Collection<Term> sub, boolean fullMatch) {
+//            //do nothing, just continue
+//            return true;
+//        }
     };
 
     public abstract Variable clone(Variable newVar, VariableNormalization normalizer);

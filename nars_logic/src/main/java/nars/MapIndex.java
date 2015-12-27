@@ -58,7 +58,7 @@ public class MapIndex extends MapCacheBag<Termed,Termed> implements TermIndex {
         public Term clone(Term[] replaced) {
             if (subterms().equals(replaced))
                 return this;
-            return the(op(), replaced, relation);
+            return get(op(), replaced, relation);
         }
     }
 

@@ -95,11 +95,6 @@ public class PremiseRule extends GenericCompound implements Level {
         return (Compound) term(1);
     }
 
-    @Override
-    public Term clone(Term[] replaced) {
-        return new PremiseRule((Compound)replaced[0], (Compound)replaced[1]);
-    }
-
     public PremiseRule(Compound premises, Compound result) {
         super(Op.PRODUCT, premises, result );
         str = super.toString();
@@ -143,11 +138,9 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
     @Override
-    public final Compound normalized() {
-        return transform(uppercaseAtomsToPatternVariables);
+    public final Compound normalized(TermIndex index) {
+        return index.transform(this, uppercaseAtomsToPatternVariables);
     }
-
-
 
     /** add the sequence of involved conditions to a list, for one given postcondition (ex: called for each this.postconditions)  */
     public List<PreCondition> getConditions(PostCondition post) {
@@ -237,7 +230,7 @@ public class PremiseRule extends GenericCompound implements Level {
     }
 
 
-    static final class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
+    static final class UppercaseAtomsToPatternVariables implements CompoundTransform {
 
 
         @Override
@@ -266,8 +259,8 @@ public class PremiseRule extends GenericCompound implements Level {
 
 
 
-    public final PremiseRule normalizeRule() {
-        return (PremiseRule) new TaskRuleVariableNormalization(this).get();
+    public final PremiseRule normalizeRule(PatternIndex index) {
+        return (PremiseRule) new TaskRuleVariableNormalization(this, index).get();
     }
 
 
@@ -573,7 +566,7 @@ public class PremiseRule extends GenericCompound implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
-    public final PremiseRule forwardPermutation() {
+    public final PremiseRule forwardPermutation(PatternIndex index) {
 
         // T, B, [pre] |- C, [post] ||--
 
@@ -584,7 +577,7 @@ public class PremiseRule extends GenericCompound implements Level {
         //      B, T, [pre], task_is_question() |- T, [post]
 
         PremiseRule clone1 = clone(B, T, C, false);
-        return clone1.normalizeRule();
+        return clone1.normalizeRule(index);
     }
 
     private final PremiseRule clone(Term newT, Term newB, Term newR, boolean question) {
@@ -627,15 +620,8 @@ public class PremiseRule extends GenericCompound implements Level {
     public static class TaskRuleVariableNormalization extends VariableNormalization {
 
 
-        public TaskRuleVariableNormalization(Compound target) {
-            super(target);
-        }
-
-        @Override protected Variable resolve(Variable v) {
-//            if (v instanceof Ellipsis) {
-//                return ((Ellipsis) v).target;
-//            }
-            return v;
+        public TaskRuleVariableNormalization(Compound target, TermIndex index) {
+            super(target, index);
         }
 
 

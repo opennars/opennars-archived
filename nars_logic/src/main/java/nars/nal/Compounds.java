@@ -14,6 +14,7 @@ import nars.term.*;
 import nars.term.compound.Compound;
 import nars.term.compound.GenericCompound;
 import nars.truth.Truth;
+import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,13 +36,7 @@ public interface Compounds {
     /**
      * universal zero-length product
      */
-    Compound Empty = new GenericCompound(Op.PRODUCT, Terms.Empty, -1) {
-        @Override
-        public Term clone(Term[] replaced) {
-            if (replaced.length == 0) return this;
-            return super.clone(replaced);
-        }
-    };
+    Compound Empty = new GenericCompound(Op.PRODUCT, Terms.Empty, -1);
 
     /**
      * implications, equivalences, and interval
@@ -56,12 +51,60 @@ public interface Compounds {
     int InvalidImplicationPredicate =
             or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
 
+    static byte[] newCompound1Key(Op op, Term singleTerm) {
+
+        byte opByte = (byte) op.ordinal();
+
+        byte[] termBytes = singleTerm.bytes();
+
+        return ByteBuf.create(1 + termBytes.length)
+                .add(opByte)
+                .add(termBytes)
+                .toBytes();
+    }
+
+    static void writeCompound1(Op op, Term singleTerm, Appendable writer, boolean pretty) throws IOException {
+        writer.append(COMPOUND_TERM_OPENER);
+        writer.append(op.str);
+        writer.append(ARGUMENT_SEPARATOR);
+        singleTerm.append(writer, pretty);
+        writer.append(COMPOUND_TERM_CLOSER);
+    }
+
+    static void appendSeparator(Appendable p, boolean pretty) throws IOException {
+        p.append(ARGUMENT_SEPARATOR);
+        if (pretty) p.append(' ');
+    }
+
+    static void appendCompound(Compound c, Appendable p, boolean pretty) throws IOException {
+
+        boolean opener = c.appendTermOpener();
+        if (opener)
+            p.append(COMPOUND_TERM_OPENER);
+
+
+        boolean appendedOperator = c.appendOperator(p);
+
+        if (c.size() == 1)
+            p.append(ARGUMENT_SEPARATOR);
+
+        c.appendArgs(p, pretty, appendedOperator);
+
+
+        appendCloser(p);
+
+    }
+
+    static void appendCloser(Appendable p) throws IOException {
+        p.append(COMPOUND_TERM_CLOSER);
+    }
+
     default Term negation(Term t) {
         if (t.op() == Op.NEGATE) {
             // (--,(--,P)) = P
             return ((Compound) t).term(0);
         }
-        return the(Op.NEGATE, new Term[]{t}, -1, false);
+        return get(Op.NEGATE, new Term[]{t}, -1, false);
     }
 
     static void setAppend(Compound set, Appendable p, boolean pretty) throws IOException {
@@ -141,7 +184,7 @@ public interface Compounds {
             res = ser;
         }
 
-        return the(
+        return get(
                 o,
                 res, index);
     }
@@ -241,7 +284,7 @@ public interface Compounds {
 
         if (sa.length == 1) return sa[0];
 
-        return the(op, sa, -1, false /* already sorted via TreeSet */);
+        return get(op, sa, -1, false /* already sorted via TreeSet */);
 
     }
 
@@ -292,7 +335,7 @@ public interface Compounds {
                 if (t.length == 1) return t[0]; //reduced to one
 
                 if (!Statement.invalidStatement(t[0], t[1]))
-                    return the(op, t, -1, false); //already sorted
+                    return get(op, t, -1, false); //already sorted
 
                 return null;
             default:
@@ -306,7 +349,7 @@ public interface Compounds {
         TreeSet<Term> x = TermContainer.differenceSorted(A, B);
         /*if (x.isEmpty())
             return null;*/
-        return the(setType, Terms.toArray(x),
+        return get(setType, Terms.toArray(x),
                 -1, false /* already sorted here via the Set */);
     }
 
@@ -342,12 +385,12 @@ public interface Compounds {
                 throw new RuntimeException("invalid case");
         }
 
-        return the(op,
-                the(conjOp, subject, oldCondition),
+        return get(op,
+                get(conjOp, subject, oldCondition),
                 pred(predicate));
     }
 
-    default Term the(Op op, Term[] t, int relation, boolean sort) {
+    default Term get(Op op, Term[] t, int relation, boolean sort) {
         if (t == null)
             return null;
 
@@ -409,7 +452,7 @@ public interface Compounds {
 
         if ((o1 == setUnion) && (o2 == setUnion)) {
             //the set type that is united
-            return the(setUnion, TermContainer.union((Compound) term1, (Compound) term2));
+            return get(setUnion, TermContainer.union((Compound) term1, (Compound) term2));
         }
 
 
@@ -441,7 +484,7 @@ public interface Compounds {
                 suffix = new Term[]{term2};
             }
 
-            return the(intersection, concat(
+            return get(intersection, concat(
                     ((Compound) term1).terms(), suffix, Term.class
             ), -1, true);
 
@@ -450,7 +493,7 @@ public interface Compounds {
         if (term1.equals(term2))
             return term1;
 
-        return the(intersection, new Term[]{term1, term2}, -1, true);
+        return get(intersection, new Term[]{term1, term2}, -1, true);
 
 
     }
@@ -458,7 +501,7 @@ public interface Compounds {
     default Term intersect(Op resultOp, Compound a, Compound b) {
         MutableSet<Term> i = TermContainer.intersect(a, b);
         if (i.isEmpty()) return null;
-        return the(resultOp, i);
+        return get(resultOp, i);
     }
 
     default Term difference(Compound a, Compound b) {
@@ -488,7 +531,7 @@ public interface Compounds {
             else {
                 Term[] i = Terms.toArray(dd);
                 if (i == null) return null;
-                return the(a.op(), i);
+                return get(a.op(), i);
             }
         }
 
@@ -524,16 +567,17 @@ public interface Compounds {
     }
 
     /** main compound construction entry-point */
-    default  Term the(Op op, Collection<Term> t) {
-        return the(op, Terms.toArray(t));
+    default  Term get(Op op, Collection<Term> t) {
+        return get(op, Terms.toArray(t));
     }
 
     /** main compound construction entry-point */
-    default Term the(Op op, Term... t) {
-        return the(op, t, -1);
+    default Term get(Op op, Term... t) {
+        return get(op, t, -1);
     }
 
-    default Term the(Op op, Term[] t, int relation) {
+    default Term get(Op op, Term[] t, int relation) {
+
 
         if (t == null)
             return null;
@@ -596,7 +640,7 @@ public interface Compounds {
             //test for valid statement
             return statement(op, t);
         } else {
-            return the(op, t, relation, op.isCommutative());
+            return get(op, t, relation, op.isCommutative());
         }
 
     }

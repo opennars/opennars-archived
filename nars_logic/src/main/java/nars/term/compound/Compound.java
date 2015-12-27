@@ -22,30 +22,23 @@ package nars.term.compound;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.PremiseAware;
-import nars.nal.RuleMatch;
-import nars.nal.nal8.Operator;
-import nars.nal.op.ImmediateTermTransform;
+import nars.nal.Compounds;
 import nars.term.Term;
 import nars.term.TermContainer;
 import nars.term.TermVector;
-import nars.term.Terms;
+import nars.term.compile.TermIndex;
 import nars.term.match.Ellipsis;
-import nars.term.transform.CompoundTransform;
 import nars.term.transform.FindSubst;
-import nars.term.transform.Subst;
 import nars.term.transform.VariableNormalization;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
-import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static nars.Symbols.*;
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 import static nars.util.data.Util.hashCombine;
 
 /**
@@ -53,14 +46,6 @@ import static nars.util.data.Util.hashCombine;
  * TODO make this an interface extending Subterms
  */
 public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> {
-
-
-
-    /**
-     * Must be Term return type because the type of Term may change with different arguments
-     */
-    Term clone(Term[] replaced);
-
 
 
     static void ensureFeasibleVolume(int vol, TermContainer c) {
@@ -76,37 +61,12 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
 
-    static void appendSeparator(Appendable p, boolean pretty) throws IOException {
-        p.append(ARGUMENT_SEPARATOR);
-        if (pretty) p.append(' ');
-    }
-
-    static void writeCompound1(Op op, Term singleTerm, Appendable writer, boolean pretty) throws IOException {
-        writer.append(COMPOUND_TERM_OPENER);
-        writer.append(op.str);
-        writer.append(ARGUMENT_SEPARATOR);
-        singleTerm.append(writer, pretty);
-        writer.append(COMPOUND_TERM_CLOSER);
-    }
-
-    static byte[] newCompound1Key(Op op, Term singleTerm) {
-
-        byte opByte = (byte) op.ordinal();
-
-        byte[] termBytes = singleTerm.bytes();
-
-        return ByteBuf.create(1 + termBytes.length)
-                .add(opByte)
-                .add(termBytes)
-                .toBytes();
-    }
-
-
     /** gets the set of unique recursively contained terms of a specific type
      * TODO generalize to a provided lambda predicate selector
+     * TODO produce an Int <-> Object bidi mapping object with the unique terms in order they are encountered
      * */
     default Set<Term> unique(Op type) {
-        Set<Term> t = Global.newHashSet(0);
+        Set<Term> t = Global.newHashSet(volume());
         //final int[] has = {0};
         recurseTerms((t1, superterm) -> {
             if (t1.op() == type)
@@ -131,60 +91,17 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
 
 
-    /** returns the resolved term according to the substitution    */
-    @Override default Term apply(Subst f, boolean fullMatch) {
-
-        Term y = f.getXY(this);
-        if (y!=null)
-            return y;
-
-        int len = size();
-        List<Term> sub = Global.newArrayList(len /* estimate */);
-
-        for (int i = 0; i < len; i++) {
-            Term t = term(i);
-            if (!t.applyTo(f, sub, fullMatch)) {
-                if (fullMatch)
-                    return null;
-            }
-        }
-
-        Term result = apply(sub);
-
-        //apply any known immediate transform operators
-        if (Op.isOperation(result)) {
-            ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
-            if (tf!=null) {
-                return applyImmediateTransform(f, result, tf);
-            }
-        }
-
-        return result;
-    }
 
 
-    default Term applyImmediateTransform(Subst f, Term result, ImmediateTermTransform tf) {
 
-        //Compound args = (Compound) Operator.opArgs((Compound) result).apply(f);
-        Compound args = Operator.opArgs((Compound) result);
-
-        if ((tf instanceof PremiseAware) && (f instanceof RuleMatch)) {
-            return ((PremiseAware)tf).function(args, (RuleMatch)f);
-        } else {
-            return tf.function(args);
-        }
-
-    }
-
-    default Term apply(List<Term> sub) {
-        /*if (subterms().equivalent(sub))
-            return this;*/
-
-        Term[] r = Terms.toArray(sub);
-        if (r == null) return null;
-
-        return clone(r);
-    }
+//    default Term apply(List<Term> sub) {
+//        return clone(Terms.toArray(sub));
+//    }
+//    default Term clone(TermContainer subs) {
+//        if (subterms().equals(subs))
+//            return this;
+//        return clone(subs.terms());
+//    }
 
 
 
@@ -227,26 +144,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     @Override
     default void append(Appendable p, boolean pretty) throws IOException {
-        appendCompound(this, p, pretty);
-    }
-
-    static void appendCompound(Compound c, Appendable p, boolean pretty) throws IOException {
-
-        boolean opener = c.appendTermOpener();
-        if (opener)
-            p.append(COMPOUND_TERM_OPENER);
-
-
-        boolean appendedOperator = c.appendOperator(p);
-
-        if (c.size() == 1)
-            p.append(ARGUMENT_SEPARATOR);
-
-        c.appendArgs(p, pretty, appendedOperator);
-
-
-        appendCloser(p);
-
+        Compounds.appendCompound(this, p, pretty);
     }
 
     default void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
@@ -265,10 +163,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     default boolean appendOperator(Appendable p) throws IOException {
         p.append(op().str);
         return true;
-    }
-
-    static void appendCloser(Appendable p) throws IOException {
-        p.append(COMPOUND_TERM_CLOSER);
     }
 
     default boolean appendTermOpener() {
@@ -298,48 +192,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return sb;
     }
 
-    /** returns how many subterms were modified, or -1 if failure (ex: results in invalid term) */
-    default <T extends Term> int transform(CompoundTransform<Compound<T>, T> trans, Term[] target, int level) {
-        int n = size();
-
-        int modifications = 0;
-
-        for (int i = 0; i < n; i++) {
-            Term x = term(i);
-            if (x == null)
-                throw new RuntimeException("null subterm");
-
-            if (trans.test(x)) {
-
-                Term y = trans.apply( (Compound<T>)this, (T) x, level);
-                if (y == null)
-                    return -1;
-
-                if (!x.equals(y)) {
-                    modifications++;
-                    x = y;
-                }
-
-            } else if (x instanceof Compound) {
-                //recurse
-                Compound cx = (Compound) x;
-                if (trans.testSuperTerm(cx)) {
-
-                    Term[] yy = new Term[cx.size()];
-                    int submods = cx.transform(trans, yy, level + 1);
-
-                    if (submods == -1) return -1;
-                    if (submods > 0) {
-                        x = cx.clone(yy);
-                        modifications+= (cx!=x) ? 1 : 0;
-                    }
-                }
-            }
-            target[i] = x;
-        }
-
-        return modifications;
-    }
 
 
     /**
@@ -399,40 +251,19 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
      * May return null if the resulting compound term is invalid
      */
     @Override
-    default <T extends Term> T normalized() {
+    default Term normalized(TermIndex index) {
         if (isNormalized())
-            return (T) this;
+            return this;
 
-        Compound result = VariableNormalization.normalizeFast(this).get();
+        Compound result = VariableNormalization.normalizeFast(this, index).get();
         if (result == null)
             return null;
 
         result.setNormalized(true);
 
-        return (T) result;
+        return result;
     }
 
-    default <X extends Compound> X transform(CompoundTransform t) {
-        return transform(t, true);
-    }
-
-    default <X extends Compound> X transform(CompoundTransform t, boolean requireEqualityForNewInstance) {
-        if (t.testSuperTerm(this)) {
-
-            Term[] cls = new Term[size()];
-
-            int mods = transform(t, cls, 0);
-
-            if (mods == -1) {
-                return null;
-            }
-            else if (!requireEqualityForNewInstance || (mods > 0)) {
-                return (X) clone(cls);
-            }
-            //else if mods==0, fall through:
-        }
-        return (X) this; //nothing changed
-    }
 
 
 
@@ -592,11 +423,6 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
         return true;
     }
 
-    default Term clone(TermContainer subs) {
-        if (subterms().equals(subs))
-            return this;
-        return clone(subs.terms());
-    }
 
     default Term last() {
         return term(size()-1);

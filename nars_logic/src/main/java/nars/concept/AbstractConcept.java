@@ -18,6 +18,10 @@ public abstract class AbstractConcept implements Concept {
         this.term = term;
     }
 
+    @Override
+    public String toString(boolean pretty) {
+        return term.toString(pretty);
+    }
 
     @Override
     public final Term term() {

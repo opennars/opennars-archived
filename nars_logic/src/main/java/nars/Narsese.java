@@ -22,7 +22,9 @@ import nars.op.io.echo;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.atom.Atom;
+import nars.term.compile.TermIndex;
 import nars.term.compound.Compound;
 import nars.term.match.*;
 import nars.term.variable.Variable;
@@ -1081,11 +1083,11 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     /** parse one term and normalize it if successful */
-    public <T extends Term> T term(String s) {
+    public Termed term(String s, TermIndex index) {
         Term x = termRaw(s);
         if (x==null) return null;
 
-        return x.normalized();
+        return x.normalized(index);
     }
 
 

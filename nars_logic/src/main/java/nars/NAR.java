@@ -233,24 +233,19 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
         return i;
     }
 
-    public final <S extends Term, T extends S> T term(String t) throws Narsese.NarseseException {
-        T x = Narsese.the().term(t);
+    public final <S extends Term> Termed term(String t) throws Narsese.NarseseException {
+        Termed x = Narsese.the().term(t, memory.index);
         if (x == null) {
             logger.error("Syntax error: '{}'", t);
             return null;
         }
 
-        T x2 = (T) memory.index.getTerm(x);
-        if (x2 == null) {
-            logger.error("Unindexed: '{}' ", x2);
-        }
-
         //this is applied automatically when a task is entered.
         //it's only necessary here where a term is requested
         //TODO apply this in index on the original copy only
-        x2.setDuration(memory.duration());
+        x.term().setDuration(memory.duration());
 
-        return x2;
+        return x;
     }
 
 
@@ -278,8 +273,8 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
     /** ask quest */
     public Task should(String questString) throws Narsese.NarseseException {
-        Term c = term(questString);
-        if (c instanceof Compound)
+        Termed c = term(questString);
+        if (c.term() instanceof Compound)
             return should((Compound) c);
         return null;
     }
@@ -1205,7 +1200,7 @@ public abstract class NAR implements Serializable, Level, ConceptBuilder {
 
             Term term = termed.term();
 
-            if ((term = term.normalized()) == null) {
+            if ((term = term.normalized(memory.index)) == null) {
                 //throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
                 return null;
             }

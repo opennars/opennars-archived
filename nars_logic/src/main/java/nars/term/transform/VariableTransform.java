@@ -7,7 +7,7 @@ import nars.term.variable.Variable;
 /**
  * Created by me on 6/1/15.
  */
-public abstract class VariableTransform implements CompoundTransform<Compound, Variable> {
+public abstract class VariableTransform implements CompoundTransform {
 
     @Override
     public final boolean test(Term possiblyAVariable) {

@@ -81,7 +81,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                         Statement.append(this, p, pretty);
                     }
                 } else {
-                    Compound.appendCompound(this, p, pretty);
+                    Compounds.appendCompound(this, p, pretty);
                 }
                 break;
         }
@@ -120,10 +120,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         terms.addAllTo(set);
     }
 
-    @Override
-    public Term clone(Term[] replaced) {
-        throw new RuntimeException(this + " does not support cloning");
-    }
 
 //    @Override
 //    public Term clone(Term[] replaced) {

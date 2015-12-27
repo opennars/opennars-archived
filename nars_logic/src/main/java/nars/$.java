@@ -11,6 +11,7 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.term.Terms;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
@@ -39,13 +40,13 @@ public abstract class $  {
     public static final org.slf4j.Logger logger = LoggerFactory.getLogger($.class);
 
     public static final <T extends Term> T $(String term) {
-        return (T)Narsese.the().term(term);
+        return (T)Narsese.the().term(term, terms);
         //        try { }
         //        catch (InvalidInputException e) { }
     }
 
-    public static final <C extends Compound> MutableTask $(String term, char punc) {
-        C t = Narsese.the().term(term);
+    public static final MutableTask $(String term, char punc) {
+        Termed t = Narsese.the().term(term, terms);
         if (t == null) return null;
         return new MutableTask(t)
                 .punctuation(punc)
@@ -428,13 +429,13 @@ public abstract class $  {
 
 
     public static Term the(Op op, Term... subterms) {
-        return terms.the(op, subterms);
+        return terms.get(op, subterms);
     }
     public static Term the(Op op, Term[] subterms, int relation) {
-        return terms.the(op, subterms, relation);
+        return terms.get(op, subterms, relation);
     }
     public static Term the(Op op, Collection<Term> subterms, int relation) {
-        return terms.the(op, Terms.toArray(subterms), relation);
+        return terms.get(op, Terms.toArray(subterms), relation);
     }
 
 }

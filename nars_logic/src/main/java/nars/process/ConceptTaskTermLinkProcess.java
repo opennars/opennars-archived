@@ -1,11 +1,11 @@
 package nars.process;
 
 import nars.NAR;
-import nars.Premise;
 import nars.bag.BagBudget;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Termed;
+import nars.term.compile.TermIndex;
 
 import java.util.function.Consumer;
 
@@ -30,7 +30,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
             belief = beliefConcept.getBeliefs().top(task, nar.time());
 
             if (belief != null) {
-                Premise.match(task, belief, nar, beliefResolved -> {
+                TermIndex.match(task, belief, nar, beliefResolved -> {
                     beliefAttempts[0]++;
                     cp.accept(new ConceptTaskTermLinkProcess(
                             nar, concept,
