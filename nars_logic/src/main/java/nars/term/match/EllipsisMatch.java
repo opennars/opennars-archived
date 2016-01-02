@@ -57,10 +57,10 @@ public final class EllipsisMatch extends TermVector<Term> implements Term {
 
     /** expand the matched results to a target buffer */
     public void apply(Collection<Term> sub) {
-        for (Term x : term)
+        for (Term x : getTerm())
             if (x.equals(Ellipsis.Shim))
                 throw new RuntimeException("shim caught");
-        Collections.addAll(sub, term);
+        Collections.addAll(sub, getTerm());
     }
 
     @Override
@@ -95,7 +95,7 @@ public final class EllipsisMatch extends TermVector<Term> implements Term {
     }
 
     public boolean addWhileMatching(Compound y, Collection<Term> target) {
-        for (Term e : term) {
+        for (Term e : getTerm()) {
             if (!y.containsTerm(e)) return false;
             target.add(e);
         }

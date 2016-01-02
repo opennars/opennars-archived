@@ -202,7 +202,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override public T[] terms() {
-        return terms.term;
+        return terms.getTerm();
     }
 
     @Override

@@ -309,7 +309,7 @@ public abstract class FindSubst extends Versioning implements Subst {
                     if (matchEllipsedLinear(X, e, Y)) {
                         EllipsisMatch raw = (EllipsisMatch) getXY(e);
                         xy.put(e, null); //HACK clear it to replace with a new value
-                        return putXY(e, ImageMatch.put(raw.term, n, Y));
+                        return putXY(e, ImageMatch.put(raw.getTerm(), n, Y));
                     }
                 } else {
                     Term n = apply(et.from);
@@ -621,7 +621,7 @@ public abstract class FindSubst extends Versioning implements Subst {
                     if (i == xsize) {
                         //SUFFIX - match the remaining terms against what the ellipsis previously collected
                         //HACK this only works with EllipsisMatch type
-                        Term[] sp = ((EllipsisMatch) eMatched).term;
+                        Term[] sp = ((EllipsisMatch) eMatched).getTerm();
                         for (Term aSp : sp) {
                             if (!match(aSp, Y.term(j++)))
                                 return false;

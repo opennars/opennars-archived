@@ -1,7 +1,5 @@
 package nars.term
 
-import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate
-import com.gs.collections.api.set.MutableSet
 import com.gs.collections.impl.factory.Sets
 import nars.Global
 import nars.term.compound.Compound
@@ -25,22 +23,25 @@ interface TermContainer<T : Term> : Termlike, Iterable<T> {
 
     fun termOr(index: Int, resultIfInvalidIndex: T): T
 
-    fun termsCopy(): Array<T>
+    //fun termsCopy(): Array<T>
 
-    fun setNormalized(b: Boolean)
+    //fun setNormalized(b: Boolean)
 
 
-    fun termsCopy(vararg additional: T): Array<T> {
-        if (additional.size == 0) return termsCopy()
-        return Terms.concat(terms(), additional)
+//    fun termsCopy(vararg additional: T): Array<T> {
+//        if (additional.size == 0) return termsCopy()
+//        return Terms.concat(terms(), additional)
+//    }
+
+    fun toSet(): Set<T> {
+        return terms().toSet()
     }
 
-    fun toSet(): MutableSet<T> {
-        return Sets.mutable.of<T>(*terms())
+    fun toSortedSet(): Set<T> {
+        return terms().toSortedSet()
     }
 
-
-    fun addAllTo(set: Collection<Term>)
+    //fun addAllTo(set: Collection<Term>)
 
 
     /** expected to provide a non-copy reference to an internal array,
@@ -48,23 +49,23 @@ interface TermContainer<T : Term> : Termlike, Iterable<T> {
      * if this creates a new array, consider using .term(i) to access
      * subterms iteratively.
      */
-    fun terms(): Array<T>
+    fun terms(): List<T>
 
 
-    open fun terms(filter: IntObjectPredicate<T>): Array<Term> {
-        val l = Global.newArrayList<T>(size())
+    open fun terms(filter: (Int,Term)->Boolean): Array<Term> {
+        val l = Global.newArrayList<Term>(size())
         val s = size()
         for (i in 0..s - 1) {
             val t = term(i)
-            if (filter.accept(i, t))
+            if (filter.invoke(i, t))
                 l.add(t)
         }
-        if (l.isEmpty()) return Terms.Empty
-        return l.toTypedArray();//l.toArray(arrayOfNulls<Term>(l.size))
+        return l.toTypedArray()
+        //l.toArray(arrayOfNulls<Term>(l.size))
     }
 
 
-    fun forEach(action: ()->T, start: Int, stop: Int)
+    //fun forEach(action: () -> T, start: Int, stop: Int)
 
     /** extract a sublist of terms as an array  */
     fun terms(start: Int, end: Int): Array<Term?> {
@@ -160,8 +161,8 @@ interface TermContainer<T : Term> : Termlike, Iterable<T> {
     }
 
     companion object {
-        fun intersect(a: TermContainer<Term>, b: TermContainer<Term>): MutableSet<Term> {
-            return Sets.intersect(a.toSet(), b.toSet())
+        fun intersect(a: TermVector<Term>, b: TermVector<Term>): TermVector<Term> {
+            return TermVector(Sets.intersect(a.toSet(), b.toSet()))
         }
 
 //        fun union(a: Compound<Term?>, b: Compound<Term?>): Set<Term?> {
@@ -171,29 +172,27 @@ interface TermContainer<T : Term> : Termlike, Iterable<T> {
 //        }
 
         /** returns null if empty set; not sorted  */
-        fun difference(a: TermContainer<Term>, b: TermContainer<Term>): Array<Term> {
+        fun difference(a: TermVector<Term>, b: TermVector<Term>): TermVector<Term> {
             if (a.size() == 1 && b.size() == 1) {
                 //special case
-                return if (a.term(0) == b.term(0))
-                    Terms.Empty
-                else
-                    a.terms()
+                return if (a.term(0) == b.term(0)) TermVector.Empty
+                else a
             } else {
                 val dd = Sets.difference(a.toSet(), b.toSet())
-                if (dd.isEmpty) return Terms.Empty
-                return Terms.toArray(dd)
+                return if (dd.isEmpty()) TermVector.Empty
+                else TermVector(dd)
             }
         }
 
 
-        fun copyByIndex(c: TermContainer<Term>): Array<Term?> {
-            val s = c.size()
-            val x = arrayOfNulls<Term>(s)
-            for (i in 0..s - 1) {
-                x[i] = c.term(i)
-            }
-            return x
-        }
+//        fun copyByIndex(c: TermContainer<Term>): Array<Term?> {
+//            val s = c.size()
+//            val x = arrayOfNulls<Term>(s)
+//            for (i in 0..s - 1) {
+//                x[i] = c.term(i)
+//            }
+//            return x
+//        }
 
 
 //        fun toString(t: TermContainer<Term>): String {

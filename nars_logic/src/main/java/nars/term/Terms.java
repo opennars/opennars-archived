@@ -166,6 +166,12 @@ public class Terms {
                 return true;
         return false;
     }
+    public static boolean contains(Collection<Term> container, Term v) {
+        for (Term e : container)
+            if (v.equals(e))
+                return true;
+        return false;
+    }
 
 
     public static Term[] reverse(Term[] arg) {

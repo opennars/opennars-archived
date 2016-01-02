@@ -257,12 +257,12 @@ enum class Op private constructor(
         fun or(vararg o: Op): Int {
             var bits = 0
             for (n in o)
-                bits = bits or n.bit()
+                bits = bits.or(n.bit())
             return bits
         }
 
         fun or(bits: Int, o: Op): Int {
-            return bits or o.bit()
+            return bits.or(o.bit())
         }
 
 
@@ -272,7 +272,7 @@ enum class Op private constructor(
         val ANY = 0
 
         internal fun isA(needle: Int, haystack: Int): Boolean {
-            return needle and haystack == needle
+            return needle.and(haystack) == needle
         }
 
 

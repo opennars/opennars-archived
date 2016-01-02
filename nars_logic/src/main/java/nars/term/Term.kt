@@ -7,21 +7,18 @@ import nars.term.visit.SubtermVisitor
 
 
 
-public interface Term : Termlike {
+public interface Term : Termlike, Termed<Term> {
 
 
-    fun term(): Term {
+    override fun term(): Term {
         return this
     }
 
-    fun op(): Op
 
     /** syntactic help  */
     fun op(equalTo: Op): Boolean {
         return op() === equalTo
     }
-
-
 
 
     open fun recurseTerms(v: SubtermVisitor) {
@@ -78,7 +75,7 @@ public interface Term : Termlike {
     //
 
     //@Override
-    fun isAny(structuralVector: Int): Boolean {
+    override fun isAny(structuralVector: Int): Boolean {
         val s = op().bit()
         return s and structuralVector == s
     }
@@ -160,7 +157,7 @@ public interface Term : Termlike {
     }
 
 
-    fun levelValid(nal: Int): Boolean {
+    override fun levelValid(nal: Int): Boolean {
 
         if (nal >= 8) return true
 
@@ -179,7 +176,7 @@ public interface Term : Termlike {
     }
 
 
-    open fun opRel(): Int {
+    override fun opRel(): Int {
         return (-1.shl(16)).or(op().ordinal)
     }
 

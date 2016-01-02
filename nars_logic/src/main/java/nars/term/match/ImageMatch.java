@@ -44,7 +44,7 @@ public class ImageMatch /*extends ArrayEllipsisMatch<Term>*/ {
         //this.imageIndex = imageIndex;
 
         //mask the relation term
-        Term[] t = m.term;
+        Term[] t = m.getTerm();
         t[imageIndex] = Op.Imdex;
         m.init();//rehash because it changed
         return m;
