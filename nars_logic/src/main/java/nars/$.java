@@ -169,7 +169,7 @@ public abstract class $  {
     }
 
     public static Variable v(Op type, String s) {
-        return v(type.ch, s);
+        return v(type.getCh(), s);
     }
 
 
@@ -316,10 +316,10 @@ public abstract class $  {
         if (counter < Variable.MAX_VARIABLE_CACHED_PER_TYPE) {
             Variable[] vct = Variable.varCache[typeIndex(type)];
             Variable existing = vct[counter];
-            return existing != null ? existing : (vct[counter] = v(type.ch, String.valueOf(counter)));
+            return existing != null ? existing : (vct[counter] = v(type.getCh(), String.valueOf(counter)));
         }
 
-        return v(type.ch, String.valueOf(counter));
+        return v(type.getCh(), String.valueOf(counter));
     }
 
     public static Term conj(Term... a) {

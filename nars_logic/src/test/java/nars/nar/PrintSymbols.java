@@ -15,7 +15,7 @@ public class PrintSymbols {
         
         System.out.println("string" + "\t\t" + "rel?" + "\t\t" + "\t\t" + "opener?" + "\t\t" + "closer?");
         for (Op i : Op.values()) {
-            System.out.println(i.str + "\t\t" + i.type + "\t\t" + i.opener + "\t\t" + i.closer);
+            System.out.println(i.getStr() + "\t\t" + i.getType() + "\t\t" + i.getOpener() + "\t\t" + i.getCloser());
 
             symbols++;
         }

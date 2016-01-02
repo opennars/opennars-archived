@@ -445,17 +445,17 @@ public class Narsese extends BaseParser<Object>  {
                         Variable(),
 
 //                        //negation shorthand
-                        seq(Op.NEGATE.str, s(), Term(), push(
+                        seq(Op.NEGATE.getStr(), s(), Term(), push(
                             //Negation.make(popTerm(null, true)))),
                             $.neg(Atom.the(pop())))),
 
                         seq(
-                            Op.SET_EXT_OPENER.str,
+                                Op.SET_EXT_OPENER.getStr(),
                             MultiArgTerm(Op.SET_EXT_OPENER, SET_EXT_CLOSER)
                         ),
 
                         seq(
-                            Op.SET_INT_OPENER.str,
+                                Op.SET_INT_OPENER.getStr(),
                             MultiArgTerm(Op.SET_INT_OPENER, SET_INT_CLOSER)
                         ),
 
@@ -498,7 +498,7 @@ public class Narsese extends BaseParser<Object>  {
 
 
     Rule Operator() {
-        return sequence(OPERATOR.ch, Term(false,false),
+        return sequence(OPERATOR.getCh(), Term(false,false),
                 push(new Operator((Term)pop())));
     }
 
@@ -750,29 +750,29 @@ public class Narsese extends BaseParser<Object>  {
     Rule Op() {
         return sequence(
                 trie(
-                        INTERSECT_EXT.str, INTERSECT_INT.str,
-                        DIFF_EXT.str, DIFF_INT.str,
-                        PRODUCT.str,
-                        IMAGE_EXT.str, IMAGE_INT.str,
+                        INTERSECT_EXT.getStr(), INTERSECT_INT.getStr(),
+                        DIFF_EXT.getStr(), DIFF_INT.getStr(),
+                        PRODUCT.getStr(),
+                        IMAGE_EXT.getStr(), IMAGE_INT.getStr(),
 
-                        INHERIT.str,
+                        INHERIT.getStr(),
 
-                        SIMILAR.str,
+                        SIMILAR.getStr(),
 
-                        PROPERTY.str,
-                        INSTANCE.str,
-                        INSTANCE_PROPERTY.str,
+                        PROPERTY.getStr(),
+                        INSTANCE.getStr(),
+                        INSTANCE_PROPERTY.getStr(),
 
-                        NEGATE.str,
+                        NEGATE.getStr(),
 
-                        IMPLICATION.str,
-                        EQUIV.str,
-                        IMPLICATION_AFTER.str, IMPLICATION_BEFORE.str, IMPLICATION_WHEN.str,
-                        EQUIV_AFTER.str, EQUIV_WHEN.str,
-                        DISJUNCTION.str,
-                        CONJUNCTION.str,
-                        SEQUENCE.str,
-                        PARALLEL.str
+                        IMPLICATION.getStr(),
+                        EQUIV.getStr(),
+                        IMPLICATION_AFTER.getStr(), IMPLICATION_BEFORE.getStr(), IMPLICATION_WHEN.getStr(),
+                        EQUIV_AFTER.getStr(), EQUIV_WHEN.getStr(),
+                        DISJUNCTION.getStr(),
+                        CONJUNCTION.getStr(),
+                        SEQUENCE.getStr(),
+                        PARALLEL.getStr()
                 ),
 
                 push(getOperator(match()))

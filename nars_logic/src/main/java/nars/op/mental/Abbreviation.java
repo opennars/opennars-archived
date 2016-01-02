@@ -52,7 +52,7 @@ public class Abbreviation implements Consumer<Task> {
     public boolean canAbbreviate(Task task) {
         Term t = task.term();
 
-        if (Op.isOperation(t)) return false;
+        if (Op.Companion.isOperation(t)) return false;
         /*if (t instanceof Similarity) {
             Similarity s = (Similarity)t;
             if (Operation.isA(s.getSubject(), abbreviate)) return false;

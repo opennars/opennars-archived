@@ -482,7 +482,7 @@ public abstract class NAR implements Serializable, Level {
     public final int execute(Task goal) {
         Term term = goal.term();
 
-        if (Op.isOperation(term)) {
+        if (Op.Companion.isOperation(term)) {
 
             Topic<Execution> tt = memory.exe.get(
                 Operator.operatorName((Compound) term)

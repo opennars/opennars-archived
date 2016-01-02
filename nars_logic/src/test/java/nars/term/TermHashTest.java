@@ -18,10 +18,10 @@ public class TermHashTest {
 
         assertTrue(inh("a", "b").hasAny(Op.ATOM));
         assertTrue(inh(p("a"), $("b"))
-                .hasAny(Op.or(Op.ATOM, Op.PRODUCT)));
+                .hasAny(Op.Companion.or(Op.ATOM, Op.PRODUCT)));
 
         assertFalse(inh(p("a"), $("b"))
-                .isAny(Op.or(Op.SIMILAR, Op.PRODUCT)));
+                .isAny(Op.Companion.or(Op.SIMILAR, Op.PRODUCT)));
         assertFalse(inh(p("a"), $("b"))
                 .isAny(Op.PRODUCT));
 

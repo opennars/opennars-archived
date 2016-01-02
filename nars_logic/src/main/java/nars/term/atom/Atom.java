@@ -140,6 +140,8 @@ public class Atom extends StringAtom {
         return the(Float.toString(v));
     }
 
+    public static final Atom Imdex = Atom.the("_");
+
     /** gets the atomic term given a name */
     public static Atom the(String name) {
         //return Atom.the(Utf8.toUtf8(name));

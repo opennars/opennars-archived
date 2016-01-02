@@ -35,7 +35,7 @@ public final class Operator<T extends Term> extends AbstractStringAtom { //imple
     private final T term;
 
     public Operator(T the) {
-        super(Op.OPERATOR.ch + the.toString());
+        super(Op.OPERATOR.getCh() + the.toString());
         term = the;
     }
 

@@ -8,7 +8,7 @@ import nars.Op;
  */
 public interface TermMetadata {
 
-    int metadataBits = Op.or(Op.PARALLEL, Op.SEQUENCE, Op.INTERVAL);
+    int metadataBits = Op.Companion.or(Op.PARALLEL, Op.SEQUENCE, Op.INTERVAL);
 
     static boolean hasMetadata(Termlike term) {
         return term.hasAny(metadataBits);

@@ -44,7 +44,7 @@ public abstract class Variable extends AbstractStringAtom {
     }
 
     public static Variable v(Op varType, String baseName) {
-        return v(varType.ch, baseName);
+        return v(varType.getCh(), baseName);
     }
 
     public static Variable v(char ch, String name) {
@@ -109,7 +109,7 @@ public abstract class Variable extends AbstractStringAtom {
     public static final class VarDep extends Variable {
 
         public VarDep(String name) {
-            super(Op.VAR_DEP.ch + name);
+            super(Op.VAR_DEP.getCh() + name);
         }
 
         @Override
@@ -142,7 +142,7 @@ public abstract class Variable extends AbstractStringAtom {
 
 
         public VarIndep(String name) {
-            super(Op.VAR_INDEP.ch + name);
+            super(Op.VAR_INDEP.getCh() + name);
         }
 
         @Override
@@ -176,7 +176,7 @@ public abstract class Variable extends AbstractStringAtom {
 
 
         public VarQuery(String name) {
-            super(Op.VAR_QUERY.ch + name);
+            super(Op.VAR_QUERY.getCh() + name);
         }
 
         @Override

@@ -336,14 +336,14 @@ public class Terms {
     public static int maxLevel(Term term) {
         int[] max = {0};
         term.recurseTerms((t, p) -> {
-            int m = t.op().minLevel;
+            int m = t.op().getMinLevel();
             if (m > max[0])
                 max[0] = m;
         });
         return max[0];
     }
 
-    public static Term[] concat(Term[] a, Term[] b) {
+    public static <T extends Term> T[] concat(T[] a, T[] b) {
 
         if (a == null) {
             return null;
@@ -362,7 +362,7 @@ public class Terms {
         System.arraycopy(a, 0, arr, 0, l);
         System.arraycopy(b, 0, arr, l, b.length);
 
-        return arr;
+        return (T[]) arr;
     }
 
     public static <T extends Term> Term[] filter(T[] input, IntObjectPredicate<T> filter) {
@@ -437,4 +437,14 @@ public class Terms {
 
         return dist;
     }
+
+
+//    fun isOperation(t: Term): Boolean {
+//        if (t !is Compound<*>) return false
+//        return t.op().isA(OperationBits) &&
+//                t.op(Op.INHERIT) &&
+//                t.size() == 2 &&
+//                t.term(1).op(Op.OPERATOR) &&
+//                t.term(0).op(Op.PRODUCT)
+//    }
 }

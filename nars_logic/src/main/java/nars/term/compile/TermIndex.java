@@ -58,14 +58,14 @@ public interface TermIndex extends CacheBag<Term, Termed> {
      * implications, equivalences, and interval
      */
     int InvalidEquivalenceTerm =
-            or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
+            Companion.or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
                     EQUIV, EQUIV_AFTER, EQUIV_WHEN,
                     INTERVAL);
     /**
      * equivalences and intervals (not implications, they are allowed
      */
     int InvalidImplicationPredicate =
-            or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
+            Companion.or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
 
     static void appendSeparator(Appendable p, boolean pretty) throws IOException {
         p.append(ARGUMENT_SEPARATOR);
@@ -74,7 +74,7 @@ public interface TermIndex extends CacheBag<Term, Termed> {
 
     static void writeCompound1(Op op, Term singleTerm, Appendable writer, boolean pretty) throws IOException {
         writer.append(COMPOUND_TERM_OPENER);
-        writer.append(op.str);
+        writer.append(op.getStr());
         writer.append(ARGUMENT_SEPARATOR);
         singleTerm.append(writer, pretty);
         writer.append(COMPOUND_TERM_CLOSER);
@@ -118,10 +118,10 @@ public interface TermIndex extends CacheBag<Term, Termed> {
         //duplicated from above, dont want to store this as a field in the class
         char opener, closer;
         if (set.op(Op.SET_EXT)) {
-            opener = Op.SET_EXT_OPENER.ch;
+            opener = Op.SET_EXT_OPENER.getCh();
             closer = Symbols.SET_EXT_CLOSER;
         } else {
-            opener = Op.SET_INT_OPENER.ch;
+            opener = Op.SET_INT_OPENER.getCh();
             closer = Symbols.SET_INT_CLOSER;
         }
 
@@ -139,7 +139,7 @@ public interface TermIndex extends CacheBag<Term, Termed> {
         int len = image.size();
 
         p.append(COMPOUND_TERM_OPENER);
-        p.append(image.op().str);
+        p.append(image.op().getStr());
 
         int relationIndex = image.relation();
         int i;
@@ -292,7 +292,7 @@ public interface TermIndex extends CacheBag<Term, Termed> {
 
         //apply any known immediate transform operators
         //TODO decide if this is evaluated incorrectly somehow in reverse
-        if (Op.isOperation(result)) {
+        if (Op.Companion.isOperation(result)) {
             ImmediateTermTransform tf = f.getTransform(Operator.operatorTerm((Compound)result));
             if (tf!=null) {
                 return applyImmediateTransform(f, result, tf);
@@ -515,7 +515,7 @@ public interface TermIndex extends CacheBag<Term, Termed> {
             t = Terms.toSortedSetArray(t);
 
         int arity = t.length;
-        if (op.minSize > 1 && arity == 1) {
+        if (op.getMinSize() > 1 && arity == 1) {
             return t[0]; //reduction
         }
 

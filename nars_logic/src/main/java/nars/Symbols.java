@@ -155,7 +155,7 @@ public final class Symbols {
 
         //Setup NativeOperator Character index hashtable 
         for (Op r : Op.values()) {
-            char c = r.ch;
+            char c = r.getCh();
             if (c!=0)
                 _charToOperator.put(c, r);
         }

@@ -219,7 +219,7 @@ public class InternalExperience {
 
         Term content = task.term();
         // to prevent infinite recursions
-        if (Op.isOperation(content)/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+        if (Op.Companion.isOperation(content)/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return null;
         }
 

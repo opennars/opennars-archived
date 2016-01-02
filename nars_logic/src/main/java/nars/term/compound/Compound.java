@@ -138,7 +138,7 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     }
 
     default boolean appendOperator(Appendable p) throws IOException {
-        p.append(op().str);
+        p.append(op().getStr());
         return true;
     }
 

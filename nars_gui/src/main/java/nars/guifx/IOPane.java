@@ -131,7 +131,7 @@ public class IOPane extends BorderPane /*implements FXIconPaneBuilder*/ {
 
     public Node newTaskNode(Task t) {
         Term tt = t.term();
-        if (Op.isOperation(tt)) {
+        if (Op.Companion.isOperation(tt)) {
             Compound ct = (Compound) tt;
             Term[] a = Operator.opArgsArray(ct);
             switch (Operator.operatorName(ct).toString()) {

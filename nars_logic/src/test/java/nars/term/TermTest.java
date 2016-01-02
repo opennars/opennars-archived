@@ -303,7 +303,7 @@ public class TermTest {
         try {
             Term x = n.term("wonder(a,b)");
             assertEquals(Op.INHERIT, x.op());
-            assertTrue(Op.isOperation(x));
+            assertTrue(Op.Companion.isOperation(x));
             assertEquals("wonder(a,b)", x.toString());
 
         } catch (Narsese.NarseseException ex) {
