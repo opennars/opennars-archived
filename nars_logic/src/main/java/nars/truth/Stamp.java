@@ -21,6 +21,7 @@
 package nars.truth;
 
 import nars.Global;
+import nars.task.Task;
 
 import java.util.Arrays;
 
@@ -55,7 +56,6 @@ public interface Stamp {
 
         if (l < 2)
             return x;
-
 
         //1. copy evidentialBase and sort it
         long[] sorted = Arrays.copyOf(x, l);
@@ -109,4 +109,13 @@ public interface Stamp {
 
     Stamp setEvidence(long... evidentialSet);
 
+    static long[] zip(Task parentTask, Task parentBelief) {
+
+        long[] as = parentTask.getEvidence();
+        long[] bs = parentBelief.getEvidence();
+
+        return parentTask.getCreationTime() > parentBelief.getCreationTime() ?
+                Stamp.zip(bs, as) :
+                Stamp.zip(as, bs);
+    }
 }

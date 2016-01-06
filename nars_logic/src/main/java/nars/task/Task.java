@@ -295,6 +295,14 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     void mulPriority(float factor);
 
+    void setExecuted();
+
+    enum TaskState {
+        Anticipated,
+        Executed
+    }
+
+    TaskState getState();
 
     final class Solution extends AtomicReference<Task> {
         Solution(Task referent) {

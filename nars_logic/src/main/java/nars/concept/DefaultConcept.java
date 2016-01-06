@@ -1,9 +1,7 @@
 package nars.concept;
 
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import com.gs.collections.impl.set.mutable.primitive.LongHashSet;
+import nars.*;
 import nars.bag.Bag;
 import nars.bag.NullBag;
 import nars.budget.BudgetMerge;
@@ -12,9 +10,11 @@ import nars.concept.util.ArrayListTaskTable;
 import nars.concept.util.BeliefTable;
 import nars.concept.util.TaskTable;
 import nars.nal.LocalRules;
+import nars.op.mental.Anticipate;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.truth.DefaultTruth;
 
 import java.util.function.BiPredicate;
 
@@ -25,6 +25,9 @@ public class DefaultConcept extends AtomConcept {
     protected TaskTable quests = null;
     protected BeliefTable beliefs = null;
     protected BeliefTable goals = null;
+
+    final int max_last_execution_evidence_len = 100;
+    final LongHashSet lastevidence = new LongHashSet(max_last_execution_evidence_len);
 
 
 
@@ -218,13 +221,18 @@ public class DefaultConcept extends AtomConcept {
             return false;
         }
 
+        if(belief.isInput() && !belief.isEternal()) {
+            this.put(Anticipate.class, true);
+        }
 
         if (hasQuestions()) {
             //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
             getQuestions().forEach( question ->
-                LocalRules.trySolution(question, strongest, nar, (s) -> {
+                LocalRules.trySolution(question, strongest, nar, null)
+                /*(s) -> {
                     //..
-                })
+                }*/
+                //)
             );
         }
         //}
@@ -270,10 +278,39 @@ public class DefaultConcept extends AtomConcept {
             if (delta!=0) //less desire of a goal, more happiness
                memory.emotion.happy(delta);
 
+            float expectation_diff = (1-successAfter) / successAfter;
+            if(Math.abs(expectation_diff) >= Global.EXECUTION_SATISFACTION_TRESHOLD) {
+                DefaultTruth projected = strongest.projection(memory.time(), memory.time());
+                if (projected.getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
+                    if (Op.isOperation( goal.term() ) && goal.getState() != Task.TaskState.Executed) { //check here already
+                        boolean subseteq_base = true;
 
-            if(Math.abs(delta)>= memory.getExecutionSatisfactionThreshold()) {
-                if (strongest.getTruth().getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
-                    nar.execute(goal);
+                        LongHashSet ev = this.lastevidence;
+                        long[] evidence = goal.getEvidence();
+
+                        if (ev != null) { //if all evidence of the new one is also part of the old one
+                            for(long l : evidence) { //then there is no need to execute
+                                //which means only execute if there is new evidence which suggests doing so1
+                                boolean included = ev.contains(l);
+                                if(!included) {
+                                    subseteq_base = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!subseteq_base || ev == null) {
+                            nar.execute(strongest);
+
+                            for(int i=0; i<evidence.length; i++) {
+                                /*boolean iscontained = */
+                                ev.add(evidence[i]);
+                            }
+                            //lastevidence.toSortedList()
+                            while(ev.size() > max_last_execution_evidence_len) {
+                                ev.remove( ev.min() );
+                            }
+                        }
+                    }
                 }
             }
 
@@ -422,12 +459,21 @@ public class DefaultConcept extends AtomConcept {
 
         //TODO if the table was not affected, does the following still need to happen:
 
-        Task sol = q.isQuest() ? getGoals().top(q, nar.time()) : getBeliefs().top(q, nar.time());
+        long now = nar.time();
+        Task sol = q.isQuest() ?
+                getGoals().top(q, now) :
+                getBeliefs().top(q, now);
 
         if (sol!=null) {
-            /*Task solUpdated = */LocalRules.trySolution(q, sol, nar, (s) -> {
+
+            if (sol.getDeleted()) {
+                //throw new RuntimeException("can not try solution on deleted task: " + sol);
+                return true;
+            }
+
+            LocalRules.trySolution(q, sol, nar, null); /*(s) -> {
                 //...
-            });
+            });*/
         }
 
         return true;

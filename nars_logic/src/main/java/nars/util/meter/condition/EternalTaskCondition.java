@@ -30,7 +30,6 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
     protected final NAR nar;
     private final char punc;
     private final Term term;
-    private final int duration;
     boolean succeeded = false;
     long successTime = Tense.TIMELESS;
 
@@ -91,7 +90,7 @@ public class EternalTaskCondition implements NARCondition, Predicate<Task>, Cons
         this.confMin = Math.max(0.0f, confMin);
         this.punc = punc;
         this.term = n.term(sentenceTerm).term();
-        this.duration = n.memory.duration();
+        //this.duration = n.memory.duration();
     }
 
     public static String rangeStringN2(float min, float max) {

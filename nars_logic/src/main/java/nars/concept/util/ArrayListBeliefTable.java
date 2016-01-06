@@ -8,15 +8,14 @@ import nars.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import nars.util.data.Util;
 
 /**
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)
  */
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
-    private static final float RANK_EPSILON = 0.000001f;
 
 
 //    /** warning this will create a 0-capacity table,
@@ -30,9 +29,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         super(cap);
     }
 
-    /** creates a revision task (but does not input it)
-     *  if failed, returns null
-     * */
+    /**
+     * creates a revision task (but does not input it)
+     * if failed, returns null
+     */
     public static Task getRevision(Task newBelief, Task oldBelief, long now) {
 
         if (newBelief.equals(oldBelief) || Tense.overlapping(newBelief, oldBelief))
@@ -53,13 +53,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 .budget(budget)
                 .parent(newBelief, oldBelief)
                 .because("Revision")
-                .time( now, newBelief.getOccurrenceTime());
+                .time(now, newBelief.getOccurrenceTime());
     }
 
     /**
      * WARNING: this assumes terms are already
      * known to be equal.
-     *
      */
     public static boolean revisible(Task newBelief, Task oldBelief) {
 
@@ -97,8 +96,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             Task t;
             for (int i = 0; null != (t = tasks[i++]); ) {
                 boolean tEtern = Tense.isEternal(t.getOccurrenceTime());
-                if (eternal && tEtern) return t;
-                if (temporal && !tEtern) return t;
+                if (eternal && tEtern || temporal && !tEtern) return t;
             }
         }
 
@@ -116,14 +114,25 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         float s = Float.NEGATIVE_INFINITY;
         Task b = null;
 
-        Task t;
-        for (int i = 0; null != (t = tasks[i++]); ) {
-            float x = r.rank(t, s);
-            if (x > s) {
-                s = x;
-                b = t;
+        for (int i = tasks.length - 1; i >= 0; i--) {
+            Task t = tasks[i];
+            if (t != null) {
+                float x = r.rank(t, s);
+                if (x + DefaultTruth.DEFAULT_TRUTH_EPSILON > s) {
+                    s = x;
+                    b = t;
+                }
             }
         }
+
+//        Task t;
+//        for (int i = 0; null != (t = tasks[i++]); ) {
+//            float x = r.rank(t, s);
+//            if (x > s) {
+//                s = x;
+//                b = t;
+//            }
+//        }
 
         return b;
     }
@@ -159,23 +168,19 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
 
 
-        boolean added = tryAdd(input, ranking, memory);
-        if (input.getDeleted()) {
-            return top();
-        }
-
         boolean tableChanged = false;
+
+        boolean added = tryAdd(input, ranking, memory);
         if (added) {
             tableChanged = true;
         }
-
 
         long now = memory.time();
         Task top = top(input, now);
 
 
         //TODO make sure input.isDeleted() can not happen
-        if (added && revisible(input, top)) {
+        if (!input.getDeleted() && revisible(input, top)) {
 
             Task revised = getRevision(input, top, now);
 
@@ -185,21 +190,26 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 if (addedRevision) {
                     tableChanged = true;
                 }
-                if (!revised.getDeleted()) {
 
-                    memory.eventRevision.emit(revised);
-                    //nal.memory().logic.BELIEF_REVISION.hit();
+                memory.eventRevision.emit(revised);
+                //nal.memory().logic.BELIEF_REVISION.hit();
 
+                if (!addedRevision) {
+                    //onBeliefRemoved(revised, "Task Denied Belief Table Entry", memory);
+                } else {
                     top = revised;
                 }
             }
-
         }
 
         //nal.updateBelief(top);
 
         if (tableChanged) {
             onChanged(c, memory);
+        }
+
+        if (!added) {
+            //onBeliefRemoved(input, "Task Denied Belief Table Entry (2)", memory);
         }
 
         return top;
@@ -245,11 +255,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             boolean inputGreater = Float.isNaN(existingRank) || (rankInput > existingRank);
             if (inputGreater) {
                 break; //item will be inserted at this index
-            } else if (input.isInput() && Util.equal(rankInput, existingRank, RANK_EPSILON)) {
-                //allow a newer task to override an older one of the same rank
-                //if it is input (any other conditions?)
-                if (input.getCreationTime() > b.getCreationTime())
-                    break; //item will be inserted at this index
             }
         }
 
@@ -259,7 +264,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (atCapacity) {
             if (i == siz) {
                 //reached the end of the list and there is no room to add at the end
-                onBeliefRemoved(input, "Unbelievable/Undesirable", memory);
+                //here we cant remove it yet because it is needed for revision
                 return false;
             } else {
                 Task removed = remove(siz - 1);

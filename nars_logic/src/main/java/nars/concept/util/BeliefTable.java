@@ -19,8 +19,6 @@ import java.util.Random;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import static nars.nal.UtilityFunctions.or;
-
 /**
  * A model storing, ranking, and projecting beliefs or goals (tasks with TruthValue).
  * It should iterate in top-down order (highest ranking first)
@@ -207,9 +205,6 @@ public interface BeliefTable extends TaskTable {
     }
 
 
-
-
-
     final class SolutionQualityMatchingOrderRanker implements Ranker {
 
         private final Task query;
@@ -229,16 +224,11 @@ public interface BeliefTable extends TaskTable {
             if (t.equals(q)) return Float.NaN; //dont compare to self
 
             //TODO use bestToBeat to avoid extra work
-            return or(t.getOriginality(),Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar));
+            //return or(t.getOriginality(),Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar));
+            return Tense.solutionQualityMatchingOrder(q, t, now, hasQueryVar);
         }
     }
 
-    default Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
-
-        if (isEmpty()) return null;
-
-        return top((t, bestToBeat) -> Tense.solutionQuality(hasQueryVar, occTime, t, truth, now));
-    }
 
 //    /**
 //     * Select a belief value or desire value for a given query

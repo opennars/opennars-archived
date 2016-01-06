@@ -114,8 +114,9 @@ public enum LocalRules {
      */
     public static void trySolution(Task question, Task solution, NAR nal, Consumer<Task> eachSolutions) {
 
-        if ((solution == null) || (solution.getDeleted()))
+        if ((solution == null) || (solution.getDeleted())) {
             throw new RuntimeException("proposedBelief " + solution + " deleted or null");
+        }
 
         if (!Tense.matchingOrder(question, solution)) {
             //System.out.println("Unsolved: Temporal order not matching");
@@ -149,7 +150,8 @@ public enum LocalRules {
                         memory
                 );
 
-                eachSolutions.accept(ss);
+                if (eachSolutions!=null)
+                    eachSolutions.accept(ss);
 
                 //TODO move this to a callee's consumer?
                 processSolution(question, nal, ss, memory, now);
@@ -158,7 +160,8 @@ public enum LocalRules {
             if (sol == null)
                 throw new RuntimeException("Unification invalid: " + solution + " unified and projected to " + sol);
 
-            eachSolutions.accept(sol);
+            if (eachSolutions!=null)
+                eachSolutions.accept(sol);
 
             //TODO move this to a callee's consumer?
             processSolution(question, nal, sol, memory, now);

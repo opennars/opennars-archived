@@ -422,7 +422,10 @@ public abstract class NAR implements Serializable, Level {
                     Operator.operatorName((Compound) term)
             );
 
+            goal.setExecuted();
+
             if (tt != null && !tt.isEmpty()) {
+
                 //enqueue after this frame, before next
                 beforeNextFrame(
                         new Execution(this, goal, tt)

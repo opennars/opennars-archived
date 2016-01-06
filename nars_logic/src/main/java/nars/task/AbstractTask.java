@@ -35,6 +35,7 @@ public abstract class AbstractTask extends Item<Task>
     /** content term of this task */
     private Termed<Compound> term;
 
+    private TaskState state = null;
 
     private char punctuation;
 
@@ -55,7 +56,6 @@ public abstract class AbstractTask extends Item<Task>
      */
     private transient Reference<Task> parentBelief;
 
-
     private transient int hash;
 
     /**
@@ -64,11 +64,10 @@ public abstract class AbstractTask extends Item<Task>
      */
     private transient Reference<Task> bestSolution;
 
-
     private List log = null;
 
     /** flag used for anticipatable derivation */
-    protected boolean anticipate = false;
+    @Deprecated protected boolean anticipate = false; //TODO use TaskState
 
 
     public AbstractTask(Compound term, char punctuation, Truth truth, Budget bv, Task parentTask, Task parentBelief, Task solution) {
@@ -264,6 +263,16 @@ public abstract class AbstractTask extends Item<Task>
         return this;
     }
 
+    @Override
+    public TaskState getState() {
+        return state;
+    }
+
+    @Override
+    public void setExecuted() {
+        state = TaskState.Executed;
+    }
+
     /** can be overridden in subclasses to handle this event */
     protected void onNormalized(Memory m) {
 
@@ -447,41 +456,10 @@ public abstract class AbstractTask extends Item<Task>
         //but this should only happen for input tasks (with no parent)
 
         if (isDouble()) {
-            long[] as = getParentTask().getEvidence();
-            long[] bs = getParentBelief().getEvidence();
-
-            //temporary
-            if (as == null)
-                throw new RuntimeException("parentTask " + getParentTask() + " has no evidentialSet");
-            if (bs == null)
-                throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
-
-            setEvidence( Stamp.toSetArray( Stamp.zip(as, bs) ) ) ;
-
-                /*if (getParentTask().isInput() || getParentBelief().isInput()) {
-                    setCyclic(false);
-                } else {*/
-                    /*
-                    <patham9> since evidental overlap is not checked on deduction, a derivation can be cyclic
-                    <patham9> its on revision when it finally matters, but not whether the two parents are cyclic, but whether the combination of both evidental bases of both parents would be cyclic/have an overlap
-                    <patham9> else deductive conclusions could not lead to revisions altough the overlap is only local to the parent (the deductive conclusion)
-                    <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
-                    */
-
-//            setCyclic(
-//                    //boolean bothParentsCyclic =
-//                    ((getParentTask().isCyclic() && getParentBelief().isCyclic())
-//                            ||
-//                            //boolean overlapBetweenParents = if the sum of the two parents length is greater than the result then there was some overlap
-//                            (zipped.length > uniques.length))
-//            );
-
-            //}
-
-        } else if (isSingle()) {
-            setEvidence(getParentTask().getEvidence());
+            setEvidence( Stamp.toSetArray( Stamp.zip(getParentTask(), getParentBelief() )));
+        } else if ( isSingle() ) {
+            setEvidence( getParentTask().getEvidence() );
         }
-
 
     }
 

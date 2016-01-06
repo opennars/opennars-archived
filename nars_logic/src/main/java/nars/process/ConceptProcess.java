@@ -70,7 +70,7 @@ public final class ConceptProcess implements Premise {
 
             belief = beliefConcept.getBeliefs().top(task, nar.time());
 
-            if (belief != null) {
+            if ((belief != null) && (!belief.getDeleted())) {
                 Premise.match(task, belief, nar, beliefResolved -> {
                     beliefAttempts[0]++;
                     cp.accept(new ConceptProcess(

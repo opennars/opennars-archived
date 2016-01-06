@@ -44,12 +44,14 @@ public enum Global {
     ;
 
 
-    public static final float EXECUTION_DESIRE_EXPECTATION_THRESHOLD = 0.6f;
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.01f;
 
     //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("I");
+
+    public static float EXECUTION_SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
+
 
 //    public static int UNIFICATION_POWER = 400;
 //    public static int UNIFICATION_POWERmin = UNIFICATION_POWER;
@@ -76,6 +78,8 @@ public enum Global {
     public static boolean DEBUG_LOG_DERIVING_RULE = true;
     public static boolean DEBUG_DETECT_DUPLICATE_DERIVATIONS = false;
     public static boolean DEBUG_DETECT_DUPLICATE_RULES = false;
+
+    public static final float EXECUTION_DESIRE_EXPECTATION_THRESHOLD = 0.6f;
 
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,7 +154,7 @@ public enum Global {
     /** extra debugging checks */
     public static boolean DEBUG_PARANOID = false;
 
-    public static float MAX_TERMUTATIONS_PER_MATCH = 4;
+    public static float MAX_TERMUTATIONS_PER_MATCH = 8;
     public static float MIN_TERMUTATIONS_PER_MATCH = 1;
 
 

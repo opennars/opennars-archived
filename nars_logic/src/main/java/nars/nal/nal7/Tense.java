@@ -1,21 +1,17 @@
 package nars.nal.nal7;
 
 import nars.Memory;
-import nars.Symbols;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
-import nars.budget.UnitBudget;
-import nars.nal.UtilityFunctions;
 import nars.task.Task;
 import nars.task.Temporal;
 import nars.term.Termed;
 import nars.truth.Stamp;
 import nars.truth.Truth;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static nars.nal.UtilityFunctions.or;
 
 public enum Tense  {
 
@@ -108,10 +104,26 @@ public enum Tense  {
         return solutionQualityMatchingOrder(problem, solution, time, problem.hasQueryVar() );
     }
 
+    public static float solutionQualityMatchingOrder(final Task problem, final Task solution, final long time, final boolean hasQueryVar) {
+
+        long poc = problem.getOccurrenceTime();
+
+        //TODO avoid creating new Truth instances
+        Truth truth = poc != solution.getOccurrenceTime() ?
+                solution.projection(poc, time) :
+                solution.getTruth();
+
+        //if (problem.hasQueryVar()) {
+        float originality = solution.getOriginality();
+        return hasQueryVar ?
+                or(originality, truth.getExpectation() / solution.term().complexity()) :
+                or(originality, truth.getConfidence());
+    }
+
     /**
         this method is used if the order is known to be matching, so it is not checked
      */
-    public static float solutionQualityMatchingOrder(Task problem, Task solution, long time, boolean hasQueryVar) {
+    public static float solutionQualityMatchingOrderOLD(Task problem, Task solution, long time, boolean hasQueryVar) {
 
         /*if ((problem == null) || (solution == null)) {
             throw new RuntimeException("problem or solution is null");
