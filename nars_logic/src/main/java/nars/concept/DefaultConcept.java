@@ -26,7 +26,7 @@ public class DefaultConcept extends AtomConcept {
     protected BeliefTable beliefs = null;
     protected BeliefTable goals = null;
 
-    final int max_last_execution_evidence_len = 100;
+    final int max_last_execution_evidence_len = Global.MAXIMUM_EVIDENTAL_BASE_LENGTH * 8;
     final LongHashSet lastevidence = new LongHashSet(max_last_execution_evidence_len);
 
 
@@ -282,29 +282,17 @@ public class DefaultConcept extends AtomConcept {
             if(Math.abs(expectation_diff) >= Global.EXECUTION_SATISFACTION_TRESHOLD) {
                 DefaultTruth projected = strongest.projection(memory.time(), memory.time());
                 if (projected.getExpectation() > Global.EXECUTION_DESIRE_EXPECTATION_THRESHOLD) {
-                    if (Op.isOperation( goal.term() ) && goal.getState() != Task.TaskState.Executed) { //check here already
-                        boolean subseteq_base = true;
+                    if (Op.isOperation(goal.term()) && (goal.getState() != Task.TaskState.Executed)) { //check here already
 
                         LongHashSet ev = this.lastevidence;
-                        long[] evidence = goal.getEvidence();
 
-                        if (ev != null) { //if all evidence of the new one is also part of the old one
-                            for(long l : evidence) { //then there is no need to execute
-                                //which means only execute if there is new evidence which suggests doing so1
-                                boolean included = ev.contains(l);
-                                if(!included) {
-                                    subseteq_base = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if(!subseteq_base || ev == null) {
+                        //if all evidence of the new one is also part of the old one
+                        //then there is no need to execute
+                        //which means only execute if there is new evidence which suggests doing so1
+                        if (ev.addAll(goal.getEvidence())) {
                             nar.execute(strongest);
 
-                            for(int i=0; i<evidence.length; i++) {
-                                /*boolean iscontained = */
-                                ev.add(evidence[i]);
-                            }
+                            //TODO more efficient size limiting
                             //lastevidence.toSortedList()
                             while(ev.size() > max_last_execution_evidence_len) {
                                 ev.remove( ev.min() );
