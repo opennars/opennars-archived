@@ -250,7 +250,8 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     default boolean isRevisible() {
         Term t = term();
-        return !(t.op().isConjunctive() && t.hasVarDep());
+        return !((t.op().isConjunctive() && t.hasVarDep()) ||
+                t.op(Op.SPACE));
     }
 
     default StringBuilder appendTo(StringBuilder sb) {

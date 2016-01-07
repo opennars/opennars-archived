@@ -290,6 +290,22 @@ public enum LocalRules {
         return Tense.solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
     }
 
+    /**
+     * WARNING: this assumes terms are already
+     * known to be equal.
+     */
+    public static boolean revisible(Task newBelief, Task oldBelief) {
+
+        //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
+
+        if (newBelief.isRevisible() && (!newBelief.equals(oldBelief))) {
+            if (Tense.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
+                return true;
+        }
+
+        return false;
+    }
+
 
     /* -------------------- same terms, difference relations -------------------- */
 //

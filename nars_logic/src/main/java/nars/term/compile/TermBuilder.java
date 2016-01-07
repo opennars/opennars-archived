@@ -180,6 +180,7 @@ public interface TermBuilder {
         if (t.isNormalized()) {
             return t;
         }
+
         Compound x = transform((Compound) t, normalizeFast((Compound) t));
         Termed tx = the(x);
         //if (x != t) {

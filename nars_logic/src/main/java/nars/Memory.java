@@ -29,12 +29,16 @@ import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Execution;
+import nars.nal.space.Space;
+import nars.nal.space.SpaceConcept;
 import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermIndex;
+import nars.term.compound.Compound;
+import nars.term.transform.CompoundTransform;
 import nars.term.variable.Variable;
 import nars.time.Clock;
 import nars.util.data.random.XorShift128PlusRandom;
@@ -239,19 +243,15 @@ public class Memory extends Param {
         Bag<Termed> termLinks =
                 new CurveBag<Termed>(termLinkBagSize, random).mergePlus();
 
-        //Budget b = new UnitBudget();
-        //Budget b = new BagAggregateBudget(taskLinks);
+        return (t instanceof Atom) ?
 
-        return t instanceof Atom ?
+            new AtomConcept(t, termLinks, taskLinks) :
 
-                new AtomConcept(
-                        t,
-                        termLinks, taskLinks) :
+            ((!(t instanceof Space)) ?
 
-                new DefaultConcept(
-                        t,
-                        taskLinks, termLinks, this);
+                new DefaultConcept(t, taskLinks, termLinks, this) :
 
+                new SpaceConcept((Space)t, taskLinks, termLinks, this));
     }
 
     public Concept concept(Termed t) {
@@ -266,10 +266,29 @@ public class Memory extends Param {
             tt = t.term();
         }
 
-        Function<Term, Termed> build = this::newDefaultConcept;
-
         //TODO ? put the unnormalized term for cached future normalizations?
 
+        if (tt.isCompound() && tt.hasAny(Op.SPACE)) {
+            if (tt instanceof Space) {
+                tt = ((Space) tt).anonymous();
+            }
+
+            tt = index.transform((Compound)tt, new CompoundTransform<Compound,Term>() {
+
+                @Override public boolean test(Term term) {
+                    return term.hasAny(Op.SPACE);
+                }
+
+                @Override public Term apply(Compound parent, Term subterm, int depth) {
+                    if (subterm instanceof Space) {
+                        return ((Space) subterm).anonymous();
+                    }
+                    return subterm;
+                }
+            });
+        }
+
+        Function<Term, Termed> build = this::newDefaultConcept;
         Termed exists = index.apply(tt, build);
 
         if (exists instanceof Concept) {

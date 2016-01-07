@@ -5,6 +5,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
+import nars.nal.LocalRules;
 import nars.nal.nal7.Tense;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -54,22 +55,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 .parent(newBelief, oldBelief)
                 .because("Revision")
                 .time(now, newBelief.getOccurrenceTime());
-    }
-
-    /**
-     * WARNING: this assumes terms are already
-     * known to be equal.
-     */
-    public static boolean revisible(Task newBelief, Task oldBelief) {
-
-        //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
-
-        if (newBelief.isRevisible() && (!newBelief.equals(oldBelief))) {
-            if (Tense.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
-                return true;
-        }
-
-        return false;
     }
 
 
@@ -180,7 +165,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
         //TODO make sure input.isDeleted() can not happen
-        if (!input.getDeleted() && revisible(input, top)) {
+        if (!input.getDeleted() && LocalRules.revisible(input, top)) {
 
             Task revised = getRevision(input, top, now);
 

@@ -3,10 +3,12 @@ package nars.nal.space;
 import com.gs.collections.impl.list.mutable.primitive.FloatArrayList;
 import nars.Op;
 import nars.term.TermVector;
+import nars.term.Termed;
 import nars.term.compound.GenericCompound;
 import nars.util.data.Util;
 
 import java.io.IOException;
+import java.util.Objects;
 
 
 /** linear combination of a sequence
@@ -17,22 +19,39 @@ public class Space extends GenericCompound {
     final FloatArrayList vector;
     final int hash2;
 
+    public Space(TermVector subterms) {
+        //this(subterms, FloatArrayList.newWithNValues((int)subterms.size(), (float)Float.NaN) /* blank */);
+        this(subterms, (FloatArrayList) null);
+    }
+
     public Space(TermVector subterms, float... f) {
         this(subterms, new FloatArrayList(f));
     }
 
+    public Space anonymous() {
+        if (vector == null) return this;
+        else return new Space(subterms());
+    }
+
+
     public Space(TermVector subterms, FloatArrayList vector) {
         super(Op.SPACE, -1, subterms);
         this.vector = vector;
-        if (vector.size()!=subterms.size())
-            throw new RuntimeException("invalid dimensions: " + subterms + " with " + vector.size());
-        this.hash2 = Util.hashCombine( super.hashCode(), vector.hashCode() );
+        if (vector!=null) {
+            if (vector.size()!=subterms.size()) {
+                throw new RuntimeException("invalid dimensions: " + subterms + " with " + vector.size());
+            }
+            this.hash2 = Util.hashCombine(super.hashCode(), vector.hashCode());
+        } else {
+            this.hash2 = super.hashCode();
+        }
+
     }
 
     @Override
     public boolean equals(Object that) {
-        return super.equals(that) &&
-                ((Space)that).vector.equals(vector);
+        return (that instanceof Space) && super.equals(that) &&
+            Objects.equals(vector,  ((Space)((Termed)that).term()).vector);
     }
 
     @Override
@@ -62,7 +81,14 @@ public class Space extends GenericCompound {
     @Override
     public void appendArg(Appendable p, boolean pretty, int i) throws IOException {
         term(i).append(p, pretty);
-        p.append('*');
-        p.append(Float.toString(vector.get(i)));
+
+        FloatArrayList vv = this.vector;
+        if (vv !=null) {
+            float v = vv.get(i);
+            if (!Float.isNaN(v)) {
+                p.append('*').append(Float.toString(v));
+            }
+        }
     }
+
 }

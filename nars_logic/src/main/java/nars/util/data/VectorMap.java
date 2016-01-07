@@ -6,7 +6,6 @@ import nars.NAR;
  * 
  * @author me
  */
-
 public abstract class VectorMap {
 
 	public final UniformVector input;
