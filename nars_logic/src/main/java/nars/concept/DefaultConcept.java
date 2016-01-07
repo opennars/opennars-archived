@@ -3,7 +3,6 @@ package nars.concept;
 import com.gs.collections.impl.set.mutable.primitive.LongHashSet;
 import nars.*;
 import nars.bag.Bag;
-import nars.bag.NullBag;
 import nars.budget.BudgetMerge;
 import nars.concept.util.ArrayListBeliefTable;
 import nars.concept.util.ArrayListTaskTable;
@@ -26,35 +25,19 @@ public class DefaultConcept extends AtomConcept {
     protected BeliefTable beliefs = null;
     protected BeliefTable goals = null;
 
+    //TODO move this to a GoalBeliefTable so lazy allocation manages this:
     final int max_last_execution_evidence_len = Global.MAXIMUM_EVIDENTAL_BASE_LENGTH * 8;
     final LongHashSet lastevidence = new LongHashSet(max_last_execution_evidence_len);
 
 
-
-//    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
-//
-//        @Override
-//        public boolean areEqual(Task a, Task b) {
-//            return (a.equals(b));
-//        }
-//
-//        //N/A
-//        @Override public int compare(Task task, Task t1) {  return 0;        }
-//        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
-//    };
-
-
-
-
     public static final BiPredicate<Task,Task> questionEquivalence = new BiPredicate<Task,Task> () {
-
 
         @Override
         public boolean test(Task a, Task b) {
             return (a.equals(b));
         }
 
-//        //N/A
+//        //N/
 //        @Override public int compare(Task task, Task t1) {  return 0;        }
 //        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
     };
@@ -63,9 +46,9 @@ public class DefaultConcept extends AtomConcept {
     static final BudgetMerge duplicateQuestionMerge = BudgetMerge.plusDQDominated;
     private final Termed[] termLinkTemplates;
 
-    public DefaultConcept(Term term, Memory p) {
-        this(term, new NullBag(), new NullBag(), p);
-    }
+//    public DefaultConcept(Term term, Memory p) {
+//        this(term, new NullBag(), new NullBag(), p);
+//    }
 
     /**
      * Constructor, called in Memory.getConcept only
@@ -88,8 +71,6 @@ public class DefaultConcept extends AtomConcept {
 
     }
 
-
-
     /**
      * Pending Quests to be answered by new desire values
      */
@@ -97,6 +78,12 @@ public class DefaultConcept extends AtomConcept {
     public final TaskTable getQuests() {
         return quests;
     }
+
+    @Override
+    public final TaskTable getQuestions() {
+        return questions;
+    }
+
 
     /**
      * Judgments directly made about the term Use ArrayList because of access
@@ -106,7 +93,6 @@ public class DefaultConcept extends AtomConcept {
     public final BeliefTable getBeliefs() {
         return beliefs == null ? BeliefTable.EMPTY : beliefs;
     }
-
 
     /**
      * Desire values on the term, similar to the above one
@@ -520,20 +506,6 @@ public class DefaultConcept extends AtomConcept {
 //    }
 
 
-    /**
-     * Pending Question directly asked about the term
-     *
-     * Note: since this is iterated frequently, an array should be used. To
-     * avoid iterator allocation, use .get(n) in a for-loop
-     */
-    /**
-     * Return the questions, called in ComposionalRules in
-     * dedConjunctionByQuestion only
-     */
-    @Override
-    public TaskTable getQuestions() {
-        return questions;
-    }
 
 
     //

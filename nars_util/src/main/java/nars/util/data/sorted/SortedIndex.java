@@ -37,9 +37,6 @@ public abstract class SortedIndex<T> implements Collection<T>, Serializable {
     public abstract List<T> getList();
     
 
-
-
-
     public abstract boolean isSorted();
 
     public abstract int locate(Object o);

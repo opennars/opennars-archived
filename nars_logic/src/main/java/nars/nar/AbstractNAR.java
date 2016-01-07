@@ -78,7 +78,6 @@ public abstract class AbstractNAR extends NAR {
     public void initNAL7() {
         //NAL7 plugins
         memory.the(new STMTemporalLinkage(this));
-        memory.the(new Anticipate(this));
     }
 
     public void initNAL8() {
@@ -100,6 +99,7 @@ public abstract class AbstractNAR extends NAR {
 
     protected void initNAL9() {
 
+        memory.the(new Anticipate(this));
 
 
         new FullInternalExperience(this);

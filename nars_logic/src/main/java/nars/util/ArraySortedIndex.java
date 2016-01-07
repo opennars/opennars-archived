@@ -68,7 +68,7 @@ public class ArraySortedIndex<E extends Budgeted> extends SortedIndex<E> {
      /*return (1+b.getPriority())*
      (b.getDurability()*b.getQuality());
      */
-    @Override public float score(Budgeted b) {
+    @Override public float score(E b) {
 
         return b.getPriority();
 

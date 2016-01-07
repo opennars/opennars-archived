@@ -7,6 +7,7 @@ import nars.term.compound.Compound;
 import nars.term.match.Ellipsis;
 import nars.term.visit.SubtermVisitor;
 import nars.util.data.Util;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -360,6 +361,12 @@ public class TermVector<T extends Term> implements TermContainer<T>, Serializabl
     public final void visit(SubtermVisitor v, Compound parent) {
         for (Term t : term)
             v.accept(t, parent);
+    }
+
+    public TermVector reverse() {
+        Term[] r = terms().clone();
+        ArrayUtils.reverse(r);
+        return new TermVector(r);
     }
 
 

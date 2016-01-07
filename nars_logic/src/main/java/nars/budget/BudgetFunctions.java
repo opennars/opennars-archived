@@ -20,6 +20,7 @@
  */
 package nars.budget;
 
+import nars.Global;
 import nars.NAR;
 import nars.bag.BLink;
 import nars.nal.UtilityFunctions;
@@ -73,11 +74,15 @@ public final class BudgetFunctions extends UtilityFunctions {
 
 		float dif = conclusion.getConfidence()
 				- Math.max(tTruth.getConfidence(), bTruth.getConfidence());
+
 		if (dif < 0) {
-			// throw new RuntimeException("Revision fault: " + oldBelief +
-			// " more confident than concluded: " + conclusion);
-			System.err.println("Revision fault: " + oldBelief
-					+ " more confident than concluded: " + conclusion);
+			String msg = ("Revision fault: previous belief " + oldBelief
+					+ " more confident than revised: " + conclusion);
+			if (Global.DEBUG) {
+				throw new RuntimeException(msg);
+			} else {
+				System.err.println(msg);
+			}
 		}
 
 		float priority = or(dif, tb.getPriority());

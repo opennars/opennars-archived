@@ -121,15 +121,19 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
 
     default void appendArgs(Appendable p, boolean pretty, boolean appendedOperator) throws IOException {
         int nterms = size();
-        for (int i = 0; i < nterms; i++) {
-             if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
-                 argSep(p, pretty);
-             }
 
-            term(i).append(p, pretty);
+        boolean bb = nterms > 1 && appendedOperator;
+        for (int i = 0; i < nterms; i++) {
+            if ((i != 0) || bb) {
+                argSep(p, pretty);
+            }
+            appendArg(p, pretty, i);
         }
     }
 
+    default void appendArg(Appendable p, boolean pretty, int i) throws IOException {
+        term(i).append(p, pretty);
+    }
 
 
     @Override

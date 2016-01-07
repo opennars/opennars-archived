@@ -200,7 +200,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final int compareTo(Object o) {
+    public int compareTo(Object o) {
         int r=0;
         if (this != o) {
             Termed t = (Termed) o;
@@ -232,8 +232,8 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
     @Override
-    public final boolean equals(Object that) {
-        return this == that || hash == that.hashCode() && equalsFurther((Termed) that);
+    public boolean equals(Object that) {
+        return this == that || hashCode() == that.hashCode() && equalsFurther((Termed) that);
     }
 
     private boolean equalsFurther(Termed thatTerm) {
@@ -262,7 +262,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
 
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return hash;
     }
 

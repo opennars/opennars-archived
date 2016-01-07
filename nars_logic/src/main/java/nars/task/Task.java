@@ -23,7 +23,6 @@ package nars.task;
 import nars.*;
 import nars.budget.Budgeted;
 import nars.concept.Concept;
-
 import nars.nal.nal7.Order;
 import nars.nal.nal7.Tense;
 import nars.term.Statement;
@@ -296,6 +295,13 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
     void mulPriority(float factor);
 
     void setExecuted();
+
+    default float getConfidenceIfTruthOr(float v) {
+        Truth t = getTruth();
+        if (t == null) return v;
+        return t.getConfidence();
+    }
+
 
     enum TaskState {
         Anticipated,

@@ -1,12 +1,19 @@
 package nars.irc;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 import nars.Global;
 import nars.Memory;
-import nars.NAR;
 import nars.NARLoop;
+import nars.bag.BLink;
+import nars.bag.impl.DigestBag;
 import nars.nar.Default;
+import nars.task.Task;
+import nars.task.in.Twenglish;
 import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
+import nars.util.data.Util;
+import nars.util.data.sorted.SortedIndex;
 
 import java.io.File;
 
@@ -16,15 +23,64 @@ import java.io.File;
 public class NarseseIRCBot extends IRCBot {
 
 
-    private NAR nar;
+    private final long outputIntervalMS = 2*60000;
+    int paragraphSize = 3;
+
+    private Default nar;
+    private DigestBag.OutputBuffer output;
+
+    public String toString(Object t) {
+        if (t instanceof Task) {
+            Task tt = (Task)t;
+
+            String ss = ((Task)t).toStringWithoutBudget(nar.memory);
+
+            if (tt.getLogLast().toString().startsWith("Answer"))
+                ss += " " + tt.getLogLast();
+
+            return ss;
+        }
+        return t + " " + t.getClass();
+    }
 
     public NarseseIRCBot() throws Exception {
         super("irc.freenode.net", "NARchy", "#nars");
 
+        new Thread(()-> {
+
+            while (true) {
+                try {
+                    output();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                Util.pause(outputIntervalMS);
+            }
+        }).start();
+    }
+
+    public void output() {
+        if (output != null) {
+            SortedIndex<BLink<Task>> l = output.buffer.list;
+
+            int n = Math.min(paragraphSize, l.size());
+
+            Iterable<String> ii = Iterables.transform(
+                    l.getList().subList(0, n), (x) -> toString(x.get()) );
+
+            String s = Joiner.on("  ").join(ii);
+            if (!s.isEmpty()) {
+                send(s);
+            }
+            l.clear();
+        }
     }
 
     public static void main(String[] args) throws Exception {
-        Global.DEBUG = true;
+        Global.DEBUG = false;
 
 
         /*DNARide.show(n.loop(), (i) -> {
@@ -38,7 +94,12 @@ public class NarseseIRCBot extends IRCBot {
 
             @Override
             public void run() {
-                nar.frame();
+                try {
+                    nar.frame();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
                /* List<String> lines = null;
                 try {
                     lines = Files.readAllLines(Paths.get(corpus.toURI()));
@@ -214,27 +275,31 @@ public class NarseseIRCBot extends IRCBot {
 
         nar = new Default(new Memory(new RealtimeMSClock(),
                 //TermIndex.memoryWeak(numConcepts * 2)
-                TermIndex.memory(1000)), 1024, 16, 1, 4);
+                TermIndex.memory(1000)), 1024, 1, 3, 4);
+
+        output = new DigestBag.OutputBuffer(nar, 128);
 
         nar.memory.duration.set(2000);
-        nar.memory.linkForgetDurations.setValue(2);
+        nar.core.conceptsFiredPerCycle.set(256);
 
-        nar.log();
+        //nar.log();
 
         send("Ready: " + nar.toString());
 
-        nar.memory.eventTaskProcess.on(c -> {
-            if (!c.isInput() && c.getPriority() > 0.25f)
-                send(c.toString());
-        });
 
-        nar.memory.eventAnswer.on(c -> {
-            if (c.getOne().isInput())
-                send(c.toString());
-        });
+//        nar.memory.eventTaskProcess.on(c -> {
+//            if (!c.isInput() && c.getPriority() > 0.25f)
+//                send(c.toString());
+//        });
+//
+//        nar.memory.eventAnswer.on(c -> {
+//            if (c.getOne().isInput())
+//                send(c.toString());
+//        });
 
-        oldnar = nar.loop(0.75f);
+        oldnar = nar.loop(0.1f);
     }
+
 
     static NARLoop oldnar = null;
     @Override
@@ -247,8 +312,15 @@ public class NarseseIRCBot extends IRCBot {
                 nar.input(msg);
             }
             catch (Exception e) {
-                System.err.println(msg + ' ' + e);
-                //send(e.toString());
+                try {
+                    new Twenglish().parse(nick, nar, msg).forEach(t -> {
+                        //t.getBudget().setPriority((float) sentenceBudget);
+                        nar.input(t);
+                    });
+                } catch (Exception f) {
+                    System.err.println(msg + ' ' + f);
+                    //send(e.toString());
+                }
             }
         }
 

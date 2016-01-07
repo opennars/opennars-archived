@@ -35,9 +35,7 @@ public enum Op {
 
     OPERATOR("^", 8, Args.One),
 
-    NEGATE("--", 5, Args.One) {
-
-    },
+    NEGATE("--", 5, Args.One),
 
     /* Relations */
     INHERIT("-->", 1, OpType.Relation, Args.Two),
@@ -62,6 +60,8 @@ public enum Op {
 
     SEQUENCE("&/", 7, Args.GTETwo), /* NOTE: after cycle terms intermed, it may appear to have one term. but at construction when this is tested, it will need multiple terms even if they are intervals */
     PARALLEL("&|", true, 7, Args.GTETwo),
+
+    SPACE("+", true, 7, Args.GTEOne),
 
 
     /* CompountTerm delimiters, must use 4 different pairs */

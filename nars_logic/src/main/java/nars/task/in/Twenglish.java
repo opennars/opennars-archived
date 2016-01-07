@@ -17,12 +17,14 @@
 package nars.task.in;
 
 import com.google.common.collect.Lists;
-import nars.*;
+import nars.$;
+import nars.Global;
+import nars.NAR;
+import nars.Narsese;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compile.TermBuilder;
-import nars.term.compound.Compound;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
 
@@ -36,7 +38,7 @@ public class Twenglish {
     public static final Atom QUESTION = Atom.the("question");
     public static final Atom QUEST = Atom.the("quest");
     public static final Atom JUDGMENT = Atom.the("judgment");
-    public static final Atom FRAGMENT = Atom.the("fragment");
+    public static final Atom FRAGMENT = Atom.the("words");
 
     //public final ArrayList<String> vocabulary = new ArrayList<>();
     
@@ -97,10 +99,6 @@ public class Twenglish {
         //etc..
     }
 
-    public Twenglish(Memory memory) {
-    }
-
-
 
     protected Collection<Task> parseSentence(String source, NAR n, List<Span> s) {
 
@@ -132,11 +130,10 @@ public class Twenglish {
                 TermBuilder
                 //Product
                     .makeSequence(t.toArray(new Term[t.size()]));
-            Compound q =
-                    $.p(
-                            //Atom.the(source),
+            Term q =
+                    $.inh(
                             p,
-                            sentenceType
+                            $.seti(sentenceType, $.the(source))
                     )
             ;
             if (q != null) {
