@@ -5,6 +5,7 @@ import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.task.Task;
 import nars.util.meter.TestNAR;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
 /**
  * Created by me on 8/19/15.
  */
+@Ignore
 @RunWith(Parameterized.class)
 public class NAL7Test extends AbstractNALTester {
 

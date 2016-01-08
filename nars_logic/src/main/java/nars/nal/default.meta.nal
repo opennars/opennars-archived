@@ -333,7 +333,7 @@
 //// conjunction decompose
 
     (&&,B,A..+), B |- B, (Truth:StructuralDeduction, Desire:StructuralStrong, Order:ForAllSame)
-    (&/,B,A..+), B, task("!") |- (&/,A..+), (Desire:Strong, SequenceIntervals:FromTask)
+//    (&/,B,A..+), B, task("!") |- (&/,A..+), (Desire:Strong, SequenceIntervals:FromTask)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A..+) is not the case, it can't be that (&&,A..+) is the case
@@ -375,10 +375,10 @@
                                       ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
                                       (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
-    (S --> M), (P --> M), neq(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
-                                                       ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
-                                                       ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
-                                                       (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
+//    (S --> M), (P --> M), neq(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Abduction),
+//                                                       ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Induction),
+//                                                       ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison),
+//                                                       (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection)
 
     (S --> M), (P --> M), neq(S,P), concurrent(Task,Belief) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
                                                                ((S --> $X) =|> (P --> $X)), (Truth:Induction),
@@ -390,10 +390,10 @@
                                       (($X --> S) <=> ($X --> P)), (Truth:Comparison),
                                       (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
 
-    (M --> S), (M --> P), neq(S,P), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
-                                                       (($X --> P) =\> (&/,($X --> S),I)), (Truth:Abduction),
-                                                       ((&/,($X --> S),I) </> ($X --> P)), (Truth:Comparison),
-                                                       (&/,(#Y --> S), I ,(#Y --> P)), (Truth:Intersection)
+//    (M --> S), (M --> P), neq(S,P), measure_time(I) |- ((&/,($X --> S),I) =/> ($X --> P)), (Truth:Induction),
+//                                                       (($X --> P) =\> (&/,($X --> S),I)), (Truth:Abduction),
+//                                                       ((&/,($X --> S),I) </> ($X --> P)), (Truth:Comparison),
+//                                                       (&/,(#Y --> S), I ,(#Y --> P)), (Truth:Intersection)
 
     (M --> S), (M --> P), neq(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction),
                                                                        (($X --> P) =|> ($X --> S)), (Truth:Abduction),
@@ -464,7 +464,7 @@
 ////NAL7 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
-    X, (XI ==> B) |- occurrsForward( substituteIfUnifies( B, "$", XI, (&/,X,/1)), XI, "==>"), (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+//    X, (XI ==> B) |- occurrsForward( substituteIfUnifies( B, "$", XI, (&/,X,/1)), XI, "==>"), (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
     X, (BI ==> Y) |- occurrsBackward( substituteIfUnifies( BI, "$", Y, X), BI, "==>"), (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
@@ -474,7 +474,7 @@
                                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                                        ((&/,S,I) </> P), (Truth:Comparison)
 
-    P, S, after(Task,Belief), notConjunction(P), notConjunction(S),  measure_time(I), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- (&/,S,I,P), (Truth:Intersection)
+//    P, S, after(Task,Belief), notConjunction(P), notConjunction(S),  measure_time(I), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- (&/,S,I,P), (Truth:Intersection)
 
     P, S, concurrent(Task,Belief), notImplicationOrEquivalence(P), notImplicationOrEquivalence(S) |- (S =|> P), (Truth:Induction, Eternalize:Immediate),
                                                                                                            (P =|> S), (Truth:Induction),
