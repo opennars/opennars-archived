@@ -67,11 +67,11 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
         boolean positive = positive();
 
 
-        if (positive) {
+        //if (positive) {
             //Term ret = xx[1];
-            Termed ret = premise.termLink.get();
+            Termed ret = premise.getBeliefTerm();
 
-            if (ret.op() == Op.IMPLICATION) {
+            if (ret.op().isImplication()) {
                 Term impSubj = Statement.subj(ret);
                 if (impSubj.op(Op.SEQUENCE)) {
                     Sequence seq = (Sequence)impSubj;
@@ -88,7 +88,7 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
 
                 }
             }
-        }
+        //}
         /* on backward its already handled by shifting
            (&/,a,/i) backward on i and changing it to a
          */

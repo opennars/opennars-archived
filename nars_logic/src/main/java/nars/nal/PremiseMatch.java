@@ -137,8 +137,8 @@ public class PremiseMatch extends FindSubst {
         this.receiver = receiver;
 
         Compound taskTerm = p.getTask().term();
-        Task pBelief = p.getBelief();
-        Termed beliefTerm = pBelief != null ? pBelief : p.termLink.get(); //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
+
+        Termed beliefTerm = p.getBeliefTerm();  //experimental, prefer to use the belief term's Term in case it has more relevant TermMetadata (intermvals)
 
         this.termutesPerMatch = p.getMaxMatches();
 

@@ -180,7 +180,7 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
         }
         //END CODE
 
-        Term lookat = null;
+        Termed lookat = null;
         Premise premise = match.premise;
 
         if (rule.sequenceIntervalsFromTask) {

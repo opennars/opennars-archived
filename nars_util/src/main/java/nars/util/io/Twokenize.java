@@ -287,7 +287,7 @@ public enum Twokenize {
         // Do the no-brainers first
         String splitPunctText = splitEdgePunct(text);
 
-        int textLength = splitPunctText.length();
+        //int textLength = splitPunctText.length();
 
         // BTO: the logic here got quite convoluted via the Scala porting detour
         // It would be good to switch back to a nice simple procedural style like in the Python version

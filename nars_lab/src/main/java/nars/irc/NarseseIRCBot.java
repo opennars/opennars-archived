@@ -9,6 +9,7 @@ import nars.bag.BLink;
 import nars.bag.impl.DigestBag;
 import nars.nar.Default;
 import nars.task.Task;
+import nars.task.in.TextInput;
 import nars.task.in.Twenglish;
 import nars.term.compile.TermIndex;
 import nars.time.RealtimeMSClock;
@@ -35,7 +36,7 @@ public class NarseseIRCBot extends IRCBot {
 
             String ss = ((Task)t).toStringWithoutBudget(nar.memory);
 
-            if (tt.getLogLast().toString().startsWith("Answer"))
+            if (tt.getLog()!=null && tt.getLogLast().toString().startsWith("Answer"))
                 ss += " " + tt.getLogLast();
 
             return ss;
@@ -44,25 +45,24 @@ public class NarseseIRCBot extends IRCBot {
     }
 
     public NarseseIRCBot() throws Exception {
-        super("irc.freenode.net", "NARchy", "#nars");
+        super("irc.freenode.net", "NARchy", "#netention");
 
         new Thread(()-> {
 
             while (true) {
                 try {
-                    output();
+                    flush();
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-
 
                 Util.pause(outputIntervalMS);
             }
         }).start();
     }
 
-    public void output() {
+    public synchronized void flush() {
         if (output != null) {
             SortedIndex<BLink<Task>> l = output.buffer.list;
 
@@ -82,7 +82,6 @@ public class NarseseIRCBot extends IRCBot {
     public static void main(String[] args) throws Exception {
         Global.DEBUG = false;
 
-
         /*DNARide.show(n.loop(), (i) -> {
         });*/
 
@@ -90,40 +89,36 @@ public class NarseseIRCBot extends IRCBot {
     }
 
     public void loop(File corpus, int lineDelay) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    nar.frame();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-               /* List<String> lines = null;
-                try {
-                    lines = Files.readAllLines(Paths.get(corpus.toURI()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-
-                while (true)  {
-
-                    for (String s : lines) {
-                        s = s.trim();
-                        if (s.isEmpty())continue;
-
-                        nar.input(s);
-
-                        try {
-                            Thread.sleep(lineDelay);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-
-                }*/
+        new Thread(() -> {
+            try {
+                nar.frame();
             }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+           /* List<String> lines = null;
+            try {
+                lines = Files.readAllLines(Paths.get(corpus.toURI()));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            while (true)  {
+
+                for (String s : lines) {
+                    s = s.trim();
+                    if (s.isEmpty())continue;
+
+                    nar.input(s);
+
+                    try {
+                        Thread.sleep(lineDelay);
+                    } catch (InterruptedException e) {
+                    }
+                }
+
+            }*/
         }).start();
 
     }
@@ -304,14 +299,24 @@ public class NarseseIRCBot extends IRCBot {
     static NARLoop oldnar = null;
     @Override
     protected void onMessage(IRCBot bot, String channel, String nick, String msg) {
+        if (channel.equals("unknown")) return;
+
         if (msg.equals("RESET")) {
             restart();
+        }
+        else if (msg.equals("WTF")) {
+            flush();
+        }
+        else {
 
-        } else {
+            TextInput ii;
             try {
-                nar.input(msg);
+                ii = nar.input(msg);
+            } catch (Exception e) {
+                ii = null;
             }
-            catch (Exception e) {
+
+            if (ii == null || ii.size() == 0) {
                 try {
                     new Twenglish().parse(nick, nar, msg).forEach(t -> {
                         //t.getBudget().setPriority((float) sentenceBudget);

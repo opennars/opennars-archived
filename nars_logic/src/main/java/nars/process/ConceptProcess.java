@@ -104,6 +104,11 @@ public final class ConceptProcess implements Premise {
 //    }
 
 
+    public final Termed getBeliefTerm() {
+        Task x = getBelief();
+        return x== null ? termLink.get() :
+                x.term();
+    }
 
 
 //    protected void beforeFinish(final long now) {

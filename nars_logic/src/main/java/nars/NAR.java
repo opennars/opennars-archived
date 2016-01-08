@@ -198,10 +198,10 @@ public abstract class NAR implements Serializable, Level {
 
     public TextInput input(String text) {
         TextInput i = new TextInput(this, text);
-        if (i.size() == 0) {
+        /*if (i.size() == 0) {
             //TODO replace with real parser error
             error(new NarseseException("Input syntax error: " + text));
-        }
+        }*/
         input((Input) i);
         return i;
     }

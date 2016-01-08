@@ -89,14 +89,14 @@ public class SpaceTest {
     }
 
     @Test public void testInternalSpaceConcept() {
-        Space xyClass = new Space(xy);
-        Space xy00 = new Space(xy, 1, 0);
-        Space xy11 = new Space(xy, 0, 1);
+        float sqr2 = (float) Math.sqrt(2);
         Atom a = $.the("a");
 
         NAR n = new Default();
-        n.believe($.sim(xy00, a));
-        n.believe($.sim(xy11, a));
+        Space xyClass = new Space(xy);
+        n.believe($.sim(a, new Space(xy, sqr2, 0)));
+        n.believe($.sim(a, new Space(xy, sqr2, sqr2)));
+        n.believe($.sim(a, new Space(xy, 0, sqr2)));
 
 
         Concept c = n.concept($.sim(a, xyClass));

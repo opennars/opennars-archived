@@ -97,8 +97,7 @@ public abstract class IRCBot {
                                 writer.flush();
                                 break;
                             case "PRIVMSG":
-                                System.err.println(line);
-
+                                //System.err.println(line);
                                 onMessage(IRCBot.this, m.params.get(0), m.nick, m.params.get(1));
                                 break;
                             default:
@@ -119,7 +118,7 @@ public abstract class IRCBot {
 
     protected abstract void onMessage(IRCBot bot, String channel, String nick, String msg);
 
-    protected boolean send(String channel, String message) {
+    protected synchronized boolean send(String channel, String message) {
         try {
             writer.write("PRIVMSG " + channel + " :" + message + "\r\n");
             writer.flush();

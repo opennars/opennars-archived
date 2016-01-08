@@ -311,6 +311,10 @@ public enum Op {
         return isA(TemporalBits);
     }
 
+    public boolean isImplication() {
+        return isA(ImplicationsBits);
+    }
+
 
     /** top-level Op categories */
     public enum OpType {
