@@ -16,11 +16,6 @@ import static com.gs.collections.impl.tuple.primitive.PrimitiveTuples.pair;
  */
 public enum Op {
 
-
-
-
-    //TODO include min/max arity for each operate, if applicable
-
     /**
      * an atomic term (includes interval and variables); this value is set if not a compound term
      */
@@ -58,9 +53,6 @@ public enum Op {
     DISJUNCTION("||", true, 5, Args.GTETwo),
     CONJUNCTION("&&", true, 5, Args.GTETwo),
 
-    SEQUENCE("&/", 7, Args.GTETwo), /* NOTE: after cycle terms intermed, it may appear to have one term. but at construction when this is tested, it will need multiple terms even if they are intervals */
-    PARALLEL("&|", true, 7, Args.GTETwo),
-
     SPACE("+", true, 7, Args.GTEOne),
 
 
@@ -71,12 +63,9 @@ public enum Op {
 
     IMPLICATION("==>", 5, OpType.Relation, Args.Two),
     IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.Two),
-    IMPLICATION_WHEN("=|>", 7, OpType.Relation, Args.Two),
-    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, Args.Two),
 
     EQUIV("<=>", true, 5, OpType.Relation, Args.Two),
     EQUIV_AFTER("</>", 7, OpType.Relation, Args.Two),
-    EQUIV_WHEN("<|>", true, 7, OpType.Relation, Args.Two),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -85,12 +74,6 @@ public enum Op {
     NONE('\u2205', Op.ANY, null),
 
     VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, OpType.Variable),
-
-    INTERVAL(
-            //TODO decide what this value should be, it overrides with IMAGE_EXT
-            //but otherwise it's not used
-            String.valueOf(Symbols.INTERVAL_PREFIX) + '/',
-            Op.ANY, Args.None),
 
     INSTANCE("{--", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
     PROPERTY("--]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
@@ -325,13 +308,13 @@ public enum Op {
 
 
     public static final int ImplicationsBits =
-            Op.or(Op.IMPLICATION, Op.IMPLICATION_BEFORE, Op.IMPLICATION_WHEN, Op.IMPLICATION_AFTER);
+            Op.or(Op.IMPLICATION, Op.IMPLICATION_AFTER);
 
     public static final int ConjunctivesBits =
-            Op.or(Op.CONJUNCTION, Op.PARALLEL, Op.SEQUENCE);
+            Op.or(Op.CONJUNCTION);
 
     public static final int EquivalencesBits =
-            Op.or(Op.EQUIV, Op.EQUIV_WHEN, Op.EQUIV_AFTER);
+            Op.or(Op.EQUIV, Op.EQUIV_AFTER);
 
     public static final int SetsBits =
             Op.or(Op.SET_EXT, Op.SET_INT);
@@ -357,13 +340,12 @@ public enum Op {
             Op.or(Op.VAR_PATTERN,Op.VAR_QUERY);
 
     public static final int TemporalBits =  Op.or(
-        Op.PARALLEL, Op.SEQUENCE,
-        Op.EQUIV_AFTER, Op.EQUIV_WHEN,
-        Op.IMPLICATION_AFTER, Op.IMPLICATION_WHEN, Op.IMPLICATION_BEFORE
+        Op.EQUIV_AFTER,
+        Op.IMPLICATION_AFTER
     );
 
 
-    static enum Args {
+    enum Args {
         ;
         static final IntIntPair None = pair(0,0);
         static final IntIntPair One = pair(1,1);

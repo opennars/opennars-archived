@@ -1,10 +1,8 @@
 package nars.term.compile;
 
-import javassist.scopedpool.SoftValueHashMap;
 import nars.Op;
 import nars.budget.Budget;
 import nars.index.MapIndex;
-import nars.index.MapIndex2;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.*;
@@ -47,14 +45,14 @@ public interface TermIndex extends TermBuilder {
      * implications, equivalences, and interval
      */
     int InvalidEquivalenceTerm =
-            or(IMPLICATION, IMPLICATION_WHEN, IMPLICATION_AFTER, IMPLICATION_BEFORE,
-                    EQUIV, EQUIV_AFTER, EQUIV_WHEN,
-                    INTERVAL);
+            or(IMPLICATION, IMPLICATION_AFTER,
+                    EQUIV, EQUIV_AFTER
+                    );
     /**
      * equivalences and intervals (not implications, they are allowed
      */
     int InvalidImplicationPredicate =
-            or(EQUIV, EQUIV_AFTER, EQUIV_WHEN, INTERVAL);
+            or(EQUIV, EQUIV_AFTER);
 
     /** universal compound hash function */
     static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {

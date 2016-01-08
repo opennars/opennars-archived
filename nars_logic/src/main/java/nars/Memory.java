@@ -27,7 +27,6 @@ import nars.bag.impl.CurveBag;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Execution;
 import nars.nal.space.Space;
 import nars.nal.space.SpaceConcept;
@@ -229,7 +228,7 @@ public class Memory extends Param {
 //    }
 
     static boolean validConceptTerm(Term term) {
-        return !((term instanceof Variable) || (term instanceof CyclesInterval));
+        return !(term instanceof Variable);
     }
 
     Concept newDefaultConcept(Term t) {

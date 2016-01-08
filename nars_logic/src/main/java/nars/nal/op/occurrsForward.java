@@ -4,10 +4,8 @@ package nars.nal.op;
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.$;
-import nars.Op;
 import nars.nal.PremiseAware;
 import nars.nal.PremiseMatch;
-import nars.nal.nal7.Sequence;
 import nars.process.ConceptProcess;
 import nars.term.Statement;
 import nars.term.Term;
@@ -73,20 +71,20 @@ public class occurrsForward extends ImmediateTermTransform implements PremiseAwa
 
             if (ret.op().isImplication()) {
                 Term impSubj = Statement.subj(ret);
-                if (impSubj.op(Op.SEQUENCE)) {
-                    Sequence seq = (Sequence)impSubj;
-
-                    int[] ii = seq.intervals();
-                    int iiLen = ii.length;
-
-                    if (iiLen > 0) {
-                        r.occurrenceShift.set(
-                                ii[iiLen - 1]
-                        );
-                        //positive ? interval : -interval);
-                    }
-
-                }
+//                if (impSubj.op(Op.SEQUENCE)) {
+//                    Sequence seq = (Sequence)impSubj;
+//
+//                    int[] ii = seq.intervals();
+//                    int iiLen = ii.length;
+//
+//                    if (iiLen > 0) {
+//                        r.occurrenceShift.set(
+//                                ii[iiLen - 1]
+//                        );
+//                        //positive ? interval : -interval);
+//                    }
+//
+//                }
             }
         //}
         /* on backward its already handled by shifting

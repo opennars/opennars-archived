@@ -3,7 +3,6 @@ package nars.concept;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
-import nars.nal.nal7.CyclesInterval;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
@@ -118,9 +117,6 @@ public enum TermLinkBuilder {
      * determines whether to grow a 1st-level termlink to a subterm
      */
     protected static Term growComponent(Term t, int level, Memory memory) {
-        if /*Global.DEBUG ... */ (t instanceof CyclesInterval) {
-            throw new RuntimeException("interval terms should not exist at this point");
-        }
 
         Concept tti = memory.concept(t);
         if (tti == null)

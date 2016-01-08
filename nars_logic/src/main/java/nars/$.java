@@ -6,7 +6,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -149,9 +148,6 @@ public   enum $  {
         return the(NEGATE, x);
     }
 
-    public static CyclesInterval cycles(int numCycles) {
-        return CyclesInterval.make(numCycles);
-    }
     public static <T extends Term> Compound<T> p(Collection<? super T> t) {
         return $.p(t.toArray((T[]) new Term[t.size()]));
     }
@@ -328,9 +324,6 @@ public   enum $  {
     public static Term conj(Term... a) {
         return the(CONJUNCTION, a);
     }
-    public static Term para(Term... a) {
-        return the(PARALLEL, a);
-    }
 
     public static Term disj(Term... a) {
         return the(DISJUNCTION, a);
@@ -409,9 +402,7 @@ public   enum $  {
     public static Term equivAfter(Term subject, Term pred) {
         return the(EQUIV_AFTER, subject, pred);
     }
-    public static Term equivWhen(Term subject, Term pred) {
-        return the(EQUIV_WHEN, subject, pred);
-    }
+
 
     public static Term diffInt(Term a, Term b) {
         return the(DIFF_INT, a, b);

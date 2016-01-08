@@ -1,6 +1,5 @@
 package nars.nal.meta.pre;
 
-import nars.$;
 import nars.Premise;
 import nars.nal.PremiseMatch;
 import nars.nal.nal7.Tense;
@@ -35,6 +34,7 @@ public class MeasureTime extends AbstractMeasureTime {
             return false;
         }
 
-        return m.putXY(target, $.cycles(time));
+        return true;
+        //return m.putXY(target, $.cycles(time));
     }
 }

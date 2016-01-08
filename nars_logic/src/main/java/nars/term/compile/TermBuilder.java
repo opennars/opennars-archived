@@ -5,9 +5,6 @@ import nars.Global;
 import nars.Op;
 import nars.nal.PremiseAware;
 import nars.nal.PremiseMatch;
-import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Parallel;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.*;
@@ -36,76 +33,7 @@ import static nars.term.Statement.subj;
  */
 public interface TermBuilder {
 
-    static Term makeSequence(Term[] a) {
 
-        //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = intervalCount(a);
-
-        if (intervalsPresent == 0) {
-            if (true && (a.length == 1)) {
-                Term single = a[0];
-                if (!(single instanceof Ellipsis))
-                    return single; //TODO combine this with singleton condition at end of this method
-            }
-            return new Sequence(a, null);
-        }
-
-
-        int blen = a.length - intervalsPresent;
-        if (blen == 0)
-            throw new RuntimeException("empty sequence containing only intervals");
-
-        //if intervals are present:
-        Term[] b = new Term[blen];
-
-        int[] i = new int[blen + 1];
-
-        int p = 0;
-        for (Term x : a) {
-            /*if (x == Ellipsis.Expand)
-                continue;*/
-            if (x instanceof CyclesInterval) {
-                long dd = ((CyclesInterval) x).duration();
-                if (dd < 0)
-                    throw new RuntimeException("cycles must be >= 0");
-
-                i[p] += dd;
-            } else {
-                b[p++] = x;
-            }
-        }
-
-        return Sequence.makeSequence(b, i);
-    }
-
-    static Term makeParallel(Term[] a) {
-
-        //count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = intervalCount(a);
-        int subterms = a.length - intervalsPresent;
-
-        if (subterms == 0)
-            return null;
-
-        if ((subterms == 1) && (!(a[0] instanceof Ellipsis)))
-            return firstNonIntervalIn(a); //unwrap the only non-interval subterm
-
-        if (intervalsPresent == 0)
-            return new Parallel(a); //no intervals need to be removed
-
-        //otherwise, intervals are present:
-
-        Term[] b = new Term[subterms];
-
-        int p = 0;
-        for (Term x : a) {
-            if (!(x instanceof CyclesInterval))
-                b[p++] = x;
-        }
-
-        return new Parallel(b);
-
-    }
 
     /** allows using the single variable normalization,
      * which is safe if the term doesnt contain pattern variables */
@@ -132,28 +60,6 @@ public interface TermBuilder {
         return false;
     }
 
-    static Term firstNonIntervalIn(Term[] a) {
-
-        for (Term x : a) {
-            if (!(x instanceof CyclesInterval)) {
-                //long d = ((CyclesInterval)x).duration();
-                return x;
-            }
-        }
-        return null;
-    }
-
-    /** returns a count of how many interval terms are in the array */
-    static int intervalCount(Term[] a) {
-        int c = 0;
-        for (Term x : a) {
-            if (x instanceof CyclesInterval) {
-                //long d = ((CyclesInterval)x).duration();
-                c++;
-            }
-        }
-        return c;
-    }
 
     Termed make(Op op, int relation, TermContainer subterms);
 
@@ -308,10 +214,6 @@ public interface TermBuilder {
                 if (t.length!=1)
                     throw new RuntimeException("invalid negation subterms: " + Arrays.toString(t));
                 return negation(t[0]);
-            case SEQUENCE:
-                return makeSequence(t);
-            case PARALLEL:
-                return makeParallel(t);
             case INSTANCE:
                 return inst(t[0], t[1]);
             case PROPERTY:
@@ -493,15 +395,12 @@ public interface TermBuilder {
                 switch (op) {
                     case EQUIV:
                     case EQUIV_AFTER:
-                    case EQUIV_WHEN:
                         if (!validEquivalenceTerm(subject)) return null;
                         if (!validEquivalenceTerm(predicate)) return null;
                         break;
 
                     case IMPLICATION:
                     case IMPLICATION_AFTER:
-                    case IMPLICATION_BEFORE:
-                    case IMPLICATION_WHEN:
                         if (subject.isAny(TermIndex.InvalidEquivalenceTerm)) return null;
                         if (predicate.isAny(TermIndex.InvalidImplicationPredicate)) return null;
 
@@ -545,17 +444,7 @@ public interface TermBuilder {
                 conjOp = CONJUNCTION;
                 break;
             case IMPLICATION_AFTER:
-                conjOp = SEQUENCE;
-                break;
-            case IMPLICATION_WHEN:
-                conjOp = PARALLEL;
-                break;
-            case IMPLICATION_BEFORE:
-                conjOp = SEQUENCE;
-                //swap order
-                Term x = oldCondition;
-                oldCondition = subject;
-                subject = x;
+                conjOp = IMPLICATION_AFTER;
                 break;
             default:
                 throw new RuntimeException("invalid case");

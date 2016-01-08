@@ -416,8 +416,6 @@ public class Narsese extends BaseParser<Object>  {
 
                         Operator(),
 
-                        Interval(),
-
                         seq(meta, Ellipsis() ),
 
                         seq(meta, TaskRule() ),
@@ -695,13 +693,6 @@ public class Narsese extends BaseParser<Object>  {
 //        ));
 //    }
 
-    Rule Interval() {
-        return sequence(INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),
-                push($.cycles(Texts.i((String) pop())))
-        ));
-    }
-
-
 
     Rule Variable() {
         /*
@@ -745,33 +736,33 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule Op() {
         return sequence(
-                trie(
-                        INTERSECT_EXT.str, INTERSECT_INT.str,
-                        DIFF_EXT.str, DIFF_INT.str,
-                        PRODUCT.str,
-                        IMAGE_EXT.str, IMAGE_INT.str,
+            trie(
+                INTERSECT_EXT.str, INTERSECT_INT.str,
+                DIFF_EXT.str, DIFF_INT.str,
+                PRODUCT.str,
+                IMAGE_EXT.str, IMAGE_INT.str,
 
-                        INHERIT.str,
+                INHERIT.str,
 
-                        SIMILAR.str,
+                SIMILAR.str,
 
-                        PROPERTY.str,
-                        INSTANCE.str,
-                        INSTANCE_PROPERTY.str,
+                PROPERTY.str,
+                INSTANCE.str,
+                INSTANCE_PROPERTY.str,
 
-                        NEGATE.str,
+                NEGATE.str,
 
-                        IMPLICATION.str,
-                        EQUIV.str,
-                        IMPLICATION_AFTER.str, IMPLICATION_BEFORE.str, IMPLICATION_WHEN.str,
-                        EQUIV_AFTER.str, EQUIV_WHEN.str,
-                        DISJUNCTION.str,
-                        CONJUNCTION.str,
-                        SEQUENCE.str,
-                        PARALLEL.str
-                ),
+                IMPLICATION.str,
+                IMPLICATION_AFTER.str,
 
-                push(getOperator(match()))
+                EQUIV.str,
+                EQUIV_AFTER.str,
+
+                DISJUNCTION.str,
+                CONJUNCTION.str
+            ),
+
+            push(getOperator(match()))
         );
     }
 

@@ -3,8 +3,6 @@ package nars.nal.meta.op;
 import com.google.common.base.Joiner;
 import nars.Global;
 import nars.Memory;
-import nars.Op;
-import nars.Premise;
 import nars.bag.BLink;
 import nars.budget.Budget;
 import nars.concept.Concept;
@@ -14,20 +12,15 @@ import nars.nal.meta.AbstractLiteral;
 import nars.nal.meta.AndCondition;
 import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.ProcTerm;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal7.Tense;
 import nars.process.ConceptProcess;
 import nars.task.MutableTask;
 import nars.task.Task;
-import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 
-import static nars.term.Statement.pred;
-import static nars.term.Statement.subj;
 import static nars.truth.TruthFunctions.eternalizedConfidence;
 
 /**
@@ -119,123 +112,10 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
             }
         }
 
-
-        //SPECIAL SEQUENCE HANDLING
-        Compound pattern = (Compound) rule.term(0);
-        Term taskpart = pattern.term(0);
-        Term beliefpart = pattern.term(1);
-
-        Term possibleSequenceHolder = null;
-
-        if (rule.sequenceIntervalsFromBelief)
-            possibleSequenceHolder = beliefpart;
-        if (rule.sequenceIntervalsFromTask)
-            possibleSequenceHolder = taskpart;
-        if (possibleSequenceHolder != null && possibleSequenceHolder.hasAny(Op.SEQUENCE))
-            processSequence(match, derivedTerm, possibleSequenceHolder);
-
-
         return derivedTerm;
     }
 
 
-    void processSequence(PremiseMatch match, Term derivedTerm, Term toInvestigate) {
-        int TermIsSequence = 1;
-        int TermSubjectIsSequence = 2;
-        int TermPredicateIsSequence = 3;
-
-        final int mode; //nothing
-
-        if (rule.sequenceIntervalsFromBelief || rule.sequenceIntervalsFromTask) {
-            if (toInvestigate instanceof Sequence) {
-                //sequence_term_amount = ((Sequence) toInvestigate).terms().length;
-                mode = TermIsSequence;
-            } else if (toInvestigate.op().isStatement()) {
-
-                if (subj(toInvestigate) instanceof Sequence) {
-                    //sequence_term_amount = ((Sequence) st.getSubject()).terms().length;
-                    mode = TermSubjectIsSequence;
-                } else if (pred(toInvestigate) instanceof Sequence) {
-                    //sequence_term_amount = ((Sequence) st.getPredicate()).terms().length;
-                    mode = TermPredicateIsSequence;
-                } else {
-                    mode = 0;
-                }
-            } else {
-                mode = 0;
-            }
-        } else {
-            return;
-        }
-
-        Sequence paste = null; //where to paste it to
-
-        //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE1
-        if (mode == TermIsSequence && derivedTerm instanceof Sequence) {
-            paste = (Sequence) derivedTerm;
-        } else if (mode == TermSubjectIsSequence && derivedTerm instanceof Statement && subj(derivedTerm) instanceof Sequence) {
-            paste = (Sequence) subj(derivedTerm);
-        } else if (mode == TermPredicateIsSequence && derivedTerm instanceof Statement && pred(derivedTerm) instanceof Sequence) {
-            paste = (Sequence) pred(derivedTerm);
-        }
-        //END CODE
-
-        Termed lookat = null;
-        Premise premise = match.premise;
-
-        if (rule.sequenceIntervalsFromTask) {
-            lookat = premise.getTaskTerm();
-        } else if (rule.sequenceIntervalsFromBelief) {
-            lookat = premise.getBeliefTerm();
-        }
-
-        //TODO: THIS CODE EXISTS TWICE WITH DIFFERENT PARAMETERS, PLACE2
-        Sequence copy = null; //where to copy the interval data from
-        if (mode == TermIsSequence && lookat instanceof Sequence) {
-            copy = (Sequence) lookat;
-        } else if (lookat != null && lookat.op().isStatement()) {
-
-            if (mode == TermSubjectIsSequence && subj(lookat) instanceof Sequence) {
-                copy = (Sequence) subj(lookat);
-            } else if (mode == TermPredicateIsSequence && pred(lookat) instanceof Sequence) {
-                copy = (Sequence) pred(lookat);
-            }
-
-        }
-        //END CODE
-
-        //ok now we can finally copy the intervals.
-
-        if (copy != null) {
-
-            int[] copyIntervals = copy.intervals();
-
-            if (paste != null) {
-
-
-                int a = copy.terms().length;
-                int b = paste.terms().length;
-                boolean sameLength = a == b;
-                boolean OneLess = a - 1 == b;
-
-                if (!sameLength && !OneLess) {
-                    System.err.println("result Sequence insufficient elements; rule:" + rule);
-                }
-
-                int[] pasteIntervals = paste.intervals();
-
-                if (OneLess) {
-                    match.occurrenceShift.set(copyIntervals[1]); //we shift according to first interval
-                    System.arraycopy(copyIntervals, 2, pasteIntervals, 1, copyIntervals.length - 2);
-                } else if (sameLength) {
-                    System.arraycopy(copyIntervals, 0, pasteIntervals, 0, copyIntervals.length);
-                }
-            } else /* if (paste == null)  */ {
-                //ok we reduced to a single element, so its a one less case
-                match.occurrenceShift.set(copyIntervals[1]);
-            }
-        }
-    }
 
     /** part 1 */
     private void derive(PremiseMatch p, Term t) {

@@ -131,9 +131,9 @@ public class PremiseRuleSet {
     }
 
 
-    private static final String[] equFull = {"<=>", "</>", "<|>"};
-    private static final String[] implFull = {"==>", "=/>", "=|>", "=\\>"};
-    private static final String[] conjFull = {"&&", "&|", "&/"};
+    private static final String[] equFull = {"<=>", "</>"/*, "<|>"*/};
+    private static final String[] implFull = {"==>", "=/>" /*, "=|>", "=\\>"*/};
+    private static final String[] conjFull = {"&&"/*, "&|", "&/"*/};
     private static final String[] unchanged = {null};
 
     /**

@@ -12,7 +12,7 @@ abstract public class ThenFork<C> extends GenericCompound<ProcTerm<C>> implement
     //private final MethodHandle method;
 
     public ThenFork(ProcTerm<C>... actions) {
-        super(Op.PARALLEL, new TermVector(actions));
+        super(Op.CONJUNCTION, new TermVector(actions));
 
 
 //            try {

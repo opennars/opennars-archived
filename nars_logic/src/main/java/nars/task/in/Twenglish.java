@@ -24,7 +24,6 @@ import nars.Narsese;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.atom.Atom;
-import nars.term.compile.TermBuilder;
 import nars.util.io.Twokenize;
 import nars.util.io.Twokenize.Span;
 
@@ -127,9 +126,7 @@ public class Twenglish {
         //1. add the logical structure of the sequence of terms
         if (inputProduct) {
             Term p =
-                TermBuilder
-                //Product
-                    .makeSequence(t.toArray(new Term[t.size()]));
+                $.p(t.toArray(new Term[t.size()]));
             Term q =
                     $.inh(
                             p,

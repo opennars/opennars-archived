@@ -3,7 +3,6 @@ package nars.concept.util;
 import nars.Memory;
 import nars.budget.BudgetMerge;
 import nars.task.Task;
-import nars.term.TermMetadata;
 import nars.truth.Truth;
 import nars.util.event.ArraySharingList;
 
@@ -138,9 +137,6 @@ public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTa
 //        //  4. evidential set
 
         if (isEmpty()) return false;
-
-        if (TermMetadata.hasMetadata(t.term()))
-            return false; //special equality condition
 
         Truth taskTruth = t.getTruth();
         long taskOccurrrence = t.getOccurrenceTime();

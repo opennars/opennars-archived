@@ -4,7 +4,10 @@ import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.nal8.Operator;
-import nars.term.*;
+import nars.term.Statement;
+import nars.term.Term;
+import nars.term.TermVector;
+import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.term.compile.TermPrinter;
 
@@ -253,11 +256,11 @@ public class GenericCompound<T extends Term> implements Compound<T> {
      */
     @Override
     public void setDuration(int duration) {
-        if (TermMetadata.hasMetadata(this)) {
-            Term[] y = terms();
-            for (Term x : y)
-                x.setDuration(duration);
-        }
+//        if (TermMetadata.hasMetadata(this)) {
+//            Term[] y = terms();
+//            for (Term x : y)
+//                x.setDuration(duration);
+//        }
     }
 
 

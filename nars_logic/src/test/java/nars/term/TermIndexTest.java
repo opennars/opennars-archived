@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.index.GuavaIndex;
 import nars.index.MapIndex;
 import nars.index.MapIndex2;
-import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.nar.Terminal;
 import nars.task.Task;
@@ -20,7 +19,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class TermIndexTest {
@@ -41,7 +41,7 @@ public class TermIndexTest {
 
     void testIndex(TermIndex i) {
         testTermSharing(i);
-        testSequenceNotShared(i);
+        //testSequenceNotShared(i);
     }
 
     @Test public void testTermSharing1() {
@@ -80,18 +80,18 @@ public class TermIndexTest {
     }
 
 
-    public void testSequenceNotShared(TermIndex i) {
-        NAR n = new Terminal(i);
-
-        Termed a = n.term("(&/, 1, /2)");
-        assertNull(n.memory.index.getTermIfPresent(a));
-
-        Termed b = n.term("(&/, 1, /3)");
-        assertNull(n.memory.index.getTermIfPresent(b));
-
-        assertFalse(((Sequence)a).equals2((Sequence) b.term()));
-
-    }
+//    public void testSequenceNotShared(TermIndex i) {
+//        NAR n = new Terminal(i);
+//
+//        Termed a = n.term("(&/, 1, /2)");
+//        assertNull(n.memory.index.getTermIfPresent(a));
+//
+//        Termed b = n.term("(&/, 1, /3)");
+//        assertNull(n.memory.index.getTermIfPresent(b));
+//
+//        assertFalse(((Sequence)a).equals2((Sequence) b.term()));
+//
+//    }
 
     private void testNotShared(NAR n, String s) {
         Term t1 = n.term(s); //create by parsing

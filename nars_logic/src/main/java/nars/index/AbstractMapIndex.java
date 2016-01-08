@@ -2,7 +2,10 @@ package nars.index;
 
 import nars.$;
 import nars.Op;
-import nars.term.*;
+import nars.term.Term;
+import nars.term.TermContainer;
+import nars.term.TermVector;
+import nars.term.Termed;
 import nars.term.compile.TermIndex;
 import nars.term.compound.GenericCompound;
 
@@ -17,14 +20,14 @@ public abstract class AbstractMapIndex implements TermIndex {
     }
 
     public static boolean isInternable(Term t) {
-        return !TermMetadata.hasMetadata(t);
+        return true; //!TermMetadata.hasMetadata(t);
     }
 
     /** get the instance that will be internalized */
     public static Termed intern(Op op, int relation, TermContainer t) {
-        return (TermMetadata.hasMetadata(t) || op.isA(TermMetadata.metadataBits)) ?
-                newMetadataCompound(op, relation, t) :
-                newInternCompound(op, t, relation);
+        //return (TermMetadata.hasMetadata(t) || op.isA(TermMetadata.metadataBits)) ?
+                //newMetadataCompound(op, relation, t) :
+        return newInternCompound(op, t, relation);
     }
 
     public static Term newMetadataCompound(Op op, int relation, TermContainer t) {
