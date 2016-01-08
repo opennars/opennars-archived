@@ -112,10 +112,10 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param reliance Confidence of the second (analytical) premise
      * @return AnalyticTruth value of the conclusion, because it is structural
      */
-    public static AnalyticTruth deduction(Truth a, float reliance) {
+    public static Truth deduction(Truth a, float reliance) {
         float f = a.getFrequency();
         float c = and(f, a.getConfidence(), reliance);
-        return new AnalyticTruth(f, c);
+        return new DefaultTruth(f, c);
     }
         /* ----- double argument functions, called in SyllogisticRules ----- */
     /**
@@ -178,9 +178,6 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion, or null if either truth is analytic already
      */
     public static Truth abduction(Truth a, Truth b) {
-        if (a.isAnalytic() || b.isAnalytic()) {
-            return null;
-        }
         float f1 = a.getFrequency();
         float f2 = b.getFrequency();
         float c1 = a.getConfidence();
@@ -196,15 +193,12 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param reliance Confidence of the second (analytical) premise
      * @return Truth value of the conclusion
      */
-    public static AnalyticTruth abduction(Truth t, float reliance) {
-        if (t.isAnalytic()) {
-            return null;
-        }
+    public static Truth abduction(Truth t, float reliance) {
         float f1 = t.getFrequency();
         float c1 = t.getConfidence();
         float w = and(c1, reliance);
         float c = w2c(w);
-        return new AnalyticTruth(f1, c);
+        return new DefaultTruth(f1, c);
     }
 
     /**
@@ -224,9 +218,6 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static Truth exemplification(Truth a, Truth b) {
-        if (a.isAnalytic() || b.isAnalytic()) {
-            return null;
-        }
         float f1 = a.getFrequency();
         float f2 = b.getFrequency();
         float c1 = a.getConfidence();

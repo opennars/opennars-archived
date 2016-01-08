@@ -36,10 +36,6 @@ public class DefaultTruth extends AbstractScalarTruth {
         this(truth.getFrequency(), truth.getConfidence());
     }
 
-    @Override
-    public boolean isAnalytic() {
-        return false;
-    }
 
 /*    public float getEpsilon() {
         return DEFAULT_TRUTH_EPSILON;

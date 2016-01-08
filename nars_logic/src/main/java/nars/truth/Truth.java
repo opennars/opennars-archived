@@ -20,7 +20,6 @@
  */
 package nars.truth;
 
-import nars.Global;
 import nars.Symbols;
 import nars.nal.nal7.Tense;
 import nars.task.Task;
@@ -48,18 +47,6 @@ public interface Truth extends MetaTruth<Float> {
     float getFrequency();
 
     Truth setFrequency(float f);
-
-
-
-
-    /**
-     * Get the isAnalytic flag
-     *
-     * @return The isAnalytic value
-     */
-    boolean isAnalytic();
-
-
 
 
 
@@ -260,16 +247,6 @@ public interface Truth extends MetaTruth<Float> {
         return d;
     }
 
-    /**
-     * Get the truth value (or desire value) of the sentence
-     *
-     * Should only be used in Concept's sentences, not in other location where Sentence is expected to be immutable
-     *
-     * @return Truth value, null for question
-     */
-    default AnalyticTruth discountConfidence() {
-        return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE);
-    }
 
 
     /** use getFrequency() when possible because this may box the result as a non-primitive */

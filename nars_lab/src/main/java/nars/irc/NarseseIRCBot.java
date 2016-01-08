@@ -45,7 +45,7 @@ public class NarseseIRCBot extends IRCBot {
     }
 
     public NarseseIRCBot() throws Exception {
-        super("irc.freenode.net", "NARchy", "#netention");
+        super("irc.freenode.net", "NARchy", "#nars");
 
         new Thread(()-> {
 
