@@ -60,7 +60,7 @@ public class NARide extends BorderPane {
 
     public final Map<Class, Function<Object,Node>> nodeBuilders = Global.newHashMap();
     private Map<Term, Supplier<? extends Node>> tools = new HashMap();
-
+    public static NAR GUInar;
 
     public static void show(NARLoop loop, Consumer<NARide> ide) {
 
@@ -69,6 +69,7 @@ public class NARide extends BorderPane {
         NARfx.run((a, b) -> {
 
             NAR nar = loop.nar;
+            GUInar = nar;
             NARide ni = new NARide(loop);
 
             {

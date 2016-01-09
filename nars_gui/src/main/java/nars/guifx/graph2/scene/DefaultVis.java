@@ -8,14 +8,18 @@ import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.*;
+import nars.$;
+import nars.guifx.ConceptPane;
 import nars.guifx.JFX;
 import nars.guifx.NARfx;
+import nars.guifx.NARide;
 import nars.guifx.annotation.Range;
 import nars.guifx.graph2.TermNode;
 import nars.guifx.graph2.VisModel;
@@ -250,10 +254,13 @@ public static class LabeledCanvasNode<N extends Comparable> extends TermNode<N> 
 
         base.setOnMouseClicked(e -> {
             //System.out.println("click " + e.getClickCount());
-            if (e.getClickCount() == 2) {
+            //if (e.getClickCount() == 2) {
+            if(e.getButton() == MouseButton.PRIMARY) {
                 if (c != null) {
                     //NARfx.run((a, b) -> {
-                    System.out.println("doubleclicked " + t);
+                    NARfx.newWindow(NARide.GUInar.memory.concept($.$(t.toString())));
+
+                    //System.out.println("doubleclicked " + t);
                     //});
                 }
             }

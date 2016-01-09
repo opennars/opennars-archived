@@ -325,10 +325,10 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         //links.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
 
-        setCenter(new SplitPane(new BorderPane(links), tasks.content));
+        //setCenter(new SplitPane(new BorderPane(links), tasks.content));
 
         Label controls = new Label("Control Panel");
-        setBottom(controls);
+        //setBottom(controls);
 
         visibleProperty().addListener(this);
         changed(null, null, null);
