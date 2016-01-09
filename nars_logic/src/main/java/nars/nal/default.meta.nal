@@ -338,16 +338,16 @@
 // conditional deduction "An inverse inference has been implemented as a form of deduction" https://code.google.com/p/open-nars/issues/detail?id=40&can=1
 
     (U --> L), ((&&,A..*,(#X --> L),(#X --> R)) ==> Z) |- substitute(((&&,A..*,(U --> R)) ==> Z),#X,U), (Belief:Deduction)
-//this shoudlnt be necesssary if th eprevious works (with zero or more):
+//this shoudlnt be necesssary if the previous works (with zero or more):
     (U --> L), ((&&,(#X --> L),(#X --> R)) ==> Z) |- ((U --> R) ==> Z), (Belief:Deduction)
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 
-    B, (A ==> C) |- occurrsForward( substituteIfUnifies( C, "$",A,B), A, "==>"), (Belief:Deduction, Order:ForAllSame, Event:Anticipate)
-    B, (C ==> A) |- occurrsBackward( substituteIfUnifies( C, "$",A,B), A, "==>"), (Belief:Abduction, Order:ForAllSame)
+    B, (A ==> C) |-  substituteIfUnifies( C, "$",A,B), (Belief:Deduction, Order:ForAllSame, Event:Anticipate)
+    B, (C ==> A) |-  substituteIfUnifies( C, "$",A,B), (Belief:Abduction, Order:ForAllSame)
 
-    B, (A <=> C) |- occurrsBackward( substituteIfUnifies( C, "$",A,B), C, "<=>"), (Belief:Deduction, Order:ForAllSame)
-    B, (C <=> A) |- occurrsForward( substituteIfUnifies( C, "$",A,B), C, "<=>"), (Belief:Deduction, Order:ForAllSame)
+    B, (A <=> C) |- substituteIfUnifies( C, "$",A,B), (Belief:Deduction, Order:ForAllSame)
+    B, (C <=> A) |- substituteIfUnifies( C, "$",A,B), (Belief:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)

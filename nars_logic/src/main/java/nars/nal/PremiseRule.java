@@ -11,7 +11,10 @@ import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
-import nars.nal.meta.pre.*;
+import nars.nal.meta.pre.MatchTaskBelief;
+import nars.nal.meta.pre.NotEqual;
+import nars.nal.meta.pre.TaskNegative;
+import nars.nal.meta.pre.TaskPunctuation;
 import nars.nal.op.*;
 import nars.term.Term;
 import nars.term.TermVector;
@@ -50,9 +53,9 @@ public class PremiseRule extends GenericCompound implements Level {
         differ.class,
         union.class,
         substitute.class,
-        substituteIfUnifies.class,
-        occurrsForward.class,
-        occurrsBackward.class
+        substituteIfUnifies.class
+//        occurrsForward.class,
+//        occurrsBackward.class
     };
 
     /** blank marker trie node indicating the derivation and terminating the branch */
@@ -387,22 +390,22 @@ public class PremiseRule extends GenericCompound implements Level {
 //                    preNext = Temporality.either;
 //                    break;
 
-                case "after":
-                    preNext = After.the;
-                    break;
+//                case "after":
+//                    preNext = After.the;
+//                    break;
+//
+//                case "concurrent":
+//                    preNext = Concurrent.the;
+//                    break;
 
-                case "concurrent":
-                    preNext = Concurrent.the;
-                    break;
-
-
-                case "measure_time":
-                    if (args.length!=1)
-                        throw new RuntimeException("measure_time requires 1 component");
-
-                    preNext = Temporality.both;
-                    next = new MeasureTime(arg1);
-                    break;
+//
+//                case "measure_time":
+//                    if (args.length!=1)
+//                        throw new RuntimeException("measure_time requires 1 component");
+//
+//                    preNext = Temporality.both;
+//                    next = new MeasureTime(arg1);
+//                    break;
 
 
 
