@@ -510,6 +510,9 @@
 ////composition on both sides of a statement:
 
     ((B,P) --> Z) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((P,B) --> Z) ,(B --> A), task("?") |- ((P,B) --> (P,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    (B,P) <-> Z) ,(B <-> A), task("?") |- ((B,P) <-> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((P,B) <-> Z) ,(B <-> A), task("?") |- ((P,B) <-> (P,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((\,N,A,_) --> Z), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
     ((/,N,_,B) --> Z), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
