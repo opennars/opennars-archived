@@ -62,10 +62,8 @@ public enum Op {
 
 
     IMPLICATION("==>", 5, OpType.Relation, Args.Two),
-    IMPLICATION_AFTER("=/>", 7, OpType.Relation, Args.Two),
 
     EQUIV("<=>", true, 5, OpType.Relation, Args.Two),
-    EQUIV_AFTER("</>", 7, OpType.Relation, Args.Two),
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -290,10 +288,6 @@ public enum Op {
         return isA(Op.SetsBits);
     }
 
-    public boolean isTemporal() {
-        return isA(TemporalBits);
-    }
-
     public boolean isImplication() {
         return isA(ImplicationsBits);
     }
@@ -307,14 +301,14 @@ public enum Op {
     }
 
 
-    public static final int ImplicationsBits =
-            Op.or(Op.IMPLICATION, Op.IMPLICATION_AFTER);
+    @Deprecated public static final int ImplicationsBits =
+            Op.or(Op.IMPLICATION);
 
-    public static final int ConjunctivesBits =
+    @Deprecated public static final int ConjunctivesBits =
             Op.or(Op.CONJUNCTION);
 
-    public static final int EquivalencesBits =
-            Op.or(Op.EQUIV, Op.EQUIV_AFTER);
+    @Deprecated public static final int EquivalencesBits =
+            Op.or(Op.EQUIV);
 
     public static final int SetsBits =
             Op.or(Op.SET_EXT, Op.SET_INT);
@@ -339,10 +333,6 @@ public enum Op {
     public static final int WildVariableBits =
             Op.or(Op.VAR_PATTERN,Op.VAR_QUERY);
 
-    public static final int TemporalBits =  Op.or(
-        Op.EQUIV_AFTER,
-        Op.IMPLICATION_AFTER
-    );
 
 
     enum Args {

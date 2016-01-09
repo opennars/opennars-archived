@@ -1,6 +1,5 @@
 package nars.term;
 
-import junit.framework.TestCase;
 import nars.Op;
 import org.junit.Test;
 
@@ -29,17 +28,17 @@ public class TermHashTest {
         assertTrue(inh("a", "b").isAny(Op.INHERIT));
     }
 
-    @Test
-    public void testTemporalBits() {
-        Term x = $("<(&&,%1,%2)=\\>%3>");
-        assertTrue(x
-                .isAny(Op.TemporalBits));
-
-        TestCase.assertFalse(x
-                .isAny(Op.CONJUNCTION.bit()));
-        assertTrue(x
-                .hasAny(Op.CONJUNCTION.bit()));
-
-    }
+//    @Test
+//    public void testTemporalBits() {
+//        Term x = $("<(&&,%1,%2)=\\>%3>");
+//        assertTrue(x
+//                .isAny(Op.TemporalBits));
+//
+//        TestCase.assertFalse(x
+//                .isAny(Op.CONJUNCTION.bit()));
+//        assertTrue(x
+//                .hasAny(Op.CONJUNCTION.bit()));
+//
+//    }
 
 }

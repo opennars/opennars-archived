@@ -6,7 +6,6 @@ import nars.term.compound.Compound;
 import org.junit.Test;
 
 import static nars.$.*;
-import static nars.Op.*;
 import static org.junit.Assert.*;
 
 /**
@@ -16,25 +15,6 @@ public class TermReductionsTest {
 
     final Term p = $("P"), q = $("Q"), r = $("R"), s = $("S");
 
-    public static Term sectInt(Term... x) {
-        return the(INTERSECT_INT, x);
-    }
-
-    public static Term diffExt(Term a, Term b) {
-        return the(DIFF_EXT, a, b);
-    }
-
-    public static Term diffInt(Term a, Term b) {
-        return the(DIFF_INT, a, b);
-    }
-
-    public static Term equivAfter(Term subject, Term pred) {
-        return the(EQUIV_AFTER, subject, pred);
-    }
-
-    public static Term disj(Term... a) {
-        return the(DISJUNCTION, a);
-    }
 
     @Test
     public void testIntersectExtReduction1() {
@@ -98,7 +78,6 @@ public class TermReductionsTest {
 
         assertNull(equiv( impl(p, q), r) );
         assertNull(equiv( equiv(p, q), r) );
-        assertNull(equiv( equivAfter(p, q), r) );
         assertNull($("<<a <=> b> <=> c>"));
     }
 

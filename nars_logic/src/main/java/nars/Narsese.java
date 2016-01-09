@@ -753,10 +753,8 @@ public class Narsese extends BaseParser<Object>  {
                 NEGATE.str,
 
                 IMPLICATION.str,
-                IMPLICATION_AFTER.str,
 
                 EQUIV.str,
-                EQUIV_AFTER.str,
 
                 DISJUNCTION.str,
                 CONJUNCTION.str

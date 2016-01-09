@@ -349,9 +349,6 @@ public abstract class AbstractTask extends Item<Task>
             throw new RuntimeException(this + " negative duration");
 
         Compound term = term();
-
-        term.setDuration(duration); //HACK int<->long stuff
-
         int d;
         d = term instanceof Interval ? ((Interval) term).duration() : duration;
         this.duration = d;

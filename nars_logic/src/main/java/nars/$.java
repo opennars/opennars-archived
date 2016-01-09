@@ -245,10 +245,6 @@ public   enum $  {
         return new MutableTask(term).goal().truth(freq, conf);
     }
 
-    public static Term implAfter(Term condition, Term consequence) {
-        return the(IMPLICATION_AFTER, condition, consequence);
-    }
-
     public static Compound sete(Collection<? extends Term> t) {
         return (Compound) the(SET_EXT, t);
     }
@@ -399,10 +395,6 @@ public   enum $  {
     public static Term equiv(Term subject, Term pred) {
         return the(EQUIV, subject, pred);
     }
-    public static Term equivAfter(Term subject, Term pred) {
-        return the(EQUIV_AFTER, subject, pred);
-    }
-
 
     public static Term diffInt(Term a, Term b) {
         return the(DIFF_INT, a, b);
@@ -421,6 +413,10 @@ public   enum $  {
     public static Term sect(Term... x) {
         return the(INTERSECT_EXT, x);
     }
+    public static Term sectInt(Term... x) {
+        return the(INTERSECT_INT, x);
+    }
+
 
     public static Operator operator(String name) {
         return new Operator($.the(name));

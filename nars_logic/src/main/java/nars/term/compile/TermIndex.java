@@ -45,14 +45,12 @@ public interface TermIndex extends TermBuilder {
      * implications, equivalences, and interval
      */
     int InvalidEquivalenceTerm =
-            or(IMPLICATION, IMPLICATION_AFTER,
-                    EQUIV, EQUIV_AFTER
-                    );
+            or(IMPLICATION, EQUIV);
     /**
      * equivalences and intervals (not implications, they are allowed
      */
     int InvalidImplicationPredicate =
-            or(EQUIV, EQUIV_AFTER);
+            or(EQUIV);
 
     /** universal compound hash function */
     static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {

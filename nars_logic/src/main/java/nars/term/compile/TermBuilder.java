@@ -394,13 +394,11 @@ public interface TermBuilder {
                 //special statement filters
                 switch (op) {
                     case EQUIV:
-                    case EQUIV_AFTER:
                         if (!validEquivalenceTerm(subject)) return null;
                         if (!validEquivalenceTerm(predicate)) return null;
                         break;
 
                     case IMPLICATION:
-                    case IMPLICATION_AFTER:
                         if (subject.isAny(TermIndex.InvalidEquivalenceTerm)) return null;
                         if (predicate.isAny(TermIndex.InvalidImplicationPredicate)) return null;
 
@@ -442,9 +440,6 @@ public interface TermBuilder {
         switch (op) {
             case IMPLICATION:
                 conjOp = CONJUNCTION;
-                break;
-            case IMPLICATION_AFTER:
-                conjOp = IMPLICATION_AFTER;
                 break;
             default:
                 throw new RuntimeException("invalid case");

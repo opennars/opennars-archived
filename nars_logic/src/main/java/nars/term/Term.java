@@ -160,17 +160,6 @@ public interface Term extends Termed, Comparable, Termlike {
         return varQuery()!=0;
     }
 
-    /** set the system's perceptual duration (cycles)
-     *  for measuring event timings
-     *  can return a different term than 'this', in
-     *  case the duration causes a reduction or some
-     *  other transformation. in any case, the callee should
-     *  replace the called term with the result
-     * */
-    default void setDuration(int duration) {
-        //nothing
-    }
-
 
 
     void append(Appendable w, boolean pretty) throws IOException;
@@ -213,14 +202,6 @@ public interface Term extends Termed, Comparable, Termlike {
                 Integer.toBinaryString(structure()))
                     .replace(" ", "0");
     }
-
-
-
-    default boolean containsTemporal() {
-        //TODO construct bit vector for one comparison
-        return isAny(Op.TemporalBits);
-    }
-
 
     @Override
     default int opRel() {

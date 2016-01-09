@@ -251,17 +251,6 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     }
 
 
-    /**
-     * recursively set duration to interval subterms
-     */
-    @Override
-    public void setDuration(int duration) {
-//        if (TermMetadata.hasMetadata(this)) {
-//            Term[] y = terms();
-//            for (Term x : y)
-//                x.setDuration(duration);
-//        }
-    }
 
 
     @Override

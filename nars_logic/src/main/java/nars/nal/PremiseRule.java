@@ -128,22 +128,22 @@ public class PremiseRule extends GenericCompound implements Level {
 
     protected final void ensureValid() {
 
-        if (getConclusionTermPattern().containsTemporal()) {
-            if ((!getTaskTermPattern().containsTemporal())
-                    &&
-                    (!getBeliefTermPattern().containsTemporal())) {
-                //if conclusion is temporal term but the premise has none:
-
-                String s = toString();
-                if ((!s.contains("after")) && (!s.contains("concurrent") && (!s.contains("measure")))) {
-                    //System.err.println
-                  throw new RuntimeException
-                            ("Possibly invalid temporal rule from atemporal premise: " + this);
-
-                }
-            }
-        }
-
+//        if (getConclusionTermPattern().containsTemporal()) {
+//            if ((!getTaskTermPattern().containsTemporal())
+//                    &&
+//                    (!getBeliefTermPattern().containsTemporal())) {
+//                //if conclusion is temporal term but the premise has none:
+//
+//                String s = toString();
+//                if ((!s.contains("after")) && (!s.contains("concurrent") && (!s.contains("measure")))) {
+//                    //System.err.println
+//                  throw new RuntimeException
+//                            ("Possibly invalid temporal rule from atemporal premise: " + this);
+//
+//                }
+//            }
+//        }
+//
 
         if (postconditions.length == 0)
             throw new RuntimeException(this + " has no postconditions");
