@@ -664,8 +664,6 @@ public class PremiseRule extends GenericCompound implements Level {
             if (v instanceof Ellipsis) {
                 Ellipsis e = (Ellipsis)v;
                 Variable r = e.clone(varPattern(serial+offset), this);
-                if (e.toString().contains("..+..+"))
-                    throw new RuntimeException("x");
                 offset = 0; //return to zero
                 return r;
             }

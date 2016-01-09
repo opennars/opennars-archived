@@ -337,7 +337,8 @@
 
 // conditional deduction "An inverse inference has been implemented as a form of deduction" https://code.google.com/p/open-nars/issues/detail?id=40&can=1
 
-    (U --> L), ((&&,(#X --> L),(#X --> R),A..+) ==> Z) |- substitute(((&&,(U --> R),A..+) ==> Z),#X,U), (Belief:Deduction)
+    (U --> L), ((&&,A..*,(#X --> L),(#X --> R)) ==> Z) |- substitute(((&&,A..*,(U --> R)) ==> Z),#X,U), (Belief:Deduction)
+//this shoudlnt be necesssary if th eprevious works (with zero or more):
     (U --> L), ((&&,(#X --> L),(#X --> R)) ==> Z) |- ((U --> R) ==> Z), (Belief:Deduction)
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////

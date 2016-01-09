@@ -89,15 +89,15 @@ public abstract class Ellipsis extends VarPattern { //TODO use Immutable
 //        return n;
 //    }
 
-    public static int numEllipsis(TermContainer x) {
-        int xs = x.size();
-        int n = 0;
-        for (int i = 0; i < xs; i++) {
-            if (x.term(i) instanceof Ellipsis)
-                n++;
-        }
-        return n;
-    }
+//    public static int numEllipsis(TermContainer x) {
+//        int xs = x.size();
+//        int n = 0;
+//        for (int i = 0; i < xs; i++) {
+//            if (x.term(i) instanceof Ellipsis)
+//                n++;
+//        }
+//        return n;
+//    }
 
     public static int numNonEllipsisSubterms(Compound x) {
         int xs = x.size();

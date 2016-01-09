@@ -1,6 +1,9 @@
 package nars.nal;
 
+import nars.$;
 import nars.Global;
+import nars.Narsese;
+import nars.term.compound.Compound;
 import nars.util.data.list.FasterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +20,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static nars.$.$;
+
 
 /**
  * Holds an array of derivation rules
@@ -228,7 +231,7 @@ public class PremiseRuleSet {
             try {
 
 
-                PremiseRule preNorm = new PremiseRule($(src));
+                PremiseRule preNorm = new PremiseRule((Compound) Narsese.the().term(src, $.terms, false /* raw */));
 
                 PremiseRule r = add(ur, preNorm, src, index);
 

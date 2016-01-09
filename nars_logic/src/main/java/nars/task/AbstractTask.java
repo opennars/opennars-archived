@@ -33,7 +33,7 @@ public abstract class AbstractTask extends Item<Task>
     /** content term of this task */
     private Termed<Compound> term;
 
-    private TaskState state = null;
+    protected TaskState state = null;
 
     private char punctuation;
 
@@ -63,9 +63,6 @@ public abstract class AbstractTask extends Item<Task>
     private transient Reference<Task> bestSolution;
 
     private List log = null;
-
-    /** flag used for anticipatable derivation */
-    @Deprecated protected boolean anticipate = false; //TODO use TaskState
 
 
     public AbstractTask(Compound term, char punctuation, Truth truth, Budget bv, Task parentTask, Task parentBelief, Task solution) {
@@ -320,7 +317,7 @@ public abstract class AbstractTask extends Item<Task>
 
     @Override
     public final boolean isAnticipated() {
-        return isJudgmentOrGoal() && (anticipate || isInput());
+        return isJudgmentOrGoal() && (getState() == TaskState.Anticipated || isInput());
     }
 
     @Override

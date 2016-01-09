@@ -193,7 +193,7 @@ public class MutableTask extends AbstractTask {
 
     /** flag used for anticipatable derivation */
     public MutableTask anticipate(boolean a) {
-        anticipate = a;
+        if (a) state = (TaskState.Anticipated);
         return this;
     }
 

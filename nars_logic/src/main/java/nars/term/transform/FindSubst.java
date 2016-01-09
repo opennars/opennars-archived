@@ -71,7 +71,8 @@ public abstract class FindSubst extends Versioning implements Subst {
     }
 
     /**
-     * @param x a compound which contains one or more ellipsis terms */
+     * @param x a compound which contains one or more ellipsis terms
+     */
     public static int countNumNonEllipsis(Compound x) {
         //TODO depending on the expression, determine the sufficient # of terms Y must contain
         return Ellipsis.numNonEllipsisSubterms(x);
@@ -149,7 +150,9 @@ public abstract class FindSubst extends Versioning implements Subst {
         matchAll(x, y, true);
     }
 
-    /** setting finish=false allows matching in pieces before finishing */
+    /**
+     * setting finish=false allows matching in pieces before finishing
+     */
     public void matchAll(Term x, Term y, boolean finish) {
         if (match(x, y) && finish) {
             if (!termutes.isEmpty())
@@ -469,35 +472,30 @@ public abstract class FindSubst extends Versioning implements Subst {
         for (Term x : X.terms()) {
 
             boolean xVar = x.op() == type;
-            Term v = xVar ? getXY(x) : x;
+            Term v = getXY(x); //xVar ? getXY(x) : x;
+            if (v == null) v = x;
 
-            if (v == null) {
+            //ellipsis to be matched in stage 2
+            //if (x == Xellipsis) {
+            //    continue;
+            //}
 
-                //ellipsis to be matched in stage 2
-                if (x == Xellipsis) {
-                    continue;
-                }
+            if (v instanceof EllipsisMatch) {
+                //assume it's THE ellipsis here, ie. x == xEllipsis
+                ellipsisMatched = true;
+                Xellipsis = null;
 
-            } else {
-                if (v instanceof EllipsisMatch) {
-                    //assume it's THE ellipsis here, ie. x == xEllipsis
-                    ellipsisMatched = true;
-                    Xellipsis = null;
+                //check that Y contains all of these
+                if (!((EllipsisMatch) v).addWhileMatching(Y, ineligible))
+                    return false;
 
-                    //check that Y contains all of these
-                    if (!((EllipsisMatch) v).addWhileMatching(Y, ineligible))
-                        return false;
-                } else if (!xVar) {
-                    if (!Y.containsTerm(v))
-                        return false;
-                    ineligible.add(v);
-                    continue;
-                }
-
+                continue;
+            } else if (!xVar) {
+                if (!Y.containsTerm(v))
+                    return false;
+                ineligible.add(v);
+                continue;
             }
-
-            if (!xVar)
-                throw new RuntimeException("fault");
 
             if (x != Xellipsis)
                 xSpecific.add(x);
@@ -695,8 +693,10 @@ public abstract class FindSubst extends Versioning implements Subst {
     public boolean matchLinear(TermContainer X, TermContainer Y) {
         int s = X.size();
         switch (s) {
-            case 0: return true;
-            case 1: return matchSub(X, Y, 0);
+            case 0:
+                return true;
+            case 1:
+                return matchSub(X, Y, 0);
             case 2:
                 if (X.term(1).op(type))
                     return matchLinearReverse(X, Y);
@@ -723,7 +723,6 @@ public abstract class FindSubst extends Versioning implements Subst {
         }
         return true;
     }
-
 
 
     private void matchTermutations(int i, int max) {
@@ -807,10 +806,12 @@ public abstract class FindSubst extends Versioning implements Subst {
     }
 
 
-    /** default compound matching; op will already have been compared. no ellipsis will be involved */
+    /**
+     * default compound matching; op will already have been compared. no ellipsis will be involved
+     */
     public final boolean matchCompound(Compound x, Compound y) {
         int xs = x.size();
-        if ((xs==y.size()) && (x.relation()==y.relation())) {
+        if ((xs == y.size()) && (x.relation() == y.relation())) {
             return ((xs > 1) && (x.isCommutative())) ?
                     matchPermute(x, y) :
                     matchLinear(x.subterms(), y.subterms());
