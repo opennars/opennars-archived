@@ -51,7 +51,7 @@ import java.util.Map;
  */
 public class Anticipate {
 
-    public float DEFAULT_CONFIRMATION_EXPECTATION = 0.51f;
+    public float DEFAULT_CONFIRMATION_EXPECTATION = 0.501f;
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(0.75f, 0.5f, BudgetFunctions.truthToQuality(TruthFunctions.negation(expiredTruth)));
@@ -109,9 +109,11 @@ public class Anticipate {
         if (debug)
             System.err.println("Anticipating " + tt + " in " + (t.getOccurrenceTime() - now));
 
+        String s = "anticipating: "+taskTime.task.getTerm().toString();
+        System.out.println(s);
+        memory.eventAnticipate.emit(t);
+
         if(Global.TESTING) {
-            String s = "anticipating: "+taskTime.task.getTerm().toString();
-            System.out.println(s);
             Global.TESTSTRING += s + "\n";
         }
 
@@ -128,9 +130,11 @@ public class Anticipate {
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
+        memory.eventDisappointed.emit(tt.task);
+        String s = "did not happen: " + prediction.toString();
+        System.out.println(s);
+
         if(Global.TESTING) {
-            String s = "did not happen: " + prediction.toString();
-            System.out.println(s);
             Global.TESTSTRING += s + "\n";
         }
 
@@ -169,14 +173,17 @@ public class Anticipate {
         for(TaskTime tt : anticipations.get(c.getTerm())) {
 
             if(tt.inTime(cOccurr) && !c.equals(tt.task) &&
-                    c.getTruth().getExpectation() > DEFAULT_CONFIRMATION_EXPECTATION) {
+                    c.getTruth().getExpectation() >= DEFAULT_CONFIRMATION_EXPECTATION) {
 
                 toRemove.add(tt);
 
                 happeneds++;
+
+                memory.eventConfirmed.emit(c);
+                String s = "happened as expected: "+tt.task.getTerm().toString();
+                System.out.println(s);
+
                 if(Global.TESTING) {
-                    String s = "happened as expected: "+tt.task.getTerm().toString();
-                    System.out.println(s);
                     Global.TESTSTRING += s + "\n";
                 }
             }
