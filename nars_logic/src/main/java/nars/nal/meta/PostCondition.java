@@ -47,7 +47,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     public final int minNAL;
 
     public static final Set<Atom> reservedMetaInfoCategories = new HashSet<Atom>() {{
-        add(the("Truth"));
+        add(the("Belief"));
         add(the("Stamp"));
         add(the("Desire"));
         add(the("Order"));
@@ -133,8 +133,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                     }
                     break;
 
-                //TODO rename to: 'Belief'
-                case "Truth":
+                case "Belief":
                     beliefTruth = which;
                     break;
 

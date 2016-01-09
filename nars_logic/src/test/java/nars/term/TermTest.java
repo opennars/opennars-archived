@@ -562,34 +562,35 @@ public class TermTest {
         return a;
     }
 
-    @Test
-    public void testSubtermsVector() {
-
-        NAR n = new Terminal();
-
-        Term a3 = n.term("c");
-
-        Compound a = testStructure("<c </> <a --> b>>", "1000000000000000000001000001");
-        Compound a0 = testStructure("<<a --> b> </> c>", "1000000000000000000001000001");
-
-        Compound a1 = testStructure("<c <|> <a --> b>>", "10000000000000000000001000001");
-        Compound a2 = testStructure("<c <=> <a --> b>>", "100000000000000000001000001");
-
-        Compound b = testStructure("<?1 </> <$2 --> #3>>", "1000000000000000000001001110");
-        Compound b2 = testStructure("<<$1 --> #2> </> ?3>", "1000000000000000000001001110");
-
-
-        assertTrue(a.impossibleStructureMatch(b.structure()));
-        assertFalse(a.impossibleStructureMatch(a3.structure()));
-
-
-        assertEquals("no additional structure code in upper bits",
-                a.structure(), a.structure());
-        assertEquals("no additional structure code in upper bits",
-                b.structure(), b.structure());
-
-
-    }
+//    @Ignore
+//    @Test
+//    public void testSubtermsVector() {
+//
+//        NAR n = new Terminal();
+//
+//        Term a3 = n.term("c");
+//
+//        Compound a = testStructure("<c </> <a --> b>>", "1000000000000000000001000001");
+//        Compound a0 = testStructure("<<a --> b> </> c>", "1000000000000000000001000001");
+//
+//        Compound a1 = testStructure("<c <|> <a --> b>>", "10000000000000000000001000001");
+//        Compound a2 = testStructure("<c <=> <a --> b>>", "100000000000000000001000001");
+//
+//        Compound b = testStructure("<?1 </> <$2 --> #3>>", "1000000000000000000001001110");
+//        Compound b2 = testStructure("<<$1 --> #2> </> ?3>", "1000000000000000000001001110");
+//
+//
+//        assertTrue(a.impossibleStructureMatch(b.structure()));
+//        assertFalse(a.impossibleStructureMatch(a3.structure()));
+//
+//
+//        assertEquals("no additional structure code in upper bits",
+//                a.structure(), a.structure());
+//        assertEquals("no additional structure code in upper bits",
+//                b.structure(), b.structure());
+//
+//
+//    }
 
     @Test
     public void testImageConstruction() {

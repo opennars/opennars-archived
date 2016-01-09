@@ -4,12 +4,14 @@ import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
 import nars.util.meter.TestNAR;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
 
+@Ignore
 @RunWith(Parameterized.class)
 public class NAL8Test extends AbstractNALTester {
 

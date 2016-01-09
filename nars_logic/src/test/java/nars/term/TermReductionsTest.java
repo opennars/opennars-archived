@@ -100,24 +100,24 @@ public class TermReductionsTest {
         assertEquals("<R==>P>", $("<R==><R==>P>>").toString());
     }
 
-    @Test public void testReducedAndInvalidImplicationsTemporal() {
-        assertNull($("<<P<=>Q> =/> R>"));
-        assertNull($("<R =/> <P<=>Q>>"));
-
-        assertNull($("<<P==>Q> =/> R>"));
-        assertNull($("<<P==>Q> =|> R>"));
-        assertNull($("<<P==>Q> =|> R>"));
-    }
-
-    @Test public void testReducedAndInvalidImplicationsTemporal2() {
-        assertEquals("<(&|,P,R)=|>Q>", $("<R=|><P==>Q>>").toString());
-    }
-    @Test public void testReducedAndInvalidImplicationsTemporal3() {
-        assertEquals("<(&/,R,P)=/>Q>", $("<R=/><P==>Q>>").toString());
-    }
-    @Test public void testReducedAndInvalidImplicationsTemporal4() {
-        assertEquals("<(&/,P,R)=\\>Q>", $("<R=\\><P==>Q>>").toString());
-    }
+//    @Test public void testReducedAndInvalidImplicationsTemporal() {
+//        assertNull($("<<P<=>Q> =/> R>"));
+//        assertNull($("<R =/> <P<=>Q>>"));
+//
+//        assertNull($("<<P==>Q> =/> R>"));
+//        assertNull($("<<P==>Q> =|> R>"));
+//        assertNull($("<<P==>Q> =|> R>"));
+//    }
+//
+//    @Test public void testReducedAndInvalidImplicationsTemporal2() {
+//        assertEquals("<(&|,P,R)=|>Q>", $("<R=|><P==>Q>>").toString());
+//    }
+//    @Test public void testReducedAndInvalidImplicationsTemporal3() {
+//        assertEquals("<(&/,R,P)=/>Q>", $("<R=/><P==>Q>>").toString());
+//    }
+//    @Test public void testReducedAndInvalidImplicationsTemporal4() {
+//        assertEquals("<(&/,P,R)=\\>Q>", $("<R=\\><P==>Q>>").toString());
+//    }
 
     //TODO:
         /*
@@ -280,12 +280,12 @@ public class TermReductionsTest {
         assertEquals(
             $("(&&,r,s)"),
             $("(&&,s,r)"));
-        assertNotEquals(
-            $("(&/,r,s)"),
-            $("(&/,s,r)"));
-        assertEquals(
-            $("(&|,r,s)"),
-            $("(&|,s,r)"));
+//        assertNotEquals(
+//            $("(&/,r,s)"),
+//            $("(&/,s,r)"));
+//        assertEquals(
+//            $("(&|,r,s)"),
+//            $("(&|,s,r)"));
 
     }
 
@@ -294,15 +294,15 @@ public class TermReductionsTest {
         assertNotEquals(
                 $("<r ==> s>"),
                 $("<s ==> r>"));
-        assertNotEquals(
-                $("<r =/> s>"),
-                $("<s =/> r>"));
-        assertNotEquals(
-                $("<r =\\> s>"),
-                $("<s =\\> r>"));
-        assertNotEquals(
-                $("<r =|> s>"),
-                $("<s =|> r>"));
+//        assertNotEquals(
+//                $("<r =/> s>"),
+//                $("<s =/> r>"));
+//        assertNotEquals(
+//                $("<r =\\> s>"),
+//                $("<s =\\> r>"));
+//        assertNotEquals(
+//                $("<r =|> s>"),
+//                $("<s =|> r>"));
 
     }
 

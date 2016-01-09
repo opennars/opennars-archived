@@ -10,7 +10,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +38,7 @@ public class PremiseRuleSet {
     public PremiseRuleSet(Path path) throws IOException {
         this(Files.readAllLines(path));
     }
-    private final PatternIndex patterns = new PatternIndex();
+    public final PatternIndex patterns = new PatternIndex();
 
 
     private static final Logger logger = LoggerFactory.getLogger(PremiseRuleSet.class);
@@ -44,7 +47,7 @@ public class PremiseRuleSet {
     public PremiseRuleSet(boolean normalize, PremiseRule... rules) {
         for (PremiseRule p : rules) {
             if (normalize)
-                p = p.normalizeRule(getPatterns());
+                p = p.normalizeRule(patterns);
             premiseRules.add(p);
         }
     }
@@ -52,12 +55,12 @@ public class PremiseRuleSet {
     public PremiseRuleSet(Collection<String> ruleStrings) {
         int[] errors = {0};
 
-        parse(load(ruleStrings), getPatterns()).forEach(s -> premiseRules.add(s));
+        parse(load(ruleStrings), patterns).forEach(s -> premiseRules.add(s));
 
 
-        getLogger().info("indexed " + premiseRules.size() + " total rules, consisting of " + getPatterns().size() + " unique pattern components terms");
+        logger.info("indexed " + premiseRules.size() + " total rules, consisting of " + patterns.size() + " unique pattern components terms");
         if (errors[0] > 0) {
-            getLogger().warn("\trule errors: " + errors[0]);
+            logger.warn("\trule errors: " + errors[0]);
         }
     }
 
@@ -79,7 +82,7 @@ public class PremiseRuleSet {
         for (String s : lines) {
             boolean currentRuleEmpty = current_rule.length() == 0;
 
-            if (s.startsWith("//") || getSpacePattern().matcher(s).replaceAll(Matcher.quoteReplacement("")).isEmpty()) {
+            if (s.startsWith("//") || spacePattern.matcher(s).replaceAll(Matcher.quoteReplacement("")).isEmpty()) {
 
                 if (!currentRuleEmpty) {
 
@@ -119,7 +122,7 @@ public class PremiseRuleSet {
         String ret = '<' + rule + '>';
 
         while (ret.contains("  ")) {
-            ret = getTwoSpacePattern().matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
+            ret = twoSpacePattern.matcher(ret).replaceAll(Matcher.quoteReplacement(" "));
         }
 
         ret = ret.replace("A..", "%A.."); //add var pattern manually to ellipsis
@@ -131,8 +134,8 @@ public class PremiseRuleSet {
     }
 
 
-    private static final String[] equFull = {"<=>", "</>"/*, "<|>"*/};
-    private static final String[] implFull = {"==>", "=/>" /*, "=|>", "=\\>"*/};
+    private static final String[] equFull = {"<=>"/*, "</>", "<|>"*/};
+    private static final String[] implFull = {"==>"/*, "=/>" , "=|>", "=\\>"*/};
     private static final String[] conjFull = {"&&"/*, "&|", "&/"*/};
     private static final String[] unchanged = {null};
 
@@ -155,19 +158,19 @@ public class PremiseRuleSet {
 
         String[] equs =
                 ruleString.contains("<=>") ?
-                        getEquFull() :
-                        getUnchanged();
+                        equFull :
+                        unchanged;
 
 
         String[] impls =
                 ruleString.contains("==>") ?
-                        getImplFull() :
-                        getUnchanged();
+                        implFull :
+                        unchanged;
 
         String[] conjs =
                 ruleString.contains("&&") ?
-                        getConjFull() :
-                        getUnchanged();
+                        conjFull :
+                        unchanged;
 
 
         rules.add(ruleString);
@@ -175,15 +178,15 @@ public class PremiseRuleSet {
 
         for (String equ : equs) {
 
-            String p1 = equ != null ? getEquivOperatorPattern().matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
+            String p1 = equ != null ? equivOperatorPattern.matcher(ruleString).replaceAll(Matcher.quoteReplacement(equ)) : ruleString;
 
             for (String imp : impls) {
 
-                String p2 = imp != null ? getImplOperatorPattern().matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
+                String p2 = imp != null ? implOperatorPattern.matcher(p1).replaceAll(Matcher.quoteReplacement(imp)) : p1;
 
                 for (String conj : conjs) {
 
-                    String p3 = conj != null ? getConjOperatorPattern().matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
+                    String p3 = conj != null ? conjOperatorPattern.matcher(p2).replaceAll(Matcher.quoteReplacement(conj)) : p2;
 
                     rules.add(p3);
                 }
@@ -239,7 +242,7 @@ public class PremiseRuleSet {
 
 
             } catch (Exception ex) {
-                getLogger().error("Invalid TaskRule: {}", ex);
+                logger.error("Invalid TaskRule: {}", ex);
                 ex.printStackTrace();
             }
         });
@@ -264,53 +267,9 @@ public class PremiseRuleSet {
     }
     private static final Pattern spacePattern = Pattern.compile(" ", Pattern.LITERAL);
 
-    public static Pattern getSpacePattern() {
-        return spacePattern;
-    }
-
-    public static Pattern getTwoSpacePattern() {
-        return twoSpacePattern;
-    }
-
-    public static Pattern getEquivOperatorPattern() {
-        return equivOperatorPattern;
-    }
-
-    public static Pattern getImplOperatorPattern() {
-        return implOperatorPattern;
-    }
-
-    public static Pattern getConjOperatorPattern() {
-        return conjOperatorPattern;
-    }
-
-    public static Logger getLogger() {
-        return logger;
-    }
-
-    public static String[] getEquFull() {
-        return equFull;
-    }
-
-    public static String[] getImplFull() {
-        return implFull;
-    }
-
-    public static String[] getConjFull() {
-        return conjFull;
-    }
-
-    public static String[] getUnchanged() {
-        return unchanged;
-    }
-
-    /** for compiling and de-duplicating pattern term components */
-    public PatternIndex getPatterns() {
-        return patterns;
-    }
-
     public List<PremiseRule> getPremiseRules() {
-        return Collections.unmodifiableList(premiseRules);
+        return premiseRules;
+        //return Collections.unmodifiableList(premiseRules);
     }
 
 
