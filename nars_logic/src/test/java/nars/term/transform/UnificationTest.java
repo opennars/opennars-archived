@@ -96,8 +96,8 @@ public class UnificationTest  {
     @Test
     public void unificationP0()  {
         test(Op.VAR_PATTERN,
-                "<%A =/> %B>",
-                "<<a --> A> =/> <b --> B>>",
+                "<%A ==> %B>",
+                "<<a --> A> ==> <b --> B>>",
                 true
         );
     }
@@ -147,15 +147,15 @@ public class UnificationTest  {
 
     @Test public void pattern_trySubs_Dep_Var()  {
         test(Op.VAR_PATTERN,
-                "<%A =/> %B>",
-                "<<#1 --> A> =/> <$1 --> B>>",
+                "<%A ==> %B>",
+                "<<#1 --> A> ==> <$1 --> B>>",
                 true);
     }
 
     @Test public void pattern_trySubs_Indep_Var_2_parallel()  {
         test(Op.VAR_INDEP,
-              "(&|,<($1,#2) --> on>,<(SELF,#2) --> at>)",
-              "(&|,<({t002},#1) --> on>,<(SELF,#1) --> at>)",
+              "(&&,<($1,#2) --> on>,<(SELF,#2) --> at>)",
+              "(&&,<({t002},#1) --> on>,<(SELF,#1) --> at>)",
               true);
     }
     @Test public void pattern_trySubs_Indep_Var_2_product_and_common_depvar()  {
@@ -257,8 +257,8 @@ public class UnificationTest  {
     }
     @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_1()  {
         test(Op.VAR_PATTERN,
-                "{<(%1,x) --> on>, c:(a &/ b)}",
-                "{<(z,x) --> on>, c:(a &/ b)}",
+                "{<(%1,x) --> on>, c:(a && b)}",
+                "{<(z,x) --> on>, c:(a && b)}",
                 true);
     }
     @Test public void pattern_trySubs_Pattern_Var_2_setComplex0_5_c()  {
@@ -311,8 +311,8 @@ public class UnificationTest  {
 
     @Test public void pattern_trySubs_Indep_Var_32()  {
         test(Op.VAR_PATTERN,
-                "<%A =|> <(*,SELF,$1) --> reachable>>",
-                "<(&|,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) =|> <(*,SELF,$1) --> reachable>>",
+                "<%A ==> <(*,SELF,$1) --> reachable>>",
+                "<(&&,<(*,$1,#2) --> on>,<(*,SELF,#2) --> at>) ==> <(*,SELF,$1) --> reachable>>",
                 true);
     }
 

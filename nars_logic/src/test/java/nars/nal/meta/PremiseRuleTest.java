@@ -46,30 +46,30 @@ public class PremiseRuleTest extends TestCase {
         assertEquals(1, p.term("<%A --> %B>").complexity());
 
         {
-            PremiseRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
-            assertEquals("((A,A),(A,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
+            PremiseRule x = p.termRaw("< A, A |- A, (Belief:Revision, Desire:Weak)>");
+            assertEquals("((A,A),(A,(<Revision-->Belief>,<Weak-->Desire>)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
 
         {
-            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Belief:Revision, Desire:Weak)>");
             x = normalize(x);
             assertEquals(19, x.volume());
-            assertEquals("((<%1-->%2>,<%2-->%1>),(<%1<->%2>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
+            assertEquals("((<%1-->%2>,<%2-->%1>),(<%1<->%2>,(<Revision-->Belief>,<Weak-->Desire>)))", x.toString());
 
         }
         {
-            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Belief:Revision, Desire:Weak)>");
             x = normalize(x);
             assertEquals(19, x.volume()); //same volume as previous block
-            assertEquals("((<%1-->%2>,<%2-->%1>),(<nonvar<->%1>,(<Revision-->Truth>,<Weak-->Desire>)))", x.toString());
+            assertEquals("((<%1-->%2>,<%2-->%1>),(<nonvar<->%1>,(<Revision-->Belief>,<Weak-->Desire>)))", x.toString());
         }
 
         {
-            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>,  (Truth:Conversion, Punctuation:Judgment)>");
+            PremiseRule x = (PremiseRule)p.term("< <A --> B>, <B --> A> |- <A <-> B>,  (Belief:Conversion, Punctuation:Judgment)>");
             x = normalize(x);
             assertEquals(19, x.volume());
-            assertEquals("((<%1-->%2>,<%2-->%1>),(<%1<->%2>,(<Conversion-->Truth>,<Judgment-->Punctuation>)))", x.toString());
+            assertEquals("((<%1-->%2>,<%2-->%1>),(<%1<->%2>,(<Conversion-->Belief>,<Judgment-->Punctuation>)))", x.toString());
         }
 
 //        {
@@ -79,9 +79,9 @@ public class PremiseRuleTest extends TestCase {
 //        }
 
         //and the first complete rule:
-        PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (Truth:Comparison,Desire:Strong)>");
+        PremiseRule x = (PremiseRule) p.term("<(S --> M), (P --> M) |- (P <-> S), (Belief:Comparison,Desire:Strong)>");
         x = normalize(x);
-        assertEquals("((<%1-->%2>,<%3-->%2>),(<%1<->%3>,(<Comparison-->Truth>,<Strong-->Desire>)))", x.toString());
+        assertEquals("((<%1-->%2>,<%3-->%2>),(<%1<->%3>,(<Comparison-->Belief>,<Strong-->Desire>)))", x.toString());
         assertEquals(19, x.volume());
 
     }
@@ -95,7 +95,7 @@ public class PremiseRuleTest extends TestCase {
 
         PatternIndex i = new PatternIndex();
 
-        String l = "<((B,P) --> ?X) ,(B --> A), task(\"?\") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)>";
+        String l = "<((B,P) --> ?X) ,(B --> A), task(\"?\") |- ((B,P) --> (A,P)), (Belief:BeliefStructuralDeduction, Punctuation:Judgment)>";
         Compound x = ((PremiseRule)p.term(l)).normalizeRule(i);
         assertTrue(!x.toString().contains("%B"));
     }
@@ -113,7 +113,7 @@ public class PremiseRuleTest extends TestCase {
         PatternIndex i = new PatternIndex();
 
 
-        Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
+        Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Belief:Conversion)>");
         y = ((PremiseRule)y).normalizeRule(i);
         printRecursive(y);
 
@@ -124,7 +124,7 @@ public class PremiseRuleTest extends TestCase {
 
 
     @Test public void printTermRecursive() {
-        Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
+        Compound y = (Compound)p.term("<(S --> P), --S |- (P --> S), (Belief:Conversion, Info:SeldomUseful)>");
         printRecursive(y);
     }
 

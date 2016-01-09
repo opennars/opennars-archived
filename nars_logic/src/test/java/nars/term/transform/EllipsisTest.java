@@ -273,15 +273,15 @@ public class EllipsisTest {
     public static String[] p(String a, String b) { return new String[] { a, b}; }
 
     @Test public void testVarArg0() {
-        //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Truth:DecomposePositiveNegativeNegative)";
-        String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A..+) ==> %M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
+        //String rule = "(%S --> %M), ((|, %S, %A..+ ) --> %M) |- ((|, %A, ..) --> %M), (Belief:DecomposePositiveNegativeNegative)";
+        String rule = "(%S ==> %M), ((&&,%S,%A..+) ==> %M) |- ((&&,%A..+) ==> %M), (Belief:DecomposeNegativePositivePositive, Order:ForAllSame, SequenceIntervals:FromBelief)";
         Compound x = $.$('<' + rule + '>');
         //System.out.println(x);
         x = ((PremiseRule)x).normalizeRule(new PatternIndex());
         //System.out.println(x);
 
         assertEquals(
-                "((<%1==>%2>,<(&&,%1,%3..+)==>%2>),(<(&&,%3..+)==>%2>,(<DecomposeNegativePositivePositive-->Truth>,<ForAllSame-->Order>,<FromBelief-->SequenceIntervals>)))",
+                "((<%1==>%2>,<(&&,%1,%3..+)==>%2>),(<(&&,%3..+)==>%2>,(<DecomposeNegativePositivePositive-->Belief>,<ForAllSame-->Order>,<FromBelief-->SequenceIntervals>)))",
                 x.toString()
         );
 

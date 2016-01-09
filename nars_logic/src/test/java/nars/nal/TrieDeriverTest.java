@@ -12,12 +12,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class TrieDeriverTest {
 
-    final String r0 = "(S --> P), (S <-> P), task(\"?\") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgment)";
+    final String r0 = "(S --> P), (S <-> P), task(\"?\") |- (S --> P), (Belief:StructuralIntersection, Punctuation:Judgment)";
 
-    final String r1 = "((|,X,A..+) --> M), M, task(\".\") |- (X --> M), (Truth:StructuralDeduction)";
+    final String r1 = "((|,X,A..+) --> M), M, task(\".\") |- (X --> M), (Belief:StructuralDeduction)";
     final String r1Case = "<(|, puppy, kitten) --> animal>.";
 
-    final String rN = "(C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Truth:Union), (C --> intersect({A..+},{B..+})), (Truth:Intersection)";
+    final String rN = "(C --> {A..+}), (C --> {B..+}) |- (C --> {A..+,B..+}), (Belief:Union), (C --> intersect({A..+},{B..+})), (Belief:Intersection)";
 
 
     @Test
@@ -75,7 +75,7 @@ public class TrieDeriverTest {
 
     @Test public void testEllipsisRule() {
         TrieDeriver d = testRule(
-            "(&&, A..+, X), B |- substituteIfUnifies((&&,A..+),\"#\",X,B), (Truth:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromTask)\n"
+            "(&&, A..+, X), B |- substituteIfUnifies((&&,A..+),\"#\",X,B), (Belief:AnonymousAnalogy, Desire:Strong, Order:ForAllSame, SequenceIntervals:FromTask)\n"
         );
         //test that A..+ survives as an ellipsis
         assertTrue(d.trie.getSummary().contains("%1..+"));
@@ -86,13 +86,13 @@ public class TrieDeriverTest {
         //test that ellipsis survives as an ellipsis after normalization no matter where it occurrs in a premise pattern
 
         assertTrue(testRule(
-            "((X --> R) ==> Z), ((&&,A..+,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Truth:Abduction)"
+            "((X --> R) ==> Z), ((&&,A..+,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Belief:Abduction)"
         ).trie.getSummary().contains("..+"));
         assertTrue(testRule(
-            "((X --> R) ==> Z), ((&&,A..*,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Truth:Abduction)"
+            "((X --> R) ==> Z), ((&&,A..*,(#Y --> B),(#Y --> R)) ==> Z) |- (X --> B), (Belief:Abduction)"
         ).trie.getSummary().contains("..*"));
         assertTrue(testRule(
-            "((X --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A..*) ==> Z) |- (X --> B), (Truth:Abduction)"
+            "((X --> R) ==> Z), ((&&,(#Y --> B),(#Y --> R),A..*) ==> Z) |- (X --> B), (Belief:Abduction)"
         ).trie.getSummary().contains("..*"));
 
 
