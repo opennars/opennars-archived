@@ -361,16 +361,12 @@ public final class BudgetFunctions extends UtilityFunctions {
 
     public static Budget compoundForwardGoal(final Truth truth, final Term content, final Premise nal, boolean temporal) {
         final int complexity = content.complexity();
-        return budgetInference(new Budget(), (float) Math.min(1.0-Global.BUDGET_EPSILON,1.5f*truthToQuality(truth)), f_complexity(complexity), nal, temporal);
-    }
-
-    public static int f_complexity(int complexity) {
-        return complexity;
+        return budgetInference(new Budget(), (float) Math.min(1.0-Global.BUDGET_EPSILON,Global.GOAL_PRIORITY_PUSH*truthToQuality(truth)), complexity, nal, temporal);
     }
 
     public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal, boolean temporal) {
         final int complexity = content.complexity();
-        return budgetInference(target, truthToQuality(truth), f_complexity(complexity), nal, temporal);
+        return budgetInference(target, truthToQuality(truth), complexity, nal, temporal);
     }
 
 
@@ -382,8 +378,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackward(final Term content, final Premise nal, boolean temporal) {
-       // return budgetInference(1f, content.complexity(), nal);
-        return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), f_complexity(content.complexity()), nal, temporal);
+        return budgetInference(1f, content.complexity(), nal, temporal);
+        //return budgetInference(new Budget(), truthToQuality(new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE)), f_complexity(content.complexity()), nal, temporal);
     }
 
     /**

@@ -323,5 +323,7 @@ public class Global {
     public static int OCCURENCE_RANKING_DECAY_UNTIL_MAX_STEPS = 10000;
     public static double OCCURENCE_DECAY_MAX=0.0f;
 
+    public static double GOAL_PRIORITY_PUSH = 1.5f; //goals use an adjusted budget function
+
 }
 
