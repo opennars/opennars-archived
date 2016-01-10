@@ -6,14 +6,14 @@
 //Pronouns and nouns are similar to some extent:
 <pronouns <-> nouns>. %0.8;0.9%
 //John eats meat:
-<(*,"John","meat") --> eat>.
+<("John","meat") --> eat>.
 //he eats meat:
-<(*,"he","meat") --> eat>.
+<("he","meat") --> eat>.
 //who is he?
 <"he" <-> ?who>?
 
 //the relation between John and meat is similar to the relation between he and meat:
- OUT: <(*,"John","meat") <-> (*,"he","meat")>. %0.8;0.45%
+ OUT: <("John","meat") <-> ("he","meat")>. %0.8;0.45%
 //he is John: (answer to the question)
  OUT: <"he" <-> "John">.
 
@@ -28,11 +28,11 @@
 //Mary is female:
 <"Mary" --> [female]>.
 //If someone is thirsty, that person drinks water:
-<<$x --> [thirsty]> ==> <(*,$x,"water") -->  drink>>.
+<<$x --> [thirsty]> ==> <($x,"water") -->  drink>>.
 //Mary is thirsty:
 <"Mary" --> [thirsty]>.
 //She drinks water.
-<(*,"she","water") --> drink>.
+<("she","water") --> drink>.
 //Who is she?
 <?who <-> ?she>?
 
@@ -51,15 +51,15 @@
 //Pronouns and nouns are similar to some extent:
 <pronouns <-> nouns>. %0.8;0.9%.
 //John eats meat:
-<(*,"John","meat") --> eat>.
+<("John","meat") --> eat>.
 //Cats are plural:
 <"cats" --> [plural]>.
 //Cats are hungry:
 <"cats" --> [hungry]>.
 //If someone is hungry, that person eats meat.
-<<$x --> [hungry]> ==> <(*,$x,"meat") --> eat>>.
+<<$x --> [hungry]> ==> <($x,"meat") --> eat>>.
 //They eat meat:
-<(*,"they","meat") --> eat>.
+<("they","meat") --> eat>.
 //who are they?
 <?who <-> "they">?
 

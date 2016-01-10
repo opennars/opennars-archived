@@ -12,12 +12,12 @@
 
 'the first deponent, a psychologist,
 'claims that people with sunglasses are more aggressive
-<<(*,$1,sunglasses) --> own> ==> <$1 --> [aggressive]>>.
+<<($1,sunglasses) --> own> ==> <$1 --> [aggressive]>>.
 
 10
 
 'the third deponent claims, that he has seen tom with sunglasses on:
-<(*,{tom},sunglasses) --> own>.
+<({tom},sunglasses) --> own>.
 
 10
 
@@ -60,6 +60,6 @@
 <{kim} --> murder>.
 
 'does kim own sunglasses?
-<(*,{kim},sunglasses) --> own>?
+<({kim},sunglasses) --> own>?
 
-'Answer <(*,{kim},sunglasses) --> own>. %1.00;0.40%
+'Answer <({kim},sunglasses) --> own>. %1.00;0.40%

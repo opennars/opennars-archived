@@ -1,4 +1,4 @@
-//metacat example:
+    //metacat example:
 //a b c => a b d
 //w x y => ?
 //correct: w x z
@@ -9,8 +9,8 @@
 <c <-> y>.
 <d <-> z>.
 //declaring two of them as similar
-<(*,a,b,c) <-> (*,a,b,d)>.
+<(a,b,c) <-> (a,b,d)>.
 //but if this is similar, to what is w,x,y similar then?
-<(*,w,x,y) <-> ?what>?
+<(w,x,y) <-> ?what>?
 
-OUT: <(*,w,x,y) <-> (*,w,x,z)>. %1.00;0.39%
+OUT: <(w,x,y) <-> (w,x,z)>. %1.00;0.39%
