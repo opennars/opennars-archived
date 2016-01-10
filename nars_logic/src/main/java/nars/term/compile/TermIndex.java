@@ -53,8 +53,11 @@ public interface TermIndex extends TermBuilder {
             or(EQUIV);
 
     /** universal compound hash function */
-    static <T extends Term> int hash(TermVector subterms, Op op, int hashSalt) {
-        int h = hashCombine( subterms.hashCode(), op.ordinal() );
+    static <T extends Term> int hash(TermVector subterms, Op op, int t, int hashSalt) {
+        int h = hashCombine(
+                    hashCombine( subterms.hashCode(), op.ordinal() ),
+                    t
+                );
         if (hashSalt!=0)
             h = hashCombine(h, hashSalt);
         return h;

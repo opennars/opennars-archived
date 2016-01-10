@@ -44,7 +44,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
         this.normalized = (subterms.vars() == 0);
         this.op = op;
         this.relation = relation;
-        this.hash = TermIndex.hash(terms, op, relation+1);
+        this.hash = TermIndex.hash(terms, op, t, relation+1);
         this.t = t;
     }
 
@@ -210,6 +210,9 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 int diff2 = Integer.compare(relation(), c.relation());
                 if (diff2 != 0) return diff2;
 
+                int diff3 = Integer.compare(this.t, c.t());
+                if (diff3 != 0) return diff3;
+
                 r=subterms().compareTo(c.subterms());
             }
         }
@@ -236,10 +239,12 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     private boolean equalsFurther(Termed thatTerm) {
 
         boolean r=false;
-        Term t = thatTerm.term();
-        if ((op == t.op()) /*&& (((t instanceof Compound))*/) {
-            Compound c = (Compound) t;
-            r=terms.equals(c.subterms()) && (relation == c.relation());
+        Term u = thatTerm.term();
+        if ((op == u.op()) /*&& (((t instanceof Compound))*/) {
+            Compound c = (Compound) u;
+            r=terms.equals(c.subterms())
+                    && (relation == c.relation())
+                    && (t == c.t());
         }
         return r;
     }
