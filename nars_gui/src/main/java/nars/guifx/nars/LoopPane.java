@@ -108,12 +108,12 @@ public class LoopPane extends VBox {
         cpuSlider.setPadding(new Insets(0,0,0,4));
         //say("ready");
 
-        /*FlowPane flowp = new FlowPane(runButton, stepButton, cpuSlider, multiplier);
+        FlowPane flowp = new FlowPane(runButton, stepButton, cpuSlider, multiplier);
 
         flowp.setPrefWidth(flowp.getWidth());
-        flowp.setPrefHeight(flowp.getHeight());
+        flowp.setPrefHeight(flowp.getHeight()+50);
 
-        runButton.setPrefHeight(runButton.getHeight());
+    /*    runButton.setPrefHeight(runButton.getHeight());
         runButton.setPrefWidth(runButton.getWidth());
 
         stepButton.setPrefHeight(stepButton.getHeight());
@@ -124,12 +124,13 @@ public class LoopPane extends VBox {
 
         multiplier.setPrefHeight(multiplier.getHeight());
         multiplier.setPrefWidth(multiplier.getWidth());
+        */
 
 
-        flowp.setMaxWidth(flowp.getWidth());
-        flowp.setMaxHeight(flowp.getHeight());
+      //  flowp.setMaxWidth(flowp.getWidth());
+      //  flowp.setMaxHeight(flowp.getHeight());
 
-        runButton.setMaxHeight(runButton.getHeight());
+        /*runButton.setMaxHeight(runButton.getHeight());
         runButton.setMaxWidth(runButton.getWidth());
 
         stepButton.setMaxHeight(stepButton.getHeight());
@@ -158,7 +159,7 @@ public class LoopPane extends VBox {
         multiplier.setMinWidth(multiplier.getWidth());*/
 
         getChildren().addAll(
-                new FlowPane(runButton, stepButton, cpuSlider, multiplier) //,
+                flowp//,
                // new FlowPane(label)
         );
 

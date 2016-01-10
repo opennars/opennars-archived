@@ -3,7 +3,6 @@ package nars.guifx;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -206,13 +205,14 @@ public class PluginPanel extends VBox {
 
 
             Button p = new Button();
+
             p.getStyleClass().add("plugin_button");
             p.setGraphic(icon(K, v));
             p.setMaxWidth(Double.MAX_VALUE);
-            p.setMaxHeight(Double.MAX_VALUE);
+            p.setMaxHeight(p.getHeight());
             //p.maxHeight(100);
             //p.prefHeight(100);
-            p.minHeight(128);
+            p.minHeight(p.getHeight());
             p.minWidth(128);
             return p;
         });

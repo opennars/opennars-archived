@@ -315,7 +315,6 @@ public class NARide extends BorderPane {
 
         final BorderPane f = new BorderPane();
 
-
         /*LinePlot lp = new LinePlot(
                 "Concepts",
                 () -> (nar.memory.getConcepts().size()),
@@ -368,6 +367,9 @@ public class NARide extends BorderPane {
 
         //f.setCenter(taskBar);
         f.setCenter(spp);
+        spp.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+       // spp.setMinHeight(430);
+      //  spp.setMaxHeight(450);
 
         f.setTop(controlPane);
 
