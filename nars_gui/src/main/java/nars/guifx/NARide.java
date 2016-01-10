@@ -291,7 +291,6 @@ public class NARide extends BorderPane {
 
         this.nar = l.nar;
 
-
         //default node builders
         //TODO make these Function<Object,Node>, not a supplier interface
         icon(NARLoop.class, (ll) -> new LoopPane(l));
@@ -387,16 +386,18 @@ public class NARide extends BorderPane {
         SplitPane p = new SplitPane();
         p.getItems().setAll(f, content);
         p.setDividerPositions(0.28f);
+        p.setResizableWithParent(f,false);
+        f.setMaxSize(f.getPrefWidth(),f.getPrefHeight());
 
         setCenter(p);
 
-        runLater(() -> {
+        //runLater(() -> {
             TabPaneDetacher tabDetacher = new TabPaneDetacher();
             tabDetacher.makeTabsDetachable(content);
             /*tabDetacher.stylesheets(
                     getScene().getStylesheets().toArray(
                             new String[getScene().getStylesheets().size()]));*/
-        });
+        //});
 
         //autosize();
 
