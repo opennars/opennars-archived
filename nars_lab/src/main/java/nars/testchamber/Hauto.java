@@ -1,5 +1,6 @@
 package nars.testchamber;
 
+import jurls.reinforcementlearning.domains.grid.Agent;
 import nars.NAR;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Machine;
@@ -31,7 +32,10 @@ public class Hauto {
         }
         return false;
     }
-    
+
+    public int markedx = -1;
+    public int markedy = -1;
+    int cnt=2;
     //put to beginning because we will need this one most often
     public void ExecutionFunction(int t,int i,int j,Cell w,Cell r,Cell left,Cell right,Cell up,
             Cell down,Cell left_up,Cell left_down,Cell right_up,Cell right_down,Cell[][] readcells)
@@ -42,7 +46,30 @@ public class Hauto {
         w.is_solid=r.is_solid;
         w.chargeFront=false;
         //
-        if((r.machine==Machine.Light || r.machine==Machine.Turret) && r.charge==1)
+        boolean turrentneighbour = (left.machine == Machine.Turret || right.machine == Machine.Turret || up.machine == Machine.Turret || down.machine == Machine.Turret);
+
+        if((r.logic == Logic.OFFSWITCH || r.logic == Logic.SWITCH) && r.charge == 0 && turrentneighbour) {
+            for(GridObject gr : TestChamber.space.objects) {
+                if(gr instanceof GridAgent) {
+                    GridAgent o=(GridAgent) gr;
+                    if(!(i==markedx && j==markedy) && Math.abs(o.cx-i)<=1 && Math.abs(o.cy-j)<=1) {
+                        w.charge = 1;
+                        w.light = 1;
+                        w.chargeFront = true;
+                    }
+                    markedx = (int) o.cx;
+                    markedy = (int) o.cy;
+                }
+            }
+        }
+        else
+        if((r.logic == Logic.SWITCH || r.logic == Logic.OFFSWITCH) && turrentneighbour) {
+            w.charge = 0;
+            w.light = 0;
+            w.chargeFront = false;
+        }
+
+        if((r.machine == Machine.Light || r.machine == Machine.Turret) && r.charge==1)
         {
             if(r.light!=1.0f) {
                 boolean nope=false;
@@ -62,7 +89,9 @@ public class Hauto {
                         entityID++;
                     }
                 }
-                nar.input("<" + r.name + " --> [on]>. :|:");
+                if(r.machine == Machine.Light) {
+                    nar.input("<" + r.name + " --> [on]>. :|:");
+                }
             }
             w.light=1.0f;
             
@@ -153,7 +182,7 @@ public class Hauto {
             w.charge = Math.max(up.charge, Math.max(down.charge, Math.max(left.charge, right.charge)));
             w.chargeFront = false;
         }
-        if(r.machine==Machine.Light || r.machine==Machine.Turret) {
+        if(r.machine==Machine.Light) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
                 nar.input("(--,<"+r.name+" --> [on]>). :|: %1.00;0.90%");
             }
@@ -174,8 +203,8 @@ public class Hauto {
         }
         
         if(oper.equals("perceive")) {
-             readCells[x][y].name = "place"+entityID.toString();
-            writeCells[x][y].name = "place"+entityID.toString();
+             readCells[x][y].name = "{place"+entityID.toString()+"}";
+            writeCells[x][y].name = "{place"+entityID.toString()+"}";
             if(TestChamber.staticInformation)
             nar.input("<" + "{place" + entityID.toString() + "} --> place>.");
             if(TestChamber.curiousity) {

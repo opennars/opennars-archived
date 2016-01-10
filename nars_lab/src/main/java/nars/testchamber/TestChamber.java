@@ -4,6 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.NARide;
 import nars.nar.Default;
+import nars.task.Task;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
@@ -13,6 +14,8 @@ import nars.testchamber.operator.Activate;
 import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
 import nars.testchamber.operator.Pick;
+import nars.util.event.DefaultTopic;
+import nars.util.event.Topic;
 import processing.core.PVector;
 
 import java.util.List;
@@ -100,6 +103,8 @@ public class TestChamber {
 
     private long lastDrawn = 0;
 
+    public static boolean becoming_hungry_again = false;
+
     public TestChamber() {
         super();
     }
@@ -107,6 +112,9 @@ public class TestChamber {
     public TestChamber(NAR nar) {
         this(nar, true);
     }
+
+    int lastcx = 0;
+    int lastcy = 0;
 
     public TestChamber(NAR nar, boolean showWindow) {
         super();
@@ -170,8 +178,16 @@ public class TestChamber {
                     if (needpizza) {
                         hungry--;
                         if (hungry < 0) {
-                            hungry = 100;
-                            nar.input("<SELF --> [hungry]>! :|:"); //also works but better:
+                            hungry = 10;
+                            //nar.input("<SELF --> [energy]>! :|:"); //also works but better:
+                            Task ret = nar.inputTask("<SELF --> [energy]>! :|:");
+
+                            if(becoming_hungry_again) {
+                                System.out.println("energy urge active");
+                                nar.memory.energyUrgeActive.emit(ret);
+                                becoming_hungry_again = false;
+                            }
+
                             /*for (GridObject obj : space.objects) {
                                 if (obj instanceof Pizza) {
                                     nar.addInput("<" + ((Pizza) obj).doorname + "--> at>!");
@@ -277,12 +293,15 @@ public class TestChamber {
                                         for (int i = 0; i < cells.h; i++) {
                                             for (int j = 0; j < cells.w; j++) {
                                                 if (cells.readCells[i][j].name.equals(goal)) {
-                                                    if (cells.readCells[i][j].logic == Logic.OFFSWITCH) {
+                                                    if(cells.readCells[i][j].logic == Logic.OFFSWITCH ||
+                                                            (cells.readCells[i][j].logic == Logic.SWITCH && //workaround for pizza machine
+                                                                    cells.readCells[i][j].charge == 0) ) {
                                                         cells.readCells[i][j].logic = Logic.SWITCH;
                                                         cells.writeCells[i][j].logic = Logic.SWITCH;
+
+                                                        //nar.addInput("<"+goal+" --> on>. :|:");
                                                         cells.readCells[i][j].charge = 1.0f;
                                                         cells.writeCells[i][j].charge = 1.0f;
-                                                        //nar.addInput("<"+goal+" --> on>. :|:");
                                                     }
                                                 }
                                             }
@@ -291,7 +310,7 @@ public class TestChamber {
                                     if ("goto".equals(opname)) {
                                         executed_going = false;
                                         nar.input("<" + goal + " --> [at]>. :|:");
-                                        if (goal.startsWith("{pizza")) {
+                                        /*if (goal.startsWith("{pizza")) {
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
                                                 if (obj instanceof LocalGridObject) {
@@ -307,7 +326,7 @@ public class TestChamber {
                                             hungry = 500;
                                             //nar.addInput("<"+goal+" --> eat>. :|:"); //that is sufficient:
                                             nar.input("<" + goal + " --> [at]>. :|:");
-                                        }
+                                        }*/
                                         active = true;
                                     }
                                 }

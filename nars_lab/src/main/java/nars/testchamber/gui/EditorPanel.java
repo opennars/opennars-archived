@@ -750,7 +750,7 @@ public class EditorPanel extends JPanel {
         resourceMenu.add(new EditorMode("need pizza") {
             @Override
             public void run() {
-                wu.run();
+                //wu.run();
                 //s.nar.input("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
                 //s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
                 TestChamber.needpizza=true;

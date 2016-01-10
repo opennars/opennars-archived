@@ -2,9 +2,11 @@ package nars.testchamber;
 
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
+import nars.task.Task;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.gui.EditorPanel;
+import nars.testchamber.object.Pizza;
 import nars.testchamber.particle.ParticleSystem;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -207,7 +209,34 @@ public class Grid2DSpace extends PApplet {
         if (time % automataPeriod == 0 || TestChamber.executed) {
             updateAutomata();
         }
+
+
+        GridAgent agent =  null;
+        for (GridObject g : objects) {
+            if (g instanceof GridAgent) {
+                agent = (GridAgent) g;
+            }
+        }
+
         if (time % agentPeriod == 0 || TestChamber.executed) {
+            if (time % (100) == 0) { //show pizza a bit ^^
+                ArrayList<GridObject> toRemove = new ArrayList<>();
+                for (GridObject spinacci : objects) {
+                    if (spinacci instanceof Pizza) {
+                        Pizza pizza = (Pizza) spinacci;
+                        if (Math.abs(pizza.cx - agent.cx) <= 1 && Math.abs(pizza.cy - agent.cy) <= 1) {
+                            Task ret = nar.inputTask("<SELF --> [energy]>. :|:");
+                            TestChamber.hungry += 1000;
+                            TestChamber.becoming_hungry_again = true;
+                            nar.memory.energyUrgeSatisfied.emit(ret);
+                            toRemove.add(pizza); //objects.remove(pizza);
+                        }
+                    }
+                }
+                for (GridObject gri : toRemove) {
+                    objects.remove(gri);
+                }
+            }
             try
             {
                 for (GridObject g : objects) {

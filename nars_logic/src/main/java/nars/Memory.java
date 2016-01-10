@@ -73,6 +73,10 @@ public class Memory extends Param {
     transient public final Topic<Task> eventConfirmed = new DefaultTopic<>();
     transient public final Topic<Task> eventDisappointed = new DefaultTopic<>();
 
+    //experimental energy demand info events
+    transient public final Topic<Task> energyUrgeActive = new DefaultTopic<>();
+    transient public final Topic<Task> energyUrgeSatisfied = new DefaultTopic<>();
+
     transient public final Topic<Memory> eventReset = new DefaultTopic<>();
 
     transient public final Topic<Concept> eventConceptActivated = new DefaultTopic<>();
