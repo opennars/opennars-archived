@@ -108,7 +108,55 @@ public class LoopPane extends VBox {
         cpuSlider.setPadding(new Insets(0,0,0,4));
         //say("ready");
 
-        FlowPane flowp = new FlowPane(runButton, stepButton, cpuSlider, multiplier);
+        /*FlowPane flowp = new FlowPane(runButton, stepButton, cpuSlider, multiplier);
+
+        flowp.setPrefWidth(flowp.getWidth());
+        flowp.setPrefHeight(flowp.getHeight());
+
+        runButton.setPrefHeight(runButton.getHeight());
+        runButton.setPrefWidth(runButton.getWidth());
+
+        stepButton.setPrefHeight(stepButton.getHeight());
+        stepButton.setPrefWidth(stepButton.getWidth());
+
+        cpuSlider.setPrefHeight(cpuSlider.getHeight());
+        cpuSlider.setPrefWidth(cpuSlider.getWidth());
+
+        multiplier.setPrefHeight(multiplier.getHeight());
+        multiplier.setPrefWidth(multiplier.getWidth());
+
+
+        flowp.setMaxWidth(flowp.getWidth());
+        flowp.setMaxHeight(flowp.getHeight());
+
+        runButton.setMaxHeight(runButton.getHeight());
+        runButton.setMaxWidth(runButton.getWidth());
+
+        stepButton.setMaxHeight(stepButton.getHeight());
+        stepButton.setMaxWidth(stepButton.getWidth());
+
+        cpuSlider.setMaxHeight(cpuSlider.getHeight());
+        cpuSlider.setMaxWidth(cpuSlider.getWidth());
+
+        multiplier.setMaxHeight(multiplier.getHeight());
+        multiplier.setMaxWidth(multiplier.getWidth());
+
+
+        flowp.setMinWidth(flowp.getWidth());
+        flowp.setMinHeight(flowp.getHeight());
+
+        runButton.setMinHeight(runButton.getHeight());
+        runButton.setMinWidth(runButton.getWidth());
+
+        stepButton.setMinHeight(stepButton.getHeight());
+        stepButton.setMinWidth(stepButton.getWidth());
+
+        cpuSlider.setMinHeight(cpuSlider.getHeight());
+        cpuSlider.setMinWidth(cpuSlider.getWidth());
+
+        multiplier.setMinHeight(multiplier.getHeight());
+        multiplier.setMinWidth(multiplier.getWidth());*/
+
         getChildren().addAll(
                 new FlowPane(runButton, stepButton, cpuSlider, multiplier) //,
                // new FlowPane(label)

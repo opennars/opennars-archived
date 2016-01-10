@@ -21,13 +21,13 @@ import static javafx.application.Platform.runLater;
  */
 public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K>> extends SpaceGrapher<K,V> {
 
-    @Implementation(FastOrganicLayout.class)
+    //@Implementation(FastOrganicLayout.class)
     @Implementation(HyperOrganicLayout.class)
-    @Implementation(HyperassociativeMap2D.class)
+    //@Implementation(HyperassociativeMap2D.class)
     @Implementation(Spiral.class)
     @Implementation(Circle.class)
     @Implementation(Grid.class)
-    @Implementation(HyperassociativeMap1D.class)
+   // @Implementation(HyperassociativeMap1D.class)
     @Implementation(Hilbert.class)
     //@Implementation(TimeGraph.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
@@ -45,6 +45,7 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
 
         InvalidationListener layoutChange = e -> {
             IterativeLayout il = layoutType.getInstance();
+            layoutUpdated();
             if (il!=null) {
                 layout.set(il);
                 layoutUpdated();

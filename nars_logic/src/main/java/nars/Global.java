@@ -138,7 +138,7 @@ public class Global {
 
 
     //custom test functionality for some components
-    public static boolean TESTING = true;
+    public static boolean TESTING = false;
     public static String TESTSTRING = "";
     //end tests
     
@@ -315,7 +315,7 @@ public class Global {
 
     public static boolean DYNAMIC_BAG = false; //adjust bag curve to distribution in the bag
 
-    public static boolean INPUT_BAG = true;
+    public static boolean INPUT_BAG = false;
 
     //since new information should be preferred, there is also a ranking decay for creation time:
     //this decay is a lot weaker than the decay of an event caused by projection

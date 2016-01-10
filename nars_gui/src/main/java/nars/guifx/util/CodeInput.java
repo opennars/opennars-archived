@@ -63,7 +63,7 @@ public class CodeInput extends BorderPane {
                                         String[] spl = s.split(" ");
                                         String total = "(&/";
                                         for (String S : spl) {
-                                            total += ",<" + S + " --> WORD>,/10";
+                                            total += ",<\"" + S + "\" --> WORD>,/10";
                                         }
                                         total+="). :|:";
                                         if (onInput(total)) {

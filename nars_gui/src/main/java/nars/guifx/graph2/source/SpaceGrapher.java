@@ -485,7 +485,7 @@ public class SpaceGrapher<K extends Comparable, V extends TermNode<K>> extends S
     final static int defaultFramePeriodMS = 30; //~60hz/2
 
     protected synchronized void checkVisibility() {
-        if (isVisible() && getParent() != null && getScene()!=null) {
+        if (isVisible() && getScene()!=null) {
             start(defaultFramePeriodMS);
         } else
             stop();
