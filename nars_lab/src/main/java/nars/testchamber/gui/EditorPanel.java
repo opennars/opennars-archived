@@ -698,10 +698,24 @@ public class EditorPanel extends JPanel {
         knowMenu.add(new EditorMode("common sense") {
             @Override
             public void run() {
-                s.nar.input("<(&/,<$1 --> [at]>,pick($1)) =/> <$1 --> [hold]>>.");
+
+                for (GridObject g : s.objects) {
+                    if (g instanceof LocalGridObject) {
+                        LocalGridObject obi = (LocalGridObject) g;
+                        if (obi instanceof Key) {
+                            s.nar.input("<(&/,goto(" + obi.doorname + "),pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
+                            s.nar.input("<(&/,goto(" + obi.doorname + "),pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
+                        }
+                    }
+                }
+
+               // s.nar.input("<(&/,<$1 --> [at]>,pick($1)) =/> <$1 --> [hold]>>.");
                 s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
-                s.nar.input("<(&/,<$1 --> [at]>,activate($1)) =/> <$1 --> [on]>>.");
-                s.nar.input("<(&/,<$1 --> [at]>,deactivate($1)) =/> <$1 --> [on]>>. %0.00;0.90%");
+                s.nar.input("<(&/,goto($1),activate($1)) =/> <$1 --> [on]>>.");
+                s.nar.input("<(&/,goto($1),activate($1)) =/> <$1 --> [on]>>.");
+                s.nar.input("<(&/,goto($1),deactivate($1)) =/> (--,<$1 --> [on]>)>. %1.00;0.90%");
+                s.nar.input("<(&/,goto($1),deactivate($1)) =/> (--,<$1 --> [on]>)>. %1.00;0.90%");
+
                 //s.nar.input("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
                 //s.nar.input("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
@@ -722,7 +736,7 @@ public class EditorPanel extends JPanel {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            s.nar.input("<(&/,<" + obi.doorname + " --> [at]>,pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
+                            s.nar.input("<(&/,goto(" + obi.doorname + "),pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
                         }
                     }
                 }
@@ -738,16 +752,16 @@ public class EditorPanel extends JPanel {
             public void run() {
                 wu.run();
                 //s.nar.input("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
-                s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
+                //s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
                 TestChamber.needpizza=true;
             }
         });
-        resourceMenu.add(new EditorMode("pizza") {
+        /*resourceMenu.add(new EditorMode("pizza") {
             @Override
             public void run() {
                 s.cells.click("Pizza", "", "");
             }
-        });
+        });*/
     }
 
 }
