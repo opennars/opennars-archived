@@ -21,6 +21,7 @@ import nars.op.io.echo;
 import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.TermVector;
 import nars.term.Termed;
 import nars.term.atom.Atom;
 import nars.term.compile.TermBuilder;
@@ -522,8 +523,8 @@ public class Narsese extends BaseParser<Object> {
         );
     }
 
-    public Term TemporalRelationBuilder(Term pred, int cycles, Op rel, Term subj) {
-        return ((Compound)$.the(rel, subj, pred)).t(cycles);
+    public Term TemporalRelationBuilder(Term pred, int cycles, Op o, Term subj) {
+        return $.the(o, -1, cycles, new TermVector(subj, pred));
     }
 
     public final static String invalidCycleDeltaString = Integer.toString(Integer.MIN_VALUE);

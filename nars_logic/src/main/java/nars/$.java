@@ -6,6 +6,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import nars.java.AtomObject;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.task.MutableTask;
 import nars.task.Task;
@@ -438,7 +439,11 @@ public   enum $  {
     }
 
     public static Term the(Op op, int relation, TermContainer subterms) {
-        return terms.newTerm(op, relation, subterms);
+        return the(op, relation, Tense.ITERNAL, subterms);
+    }
+
+    public static Term the(Op op, int relation, int t, TermContainer subterms) {
+        return terms.newTerm(op, relation, t, subterms);
     }
 
     public static int typeIndex(Op o) {

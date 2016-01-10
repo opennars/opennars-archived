@@ -33,6 +33,8 @@ public class NAL7NewTest extends AbstractNALTester {
     @Test public void parseTemporalRelation() {
         //TODO move to NarseseTest
         assertEquals("<x ==>+5 y>", $("<x ==>+5 y>").toString());
+        assertEquals("<x &&+5 y>", $("<x &&+5 y>").toString());
+
         assertEquals("<x ==>-5 y>", $("<x ==>-5 y>").toString());
 
         assertEquals("<<before-->x> ==>+5 <after-->x>>", $("<x:before ==>+5 x:after>").toString());

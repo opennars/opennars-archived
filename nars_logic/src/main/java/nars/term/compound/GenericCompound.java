@@ -178,7 +178,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
                 imageAppend(this, p, pretty);
                 break;
             default:
-                if (op.isStatement()) {
+                if (op.isStatement() || size()==2) {
                     if (Op.isOperation(this)) {
                         operationAppend((Compound) term(0), (Operator) term(1), p, pretty); //TODO Appender
                     }

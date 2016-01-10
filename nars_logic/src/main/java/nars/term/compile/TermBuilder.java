@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Op;
 import nars.nal.PremiseAware;
 import nars.nal.PremiseMatch;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.term.*;
@@ -202,37 +203,41 @@ public interface TermBuilder {
 
 
     default Term newTerm(Op op, int relation, TermContainer tt) {
+        return newTerm(op, relation, Tense.ITERNAL, tt);
+    }
+
+    default Term newTerm(Op op, int relation, int t, TermContainer tt) {
 
         if (tt == null)
             return null;
 
-        Term[] t = tt.terms();
+        Term[] u = tt.terms();
 
         /* special handling */
         switch (op) {
             case NEGATE:
-                if (t.length!=1)
-                    throw new RuntimeException("invalid negation subterms: " + Arrays.toString(t));
-                return negation(t[0]);
+                if (u.length!=1)
+                    throw new RuntimeException("invalid negation subterms: " + Arrays.toString(u));
+                return negation(u[0]);
             case INSTANCE:
-                return inst(t[0], t[1]);
+                return inst(u[0], u[1]);
             case PROPERTY:
-                return prop(t[0], t[1]);
+                return prop(u[0], u[1]);
             case INSTANCE_PROPERTY:
-                return instprop(t[0], t[1]);
+                return instprop(u[0], u[1]);
             case CONJUNCTION:
-                return junction(CONJUNCTION, tt);
+                return junction(CONJUNCTION, t, tt);
             case DISJUNCTION:
-                return junction(DISJUNCTION, tt);
+                return junction(DISJUNCTION, t, tt);
             case IMAGE_INT:
             case IMAGE_EXT:
                 //if no relation was specified and it's an Image,
                 //it must contain a _ placeholder
-                if (hasImdex(t)) {
+                if (hasImdex(u)) {
                     //TODO use result of hasImdex in image construction to avoid repeat iteration to find it
-                    return image(op, t);
+                    return image(op, u);
                 }
-                if ((relation == -1) || (relation > t.length))
+                if ((relation == -1) || (relation > u.length))
                     return null;
                 //throw new RuntimeException("invalid index relation: " + relation + " for args " + Arrays.toString(t));
 
@@ -240,13 +245,13 @@ public interface TermBuilder {
             case DIFF_EXT:
             case DIFF_INT:
                 return newDiff(op, tt);
-            case INTERSECT_EXT: return newIntersectEXT(t);
-            case INTERSECT_INT: return newIntersectINT(t);
+            case INTERSECT_EXT: return newIntersectEXT(u);
+            case INTERSECT_INT: return newIntersectINT(u);
         }
 
         if (op.isStatement()) {
 
-            return statement(op, t);
+            return statement(op, t, u);
 
         } else {
 
@@ -350,14 +355,14 @@ public interface TermBuilder {
                 index, new TermVector(res));
     }
 
-    default Term junction(Op op, Iterable<Term> t) {
+    default Term junction(Op op, int t, Iterable<Term> u) {
 
 
         final boolean[] done = {true};
 
         //TODO use a more efficient flattening that doesnt involve recursion and multiple array creations
         TreeSet<Term> s = new TreeSet();
-        t.forEach(x -> {
+        u.forEach(x -> {
             if (x.op(op)) {
                 for (Term y : ((TermContainer) x).terms()) {
                     if (s.add(y))
@@ -370,22 +375,26 @@ public interface TermBuilder {
         });
 
         if (!done[0]) {
-            return junction(op, s);
+            return junction(op, t, s);
         }
 
-        return finish(op, -1, TermSet.the(s));
+        Term x = finish(op, -1, TermSet.the(s));
+        if (x instanceof Compound) {
+            x = ((Compound)x).t(t);
+        }
+        return x;
     }
 
-    default Term statement(Op op, Term[] t) {
+    default Term statement(Op op, int t, Term[] u) {
 
-        switch (t.length) {
+        switch (u.length) {
             case 1:
-                return t[0];
+                return u[0];
 
             case 2:
 
-                Term subject = t[0];
-                Term predicate = t[1];
+                Term subject = u[0];
+                Term predicate = u[1];
 
                 //DEBUG:
                 if (subject == null || predicate == null)
@@ -414,12 +423,14 @@ public interface TermBuilder {
                         break;
                 }
 
-                if (t[0].equals(t[1]))
-                    return t[0];
+                if (u[0].equals(u[1]))
+                    return u[0];
 
                 //already tested equality, so go to invalidStatement2:
-                if (!Statement.invalidStatement2(t[0], t[1])) {
-                    return make(op, -1, TermContainer.the(op, t)).term();
+                if (!Statement.invalidStatement2(u[0], u[1])) {
+                    TermContainer cc = TermContainer.the(op, u);
+                    boolean reversed = cc.term(0)==u[1];
+                    return ((Compound)make(op, -1, cc).term()).t(reversed ? -t : t);
                 }
 
                 return null;
