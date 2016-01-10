@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import com.google.common.io.Resources;
 import com.google.common.base.Charsets;
+
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +36,8 @@ public class DerivationRules extends FastList<TaskRule> {
 
 
     public DerivationRules() throws IOException, URISyntaxException {
-        this(Resources.toString(Deriver.class.getResource("default.meta.nal"), Charsets.UTF_8));
+        //this(Paths.get(Deriver.class.getResource("default.meta.nal").toURI()));
+        this(Resources.toString(Deriver.class.getResource("default.meta.nal"), Charsets.UTF_8).split("\n"));
     }
 
     public DerivationRules(Path path) throws IOException {
