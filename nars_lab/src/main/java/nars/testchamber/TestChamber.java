@@ -179,8 +179,7 @@ public class TestChamber {
                         hungry--;
                         if (hungry < 0) {
                             hungry = 10;
-                            //nar.input("<SELF --> [energy]>! :|:"); //also works but better:
-                            Task ret = nar.inputTask("<SELF --> [energy]>! :|:");
+                            Task ret = nar.inputTask("<SELF --> [replete]>! :|:");
 
                             if(becoming_hungry_again) {
                                 System.out.println("energy urge active");

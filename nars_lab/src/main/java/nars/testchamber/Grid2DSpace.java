@@ -225,7 +225,7 @@ public class Grid2DSpace extends PApplet {
                     if (spinacci instanceof Pizza) {
                         Pizza pizza = (Pizza) spinacci;
                         if (Math.abs(pizza.cx - agent.cx) <= 1 && Math.abs(pizza.cy - agent.cy) <= 1) {
-                            Task ret = nar.inputTask("<SELF --> [energy]>. :|:");
+                            Task ret = nar.inputTask("<SELF --> [replete]>. :|:");
                             TestChamber.hungry += 1000;
                             TestChamber.becoming_hungry_again = true;
                             nar.memory.energyUrgeSatisfied.emit(ret);
