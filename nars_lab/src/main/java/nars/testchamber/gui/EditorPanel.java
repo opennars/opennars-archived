@@ -278,27 +278,29 @@ public class EditorPanel extends JPanel {
                                             continue;
                                         }
 
-                                        if (!val[1].equals("") && !val[1].contains("{")) {
+                                        if (val.length > 1 && !val[1].equals("") && !val[1].contains("{")) {
                                             val[1] = "{" + val[1] + "}";
                                         }
+                                        try{
+                                            String name = val[1];
 
-                                        String name = val[1];
-
-                                        try {
-                                            if (!name.equals("")) {
-                                                String value = name.replaceAll("[A-Za-z]", "");
-                                                int res = Integer.parseInt(value);
-                                                if (res > Hauto.entityID) {
-                                                    Hauto.entityID = res + 1;
+                                            try {
+                                                if (!name.equals("")) {
+                                                    String value = name.replaceAll("[A-Za-z]", "");
+                                                    int res = Integer.parseInt(value);
+                                                    if (res > Hauto.entityID) {
+                                                        Hauto.entityID = res + 1;
+                                                    }
                                                 }
+                                            } catch (Exception ex) {
                                             }
-                                        } catch (Exception ex) {
-                                        }
+
 
                                         float cx = Float.valueOf(val[2]);
                                         float cy = Float.valueOf(val[3]);
                                         int x = Integer.valueOf(val[5]);
                                         int y = Integer.valueOf(val[6]);
+
                                         if (val[0].equals("GridAgent")) {
                                             for (GridObject z : s.objects) {
                                                 if (z instanceof GridAgent) {
@@ -326,6 +328,7 @@ public class EditorPanel extends JPanel {
                                             addu.space = s;
                                             newobj.add(addu);
                                         }
+                                        }catch(Exception ex) {}
                                     }
                                     s.objects = newobj;
                                 }

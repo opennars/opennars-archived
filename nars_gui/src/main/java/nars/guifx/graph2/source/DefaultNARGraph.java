@@ -45,7 +45,6 @@ public class DefaultNARGraph<K extends Comparable & Termed, V extends TermNode<K
 
         InvalidationListener layoutChange = e -> {
             IterativeLayout il = layoutType.getInstance();
-            layoutUpdated();
             if (il!=null) {
                 layout.set(il);
                 layoutUpdated();
