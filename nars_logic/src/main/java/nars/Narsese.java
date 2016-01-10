@@ -523,17 +523,22 @@ public class Narsese extends BaseParser<Object> {
     }
 
     public Term TemporalRelationBuilder(Term pred, int cycles, Op rel, Term subj) {
-        return $.the(rel, subj, pred);
+        return ((Compound)$.the(rel, subj, pred)).t(cycles);
     }
 
     public final static String invalidCycleDeltaString = Integer.toString(Integer.MIN_VALUE);
 
     public Rule CycleDelta() {
-        return sequence(
-                anyOf('+', '-'),
-                oneOrMore(digit()),
-                push(Integer.parseInt(matchOrDefault(invalidCycleDeltaString)))
-        );
+        return
+                firstOf(
+                    seq('+',oneOrMore(digit()),
+                        push(Integer.parseInt(matchOrDefault(invalidCycleDeltaString)))
+                    ),
+                    seq('-',oneOrMore(digit()),
+                        push(-Integer.parseInt(matchOrDefault(invalidCycleDeltaString)))
+                    )
+                )
+        ;
     }
 
     public Rule Operator() {

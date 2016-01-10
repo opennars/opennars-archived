@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.concept.Concept;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.term.Termed;
 import nars.term.compound.Compound;
@@ -43,7 +42,6 @@ public abstract class AbstractTask extends Item<Task>
 
     private long creationTime = Tense.TIMELESS;
     private long occurrenceTime = Tense.ETERNAL;
-    private int duration = Tense.TIMELESS;
 
     /**
      * Task from which the Task is derived, or null if input
@@ -219,10 +217,6 @@ public abstract class AbstractTask extends Item<Task>
         }
         setTerm(nomalizedTerm);
 
-        setDuration(
-            memory.duration() //assume the default perceptual duration?
-        );
-
         //finally, assign a unique stamp if none specified (input)
         if (getEvidence().length== 0) {
             setEvidence(memory.newStampSerial());
@@ -338,18 +332,7 @@ public abstract class AbstractTask extends Item<Task>
         return getParentBelief()==null && getParentTask()!=null ;
     }
 
-    @Override
-    public final void setDuration(int duration) {
-        /*if (this.duration!=Stamp.TIMELESS)
-            throw new RuntimeException(this + " has corrupted duration");*/
-        if (duration < 0)
-            throw new RuntimeException(this + " negative duration");
 
-        Compound term = term();
-        int d;
-        d = term instanceof Interval ? ((Interval) term).duration() : duration;
-        this.duration = d;
-    }
 
     @Override
     public void log(List historyToCopy) {
@@ -381,15 +364,6 @@ public abstract class AbstractTask extends Item<Task>
     public final long getOccurrenceTime() {
         return occurrenceTime;
     }
-
-    @Override
-    public final int duration() {
-        Compound t = term();
-        if (t instanceof Interval)
-            return ((Interval)t).duration();
-        return duration;
-    }
-
 
 
     @Override
@@ -669,7 +643,7 @@ public abstract class AbstractTask extends Item<Task>
 
     @Override
     public long end() {
-        return occurrenceTime + duration;
+        return occurrenceTime;// + duration;
     }
 
 

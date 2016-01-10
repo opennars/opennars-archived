@@ -1,7 +1,5 @@
 package nars.util;
 
-import nars.util.data.rope.Rope;
-import nars.util.data.rope.StringHack;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.CharBuffer;
@@ -148,13 +146,13 @@ public enum Texts {
 //        return escape(s, true, false);
 //    }
 
-    public static char[] getCharArray(String s) {
-        return Rope.getCharArray(s);
-    }
-
-    public static char[] getCharArray(StringBuilder s) {
-        return Rope.getCharArray(s);
-    }
+//    public static char[] getCharArray(String s) {
+//        return Rope.getCharArray(s);
+//    }
+//
+//    public static char[] getCharArray(StringBuilder s) {
+//        return Rope.getCharArray(s);
+//    }
 
 
     public static int fuzzyDistance(CharSequence a, CharSequence b) {
@@ -205,33 +203,33 @@ public enum Texts {
         return cost[len0 - 1];
     }
 
-    /**
-     * Change the first min(|s|, |t|) characters of s to t
-     * TODO must reset the hashcode field
-     * TODO this is untested and probably not yet functional
-     */
-    public static void overwrite(CharSequence s, CharSequence t) {
-        try {
-            char[] value = (char[]) StringHack.val.get(s);
-
-            for (int i = 0; i < Math.min(s.length(), t.length()); i++) {
-                value[i] = t.charAt(i);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static boolean containsChar(CharSequence n, char c) {
-        if (n instanceof String)
-            return ((String) n).indexOf(c) != -1;
-
-        int l = n.length();
-        for (int i = 0; i < l; i++)
-            if (n.charAt(i) == c)
-                return true;
-        return false;
-    }
+//    /**
+//     * Change the first min(|s|, |t|) characters of s to t
+//     * TODO must reset the hashcode field
+//     * TODO this is untested and probably not yet functional
+//     */
+//    public static void overwrite(CharSequence s, CharSequence t) {
+//        try {
+//            char[] value = (char[]) StringHack.val.get(s);
+//
+//            for (int i = 0; i < Math.min(s.length(), t.length()); i++) {
+//                value[i] = t.charAt(i);
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+//
+//    public static boolean containsChar(CharSequence n, char c) {
+//        if (n instanceof String)
+//            return ((String) n).indexOf(c) != -1;
+//
+//        int l = n.length();
+//        for (int i = 0; i < l; i++)
+//            if (n.charAt(i) == c)
+//                return true;
+//        return false;
+//    }
 
 
     static final ThreadLocal<Format> oneDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0") );
@@ -240,9 +238,9 @@ public enum Texts {
         return oneDecimal.get().format(x);
     }
 
-    public static String n1char(double x) {
-        return oneDecimal.get().format(x);
-    }
+//    public static String n1char(double x) {
+//        return oneDecimal.get().format(x);
+//    }
 
 
     static final ThreadLocal<Format> threeDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.000") );
@@ -271,9 +269,9 @@ public enum Texts {
 //        return twoDecimal.format(x);
 //    }
 
-    public static long thousandths(float d) {
-        return (long) ((d * 1000.0f + 0.5f));
-    }
+//    public static long thousandths(float d) {
+//        return (long) ((d * 1000.0f + 0.5f));
+//    }
 
     public static long hundredths(float d) {
         return (long) ((d * 100.0f + 0.5f));

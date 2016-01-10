@@ -31,13 +31,18 @@ public enum Tense  {
      * default for atemporal events
      * means "always" in Judgment/Question, but "current" in Goal/Quest
      */
-    public static final long ETERNAL = Integer.MIN_VALUE;
+    public static final long ETERNAL = Long.MIN_VALUE;
+
+    @Deprecated public static final int ITERNAL = Integer.MIN_VALUE;
+
+
     /**
      * flag for an unknown time, or as-yet-un-perceived time,
      * signalling a missing value to set to some default
      * if eventually perceived or derived
      */
-    public static final int TIMELESS = Integer.MIN_VALUE + 1;
+    public static final long TIMELESS = Long.MIN_VALUE + 1;
+
 
     public final String symbol;
 

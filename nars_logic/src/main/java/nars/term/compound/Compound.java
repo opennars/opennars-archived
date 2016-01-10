@@ -312,6 +312,13 @@ public interface Compound<T extends Term> extends Term, IPair, TermContainer<T> 
     @Override
     boolean isNormalized();
 
+    /** sets temporal relation value (TEMPORARY). returns new value */
+    @Deprecated Compound t(int cycles);
+
+    /** gets temporal relation value */
+    int t();
+
+
 
 //    public int countOccurrences(final Term t) {
 //        final AtomicInteger o = new AtomicInteger(0);

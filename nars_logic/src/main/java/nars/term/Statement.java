@@ -20,7 +20,6 @@
  */
 package nars.term;
 
-import nars.Op;
 import nars.term.compound.Compound;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public interface Statement {
 
             if (pretty) w.append(' ');
 
-            c.op().append(w);
+            c.op().append(c, w);
 
             if (pretty) w.append(' ');
 
@@ -213,22 +212,22 @@ public interface Statement {
 //
 
 
-    static void append(Appendable w, Op op, Term subject, Term predicate, boolean pretty) throws IOException {
-
-        w.append(STATEMENT_OPENER);
-
-        subject.append(w, pretty);
-
-        if (pretty) w.append(' ');
-
-        op.append(w);
-
-        if (pretty) w.append(' ');
-
-        predicate.append(w, pretty);
-
-        w.append(STATEMENT_CLOSER);
-    }
+//    static void append(Appendable w, Op op, Term subject, Term predicate, boolean pretty) throws IOException {
+//
+//        w.append(STATEMENT_OPENER);
+//
+//        subject.append(w, pretty);
+//
+//        if (pretty) w.append(' ');
+//
+//        op.append(w);
+//
+//        if (pretty) w.append(' ');
+//
+//        predicate.append(w, pretty);
+//
+//        w.append(STATEMENT_CLOSER);
+//    }
 
 
 

@@ -1,10 +1,8 @@
 package nars.task;
 
 
-import nars.term.compound.Compound;
-
 @FunctionalInterface
-public interface Tasked<T extends Compound> {
+public interface Tasked {
 
     Task getTask();
 

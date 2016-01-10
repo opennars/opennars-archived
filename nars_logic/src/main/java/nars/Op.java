@@ -3,6 +3,7 @@ package nars;
 
 import com.gs.collections.api.tuple.primitive.IntIntPair;
 import nars.nal.nal7.Order;
+import nars.nal.nal7.Tense;
 import nars.term.Term;
 import nars.term.atom.Atom;
 import nars.term.compound.Compound;
@@ -211,11 +212,22 @@ public enum Op {
     /**
      * writes this operator to a Writer in (human-readable) expanded UTF16 mode
      */
-    public final void append(Appendable w) throws IOException {
+    public final void append(Compound c, Appendable w) throws IOException {
+        int t = c.t();
+        boolean hasTime = t != Tense.ITERNAL;
+
+        if (hasTime)
+            w.append(' ');
+
         if (ch == 0)
             w.append(str);
         else
             w.append(ch);
+
+        if (hasTime) {
+            if (t > 0) w.append('+');
+            w.append(Integer.toString(t)).append(' ');
+        }
     }
 
     public static int or(int... i) {

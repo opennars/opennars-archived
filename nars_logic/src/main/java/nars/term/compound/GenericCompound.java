@@ -3,6 +3,7 @@ package nars.term.compound;
 import com.gs.collections.api.block.predicate.primitive.IntObjectPredicate;
 import nars.Op;
 import nars.Symbols;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.term.Statement;
 import nars.term.Term;
@@ -26,33 +27,25 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final int relation;
 
     protected final transient int hash;
+    private final int t;
     private transient boolean normalized = false;
 
-
-//    protected GenericCompound(Op op, T... subterms) {
-//        this(op, -1, subterms);
-//    }
-//
-//    public GenericCompound(Op op, int relation, T... subterms) {
-//
-//        TermVector<T> terms = this.terms = op.isCommutative() ?
-//                TermSet.newTermSetPresorted(subterms) :
-//                new TermVector(subterms);
-//        this.op = op;
-//        this.relation = relation;
-//        this.hash = TermIndex.hash(terms, op, relation+1);
-//    }
 
     public GenericCompound(Op op, TermVector subterms) {
         this(op, -1, subterms);
     }
 
     public GenericCompound(Op op, int relation, TermVector subterms) {
+        this(op, relation, Tense.ITERNAL, subterms);
+    }
+
+    public GenericCompound(Op op, int relation, int t, TermVector subterms) {
         this.terms = subterms;
         this.normalized = (subterms.vars() == 0);
         this.op = op;
         this.relation = relation;
         this.hash = TermIndex.hash(terms, op, relation+1);
+        this.t = t;
     }
 
     public static void productAppend(Compound product, Appendable p, boolean pretty) throws IOException {
@@ -163,6 +156,7 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     public final Op op() {
         return op;
     }
+
 
     @Override
     public final boolean isCommutative() {
@@ -363,6 +357,16 @@ public class GenericCompound<T extends Term> implements Compound<T> {
     @Override
     public final boolean isNormalized() {
         return normalized;
+    }
+
+    @Deprecated public Compound t(int cycles) {
+        if (cycles == t()) return this;
+        return new GenericCompound(op(), relation, cycles, subterms());
+    }
+
+    @Override
+    public int t() {
+        return t;
     }
 
     @Override

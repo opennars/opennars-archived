@@ -141,17 +141,6 @@ public interface Task extends Budgeted, Truthed, Comparable, Stamp, Termed, Task
 
     default Task getTask() { return this; }
 
-    /**
-     * Sets the perceived temporal duration of the Task,
-     * in cycles.  This corresponds to how long the Task
-     * seems to the Memory (ie. Memory.duration()), so it
-     * serves as a default duration when the task's term
-     * does not specify one (as in the case of a
-     * Sequence or Parallel).
-     *
-     */
-    void setDuration(int l);
-
 
     /**
      * Get the parent task of a task.

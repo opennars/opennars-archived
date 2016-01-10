@@ -1,16 +1,14 @@
 package nars.task;
 
 import nars.Memory;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
-import nars.term.compound.Compound;
 
 /**
  * interface for the temporal information about the
  * task to which this refers to.  used to separate
  * temporal tasks from non-temporal tasks
  */
-public interface Temporal<T extends Compound> extends Tasked<T>, Interval {
+public interface Temporal extends Tasked {
 
     boolean isAnticipated();
 

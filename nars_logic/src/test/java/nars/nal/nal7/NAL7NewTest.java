@@ -1,16 +1,17 @@
 package nars.nal.nal7;
 
-import nars.$;
 import nars.NAR;
 import nars.Narsese;
 import nars.nal.AbstractNALTester;
-import nars.term.Term;
 import nars.util.meter.TestNAR;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.function.Supplier;
+
+import static nars.$.$;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by me on 1/9/16.
@@ -31,9 +32,14 @@ public class NAL7NewTest extends AbstractNALTester {
 
     @Test public void parseTemporalRelation() {
         //TODO move to NarseseTest
-        Term x = $.$("<x ==>+5 y>");
-        //Term x = $.$("<x:before ==> x:after>");
-        System.out.println(x);
+        assertEquals("<x ==>+5 y>", $("<x ==>+5 y>").toString());
+        assertEquals("<x ==>-5 y>", $("<x ==>-5 y>").toString());
+
+        assertEquals("<<before-->x> ==>+5 <after-->x>>", $("<x:before ==>+5 x:after>").toString());
+    }
+    @Test public void testReversibilityOfCommutive() {
+        assertEquals("<a <=>+5 b>", $("<a <=>+5 b>").toString());
+        assertEquals("<a <=>-5 b>", $("<b <=>+5 a>").toString());
     }
 
     @Test

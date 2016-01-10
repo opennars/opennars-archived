@@ -1,10 +1,8 @@
 package nars.term.compile;
 
 import nars.Op;
-import nars.Symbols;
 import nars.term.Term;
 import nars.term.compound.Compound;
-import nars.term.compound.GenericCompound;
 
 import java.io.IOException;
 
@@ -31,7 +29,7 @@ public interface TermPrinter {
 
         p.append(COMPOUND_TERM_OPENER);
 
-        c.op().append(p);
+        c.op().append(c, p);
 
         if (c.size() == 1)
             p.append(ARGUMENT_SEPARATOR);

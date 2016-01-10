@@ -3,7 +3,6 @@ package nars.op.mental;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.*;
 import nars.budget.Budget;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
@@ -280,7 +279,8 @@ public class InternalExperience {
 
 
             if (valid) {
-                long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
+                //long interval = (impsub instanceof Interval ? ((Interval)impsub).duration() : 0);
+                int interval = 0;
 
                 beliefReasonDerive(task,
                         $.oper(anticipate, $.p(beliefImpl.term(1))),
