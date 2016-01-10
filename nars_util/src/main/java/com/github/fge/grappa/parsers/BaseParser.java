@@ -198,7 +198,7 @@ public abstract class BaseParser<V>
      * @see #anyOf(Characters)
      */
     @DontLabel
-    public Rule anyOf(char[] characters)
+    public Rule anyOf(char... characters)
     {
         Objects.requireNonNull(characters);
         Preconditions.checkArgument(characters.length > 0);

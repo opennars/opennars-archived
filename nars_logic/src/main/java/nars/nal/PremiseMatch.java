@@ -8,7 +8,6 @@ import nars.budget.BudgetFunctions;
 import nars.budget.UnitBudget;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.MatchTerm;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.op.ImmediateTermTransform;
 import nars.process.ConceptProcess;
@@ -17,7 +16,6 @@ import nars.term.Term;
 import nars.term.Termed;
 import nars.term.compound.Compound;
 import nars.term.transform.FindSubst;
-import nars.term.transform.VarCachedVersionMap;
 import nars.truth.Truth;
 import nars.util.version.Versioned;
 
@@ -37,8 +35,8 @@ public class PremiseMatch extends FindSubst {
     /** current Premise */
     public ConceptProcess premise;
 
-    public final VarCachedVersionMap secondary;
-    public final Versioned<Integer> occurrenceShift;
+    //public final VarCachedVersionMap secondary;
+    //public final Versioned<Integer> occurrenceShift;
     public final Versioned<Truth> truth;
     public final Versioned<Character> punct;
     public final Versioned<MatchTerm> pattern;
@@ -57,8 +55,8 @@ public class PremiseMatch extends FindSubst {
             addTransform(c);
         }
 
-        secondary = new VarCachedVersionMap(this);
-        occurrenceShift = new Versioned(this);
+        //secondary = new VarCachedVersionMap(this);
+        //occurrenceShift = new Versioned(this);
         truth = new Versioned(this);
         punct = new Versioned(this);
         pattern = new Versioned(this);
@@ -121,8 +119,8 @@ public class PremiseMatch extends FindSubst {
                 ", subst:" + super.toString() +
                 (pattern.get()!=null ? (", derived:" + pattern) : "")+
                 (truth.get()!=null ? (", truth:" + truth) : "")+
-                (!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
-                (occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
+                //(!secondary.isEmpty() ? (", secondary:" + secondary) : "")+
+                //(occurrenceShift.get()!=null ? (", occShift:" + occurrenceShift) : "")+
                 //(branchPower.get()!=null ? (", derived:" + branchPower) : "")+
                 '}';
 
@@ -162,18 +160,14 @@ public class PremiseMatch extends FindSubst {
 
     }
 
-
-
-
-
-    public final void occurrenceAdd(long durationsDelta) {
-        //TODO move to post
-        int oc = occurrenceShift.getIfAbsent(Tense.TIMELESS);
-        if (oc == Tense.TIMELESS)
-            oc = 0;
-        oc += durationsDelta * premise.getTask().duration();
-        occurrenceShift.set((int)oc);
-    }
+//    public final void occurrenceAdd(long durationsDelta) {
+//        //TODO move to post
+//        int oc = occurrenceShift.getIfAbsent(Tense.TIMELESS);
+//        if (oc == Tense.TIMELESS)
+//            oc = 0;
+//        oc += durationsDelta * premise.getTask().duration();
+//        occurrenceShift.set((int)oc);
+//    }
 
     /** calculates Budget used in a derived task,
      *  returns null if invalid / insufficient */

@@ -49,7 +49,7 @@ import static nars.Symbols.*;
  * NARese, syntax and language for interacting with a NAR in NARS.
  * https://code.google.com/p/open-nars/wiki/InputOutputFormat
  */
-public class Narsese extends BaseParser<Object>  {
+public class Narsese extends BaseParser<Object> {
 
 
     //These should be set to something like RecoveringParseRunner for performance
@@ -59,8 +59,7 @@ public class Narsese extends BaseParser<Object>  {
     //private final ParseRunner singleTaskRuleParser = new ListeningParseRunner3(TaskRule());
 
 
-
-    static final ThreadLocal<Narsese> parsers = ThreadLocal.withInitial(() -> Grappa.createParser(Narsese.class) );
+    static final ThreadLocal<Narsese> parsers = ThreadLocal.withInitial(() -> Grappa.createParser(Narsese.class));
 
     public static Narsese the() {
         return parsers.get();
@@ -74,7 +73,7 @@ public class Narsese extends BaseParser<Object>  {
 //        if ((t == null) && ((p == JUDGMENT) || (p == GOAL)))
 //            t = new DefaultTruth(p);
 //
-        int blen = b!=null ? b.length : 0;
+        int blen = b != null ? b.length : 0;
 //        if ((blen > 0) && (Float.isNaN(b[0])))
 //            blen = 0;
 //
@@ -89,19 +88,20 @@ public class Narsese extends BaseParser<Object>  {
 
         MutableTask ttt =
                 new MutableTask(content)
-                                .punctuation(p)
-                                .truth(t)
-                                .time(
-                                    memory.time(), //creation time
-                                    Tense.getOccurrenceTime(
+                        .punctuation(p)
+                        .truth(t)
+                        .time(
+                                memory.time(), //creation time
+                                Tense.getOccurrenceTime(
                                         tense,
                                         memory
-                                    ));
+                                ));
 
         switch (blen) {
-            case 0:     /* do not set, Memory will apply defaults */ break;
+            case 0:     /* do not set, Memory will apply defaults */
+                break;
             case 1:
-                if ((p == Symbols.QUEST || p==Symbols.QUESTION)) {
+                if ((p == Symbols.QUEST || p == Symbols.QUESTION)) {
                     ttt.budget(b[0],
                             memory.getDefaultDurability(p),
                             memory.getDefaultQuality(p));
@@ -111,8 +111,12 @@ public class Narsese extends BaseParser<Object>  {
                             memory.getDefaultDurability(p));
                 }
                 break;
-            case 2:     ttt.budget(b[1], b[0]); break;
-            default:    ttt.budget(b[2], b[1], b[0]); break;
+            case 2:
+                ttt.budget(b[1], b[0]);
+                break;
+            default:
+                ttt.budget(b[2], b[1], b[0]);
+                break;
         }
 
         return ttt;
@@ -121,18 +125,20 @@ public class Narsese extends BaseParser<Object>  {
 
     public Rule Input() {
         return sequence(
-            zeroOrMore( //1 or more?
-                    //sequence(
-                            firstOf(
-                                    LineComment(),
-                                    Task()
-                            ),
-                            s()
-                    //)
-            ), eof() ) ;
+                zeroOrMore( //1 or more?
+                        //sequence(
+                        firstOf(
+                                LineComment(),
+                                Task()
+                        ),
+                        s()
+                        //)
+                ), eof());
     }
 
-    /**  {Premise1,Premise2} |- Conclusion. */
+    /**
+     * {Premise1,Premise2} |- Conclusion.
+     */
     public Rule TaskRule() {
 
         //use a var to count how many rule conditions so that they can be pulled off the stack without reallocating an arraylist
@@ -142,14 +148,14 @@ public class Narsese extends BaseParser<Object>  {
 
                 Term(), //cause
 
-                zeroOrMore( sepArgSep(), Term() ),
+                zeroOrMore(sepArgSep(), Term()),
                 s(), TASK_RULE_FWD, s(),
 
                 push(PremiseRule.class), //stack marker
 
                 Term(), //effect
 
-                zeroOrMore( sepArgSep(), Term() ),
+                zeroOrMore(sepArgSep(), Term()),
                 s(), STATEMENT_CLOSER,
 
                 push(popTaskRule())
@@ -164,12 +170,12 @@ public class Narsese extends BaseParser<Object>  {
         List<Term> l = Global.newArrayList(1);
 
         Object popped;
-        while ( (popped = pop()) != PremiseRule.class) { //lets go back till to the start now
-            r.add((Term)popped);
+        while ((popped = pop()) != PremiseRule.class) { //lets go back till to the start now
+            r.add((Term) popped);
         }
 
-        while ( (popped = pop()) != PremiseRule.class) {
-            l.add((Term)popped);
+        while ((popped = pop()) != PremiseRule.class) {
+            l.add((Term) popped);
         }
 
         Collections.reverse(l);
@@ -178,8 +184,7 @@ public class Narsese extends BaseParser<Object>  {
         Compound premise;
         if (l.size() >= 1) {
             premise = $.p(l);
-        }
-        else {
+        } else {
             //empty premise list is invalid
             return null;
         }
@@ -187,8 +192,7 @@ public class Narsese extends BaseParser<Object>  {
         Compound conclusion;
         if (r.size() >= 1) {
             conclusion = $.p(r);
-        }
-        else {
+        } else {
             //empty premise list is invalid
             return null;
         }
@@ -200,14 +204,14 @@ public class Narsese extends BaseParser<Object>  {
         return sequence(
                 s(),
                 //firstOf(
-                        "//",
-                        //"'",
-                        //sequence("***", zeroOrMore('*')), //temporary
-                        //"OUT:"
+                "//",
+                //"'",
+                //sequence("***", zeroOrMore('*')), //temporary
+                //"OUT:"
                 //),
                 //sNonNewLine(),
                 LineCommentEchoed(),
-                firstOf("\n",eof() /* may not have newline at end of file */)
+                firstOf("\n", eof() /* may not have newline at end of file */)
         );
     }
 
@@ -217,7 +221,7 @@ public class Narsese extends BaseParser<Object>  {
 
                 zeroOrMore(noneOf("\n")),
 
-                push( ImmediateOperator.command(echo.class, match()) ) );
+                push(ImmediateOperator.command(echo.class, match())));
     }
 
 //    public Rule PauseInput() {
@@ -245,10 +249,10 @@ public class Narsese extends BaseParser<Object>  {
         return sequence(
                 s(),
 
-                optional( Budget(budget) ),
+                optional(Budget(budget)),
 
 
-                Term(true,false),
+                Term(true, false),
                 term.set((Term) pop()),
 
                 SentencePunctuation(punc),
@@ -262,7 +266,7 @@ public class Narsese extends BaseParser<Object>  {
 
                 ),
 
-                push(new Object[] { budget.get(), term.get(), punc.get(), truth.get(), tense.get() } )
+                push(new Object[]{budget.get(), term.get(), punc.get(), truth.get(), tense.get()})
                 //push(getTask(budget, term, punc, truth, tense))
 
         );
@@ -305,9 +309,9 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule Tense(Var<Tense> tense) {
         return firstOf(
-            sequence(TENSE_PRESENT, tense.set(Tense.Present)),
-            sequence(TENSE_PAST, tense.set(Tense.Past)),
-            sequence(TENSE_FUTURE, tense.set(Tense.Future))
+                sequence(TENSE_PRESENT, tense.set(Tense.Present)),
+                sequence(TENSE_PAST, tense.set(Tense.Past)),
+                sequence(TENSE_FUTURE, tense.set(Tense.Future))
         );
     }
 
@@ -388,9 +392,8 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-
     public Rule Term() {
-        return Term(true,true);
+        return Term(true, true);
     }
 
 //    Rule nothing() {
@@ -398,9 +401,8 @@ public class Narsese extends BaseParser<Object>  {
 //    }
 
 
-
-
-    @Cached Rule Term(boolean oper, boolean meta) {
+    @Cached
+    Rule Term(boolean oper, boolean meta) {
         /*
                  <term> ::= <word>                             // an atomic constant term
                         | <variable>                         // an atomic variable term
@@ -416,54 +418,56 @@ public class Narsese extends BaseParser<Object>  {
 
                         Operator(),
 
-                        seq(meta, Ellipsis() ),
+                        seq(meta, Ellipsis()),
 
-                        seq(meta, TaskRule() ),
+                        seq(meta, TaskRule()),
 
-                        seq(oper, ColonReverseInheritance() ),
+                        seq(oper, ColonReverseInheritance()),
 
+                        TemporalRelation(),
 
                         //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
                         seq(oper,
 
-                            Term(false,false),
+                                Term(false, false),
 
-                            COMPOUND_TERM_OPENER,
+                                COMPOUND_TERM_OPENER,
 
-                            firstOf(
+                                firstOf(
 
-                                //empty operator parens
-                                sequence( s(), COMPOUND_TERM_CLOSER,  push(popTerm(Op.OPERATOR, false)) ),
+                                        //empty operator parens
+                                        sequence(s(), COMPOUND_TERM_CLOSER, push(popTerm(Op.OPERATOR, false))),
 
-                                MultiArgTerm(Op.OPERATOR, COMPOUND_TERM_CLOSER, false, false, false, true)
-                            )
+                                        MultiArgTerm(Op.OPERATOR, COMPOUND_TERM_CLOSER, false, false, false, true)
+                                )
                         ),
 
-                        seq( STATEMENT_OPENER,
-                            MultiArgTerm(null, STATEMENT_CLOSER, false, true, true, false)
+                        seq(STATEMENT_OPENER,
+                                MultiArgTerm(null, STATEMENT_CLOSER, false, true, true, false)
                         ),
+
 
                         Variable(),
 
 //                        //negation shorthand
                         seq(Op.NEGATE.str, s(), Term(), push(
-                            //Negation.make(popTerm(null, true)))),
-                            $.neg(Atom.the(pop())))),
+                                //Negation.make(popTerm(null, true)))),
+                                $.neg(Atom.the(pop())))),
 
                         seq(
-                            Op.SET_EXT_OPENER.str,
-                            MultiArgTerm(Op.SET_EXT_OPENER, SET_EXT_CLOSER)
+                                Op.SET_EXT_OPENER.str,
+                                MultiArgTerm(Op.SET_EXT_OPENER, SET_EXT_CLOSER)
                         ),
 
                         seq(
-                            Op.SET_INT_OPENER.str,
-                            MultiArgTerm(Op.SET_INT_OPENER, SET_INT_CLOSER)
+                                Op.SET_INT_OPENER.str,
+                                MultiArgTerm(Op.SET_INT_OPENER, SET_INT_CLOSER)
                         ),
 
-                        seq( COMPOUND_TERM_OPENER,
+                        seq(COMPOUND_TERM_OPENER,
                                 firstOf(
                                         //empty product
-                                        seq( s(), COMPOUND_TERM_CLOSER, push(TermIndex.Empty) ),
+                                        seq(s(), COMPOUND_TERM_CLOSER, push(TermIndex.Empty)),
 
                                         MultiArgTerm(null, COMPOUND_TERM_CLOSER, true, false, false, false),
 
@@ -498,9 +502,43 @@ public class Narsese extends BaseParser<Object>  {
 //    }
 
 
-    Rule Operator() {
-        return sequence(OPERATOR.ch, Term(false,false),
-                push(new Operator((Term)pop())));
+    public Rule TemporalRelation() {
+        return seq(
+
+                STATEMENT_OPENER,
+                s(),
+                Term(true,false),
+                s(),
+                OpTemporal(),
+                CycleDelta(),
+                s(),
+                Term(true,false),
+                s(),
+                STATEMENT_CLOSER,
+
+
+                push(TemporalRelationBuilder((Term) pop() /* pred */,
+                        (Integer) pop() /*cycleDelta*/, (Op) pop() /*relation*/, (Term) pop() /* subj */))
+        );
+    }
+
+    public Term TemporalRelationBuilder(Term pred, int cycles, Op rel, Term subj) {
+        return $.the(rel, subj, pred);
+    }
+
+    public final static String invalidCycleDeltaString = Integer.toString(Integer.MIN_VALUE);
+
+    public Rule CycleDelta() {
+        return sequence(
+                anyOf('+', '-'),
+                oneOrMore(digit()),
+                push(Integer.parseInt(matchOrDefault(invalidCycleDeltaString)))
+        );
+    }
+
+    public Rule Operator() {
+        return sequence(OPERATOR.ch, Term(false, false),
+                push(new Operator((Term) pop())));
     }
 
     //final static String invalidAtomCharacters = " ,.!?" + INTERVAL_PREFIX_OLD + "<>-=*|&()<>[]{}%#$@\'\"\t\n";
@@ -517,20 +555,17 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule NumberAtom() {
         return sequence(
-            sequence(
-                    optional('-'),
-                    oneOrMore(digit()),
-                    optional('.', oneOrMore(digit()))
-            ),
-            push(Atom.the(Float.parseFloat(matchOrDefault("NaN"))))
+                sequence(
+                        optional('-'),
+                        oneOrMore(digit()),
+                        optional('.', oneOrMore(digit()))
+                ),
+                push(Atom.the(Float.parseFloat(matchOrDefault("NaN"))))
         );
     }
 
 
-
-
-    public static final class ValidAtomCharMatcher extends AbstractMatcher
-    {
+    public static final class ValidAtomCharMatcher extends AbstractMatcher {
 
         public static final ValidAtomCharMatcher the = new ValidAtomCharMatcher();
 
@@ -539,15 +574,14 @@ public class Narsese extends BaseParser<Object>  {
         }
 
         @Override
-        public MatcherType getType()
-        {
+        public MatcherType getType() {
             return MatcherType.TERMINAL;
         }
 
         @Override
         public <V> boolean match(MatcherContext<V> context) {
             int count = 0;
-            int max= context.getInputBuffer().length() - context.getCurrentIndex();
+            int max = context.getInputBuffer().length() - context.getCurrentIndex();
 
             while (count < max && isValidAtomChar(context.getCurrentChar())) {
                 context.advanceIndex(1);
@@ -559,10 +593,10 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     public static boolean isValidAtomChar(char c) {
-        int x = (int)c;
+        int x = (int) c;
 
         //TODO replace these with Symbols. constants
-        switch(x) {
+        switch (x) {
             case ' ':
             case Symbols.ARGUMENT_SEPARATOR:
             case Symbols.JUDGMENT:
@@ -608,8 +642,8 @@ public class Narsese extends BaseParser<Object>  {
      */
     Rule ColonReverseInheritance() {
         return sequence(
-            Term(false,true), s(), ':', s(), Term(),
-            push($.inh( (Term)pop(), (Term)pop() ) )
+                Term(false, true), s(), ':', s(), Term(),
+                push($.inh((Term) pop(), (Term) pop()))
         );
     }
 
@@ -655,17 +689,17 @@ public class Narsese extends BaseParser<Object>  {
                 Variable(), "..",
                 firstOf(
 
-                    seq( Term(false,false), "=", Term(false,false), "..+",
-                        swap(3),
-                            push( new EllipsisTransform(
-                            (Variable)pop(), (Term)pop(), (Term)pop()  ))
+                        seq(Term(false, false), "=", Term(false, false), "..+",
+                                swap(3),
+                                push(new EllipsisTransform(
+                                        (Variable) pop(), (Term) pop(), (Term) pop()))
                         ),
-                    seq( "+",
-                            push( new EllipsisOneOrMore( (Variable)pop() ) )
-                    ),
-                    seq( "*",
-                            push( new EllipsisZeroOrMore( (Variable)pop() ) )
-                    )
+                        seq("+",
+                                push(new EllipsisOneOrMore((Variable) pop()))
+                        ),
+                        seq("*",
+                                push(new EllipsisZeroOrMore((Variable) pop()))
+                        )
                 )
         );
     }
@@ -685,7 +719,6 @@ public class Narsese extends BaseParser<Object>  {
     //Rule alphanumeric() { return firstOf(alpha(), digit()); }
 
 
-
 //    @Deprecated Rule IntervalLog() {
 //        return sequence(INTERVAL_PREFIX_OLD, sequence(oneOrMore(digit()), push(match()),
 //                //push(Interval.interval(-1 + Texts.i((String) pop())))
@@ -702,10 +735,10 @@ public class Narsese extends BaseParser<Object>  {
                         | "%"[<word>]                        // pattern variable in rule
         */
         return firstOf(
-            sequence( Symbols.VAR_INDEPENDENT, Atom(), push( new Variable.VarIndep((String)pop()))) ,
-            sequence( Symbols.VAR_DEPENDENT, Atom(), push( new Variable.VarDep((String)pop()))) ,
-            sequence( Symbols.VAR_QUERY, Atom(), push( new Variable.VarQuery((String)pop()))) ,
-            sequence( Symbols.VAR_PATTERN, Atom(), push( new VarPattern((String)pop())))
+                sequence(Symbols.VAR_INDEPENDENT, Atom(), push(new Variable.VarIndep((String) pop()))),
+                sequence(Symbols.VAR_DEPENDENT, Atom(), push(new Variable.VarDep((String) pop()))),
+                sequence(Symbols.VAR_QUERY, Atom(), push(new Variable.VarQuery((String) pop()))),
+                sequence(Symbols.VAR_PATTERN, Atom(), push(new VarPattern((String) pop())))
 //                anyOf(variables),
 //                push(match().charAt(0)), Atom(), swap(),
 //                    push($.v((char)pop(), (String) pop())
@@ -736,31 +769,42 @@ public class Narsese extends BaseParser<Object>  {
 
     Rule Op() {
         return sequence(
-            trie(
-                INTERSECT_EXT.str, INTERSECT_INT.str,
-                DIFF_EXT.str, DIFF_INT.str,
-                PRODUCT.str,
-                IMAGE_EXT.str, IMAGE_INT.str,
+                trie(
+                        INTERSECT_EXT.str, INTERSECT_INT.str,
+                        DIFF_EXT.str, DIFF_INT.str,
+                        PRODUCT.str,
+                        IMAGE_EXT.str, IMAGE_INT.str,
 
-                INHERIT.str,
+                        INHERIT.str,
 
-                SIMILAR.str,
+                        SIMILAR.str,
 
-                PROPERTY.str,
-                INSTANCE.str,
-                INSTANCE_PROPERTY.str,
+                        PROPERTY.str,
+                        INSTANCE.str,
+                        INSTANCE_PROPERTY.str,
 
-                NEGATE.str,
+                        NEGATE.str,
 
-                IMPLICATION.str,
+                        IMPLICATION.str,
 
-                EQUIV.str,
+                        EQUIV.str,
 
-                DISJUNCTION.str,
-                CONJUNCTION.str
-            ),
+                        DISJUNCTION.str,
+                        CONJUNCTION.str
+                ),
 
-            push(getOperator(match()))
+                push(getOperator(match()))
+        );
+    }
+
+    Rule OpTemporal() {
+        return sequence(
+                trie(
+                        IMPLICATION.str,
+                        EQUIV.str,
+                        CONJUNCTION.str
+                ),
+                push(getOperator(match()))
         );
     }
 
@@ -788,7 +832,7 @@ public class Narsese extends BaseParser<Object>  {
     }
 
     boolean OperationPrefixTerm() {
-        return push( new Object[] { termable(pop()), (Operator.class) } );
+        return push(new Object[]{termable(pop()), (Operator.class)});
     }
 
     /**
@@ -800,19 +844,19 @@ public class Narsese extends BaseParser<Object>  {
 
         return sequence(
 
-                operatorPrecedes ?  OperationPrefixTerm() : push(Compound.class),
+                operatorPrecedes ? OperationPrefixTerm() : push(Compound.class),
 
                 initialOp ? Op() : Term(),
 
                 spaceSeparates ?
 
-                        sequence( s(), Op(), s(), Term() )
+                        sequence(s(), Op(), s(), Term())
 
                         :
 
                         zeroOrMore(sequence(
                                 sepArg(),
-                            allowInternalOp ? AnyOperatorOrTerm() : Term()
+                                allowInternalOp ? AnyOperatorOrTerm() : Term()
                         )),
 
                 sequence(s(), close),
@@ -840,7 +884,9 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    /** pass-through; the object is potentially a term but don't create it yet */
+    /**
+     * pass-through; the object is potentially a term but don't create it yet
+     */
     static Object termable(Object o) {
         return o;
     }
@@ -849,7 +895,7 @@ public class Narsese extends BaseParser<Object>  {
         if (o == null) return null; //pass through
         if (o instanceof Term) return o;
         if (o instanceof String) {
-            String s= (String)o;
+            String s = (String) o;
             return Atom.the(s);
         }
         throw new RuntimeException(o + " is not a term");
@@ -858,8 +904,8 @@ public class Narsese extends BaseParser<Object>  {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    @Deprecated final Term popTerm(Op op /*default */, @Deprecated boolean allowInternalOp) {
-
+    @Deprecated
+    final Term popTerm(Op op /*default */, @Deprecated boolean allowInternalOp) {
 
 
         //System.err.println(getContext().getValueStack());
@@ -874,9 +920,9 @@ public class Narsese extends BaseParser<Object>  {
 
             if (p instanceof Object[]) {
                 //it's an array so unpack by pushing everything back onto the stack except the last item which will be used as normal below
-                Object[] pp = (Object[])p;
+                Object[] pp = (Object[]) p;
                 if (pp.length > 1) {
-                    for (int i = pp.length-1; i >= 1; i--) {
+                    for (int i = pp.length - 1; i >= 1; i--) {
                         stack.push(pp[i]);
                     }
                 }
@@ -890,8 +936,6 @@ public class Narsese extends BaseParser<Object>  {
             }
 
             if (p == Compound.class) break; //beginning of stack frame for this term
-
-
 
 
             if (p instanceof String) {
@@ -910,7 +954,7 @@ public class Narsese extends BaseParser<Object>  {
                     throw new NarseseException("Too many operators involved: " + op + ',' + p + " in " + stack + ':' + vectorterms);
                 }
 
-                op = (Op)p;
+                op = (Op) p;
             }
         }
 
@@ -934,7 +978,6 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-
     /**
      * whitespace, optional
      */
@@ -956,7 +999,9 @@ public class Narsese extends BaseParser<Object>  {
 //    }
 
 
-    /** returns number of tasks created */
+    /**
+     * returns number of tasks created
+     */
     public static int tasks(String input, Collection<Task> c, Memory m) {
         int[] i = new int[1];
         tasks(input, t -> {
@@ -983,34 +1028,31 @@ public class Narsese extends BaseParser<Object>  {
     }
 
 
-    /** supplies the source array of objects that can construct a Task */
+    /**
+     * supplies the source array of objects that can construct a Task
+     */
     public static void tasksRaw(CharSequence input, Consumer<Object[]> c) {
 
         ParsingResult r = the().inputParser.run(input);
 
         int size = r.getValueStack().size();
 
-        for (int i = size-1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
             if (o instanceof Task) {
                 //wrap the task in an array
-                c.accept(new Object[] { o });
-            }
-            else if (o instanceof Object[]) {
-                c.accept((Object[])o);
-            }
-            else {
+                c.accept(new Object[]{o});
+            } else if (o instanceof Object[]) {
+                c.accept((Object[]) o);
+            } else {
                 throw new RuntimeException("Unrecognized input result: " + o);
             }
         }
     }
 
 
-
-
-
-        //r.getValueStack().clear();
+    //r.getValueStack().clear();
 
 //        r.getValueStack().iterator().forEachRemaining(x -> {
 //            if (x instanceof Task)
@@ -1028,8 +1070,7 @@ public class Narsese extends BaseParser<Object>  {
         ParsingResult r;
         try {
             r = singleTaskParser.run(input);
-        }
-        catch (Throwable ge) {
+        } catch (Throwable ge) {
             //ge.printStackTrace();
             throw new NarseseException(ge.toString() + ' ' + ge.getCause() + ": parsing: " + input);
         }
@@ -1039,14 +1080,15 @@ public class Narsese extends BaseParser<Object>  {
 
 
         try {
-            return decodeTask(memory, (Object[])r.getValueStack().peek() );
-        }
-        catch (Exception e) {
+            return decodeTask(memory, (Object[]) r.getValueStack().peek());
+        } catch (Exception e) {
             throw newParseException(input, r, e);
         }
     }
 
-    /** returns null if the Task is invalid (ex: invalid term) */
+    /**
+     * returns null if the Task is invalid (ex: invalid term)
+     */
     public static Task decodeTask(Memory m, Object[] x) {
         if (x.length == 1 && x[0] instanceof Task) {
             return (Task) x[0];
@@ -1055,10 +1097,12 @@ public class Narsese extends BaseParser<Object>  {
         Termed content = m.index.normalized(contentRaw);
         if (content == null)
             throw new RuntimeException("Task term unnormalizable: " + contentRaw);
-        return makeTask(m, (float[])x[0], content, (Character)x[2], (Truth)x[3], (Tense)x[4]);
+        return makeTask(m, (float[]) x[0], content, (Character) x[2], (Truth) x[3], (Tense) x[4]);
     }
 
-    /** parse one term unnormalized */
+    /**
+     * parse one term unnormalized
+     */
     public Term term(CharSequence s) {
 
         ParsingResult r = singleTermParser.run(s);
@@ -1158,8 +1202,8 @@ public class Narsese extends BaseParser<Object>  {
 
 
         //if (!r.isSuccess()) {
-            return new NarseseException("input: " + input + " (" + r + ")  " +
-                    (e!=null ? e.toString() + ' ' + Arrays.toString(e.getStackTrace()) : ""));
+        return new NarseseException("input: " + input + " (" + r + ")  " +
+                (e != null ? e.toString() + ' ' + Arrays.toString(e.getStackTrace()) : ""));
 
         //}
 //        if (r.parseErrors.isEmpty())
@@ -1233,6 +1277,7 @@ public class Narsese extends BaseParser<Object>  {
 
         /**
          * An invalid addInput line.
+         *
          * @param s type of error
          */
         public NarseseException(String s) {

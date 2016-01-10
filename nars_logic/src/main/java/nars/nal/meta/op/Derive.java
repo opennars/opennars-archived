@@ -188,10 +188,10 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
         long now = premise.time();
 
-        int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
+        //int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
         long taskOcc = task.getOccurrenceTime();
-        long occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
-
+        //long occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
+        long occ = taskOcc;
 
         //just not able to measure it, closed world assumption gone wild.
         if (occ != Tense.ETERNAL && premise.isEternal() && !premise.nal(7)) {

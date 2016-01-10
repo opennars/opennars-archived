@@ -131,9 +131,10 @@ public class TestNAR  {
         return this;
     }
 
-    public void inputAt(long time, String s) {
+    public TestNAR inputAt(long time, String s) {
         finished = false;
         nar.inputAt(time, s);
+        return this;
     }
 
     public void believe(String t, Tense tense, float f, float c) {
