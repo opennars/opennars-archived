@@ -18,6 +18,7 @@ import nars.task.MutableTask;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
+import nars.term.compound.Compound;
 import nars.term.variable.Variable;
 import nars.truth.Truth;
 
@@ -147,8 +148,8 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
         private final ConceptProcess premise;
 
-        public DerivedTask(Concept c, ConceptProcess premise) {
-            super(c);
+        public DerivedTask(Termed tc, ConceptProcess premise) {
+            super(tc);
             this.premise = premise;
         }
 
@@ -184,14 +185,23 @@ public class Derive extends AbstractLiteral implements ProcTerm<PremiseMatch> {
 
         char punct = m.punct.get();
 
-        MutableTask deriving = new DerivedTask(c, premise);
-
         long now = premise.time();
 
-        //int occurence_shift = m.occurrenceShift.getIfAbsent(Tense.TIMELESS);
+        int tDelta = m.tDelta.getIfAbsent(Tense.ITERNAL);
         long taskOcc = task.getOccurrenceTime();
-        //long occ = occurence_shift > Tense.TIMELESS ? taskOcc + occurence_shift : taskOcc;
-        long occ = taskOcc;
+        long occ;
+        Termed ct;
+        if (tDelta > Tense.ITERNAL) {
+            occ = taskOcc + tDelta;
+            ct = ((Compound)c.term()).t(tDelta);
+        } else {
+            occ = taskOcc;
+            ct = c;
+        }
+
+        MutableTask deriving = new DerivedTask(ct, premise);
+
+
 
         //just not able to measure it, closed world assumption gone wild.
         if (occ != Tense.ETERNAL && premise.isEternal() && !premise.nal(7)) {

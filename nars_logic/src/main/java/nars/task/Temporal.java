@@ -22,10 +22,10 @@ public interface Temporal extends Tasked {
         return Tense.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
-    default boolean startsAfter(Temporal other/*, int perceptualDuration*/) {
+    default int tDelta(Temporal other/*, int perceptualDuration*/) {
         long start = start();
         long other_end = other.end();
-        return start - other_end > 0;
+        return (int)(start - other_end); //TODO long/int
     }
 
     long start();

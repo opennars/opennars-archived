@@ -11,10 +11,7 @@ import nars.nal.meta.BooleanCondition;
 import nars.nal.meta.PostCondition;
 import nars.nal.meta.TaskBeliefPair;
 import nars.nal.meta.op.Solve;
-import nars.nal.meta.pre.MatchTaskBelief;
-import nars.nal.meta.pre.NotEqual;
-import nars.nal.meta.pre.TaskNegative;
-import nars.nal.meta.pre.TaskPunctuation;
+import nars.nal.meta.pre.*;
 import nars.nal.op.*;
 import nars.term.Term;
 import nars.term.TermVector;
@@ -390,13 +387,13 @@ public class PremiseRule extends GenericCompound implements Level {
 //                    preNext = Temporality.either;
 //                    break;
 
-//                case "after":
-//                    preNext = After.the;
-//                    break;
-//
-//                case "concurrent":
-//                    preNext = Concurrent.the;
-//                    break;
+                case "after":
+                    preNext = After.the;
+                    break;
+
+                case "concurrent":
+                    preNext = Concurrent.the;
+                    break;
 
 //
 //                case "measure_time":
