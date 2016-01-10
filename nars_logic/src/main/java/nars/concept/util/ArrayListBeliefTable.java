@@ -148,7 +148,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                     tableChanged = true;
                 }
 
-                memory.eventRevision.emit(revised);
+                //memory.eventRevision.emit(revised);
                 //nal.memory().logic.BELIEF_REVISION.hit();
 
                 if(!addedRevision) {
