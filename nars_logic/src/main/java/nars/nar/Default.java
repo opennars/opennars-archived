@@ -570,9 +570,9 @@ public class Default extends NAR {
         for (OperatorReaction o : defaultOperators)
             onExec(o);
 
-        new FullInternalExperience(this);
-        new Abbreviation(this);
-        onExec(Counting.class);
+        //new FullInternalExperience(this); //too early for this but we can allow the NAL9 operators
+        //new Abbreviation(this);
+        //onExec(Counting.class);
 
 //                /*if (internalExperience == Minimal) {
 //                    new InternalExperience(this);

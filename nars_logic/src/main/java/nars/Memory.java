@@ -138,7 +138,7 @@ public class Memory extends Param {
 
         this.random = rng;
 
-        this.level = 8;
+        this.level = 9;
 
         this.clock = clock;
 
