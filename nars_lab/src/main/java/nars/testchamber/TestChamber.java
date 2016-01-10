@@ -8,6 +8,7 @@ import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
 import nars.testchamber.map.Maze;
 import nars.testchamber.object.Key;
+import nars.testchamber.object.Pizza;
 import nars.testchamber.operator.Activate;
 import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
@@ -58,7 +59,7 @@ public class TestChamber {
 
     public static String getobj(int x, int y) {
         for (GridObject gridi : space.objects) {
-            if (gridi instanceof LocalGridObject) { //Key && ((Key)gridi).doorname.equals(goal)) {
+            if (gridi instanceof LocalGridObject && !(gridi instanceof Pizza)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                 LocalGridObject gridu = (LocalGridObject) gridi;
                 if (gridu.x == x && gridu.y == y && !"".equals(gridu.doorname))
                     return gridu.doorname;
