@@ -92,7 +92,7 @@
 //        assertTrue(prologAnswered);
 //
 ////        //nar.addInput(new TextInput(new File("nal/Examples/Example-MultiStep-edited.txt")));
-////        //nar.addInput(new TextInput(new File("nal/Examples/Example-NAL1-edited.txt")));
+////        //nar.addInput(new TextInput(new File("nal/Examples/Example-NAL1-edited.nal")));
 ////        nar.addInput(new TextInput(new File("nal/test/nal1.multistep.nal")));
 ////        nar.finish(10);
 //
