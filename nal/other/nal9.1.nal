@@ -5,5 +5,5 @@
 <c --> d>?
 '20
 40
-''outputMustContain('<(^believe,<a --> b>,TRUE) =|> (^wonder,<c --> d>)>. :|: %1.00;0.45%')
+''outputMustContain('<believe(<a --> b>,TRUE) =|> wonder(<c --> d>)>. :|: %1.00;0.45%')
 'todo, look why tense is different than in GUI here
