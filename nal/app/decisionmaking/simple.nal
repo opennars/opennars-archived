@@ -1,5 +1,9 @@
 //simple sequential example which needs variable unification
-<(&/,(goto,$1),(pick,$1)) =/> <$1 --> reached>>.
+<(&/,goto($1),pick($1)) =/> <$1 --> reached>>.
+<(&/,goto($1),pick($1)) =/> <$1 --> reached>>.
+<(&/,goto($1),pick($1)) =/> <$1 --> reached>>.
+<goal --> reached>!
+<goal --> reached>!
 <goal --> reached>!
 15
 ''outputMustContain('goto([goal, SELF])=null')
