@@ -13,9 +13,9 @@ public class TestH {
         TestH test = new TestH();
 
         double spacing = 1.0;
-        int countX = 5;
-        int countY = 3;
-        test.createHexagonGrid(new ArrayRealVector(new double[]{0.0, 0.0}),spacing, countX, countY);
+        int countX = 3;
+        int countY = 2;
+        test.createCircleHexagonGrid(new ArrayRealVector(new double[]{0.0, 0.0}),spacing, countX, countY, 5);
 
         debugSpatialPointPositions(test.network.spatialDots);
     }
@@ -23,6 +23,19 @@ public class TestH {
     private static void debugSpatialPointPositions(List<SpatialDot> dots) {
         for(SpatialDot iterationDot : dots) {
             System.out.println(String.format("{%s,%s},", iterationDot.spatialPosition.getDataRef()[0], iterationDot.spatialPosition.getDataRef()[1]));
+        }
+    }
+
+    private void createCircleHexagonGrid(ArrayRealVector offset, double spacing, int countX, int countY, int circleSections) {
+        createHexagonGrid(offset, spacing, countX, countY);
+
+        for( int circleSectionI = 0; circleSectionI < circleSections; circleSectionI++ ) {
+            double deltaRotatedX = Math.cos(((2.0 * Math.PI) / circleSections) * circleSectionI) * spacing * 0.3;
+            double deltaRotatedY = Math.sin(((2.0 * Math.PI) / circleSections) * circleSectionI) * spacing * 0.3;
+
+            ArrayRealVector deltaRotated = new ArrayRealVector(new double[]{deltaRotatedX, deltaRotatedY});
+
+            createHexagonGrid(offset.add(deltaRotated), spacing, countX, countY);
         }
     }
 
