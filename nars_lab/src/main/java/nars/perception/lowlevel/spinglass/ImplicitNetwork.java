@@ -16,10 +16,34 @@ public class ImplicitNetwork {
 
     public void step() {
         //addPerceptionToSpin();
+
+
+
+
         pertubeSpin();
+
+        copyDirections();
+
         interactSpin();
+
+        swapDirections();
+
         spreadSpin();
         weakenSpin();
+
+
+    }
+
+    private void copyDirections() {
+        for( int ia = 0; ia < spatialDots.size(); ia++ ) {
+            spatialDots.get(ia).spinAttributes.get(0).nextDirection = spatialDots.get(ia).spinAttributes.get(0).direction.copy();
+        }
+    }
+
+    private void swapDirections() {
+        for( int ia = 0; ia < spatialDots.size(); ia++ ) {
+            spatialDots.get(ia).spinAttributes.get(0).swap();
+        }
     }
 
     private void spreadSpin() {
@@ -84,11 +108,11 @@ public class ImplicitNetwork {
                 double realForceBetweenNeedlesInDirection = Math.max(0.0, realForceBetweenNeedles);
                 double realForceBetweenNeedlesInOrthogonalDirection =  Math.max(0.0, -realForceBetweenNeedles);
 
-                spatialDots.get(ia).spinAttributes.get(0).addTwoWayToDirection(new ArrayRealVector(normalizedDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInDirection)));
-                spatialDots.get(ib).spinAttributes.get(0).addTwoWayToDirection(new ArrayRealVector(normalizedDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInDirection)));
+                spatialDots.get(ia).spinAttributes.get(0).addTwoWayToNextDirection(new ArrayRealVector(normalizedDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInDirection)));
+                spatialDots.get(ib).spinAttributes.get(0).addTwoWayToNextDirection(new ArrayRealVector(normalizedDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInDirection)));
 
-                spatialDots.get(ia).spinAttributes.get(0).addTwoWayToDirection(new ArrayRealVector(normalizedOrthogonalDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInOrthogonalDirection)));
-                spatialDots.get(ib).spinAttributes.get(0).addTwoWayToDirection(new ArrayRealVector(normalizedOrthogonalDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInOrthogonalDirection)));
+                spatialDots.get(ia).spinAttributes.get(0).addTwoWayToNextDirection(new ArrayRealVector(normalizedOrthogonalDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInOrthogonalDirection)));
+                spatialDots.get(ib).spinAttributes.get(0).addTwoWayToNextDirection(new ArrayRealVector(normalizedOrthogonalDirectionBetweenDots.mapMultiply(realForceBetweenNeedles*realForceBetweenNeedlesInOrthogonalDirection)));
             }
         }
     }

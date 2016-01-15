@@ -13,10 +13,10 @@ public class Test0 {
         test0.network.maxInfluenceDistance = 2.0;
 
         // init test network
-        test0.buildTestgrid(4, 4, 1.0, 1.0);
+        test0.buildTestgrid(10, 10, 1.0, 1.0);
 
 
-        int numberOfSteps = 10;
+        int numberOfSteps = 50;
 
         System.out.println("ListAnimate[{");
 
@@ -40,7 +40,7 @@ public class Test0 {
                 }
             }
 
-            System.out.println("}, PlotRange -> {{-1, 7}, {-1, 7}}]");
+            System.out.println("}, PlotRange -> {{-1, 11}, {-1, 11}}]");
 
             if( stepI != numberOfSteps-1 ) {
                 System.out.println(",");
