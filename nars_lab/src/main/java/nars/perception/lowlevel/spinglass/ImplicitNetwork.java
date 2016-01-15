@@ -15,7 +15,7 @@ public class ImplicitNetwork {
     public float weakenScale = 0.2f;
 
     public void step() {
-        addPerceptionToSpin();
+        //addPerceptionToSpin();
         pertubeSpin();
         interactSpin();
         spreadSpin();
@@ -74,16 +74,11 @@ public class ImplicitNetwork {
 
                 double strengthBetweenSpins = calcStrengthByDistance(distance);
 
-                double forceBetweenNeedles = calcForceBetweenNeedles(spatialDots.get(ia).spinAttributes.get(0).direction, spatialDots.get(ib).spinAttributes.get(0).direction);
+                double forceBetweenNeedles = calcForceBetweenNeedles(Helper.normalizeWithExceptionAsZeroVector(spatialDots.get(ia).spinAttributes.get(0).direction), Helper.normalizeWithExceptionAsZeroVector(spatialDots.get(ib).spinAttributes.get(0).direction));
 
                 double realForceBetweenNeedles = strengthBetweenSpins * forceBetweenNeedles * needleForce;
 
-                ArrayRealVector normalizedDirectionBetweenDots;
-                {
-                    double length = Math.sqrt(spatialDots.get(ia).spatialPosition.dotProduct(spatialDots.get(ib).spatialPosition));
-                    normalizedDirectionBetweenDots = new ArrayRealVector(spatialDots.get(ib).spatialPosition.subtract(spatialDots.get(ia).spatialPosition));
-                }
-
+                ArrayRealVector normalizedDirectionBetweenDots = Helper.normalize(spatialDots.get(ib).spatialPosition.subtract(spatialDots.get(ia).spatialPosition));
                 ArrayRealVector normalizedOrthogonalDirectionBetweenDots = new ArrayRealVector(new double[]{-normalizedDirectionBetweenDots.getDataRef()[1], normalizedDirectionBetweenDots.getDataRef()[0]});
 
                 double realForceBetweenNeedlesInDirection = Math.max(0.0, realForceBetweenNeedles);

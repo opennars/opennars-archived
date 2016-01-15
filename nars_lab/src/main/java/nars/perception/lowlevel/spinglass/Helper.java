@@ -10,4 +10,12 @@ public class Helper {
         double length = Math.sqrt(input.dotProduct(input));
         return new ArrayRealVector(input.mapDivide(length));
     }
+
+    public static ArrayRealVector normalizeWithExceptionAsZeroVector(ArrayRealVector input) {
+        double length = Math.sqrt(input.dotProduct(input));
+        if(length == 0.0) {
+            return new ArrayRealVector(new double[]{0.0, 0.0});
+        }
+        return normalize(input);
+    }
 }
