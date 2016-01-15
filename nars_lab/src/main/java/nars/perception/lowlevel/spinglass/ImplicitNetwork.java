@@ -48,9 +48,11 @@ public class ImplicitNetwork {
 
         // TODO< calc from simple lines as a dummy input >
 
+        /*
         spatialDots.get(0).spinAttributes.get(0).direction = spatialDots.get(0).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{1.0, 0.0}));
         spatialDots.get(1).spinAttributes.get(0).direction = spatialDots.get(1).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{1.0, 0.0}));
         spatialDots.get(2).spinAttributes.get(0).direction = spatialDots.get(2).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{0.0, 1.0}));
+        */
     }
 
     private void weakenSpin() {
