@@ -17,21 +17,15 @@ public class ImplicitNetwork {
     public void step() {
         //addPerceptionToSpin();
 
-
-
-
         pertubeSpin();
 
         copyDirections();
-
         interactSpin();
-
         swapDirections();
 
         spreadSpin();
+
         weakenSpin();
-
-
     }
 
     private void copyDirections() {
@@ -130,7 +124,8 @@ public class ImplicitNetwork {
     }
 
     private double getRandomDirection() {
-        return random.nextDouble() * 2.0 - 1.0;
+        double randomValue = random.nextDouble();
+        return randomValue * 2.0 - 1.0;
     }
 
     private double calcStrengthBetweenPositions(ArrayRealVector a, ArrayRealVector b) {

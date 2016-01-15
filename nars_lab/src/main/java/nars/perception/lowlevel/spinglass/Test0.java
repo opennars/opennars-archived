@@ -2,6 +2,10 @@ package nars.perception.lowlevel.spinglass;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  *
  */
@@ -29,15 +33,25 @@ public class Test0 {
                 ArrayRealVector position = test0.network.spatialDots.get(dotI).spatialPosition;
                 ArrayRealVector direction = test0.network.spatialDots.get(dotI).spinAttributes.get(0).direction;
 
+
                 System.out.print("Line[{");
-                System.out.print(String.format("{%s,%s},", position.getDataRef()[0], position.getDataRef()[1]));
+
+                DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+                otherSymbols.setDecimalSeparator('.');
+                //otherSymbols.setGroupingSeparator('.');
+
+                DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
+
+
+                System.out.print(String.format("{%s,%s},", df.format(position.getDataRef()[0]), df.format(position.getDataRef()[1])));
                 ArrayRealVector positionPlusDirection = position.add(direction);
-                System.out.print(String.format("{%s,%s}", positionPlusDirection.getDataRef()[0], positionPlusDirection.getDataRef()[1]));
+                System.out.print(String.format("{%s,%s}", df.format(positionPlusDirection.getDataRef()[0]), df.format(positionPlusDirection.getDataRef()[1])));
                 System.out.print("}]");
 
-                if( dotI != test0.network.spatialDots.size()-1 ) {
+                if (dotI != test0.network.spatialDots.size() - 1) {
                     System.out.print(",");
                 }
+
             }
 
             System.out.println("}, PlotRange -> {{-1, 11}, {-1, 11}}]");
