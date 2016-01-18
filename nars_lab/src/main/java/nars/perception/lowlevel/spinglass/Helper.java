@@ -18,4 +18,27 @@ public class Helper {
         }
         return normalize(input);
     }
+
+    /*
+
+    public static ArrayRealVector projectOntoNormalized(ArrayRealVector start, ArrayRealVector normalizedDirection, ArrayRealVector position) {
+        ArrayRealVector diff = position.subtract(start);
+
+        double length = normalizedDirection.dotProduct(diff);
+        return start.add(normalizedDirection.mapMultiply(length));
+    }
+    */
+    public static ArrayRealVector projectOntoNotNormalized(ArrayRealVector start, ArrayRealVector direction, ArrayRealVector position) {
+        ArrayRealVector diff = position.subtract(start);
+
+        double length = direction.dotProduct(diff);
+        return start.add(direction.mapMultiply(length));
+    }
+
+    public static boolean projectInRange(ArrayRealVector start, ArrayRealVector delta, ArrayRealVector position) {
+        ArrayRealVector diff = position.subtract(start);
+
+        double dotResult = delta.dotProduct(diff);
+        return dotResult > 0.0 && dotResult < delta.dotProduct(delta);
+    }
 }

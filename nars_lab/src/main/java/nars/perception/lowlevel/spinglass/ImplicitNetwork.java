@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by r0b3 on 14.01.2016.
+ *
  */
 public class ImplicitNetwork {
     public List<SpatialDot> spatialDots = new ArrayList<>();
@@ -15,8 +15,6 @@ public class ImplicitNetwork {
     public float weakenScale = 0.2f;
 
     public void step() {
-        //addPerceptionToSpin();
-
         pertubeSpin();
 
         copyDirections();
@@ -59,18 +57,6 @@ public class ImplicitNetwork {
         for( int ia = 0; ia < spatialDots.size(); ia++ ) {
             spatialDots.get(ia).spinAttributes.get(0).direction = spatialDots.get(ia).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{getRandomDirection()*scale, getRandomDirection()*scale}));
         }
-    }
-
-    private void addPerceptionToSpin() {
-        // for testing we just add some vectors
-
-        // TODO< calc from simple lines as a dummy input >
-
-        /*
-        spatialDots.get(0).spinAttributes.get(0).direction = spatialDots.get(0).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{1.0, 0.0}));
-        spatialDots.get(1).spinAttributes.get(0).direction = spatialDots.get(1).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{1.0, 0.0}));
-        spatialDots.get(2).spinAttributes.get(0).direction = spatialDots.get(2).spinAttributes.get(0).direction.add(new ArrayRealVector(new double[]{0.0, 1.0}));
-        */
     }
 
     private void weakenSpin() {
