@@ -1,8 +1,6 @@
 package nars.guifx.remote;
 
 import com.google.common.collect.Lists;
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.application.Application;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
@@ -13,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import nars.guifx.NARfx;
 import org.fxmisc.richtext.PopupAlignment;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
@@ -56,7 +53,7 @@ public class LanternaTerminal extends Application {
 
             setStyle(0, Lists.newArrayList("code-area-default"));
 
-            setFont(NARfx.mono(46.0));
+            //setFont(NARfx.mono(46.0));
 
 
             getChildren().add(uc);
@@ -140,12 +137,12 @@ public class LanternaTerminal extends Application {
 
         protected void updateFontSize() {
 
-            if (getFont()!=null) {
+           /* if (getFont()!=null) {
                 FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(getFont());
                 charHeight = fm.getAscent();
                 charWidth = fm.computeStringWidth("X");
                 System.out.println(charHeight + " " + charWidth);
-            }
+            }*/
         }
     }
 
