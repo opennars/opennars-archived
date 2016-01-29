@@ -1,5 +1,10 @@
 package nars.microworld;
 
+import nars.NAR;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.operator.SyncOperator;
+import nars.nar.Default;
+import nars.task.Task;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.event.MouseEvent;
@@ -7,10 +12,11 @@ import processing.event.MouseEvent;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Simintellj extends Frame {
+public class SimNAR extends Frame {
 
-    public Simintellj() {
+    public SimNAR() {
         String[] args = {"Microworld"};
         MyPapplet mp = new MyPapplet ();
         PApplet.runSketch(args, mp);
@@ -223,102 +229,87 @@ public class Simintellj extends Frame {
         class Hai
         {
             Hai(){}
-            float[][][] Q; //state, action
-            float[][][] et;
-            int nActions=0,nStates=0;
-            int Quantify(float val, int quantsteps)
-            {
-                float step=1/((float)quantsteps);
-                float wander=0.0f;
-                int ind=-1;
-                while(wander<=val)
-                {
-                    wander+=step;
-                    ind++;
-                }
-                return ind;
-            }
-            void Draw(int x,int y,int RenderSize)
-            {
-                hsom_DrawSOM(som,RenderSize,x,y+RenderSize*6,false,0);
-                pushMatrix();
-                translate(x,y);
-                hamlib.Draw1DLine(som.inputs,10);
-                translate(0,10);
-                translate(0,RenderSize);
-                for(int i=0;i<nStates;i++)
-                {
-                    for(int j=0;j<nStates;j++)
-                    {
-                        for(int a=0;a<nActions;a++)
-                        {
-                            hamlib.FillDependendOnVal(Q[i][j][a]);
-                            rect((nStates+1)*RenderSize+i*RenderSize+(a*(nStates+1)*RenderSize),j*RenderSize,RenderSize,RenderSize);
-                        }
-                    }
-                }
-                popMatrix();
-            }
+            NAR nar;
+            int nActions = 3;
             Hai(int nactions,int nstates)
             {
-                nActions=nactions;
-                nStates=nstates;
-                Q=new float[nStates][nStates][nActions];
-                et=new float[nStates][nStates][nActions];
+                this.nActions = nactions; //for actions since we allow the same randomization phase as in QL
+                nar = new Default(1000, 1, 1, 3);
+                nar.onExec(new Right("Right"));
+                nar.onExec(new Left("Left"));
+                //NARide.show(nar.loop(), (i) -> {});
             }
-            int lastStateX=0,lastStateY=0,lastAction=0;
-            float Alpha=0.1f,Gamma=0.8f,Lambda=0.1f; //0.1 0.5 0.9
-            int Update(int StateX,int StateY,float reward)
+
+
+            int lastAction=0;
+            public class Right extends SyncOperator {
+                public Right(String name) {
+                    super(name);
+                }
+
+                @Override
+                public List<Task> apply(Task<Operation> operationTask) {
+                    lastAction = 1;
+                    System.out.println("NAR decide left");
+                    return null;
+                }
+            }
+            public class Left extends SyncOperator {
+                public Left(String name) {
+                    super(name);
+                }
+
+                @Override
+                public List<Task> apply(Task<Operation> operationTask) {
+                    lastAction = 2;
+                    System.out.println("NAR decide right");
+                    return null;
+                }
+            }
+
+            int k=0;
+            float Alpha=0.1f;
+            int UpdateSOM(float[] viewField,float reward) //input and reward
             {
-                int maxk=0;
-                float maxval=-999999;
-                for(int k=0;k<nActions;k++)
-                {
-                    if(Q[StateX][StateY][k]>maxval)
-                    {
-                        maxk=k;
-                        maxval=Q[StateX][StateY][k];
+                for(int i=0;i<viewField.length;i++) {
+                    if(viewField[i]>0.1f) {
+                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(viewField[i])+"%";
+                        nar.input(s);
+                        System.out.println("perceive "+s);
                     }
                 }
-                int Action=0;
-                if(random(1.0f)<Alpha)
-                {
-                    Action=(int)random((float)nActions);
+                lastAction = 0;
+                k++;
+                if(k%10==0) {
+                    nar.input("<SELF --> [good]>! :|:");
+                    System.out.println("food urge input");
                 }
-                else
-                {
-                    Action=maxk;
+                if(reward > 0) {
+                    System.out.println("good mr_nars");
+                    nar.input("<SELF --> [good]>. :|:");
                 }
-                float DeltaQ=reward+Gamma*Q[StateX][StateY][Action]-Q[lastStateX][lastStateY][lastAction];
-                et[lastStateX][lastStateY][lastAction]=et[lastStateX][lastStateY][lastAction]+1;
-                for(int i=0;i<nStates;i++)
-                {
-                    for(int j=0;j<nStates;j++)
-                    {
-                        for(int k=0;k<nActions;k++)
-                        {
-                            Q[i][j][k]=Q[i][j][k]+Alpha*DeltaQ*et[i][j][k];
-                            et[i][j][k]=Gamma*Lambda*et[i][j][k];
-                        }
+                if(reward < 0) {
+                    System.out.println("bad mr_nars");
+                    nar.input("(--,<SELF --> [good]>). :|:");
+                }
+
+                for(int i=0;i<250;i++) { //let NARS decide another action
+                    nar.frame();
+                }
+
+                if(lastAction==0 && random(1.0f)<Alpha) { //if NAR hasn't decided chose a random action
+                    lastAction = (int)random((float)nActions);
+                    if(lastAction == 1) {
+                        System.out.println("random left");
+                        nar.input("Left(SELF). :|:");
+                    }
+                    if(lastAction == 2) {
+                        System.out.println("random right");
+                        nar.input("Right(SELF). :|:");
                     }
                 }
 
-                lastStateX=StateX;
-                lastStateY=StateY;
-                lastAction=Action;
                 return lastAction;
-            }
-            void SetParams(float[] Params)
-            {
-                Alpha=Params[0];
-                Gamma=Params[1];
-                Lambda=Params[2];
-            }
-            Hsom som;
-            int UpdateSOM(float[] viewField,float reward)
-            {
-                som.Adapt(viewField);
-                return Update(som.winnerx,som.winnery,reward);
             }
         }
 
@@ -420,10 +411,10 @@ public class Simintellj extends Frame {
                     }
                 }
                 int action=oi.hai.UpdateSOM(viewField,oi.acc);
-                if(!Had)
+               /* if(!Had)
                 {
                     action=0;
-                }
+                }*/
                 if(action==2)
                 {
                     oi.a+=0.5f;
@@ -479,9 +470,9 @@ public class Simintellj extends Frame {
         void hrend_DrawGUI()
         {
             fill(0);
-            text("viewfield and RF-Rewards:",20,20);
+            //text("viewfield and RF-Rewards:",20,20);
             //test.DrawViewFields(20,30,10);
-            test.hai.Draw(20,30,2);
+            //test.hai.Draw(20,30,2);
         }
         void hrend_DrawBegin()
         {
@@ -500,7 +491,7 @@ public class Simintellj extends Frame {
         void hrend_DrawEnd()
         {
             fill(0);
-            text("Hamlib simulation system demonstration",0,-5);
+            //text("Hamlib simulation system demonstration",0,-5);
             stroke(255,255,255);
             line(0,0,width,0);
             line(width,height,width,0);
@@ -1321,8 +1312,8 @@ public class Simintellj extends Frame {
             {
                 int SomSize=10;
                 Hai h=new Hai(nactions,SomSize);
-                h.som=new Hsom(SomSize,Hsim_eyesize*2);
-                h.som.Leaky=false;
+                //h.som=new Hsom(SomSize,Hsim_eyesize*2);
+                //h.som.Leaky=false;
                 test=new Obj(new Hsim_Custom(),h,(int)(random(1)*(double)width),(int)(random(1)*(double)height),random(1)*2*PI-PI,random(1),0,0,random(1)*5+20,0,Hsim_eyesize);
                 hsim.obj.add(test);
             }
@@ -1351,6 +1342,6 @@ public class Simintellj extends Frame {
     }
 
     public static void main(String[] args) {
-        new Simintellj();
+        new SimNAR();
     }
 }
