@@ -159,7 +159,8 @@ public class EditorPanel extends JPanel {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    //todo: fill level according to read text
+
+                                    // fill level according to read text
                                     String[] values = allText.split("OBJECTS")[0].split(";");
                                     for (String cell : values) {
                                         String[] c = cell.split(",");
