@@ -1,5 +1,6 @@
 package nars.microworld;
 
+import nars.Memory;
 import nars.NAR;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
@@ -237,6 +238,10 @@ public class SimNAR extends Frame {
                 nar = new Default(1000, 1, 1, 3);
                 nar.onExec(new Right("Right"));
                 nar.onExec(new Left("Left"));
+                Memory m = nar.memory;
+                m.conceptForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 2
+                m.taskLinkForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 4
+                m.termLinkForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 10
                 //NARide.show(nar.loop(), (i) -> {});
             }
 
@@ -418,20 +423,20 @@ public class SimNAR extends Frame {
                 if(action==2)
                 {
                     oi.a+=0.5f;
-                    oi.v=10.0f;
+                    oi.v=5.0f;
                     //mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
                 if(action==1)
                 {
                     oi.a-=0.5f;
-                    oi.v=10.0f;
+                    oi.v=5.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
                 if(action==0)
                 {
-                    oi.v=10.0f;
+                    oi.v=5.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 if(oi.x>width)
