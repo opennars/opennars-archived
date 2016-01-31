@@ -164,7 +164,7 @@ public class DefaultConcept extends AtomConcept {
      * @return Whether to continue the processing of the task
      */
     LongArrayList lastevidence = new LongArrayList();
-    int max_last_execution_evidence_len = 100;
+    int max_last_execution_evidence_len = 1;
     public boolean processGoal(final Premise nal) {
 
         final Task goal = nal.getTask();

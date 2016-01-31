@@ -28,7 +28,6 @@ import nars.truth.Stamp;
 import nars.truth.Truth;
 import nars.util.Texts;
 import nars.util.data.Util;
-import org.apache.commons.math3.util.FastMath;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -833,8 +832,8 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     final public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
         if (!isDeleted()) {
           // BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
-           // BudgetFunctions.forgetAlann(this, forgetCycles, now);
-             BudgetFunctions.forgetIterative(this,forgetCycles, relativeThreshold);
+            BudgetFunctions.forgetAlann(this, forgetCycles, now);
+             //BudgetFunctions.forgetIterative(this,forgetCycles, relativeThreshold);
         }
 
         setLastForgetTime(now);
