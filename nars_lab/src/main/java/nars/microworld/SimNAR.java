@@ -436,7 +436,7 @@ public class SimNAR extends Frame {
                 else
                 if(action==0)
                 {
-                    oi.v=5.0f;
+                    oi.v=10.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 if(oi.x>width)
