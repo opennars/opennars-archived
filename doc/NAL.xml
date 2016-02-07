@@ -6,12 +6,13 @@
       <option name="COMMENT_END" value="" />
       <option name="HEX_PREFIX" value="" />
       <option name="NUM_POSTFIXES" value="" />
+      <option name="HAS_PARENS" value="true" />
       <option name="LINE_COMMENT_AT_START" value="true" />
     </options>
     <keywords keywords="&amp;&amp;;&amp;/;&amp;|;--&gt;;/;&lt;-&gt;;&lt;/&gt;;&lt;=&gt;;&lt;|&gt;;=/&gt;;\;||" ignore_case="false" />
     <keywords2 keywords="after;concurrent;measure_time;no_common_subterm;not_equal;not_implication_or_equivalence;not_set;shift_occurrence_backward;shift_occurrence_forward;substitute" />
     <keywords3 keywords="#X;#Y;#Z;$X;$Y;$Z;?X;?Y;?Z" />
-    <keywords4 keywords="Desire;Order;Truth;|-" />
+    <keywords4 keywords="Derive;Desire;Order;Punctuation;Truth;|-" />
   </highlighting>
   <extensionMap>
     <mapping ext="nal" />
