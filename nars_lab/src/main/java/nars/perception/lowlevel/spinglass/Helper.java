@@ -28,7 +28,7 @@ public class Helper {
         return start.add(normalizedDirection.mapMultiply(length));
     }
     */
-    public static ArrayRealVector projectOntoNotNormalized(ArrayRealVector start, ArrayRealVector direction, ArrayRealVector position) {
+    public static ArrayRealVector projectOntoDotNormalized(ArrayRealVector start, ArrayRealVector direction, ArrayRealVector position) {
         ArrayRealVector diff = position.subtract(start);
 
         double length = direction.dotProduct(diff);

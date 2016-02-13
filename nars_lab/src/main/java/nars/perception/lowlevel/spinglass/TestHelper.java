@@ -19,7 +19,7 @@ public class TestHelper {
                 continue;
             }
 
-            ArrayRealVector projectedPosition = Helper.projectOntoNotNormalized(a, diffNormalized, iterationSpatialDot.spatialPosition);
+            ArrayRealVector projectedPosition = Helper.projectOntoDotNormalized(a, diffNormalized, iterationSpatialDot.spatialPosition);
 
             ArrayRealVector positionToProjectedPositionDiff = iterationSpatialDot.spatialPosition.subtract(projectedPosition);
             double distanceSquared = positionToProjectedPositionDiff.dotProduct(positionToProjectedPositionDiff);
