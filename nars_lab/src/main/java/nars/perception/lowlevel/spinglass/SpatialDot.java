@@ -13,4 +13,5 @@ public class SpatialDot {
     public ArrayRealVector spatialPosition;
 
     public List<SpinAttribute> spinAttributes = new ArrayList<>();
+    public boolean wasIgnited = false;
 }

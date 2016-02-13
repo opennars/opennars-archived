@@ -13,6 +13,7 @@ public class ImplicitNetwork {
     public List<SpatialDot> spatialDots = new ArrayList<>();
 
     public float weakenScale = 0.2f;
+    public float influenceStrengthFactor;
 
     public void step() {
         pertubeSpin();
@@ -24,6 +25,12 @@ public class ImplicitNetwork {
         spreadSpin();
 
         weakenSpin();
+    }
+
+    public void resetIgnitions() {
+        for( int ia = 0; ia < spatialDots.size(); ia++ ) {
+            spatialDots.get(ia).wasIgnited = false;
+        }
     }
 
     private void copyDirections() {
@@ -117,7 +124,7 @@ public class ImplicitNetwork {
     private double calcStrengthBetweenPositions(ArrayRealVector a, ArrayRealVector b) {
         double distance = a.getDistance(b);
         if( isDistanceBelowInfluenceDistance(distance) ) {
-            return calcStrengthByDistance(distance);
+            return calcStrengthByDistance(distance) * influenceStrengthFactor;
         }
         return 0.0;
     }

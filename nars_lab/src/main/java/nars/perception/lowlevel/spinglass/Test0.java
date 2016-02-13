@@ -4,7 +4,9 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  *
@@ -18,7 +20,15 @@ public class Test0 {
     }
 
     public void test() {
-        network.maxInfluenceDistance = 2.0;
+        Random random = new Random();
+
+        network.maxInfluenceDistance = 1.5;
+        network.influenceStrengthFactor = 1.0f;
+
+        Avalanche avalanche = new Avalanche();
+        avalanche.neightborSearchRadius = network.maxInfluenceDistance;
+        avalanche.minimalDotResultForIgnition = 0.5;
+        avalanche.minimalStrengthForIgnition = 0.5;
 
         // init test network
         buildTestgrid(10, 10, 1.0, 1.0);
@@ -35,9 +45,27 @@ public class Test0 {
 
             network.step();
 
+            network.resetIgnitions();
+            // avalances
+            {
+                int startIgnitionCandidate = avalanche.searchRandomIgnitionCandidate(network.spatialDots, random);
+                if( startIgnitionCandidate != -1 ) {
+                    List<SpatialDot> ignitedDots = avalanche.ignite(network.spatialDots, startIgnitionCandidate);
+                }
+            }
+
+
             System.out.println("Graphics[{");
 
             for( int dotI = 0; dotI < network.spatialDots.size(); dotI++ ) {
+                boolean wasIgnited = network.spatialDots.get(dotI).wasIgnited;
+                if( wasIgnited ) {
+                    System.out.print("Red,");
+                }
+                else {
+                    System.out.print("Black,");
+                }
+
                 ArrayRealVector position = network.spatialDots.get(dotI).spatialPosition;
                 ArrayRealVector direction = network.spatialDots.get(dotI).spinAttributes.get(0).direction;
 
@@ -86,7 +114,7 @@ public class Test0 {
         ArrayRealVector a = centerPosition.add(scaledRotation);
         ArrayRealVector b = centerPosition.subtract(scaledRotation);
 
-        double maxDistance = 1.5;
+        double maxDistance = 0.5;
         TestHelper.additiveLine(network.spatialDots, a, b, maxDistance*maxDistance);
 
     }
