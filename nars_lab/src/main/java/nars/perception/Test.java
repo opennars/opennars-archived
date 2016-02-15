@@ -7,10 +7,13 @@ import boofcv.struct.image.ImageFloat32;
 import nars.op.software.scheme.Util;
 import nars.perception.lowlevel.Convolution;
 import nars.perception.lowlevel.GaborKernel;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -20,10 +23,13 @@ public class Test {
 
     public static void main(String[] args) {
         RibDriver ribDriver = new RibDriver();
+        ribDriver.camera.position = new Vector3D(new double[]{0.0, -1.0, 4.0});
 
         RibDriver.Billboard billboard0 = new RibDriver.Billboard();
-        billboard0.position = new ArrayRealVector(new double[]{0.0, 0.0, 0.0});
-        billboard0.radius = 1.0f;
+        billboard0.position = new Vector3D(new double[]{0.0, 0.0, 0.0});
+        billboard0.radiusHorizontal = 1.0f;
+        billboard0.radiusVertical = 0.05f;
+
 
         ribDriver.objects.add(billboard0);
 
@@ -36,6 +42,19 @@ public class Test {
         }
         out.print(ribOutput);
         out.close();
+
+
+        // invoke renderer
+
+        Runtime rt = Runtime.getRuntime();
+        try {
+            Process pr = rt.exec("\"C:\\Program Files (x86)\\Aqsis\\bin\\aqsis.exe\" test1.rib", new String[]{}, new File("C:\\users\\r0b3\\temp\\"));
+            pr.waitFor();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
         BufferedImage readImage = UtilImageIO.loadImage("C:\\Users\\r0b3\\temp\\scene1.tif");
@@ -63,6 +82,7 @@ public class Test {
         ImageFloat32 convolutedImage = Convolution.convolution(kernel, convertedInput);
 
         // dump kernel
+        /*
         {
             ImageFloat32 kernelImage = new ImageFloat32(kernel.width, kernel.width);
 
@@ -70,16 +90,11 @@ public class Test {
                 for( int x = 0; x < kernel.width; x++ ) {
                     float kernelValue = kernel.get(x, y);
                     kernelImage.set(x, y, Math.max(kernelValue * 127.0f, 0.0f));
-
-                    System.out.print(kernelValue);
-                    System.out.print(" ");
                 }
-
-                System.out.println();
             }
 
             UtilImageIO.saveImage(kernelImage, "C:\\Users\\r0b3\\temp\\testOpennarsKernel.tif");
-        }
+        }*/
 
         // for correct saving of image
         {
