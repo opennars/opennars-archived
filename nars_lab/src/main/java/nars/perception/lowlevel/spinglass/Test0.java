@@ -120,18 +120,7 @@ public class Test0 {
     }
 
     private void buildTestgrid(int sizeX, int sizeY, double spacingX, double spacingY) {
-        for( int iy = 0; iy < sizeY; iy++ ) {
-            for( int ix = 0; ix < sizeX; ix++ ) {
-                double positionX = (double)ix * spacingX;
-                double positionY = (double)iy * spacingY;
-
-                SpatialDot createdSpatialDot = new SpatialDot();
-                createdSpatialDot.spatialPosition = new ArrayRealVector(new double[]{positionX, positionY});
-                createdSpatialDot.spinAttributes.add(new SpinAttribute());
-                createdSpatialDot.spinAttributes.get(0).direction = new ArrayRealVector(new double[]{0.0, 0.0});
-                network.spatialDots.add(createdSpatialDot);
-            }
-        }
+        Helper.buildGrid(network, sizeX, sizeY, spacingX, spacingY);
     }
 
     public ImplicitNetwork network = new ImplicitNetwork();
