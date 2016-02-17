@@ -250,7 +250,7 @@ public class Hauto {
             }
             String wishreal=wish.replace("closed", "opened").replace("off", "on");
 
-            System.out.println(String.format("TESTCHAMBER DEBUG: cellnameNotEmpty=%s", !"".equals(readCells[x][y].name)));
+            //System.out.println(String.format("TESTCHAMBER DEBUG: cellnameNotEmpty=%s", !"".equals(readCells[x][y].name)));
             if(!"".equals(readCells[x][y].name)) {
                 //nar.input("oper +("+ readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
@@ -261,7 +261,7 @@ public class Hauto {
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
-            System.out.println(String.format("TESTCHAMBER DEBUG: objNotEmpty=%s", !s.equals("")));
+           // System.out.println(String.format("TESTCHAMBER DEBUG: objNotEmpty=%s", !s.equals("")));
             if(!s.equals("")) {
                 //nar.input(oper + "(" +s+")!");
                 if(!inverse) {
@@ -272,10 +272,8 @@ public class Hauto {
                 //--nar.step(1);
             }
 
-            // like in a operator we simulate an action
-            // (i try to fix a bug, this is just another try)
-            TestChamber.executed = true;
-            TestChamber.executed_going = true;
+            //TestChamber.executed = true;
+            //TestChamber.executed_going = true;
 
             return;
         }
