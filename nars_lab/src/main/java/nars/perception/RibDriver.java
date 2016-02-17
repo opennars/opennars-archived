@@ -71,8 +71,8 @@ public class RibDriver {
 
     public List<Object> objects = new ArrayList<>();
 
-    public String build() {
-        string.append("Display \"Scene1.tif\" \"file\" \"rgb\"\n");
+    public String build(String imageName) {
+        string.append(String.format("Display \"%s.tif\" \"file\" \"rgb\"\n", imageName));
         string.append("Format 800 600 1\n");
         string.append("Projection \"perspective\" \"fov\" 60\n");
 
