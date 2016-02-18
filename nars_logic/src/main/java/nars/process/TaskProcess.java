@@ -361,6 +361,8 @@ public class TaskProcess extends AbstractPremise implements Serializable {
 
     public Concept run() {
 
+        if(true)
+            return null;
 
         final Task task = getTask();
 

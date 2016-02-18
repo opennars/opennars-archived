@@ -9,6 +9,7 @@ import nars.NARLoop;
 import nars.Video;
 import nars.guifx.NARide;
 import nars.nar.Default;
+import nars.nar.Simple;
 import nars.op.io.say;
 import nars.term.Atom;
 import nars.term.Term;
@@ -103,7 +104,7 @@ for Li in reversed(lines):
     private NAR nar;
 
     public NLPIRCBot() throws Exception {
-        super("irc.freenode.net", "mr_nars", "#nars");
+        super("irc.freenode.net", "mr_minimi", "#nars");
 
     }
 
@@ -296,13 +297,15 @@ for Li in reversed(lines):
         if(oldnar!=null) {
             oldnar.stop();
         }
-        nar = new Default(1000, 1, 1, 3);
+        nar = new Simple();
         nar.memory.eventExecute.on(c -> {
             send(c.getTask().toString());
         });
 
         nar.memory.eventAnswer.on(c -> {
-            send(c.toString());
+            if(!c.toString().contains("Minimi")) {
+                send(c.toString());
+            }
         });
 
         oldnar = nar.loop(1000);

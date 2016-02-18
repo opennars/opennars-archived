@@ -286,9 +286,9 @@ public class LocalRules {
         //TODO solutionEval calculates the same solutionQuality as here, avoid this unnecessary redundancy
         Budget budget = Tense.solutionEval(question, sol, nal);
 
-        if (!(question.isQuestion() || question.isQuest())) {
+        /*if (!(question.isQuestion() || question.isQuest())) {
             System.err.println("err");
-        }
+        }*/
         /*memory.output(task);
 
         //only questions and quests get here because else output is spammed

@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
+import nars.nar.Simple;
 import nars.task.Task;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -235,7 +236,7 @@ public class SimNAR extends Frame {
             Hai(int nactions,int nstates)
             {
                 this.nActions = nactions; //for actions since we allow the same randomization phase as in QL
-                nar = new Default(1000, 1, 1, 3);
+                nar = new Simple(); //Default(1000, 1, 1, 3);
                 nar.onExec(new Right("Right"));
                 nar.onExec(new Left("Left"));
                 Memory m = nar.memory;
@@ -298,7 +299,7 @@ public class SimNAR extends Frame {
                     nar.input("(--,<SELF --> [good]>). :|:");
                 }
 
-                for(int i=0;i<250;i++) { //let NARS decide another action
+                for(int i=0;i<50;i++) { //let NARS decide another action
                     nar.frame();
                 }
 

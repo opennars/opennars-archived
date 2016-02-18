@@ -441,7 +441,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float durability = t.getDurability() * complexityFactor;
         final float quality = qual * complexityFactor;
 
-        final TermLink termLink = nal.getTermLink();
+       /* final TermLink termLink = nal.getTermLink();
         if (termLink!=null && !temporal) {
             priority = or(priority, termLink.getPriority());
             durability = and(durability, termLink.getDurability()); //originaly was 'AND'
@@ -457,7 +457,7 @@ public final class BudgetFunctions extends UtilityFunctions {
                 //termLink.orPriority(or(quality, targetActivation));
                 termLink.orDurability(quality);
             }
-        }
+        }*/
 
         return target.budget(priority, durability, quality);
 

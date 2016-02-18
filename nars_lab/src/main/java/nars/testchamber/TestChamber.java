@@ -4,6 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.NARide;
 import nars.nar.Default;
+import nars.nar.Simple;
 import nars.task.Task;
 import nars.testchamber.Cell.Logic;
 import nars.testchamber.Cell.Material;
@@ -38,7 +39,7 @@ public class TestChamber {
 
 
     public static void main(String[] args) {
-        Default nar = new Default(1000, 1, 1, 3);
+        NAR nar = new Simple();
 
         NARide.show(nar.loop(narFrameRate), i -> {
 

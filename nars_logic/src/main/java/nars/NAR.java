@@ -1190,9 +1190,10 @@ abstract public class NAR implements Serializable, Level, ConceptBuilder {
         final Concept c = doConceptualize(term, budget);
 //        if (c==null)
 //            throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
-
-        c.setMemory(memory);
-        memory.eventConceptActivated.emit(c);
+        if(c!=null) {
+            c.setMemory(memory);
+            memory.eventConceptActivated.emit(c);
+        }
         return c;
     }
 
