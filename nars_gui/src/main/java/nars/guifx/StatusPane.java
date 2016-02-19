@@ -21,7 +21,7 @@ public class StatusPane extends PlotBox {
             new Plot2D(Plot2D.Line, historySize,
                     w, height/3
             ).add("Concept Energy",
-                    () -> m.getDouble(MemoryBudget.Budgeted.ActiveTermLinkPrioritySum)
+                    () -> m.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum)
             ),
 
             new Plot2D(Plot2D.Line, historySize,
