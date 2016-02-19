@@ -1,23 +1,3 @@
-// Pei Wang's "Non-Axiomatic Logic" specified with a math. notation inspired DSL with given intiutive explainations:
-
-//The rules of NAL, can be interpreted by considering the intiution behind the following two relations:
-// Statement:                 (A --> B):               A can stand for B
-// Statement about Statement: (A ==> B): If A is true, so is/will be B
-// --> is a relation in meaning of terms, while ==> is a relation of truth between statements.
-
-//// Revision ////////////////////////////////////////////////////////////////////////////////////
-// When a given belief is challenged by new experience, a new belief2 with same content (and disjoint evidental base),
-// a new revised task, which sums up the evidence of both belief and belief2 is derived:
-
-//   A, A |- A, (Truth:Revision) (Commented out because it is already handled by belief management in java)
-
-//Similarity to Inheritance
-
-    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgment)
-
-//Inheritance to Similarity
-
-    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgment)
 
 //Set Definition Similarity to Inheritance
 
@@ -50,16 +30,6 @@
 
 ////// Truth-value functions: see TruthFunctions.java
 
-//// Immediate Inference ////////////////////////////////////////////////////////////////////////////////////
-//If S can stand for P, P can to a certain low degree also represent the class S
-//If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
-
-    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
-    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
-    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
-    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
-    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgment)
-    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgment)
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
 
@@ -236,17 +206,11 @@
 
     (P ==> M), (S ==> M), not_equal(S,P) |- (S <=> P), (Truth:Comparison, Derive:AllowBackward)
     (P =/> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
-                                            (S </> P), (Truth:Comparison, Derive:AllowBackward),
-                                            (P </> S), (Truth:Comparison, Derive:AllowBackward)
     (P =|> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward)
     (P =\> M), (S =\> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
-                                            (S </> P), (Truth:Comparison, Derive:AllowBackward),
-                                            (P </> S), (Truth:Comparison, Derive:AllowBackward)
 
     (M ==> P), (M ==> S), not_equal(S,P) |- (S <=> P), (Truth:Comparison, Derive:AllowBackward)
     (M =/> P), (M =/> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward),
-                                            (S </> P), (Truth:Comparison, Derive:AllowBackward),
-                                            (P </> S), (Truth:Comparison, Derive:AllowBackward)
     (M =|> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison, Derive:AllowBackward)
 
 //Same as for inheritance again
@@ -309,17 +273,6 @@
     M, (S <=> M), shift_occurrence_backward(unused,"<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
     M, (M <=> S), shift_occurrence_forward(unused,"==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
-//// conditional composition: ////////////////////////////////////////////////////////////////////////////////////
-//They are let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
-//For this there needs to be a semantic dependence between both, either by the predicate or by the subject,
-//or a temporal dependence which acts as special case of semantic dependence
-//These cases are handled by "Variable Introduction" and "Temporal Induction"
-
-//   P, S, no_common_subterm(S,P) |- (S ==> P), (Truth:Induction)
-//   P, S, no_common_subterm(S,P) |- (S <=> P), (Truth:Comparison)
-//   P, S, no_common_subterm(S,P) |- (P && S), (Truth:Intersection)
-//   P, S, no_common_subterm(S,P) |- (P || S), (Truth:Union)
-
 //// conjunction decompose
 
     (&&,A_1..n), A_1 |- A_1, (Truth:StructuralDeduction, Desire:StructuralStrong)
@@ -367,30 +320,10 @@
                                             ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
 
-    (S --> M), (P --> M), not_equal(S,P), measure_time(I) |- ((&/,(P --> $X),I) =/> (S --> $X)), (Truth:Induction, Linkage:Temporal),
-                                                             ((S --> $X) =\> (&/,(P --> $X),I)), (Truth:Abduction, Linkage:Temporal),
-                                                             ((&/,(P --> $X),I) </> (S --> $X)), (Truth:Comparison, Linkage:Temporal),
-                                                             (&/,(P --> #Y), I, (S --> #Y)), (Truth:Intersection, Linkage:Temporal)
-
-    (S --> M), (P --> M), not_equal(S,P), concurrent(Task,Belief) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction, Linkage:Temporal),
-                                                                     ((S --> $X) =|> (P --> $X)), (Truth:Induction, Linkage:Temporal),
-                                                                     ((P --> $X) <|> (S --> $X)), (Truth:Comparison, Linkage:Temporal),
-                                                                     (&|,(P --> #Y),(S --> #Y)), (Truth:Intersection, Linkage:Temporal)
-
     (M --> S), (M --> P), not_equal(S,P) |- (($X --> S) ==> ($X --> P)), (Truth:Induction),
                                             (($X --> P) ==> ($X --> S)), (Truth:Abduction),
                                             (($X --> S) <=> ($X --> P)), (Truth:Comparison),
                                             (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
-
-    (M --> S), (M --> P), not_equal(S,P), measure_time(I) |- ((&/,($X --> P),I) =/> ($X --> S)), (Truth:Induction, Linkage:Temporal),
-                                                             (($X --> S) =\> (&/,($X --> P),I)), (Truth:Abduction, Linkage:Temporal),
-                                                             ((&/,($X --> P),I) </> ($X --> S)), (Truth:Comparison, Linkage:Temporal),
-                                                             (&/,(#Y --> P), I ,(#Y --> S)), (Truth:Intersection, Linkage:Temporal)
-
-    (M --> S), (M --> P), not_equal(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction, Linkage:Temporal),
-                                                                             (($X --> P) =|> ($X --> S)), (Truth:Abduction, Linkage:Temporal),
-                                                                             (($X --> S) <|> ($X --> P)), (Truth:Comparison, Linkage:Temporal),
-                                                                             (&|,(#Y --> S),(#Y --> P)), (Truth:Intersection, Linkage:Temporal)
 
 //// 2nd variable introduction ////////////////////////////////////////////////////////////////////////////////////
 
@@ -454,73 +387,7 @@
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-    P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Linkage:Temporal),
-                                                                                                   (P =\> (&/,S,I)), (Truth:Abduction, Linkage:Temporal),
-                                                                                                   ((&/,S,I) </> P), (Truth:Comparison, Linkage:Temporal),
-                                                                                                   (&/,S,I,P), (Truth:Intersection, Linkage:Temporal)
+    P, S, measure_time(I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction, Linkage:Temporal)
 
 
-    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction, Linkage:Temporal),
-                                                                                                           (P =|> S), (Truth:Induction, Linkage:Temporal),
-                                                                                                           (S <|> P), (Truth:Comparison, Linkage:Temporal),
-                                                                                                           (&|,S,P), (Truth:Intersection, Linkage:Temporal)
-
-////backward inference is mostly handled by the rule transformation:
-
-//    T, B |- C, [post] =>
-//          C, B, task("?") |- T, [post]
-//          C, T, task("?") |- B, [post]
-
-//here now are the backward inference rules which should really only work on backward inference:
-
-    (A --> S), (B --> S), task("?") |- (A --> B), (Punctuation:Question),
-                                       (B --> A), (Punctuation:Question),
-                                       (A <-> B), (Punctuation:Question)
-
-//and the backward inference driven forward inference:
-
-//NAL2:
-
-    ([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgment)
-    ({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgment)
-
-    ([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgment)
-    ({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgment)
-
-//NAL3:
-
-////composition on both sides of a statement:
-
-    ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-
-    ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-
-////composition on one side of a statement:
-
-    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-
-    (W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
-    ((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
-
-//NAL4:
-
-////composition on both sides of a statement:
-
-    ((B,P) --> Z) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((P,B) --> Z) ,(B --> A), task("?") |- ((P,B) --> (P,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    (B,P) <-> Z) ,(B <-> A), task("?") |- ((B,P) <-> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((P,B) <-> Z) ,(B <-> A), task("?") |- ((P,B) <-> (P,A)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((\,N,A,_) --> Z), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-    ((/,N,_,B) --> Z), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
-
-//NAL5:
-
-  --A,   A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
-    A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgment)
-
-//compound composition one premise
-
-    (||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    P, S, concurrent(Task,Belief), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction, Linkage:Temporal)
