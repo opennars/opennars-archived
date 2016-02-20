@@ -1,5 +1,7 @@
 package ptrman.difficultyEnvironment.view;
 
+/*
+
 import nars.rover.physics.ContactPoint;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
@@ -14,9 +16,7 @@ import org.jbox2d.dynamics.joints.MouseJoint;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- *
- */
+
 public class DrawerRunnable implements Runnable {
     public DrawerRunnable() {
         identity.setIdentity();
@@ -56,7 +56,8 @@ public class DrawerRunnable implements Runnable {
             draw.drawSegment(p1, p2, mouseColor);
         }
 
-        if (false /*settings.getSetting(TestbedSettings.DrawContactPoints).enabled*/) {
+        // +*settings.getSetting(TestbedSettings.DrawContactPoints).enabled*+
+        if (false ) {
             final float k_impulseScale = 0.1f;
             final float axisScale = 0.3f;
 
@@ -144,3 +145,4 @@ public class DrawerRunnable implements Runnable {
     // misc
     private final Transform identity = new Transform();
 }
+*/

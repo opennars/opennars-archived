@@ -1,10 +1,12 @@
 package ptrman.difficultyEnvironment.view;
 
+/*
 import com.jogamp.opengl.GLCapabilitiesImmutable;
 import nars.rover.physics.PhysicsController;
 import nars.rover.physics.gl.JoglAbstractPanel;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.dynamics.World;
+*/
 
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
@@ -31,8 +33,11 @@ import org.jbox2d.dynamics.World;
  ******************************************************************************/
 // modified by ptrman/SquareOfTwo
 
+/*
+
 public class JoglPanel extends JoglAbstractPanel {
     public JoglPanel(final World world, DebugDraw debugDraw, final PhysicsController controller, GLCapabilitiesImmutable config) {
         super(world, debugDraw, controller, null, config);
     }
 }
+*/

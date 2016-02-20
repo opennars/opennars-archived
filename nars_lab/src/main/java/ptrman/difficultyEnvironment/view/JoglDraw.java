@@ -25,12 +25,11 @@ package ptrman.difficultyEnvironment.view;
  ******************************************************************************/
 // changed by ptrman/SquareOfTwo
 
+/*
 import nars.rover.physics.PhysicsCamera;
 import nars.rover.physics.gl.JoglAbstractDraw;
 
-/**
- *
- */
+
 public class JoglDraw extends JoglAbstractDraw {
     private PhysicsCamera camera;
 
@@ -43,3 +42,4 @@ public class JoglDraw extends JoglAbstractDraw {
         return camera;
     }
 }
+*/
