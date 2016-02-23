@@ -98,7 +98,7 @@ public class Minimi implements Serializable  {
                                 mem.put(key,newmem.get(key));
                             }
 
-                            derivedTasksBuffer.forEach(t -> Memput(t.getPriority(), ProcessTask(nar, t, mem), mem, rng));
+                            derivedTasksBuffer.forEach(t -> Memput(ProcessTask(nar, t, mem), mem, rng));
                             derivedTasksBuffer.clear();
                         }
                     }catch(Exception ex) {} //recovery ^^
@@ -111,13 +111,13 @@ public class Minimi implements Serializable  {
                     }
                     try {
                         potentialExec(task, nar);
-                        Memput(task.getPriority(), task, mem, rng);
+                        Memput(task, mem, rng);
                     }catch(Exception ex) {}
                 })
         );
     }
 
-    public void Memput(float priority, Task t, TreeMap<Float,Task> mem, Random rng) {
+    public void Memput(Task t, TreeMap<Float,Task> mem, Random rng) {
         ArrayList<Float> removeme = new ArrayList<Float>();
         Truth revise = null;
         TreeMap<Float, Task> toupdate = new TreeMap<>();
