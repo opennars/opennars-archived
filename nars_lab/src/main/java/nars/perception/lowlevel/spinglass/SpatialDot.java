@@ -14,4 +14,6 @@ public class SpatialDot {
 
     public List<SpinAttribute> spinAttributes = new ArrayList<>();
     public boolean wasIgnited = false;
+
+    public List<Integer> neightborIndices = new ArrayList<>(); // get calculated once for speeding up the neightbor search
 }
