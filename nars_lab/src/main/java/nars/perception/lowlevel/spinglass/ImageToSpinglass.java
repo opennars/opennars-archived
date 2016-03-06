@@ -29,7 +29,7 @@ public class ImageToSpinglass {
 
     public void read(ImageFloat32 input, List<SpatialDot> spatialDots, float strengthMultiplier) {
         ImageFloat32 convolutedImageVertical = Convolution.convolution(kernelVertical, input);
-        ImageFloat32 convolutedImageHorizontal = Convolution.convolution(kernelVertical, input);
+        ImageFloat32 convolutedImageHorizontal = Convolution.convolution(kernelHorizontal, input);
 
         // readout the strength for the spatialDots
 
