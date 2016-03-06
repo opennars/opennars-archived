@@ -24,7 +24,7 @@ public class ImplicitNetwork {
             SpatialDot spatialDotUnderInvestigation = spatialDots.get(ia);
 
             for (int ib = 0; ib < spatialDots.size(); ib++) {
-                if( ia != ib ) {
+                if( ia == ib ) {
                     continue;
                 }
 
