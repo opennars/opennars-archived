@@ -56,7 +56,7 @@ public class FeedWorld {
     double spacingOfDots = 6.0;
 
     // see nars input/output
-    float alpha=0.1f; // how often do we send nars a random action when nars didn't do anything?
+    float alpha=0.4f; // how often do we send nars a random action when nars didn't do anything?
     int frameCounter = 0;
 
 
@@ -129,6 +129,8 @@ public class FeedWorld {
         nar = new Default(1000, 1, 1, 3);
         nar.onExec(new Action(interactionContainer, 0, "Left"));
         nar.onExec(new Action(interactionContainer, 1, "Right"));
+        nar.onExec(new Action(interactionContainer, 2, "Stop"));
+        nar.onExec(new Action(interactionContainer, 3, "Thrust"));
         Memory m = nar.memory;
         m.conceptForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 2
         m.taskLinkForgetDurations.setValue(1.0); //better for declarative reasoning tasks: 4
@@ -164,6 +166,13 @@ public class FeedWorld {
 
         if( verbose ) {
             System.out.println(String.format("debug{verbose} frame=%s", frameCounter));
+        }
+
+        if( verbose ) {
+            Simple3dPhysicsComponent characterPhysicsComponent = (Simple3dPhysicsComponent)characterEntity.components.getComponentByName("Simple3dPhysicsComponent");
+            DirectionComponent characterDirectionComponent = (DirectionComponent)characterEntity.components.getComponentByName("DirectionComponent");
+
+            System.out.println(String.format("debug{verbose} actor position=<%s,%s> direction=%s", characterPhysicsComponent.position.getX(), characterPhysicsComponent.position.getZ(), characterDirectionComponent.angleInRad));
         }
 
 
@@ -266,7 +275,7 @@ public class FeedWorld {
         }
 
 
-        boolean doDump = true;
+        boolean doDump = false;
 
         if( doDump ) {
 
@@ -346,14 +355,22 @@ public class FeedWorld {
 
         // if NAR hasn't decided chose a random action
         if(interactionContainer.triggeredActionIds.size()==0 && random.nextFloat()<alpha) {
-            int lastAction = random.nextInt(2);
+            int lastAction = random.nextInt(5);
             if(lastAction == 0) {
                 System.out.println("random left");
-                nar.input("Left(SELF). :|:");
+                nar.input("Left(SELF)! :|:");
             }
-            if(lastAction == 1) {
+            else if(lastAction == 1) {
                 System.out.println("random right");
-                nar.input("Right(SELF). :|:");
+                nar.input("Right(SELF)! :|:");
+            }
+            else if(lastAction == 2) {
+                System.out.println("random stop");
+                nar.input("Stop(SELF)! :|:");
+            }
+            else if(lastAction >= 3) { // give it more propability
+                System.out.println("random thrust");
+                nar.input("Thrust(SELF)! :|:");
             }
         }
 
@@ -368,10 +385,26 @@ public class FeedWorld {
             if( iterationActionId == 0 ) { // left
                 NarsSurface3dControllerComponent characterDirectionComponent = (NarsSurface3dControllerComponent)characterEntity.components.getComponentByName("NarsSurface3dControllerComponent");
                 characterDirectionComponent.rotate(rotationVelocityInRadPerFrame);
+
+                System.out.println("left action triggered");
             }
             else if( iterationActionId == 1 ) { // right
                 NarsSurface3dControllerComponent characterDirectionComponent = (NarsSurface3dControllerComponent)characterEntity.components.getComponentByName("NarsSurface3dControllerComponent");
                 characterDirectionComponent.rotate(-rotationVelocityInRadPerFrame);
+
+                System.out.println("right action triggered");
+            }
+            else if( iterationActionId == 2 ) { // stop
+                NarsSurface3dControllerComponent characterDirectionComponent = (NarsSurface3dControllerComponent)characterEntity.components.getComponentByName("NarsSurface3dControllerComponent");
+                characterDirectionComponent.stop();
+
+                System.out.println("right action triggered");
+            }
+            else if( iterationActionId == 3 ) { // thrust
+                NarsSurface3dControllerComponent characterDirectionComponent = (NarsSurface3dControllerComponent)characterEntity.components.getComponentByName("NarsSurface3dControllerComponent");
+                characterDirectionComponent.thrust();
+
+                System.out.println("right action triggered");
             }
         }
 
