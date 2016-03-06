@@ -53,7 +53,7 @@ public class FeedWorld {
 
     // settings
     // SpatialDot spacing distance of the dots in the image
-    double spacingOfDots = 3.0;
+    double spacingOfDots = 6.0;
 
     // see nars input/output
     float alpha=0.1f; // how often do we send nars a random action when nars didn't do anything?
@@ -265,18 +265,23 @@ public class FeedWorld {
             }
         }
 
-        // dumping for debugging
-        StringBuilder dumpBuilder = new StringBuilder();
-        Dump.dumpAsMathematicaGraphic(dumpBuilder, network);
 
-        try {
-            PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("C:\\Users\\r0b3\\temp\\mathematicaDebug.txt", true)));
-            out2.println( dumpBuilder.toString());
-            out2.close();
-        } catch (IOException e) {
-            //exception handling left as an exercise for the reader
+        boolean doDump = true;
+
+        if( doDump ) {
+
+            // dumping for debugging
+            StringBuilder dumpBuilder = new StringBuilder();
+            Dump.dumpAsMathematicaGraphic(dumpBuilder, network);
+
+            try {
+                PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("C:\\Users\\r0b3\\temp\\mathematicaDebug.txt", true)));
+                out2.println(dumpBuilder.toString());
+                out2.close();
+            } catch (IOException e) {
+                //exception handling left as an exercise for the reader
+            }
         }
-
 
 
         // TODO< reward calculation >
