@@ -15,6 +15,32 @@ public class ImplicitNetwork {
     public float weakenScale = 0.2f;
     public float influenceStrengthFactor;
 
+    public void initialize() {
+        initializeNeightbors();
+    }
+
+    private void initializeNeightbors() {
+        for( int ia = 0; ia < spatialDots.size(); ia++ ) {
+            SpatialDot spatialDotUnderInvestigation = spatialDots.get(ia);
+
+            for (int ib = 0; ib < spatialDots.size(); ib++) {
+                if( ia == ib ) {
+                    continue;
+                }
+
+                ArrayRealVector dotAPosition = spatialDotUnderInvestigation.spatialPosition;
+                ArrayRealVector dotBPosition = spatialDots.get(ib).spatialPosition;
+
+                double distance = dotAPosition.getDistance(dotBPosition);
+                if( !isDistanceBelowInfluenceDistance(distance) ) {
+                    continue;
+                }
+
+                spatialDotUnderInvestigation.neightborIndices.add(ib);
+            }
+        }
+    }
+
     public void step() {
         pertubeSpin();
 
@@ -47,7 +73,7 @@ public class ImplicitNetwork {
 
     private void spreadSpin() {
         for( int ia = 0; ia < spatialDots.size(); ia++ ) {
-            for( int ib = ia+1; ib < spatialDots.size(); ib++) {
+            for( int ib : spatialDots.get(ia).neightborIndices ) {
                 double strengthBetweenSpins = calcStrengthBetweenPositions(spatialDots.get(ia).spatialPosition, spatialDots.get(ib).spatialPosition);
 
                 // add spin
@@ -74,7 +100,7 @@ public class ImplicitNetwork {
 
     private void interactSpin() {
         for( int ia = 0; ia < spatialDots.size(); ia++ ) {
-            for (int ib = ia + 1; ib < spatialDots.size(); ib++) {
+            for( int ib : spatialDots.get(ia).neightborIndices ) {
                 ArrayRealVector dotAPosition = spatialDots.get(ia).spatialPosition;
                 ArrayRealVector dotBPosition = spatialDots.get(ib).spatialPosition;
 

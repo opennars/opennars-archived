@@ -55,48 +55,14 @@ public class Test0 {
             }
 
 
-            System.out.println("Graphics[{");
+            StringBuilder string = new StringBuilder();
 
-            for( int dotI = 0; dotI < network.spatialDots.size(); dotI++ ) {
-                boolean wasIgnited = network.spatialDots.get(dotI).wasIgnited;
-                if( wasIgnited ) {
-                    System.out.print("Red,");
-                }
-                else {
-                    System.out.print("Black,");
-                }
-
-                ArrayRealVector position = network.spatialDots.get(dotI).spatialPosition;
-                ArrayRealVector direction = network.spatialDots.get(dotI).spinAttributes.get(0).direction;
-
-
-                System.out.print("Line[{");
-
-                DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
-                otherSymbols.setDecimalSeparator('.');
-                //otherSymbols.setGroupingSeparator('.');
-
-                DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
-
-
-                System.out.print(String.format("{%s,%s},", df.format(position.getDataRef()[0]), df.format(position.getDataRef()[1])));
-                ArrayRealVector positionPlusDirection = position.add(direction);
-                System.out.print(String.format("{%s,%s}", df.format(positionPlusDirection.getDataRef()[0]), df.format(positionPlusDirection.getDataRef()[1])));
-                System.out.print("}]");
-
-                if (dotI != network.spatialDots.size() - 1) {
-                    System.out.print(",");
-                }
-
-            }
-
-            System.out.println("}, PlotRange -> {{-1, 11}, {-1, 11}}]");
+            Dump.dumpAsMathematicaGraphic(string, network);
+            System.out.println(string.toString());
 
             if( stepI != numberOfSteps-1 ) {
                 System.out.println(",");
             }
-
-            System.out.println("");
         }
 
         System.out.println("}]");
@@ -120,18 +86,7 @@ public class Test0 {
     }
 
     private void buildTestgrid(int sizeX, int sizeY, double spacingX, double spacingY) {
-        for( int iy = 0; iy < sizeY; iy++ ) {
-            for( int ix = 0; ix < sizeX; ix++ ) {
-                double positionX = (double)ix * spacingX;
-                double positionY = (double)iy * spacingY;
-
-                SpatialDot createdSpatialDot = new SpatialDot();
-                createdSpatialDot.spatialPosition = new ArrayRealVector(new double[]{positionX, positionY});
-                createdSpatialDot.spinAttributes.add(new SpinAttribute());
-                createdSpatialDot.spinAttributes.get(0).direction = new ArrayRealVector(new double[]{0.0, 0.0});
-                network.spatialDots.add(createdSpatialDot);
-            }
-        }
+        Helper.buildGrid(network, sizeX, sizeY, spacingX, spacingY);
     }
 
     public ImplicitNetwork network = new ImplicitNetwork();

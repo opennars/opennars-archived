@@ -1,6 +1,5 @@
 package nars.perception;
 
-import nars.perception.lowlevel.spinglass.Helper;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -30,12 +29,12 @@ public class RibDriver {
     }
 
     public static class Camera extends SpatialObject {
-        public double horizontalRotation = 0.0f; // in radiants
+        public double horizontalRotation = 0.0; // in radiants
     }
 
     public static class Billboard extends Object {
-        public float radiusHorizontal = 0.0f;
-        public float radiusVertical = 0.0f;
+        public double radiusHorizontal = 0.0;
+        public double radiusVertical = 0.0;
 
         public void build(StringBuilder string, Vector3D cameraPosition) {
             Vector3D diffToCamera = cameraPosition.subtract(position);
@@ -72,8 +71,8 @@ public class RibDriver {
 
     public List<Object> objects = new ArrayList<>();
 
-    public String build() {
-        string.append("Display \"Scene1.tif\" \"file\" \"rgb\"\n");
+    public String build(String imageName) {
+        string.append(String.format("Display \"%s.tif\" \"file\" \"rgb\"\n", imageName));
         string.append("Format 800 600 1\n");
         string.append("Projection \"perspective\" \"fov\" 60\n");
 

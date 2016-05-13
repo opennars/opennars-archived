@@ -61,6 +61,13 @@ For an overview of reasoning features, see working examples explained in SingleS
 Run Requirements
 ----------------
  * Java 8 (OpenJDK or Oracle JDK)
+ 
+Build Instructions
+----------------
+
+OpenNARS does not pass all of its tests and nars_lab requires to be run from base directory to find it's resources. You can build and run OpenNARS using the following command.
+
+```maven package -Dmaven.test.skip=true && mv nars_lab/target/nars_lab-1.7-SNAPSHOT-jar-with-dependencies.jar . && java -jar nars_lab-1.7-SNAPSHOT-jar-with-dependencies.jar```
 
 
 Command Shell Usage
