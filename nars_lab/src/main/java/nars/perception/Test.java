@@ -33,14 +33,14 @@ public class Test {
 
         ribDriver.objects.add(billboard0);
 
-        String ribOutput = ribDriver.build();
+        //String ribOutput = ribDriver.build();
         PrintWriter out = null;
         try {
             out = new PrintWriter("C:\\users\\r0b3\\temp\\test1.rib");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        out.print(ribOutput);
+        //out.print(ribOutput);
         out.close();
 
 
