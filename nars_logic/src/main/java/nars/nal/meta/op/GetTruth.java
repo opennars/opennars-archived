@@ -21,8 +21,10 @@ public class GetTruth extends PreCondition {
     public final char puncOverride;
 
     transient private final String id;
+    public boolean swapped = false;
 
-    public GetTruth(BeliefFunction belief, DesireFunction desire, char puncOverride) {
+    public GetTruth(BeliefFunction belief, DesireFunction desire, char puncOverride, boolean swapped) {
+        this.swapped = swapped;
         this.belief = belief;
         this.desire = desire;
         this.puncOverride = puncOverride;
@@ -91,7 +93,7 @@ public class GetTruth extends PreCondition {
         }
 
 
-        final Truth truth;
+        Truth truth;
         TruthFunction tf;
 
         if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
@@ -99,7 +101,15 @@ public class GetTruth extends PreCondition {
             if (tf == null)
                 return false;
 
-            truth = tf.get(T, B);
+            if(swapped) {
+                try {
+                    truth = tf.get(B, T);
+                } catch(Exception ex) {
+                    truth = null;
+                }
+            } else {
+                truth = tf.get(T, B);
+            }
 
             if (truth == null) {
                 //no truth value function was applicable but it was necessary, abort

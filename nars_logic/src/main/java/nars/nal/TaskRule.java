@@ -150,7 +150,7 @@ public class TaskRule extends ProductN implements Level {
 
         ///--------------
 
-        l.add(new GetTruth(post.truth, post.desire, post.puncOverride));
+        l.add(new GetTruth(post.truth, post.desire, post.puncOverride, this.swapped));
         l.add(new Resolve(post.term, this ));
 
         if (post.afterConclusions.length > 0) {
@@ -616,6 +616,8 @@ public class TaskRule extends ProductN implements Level {
      * for each calculable "question reverse" rule,
      * supply to the consumer
      */
+
+    public boolean swapped = false;
 
     public final TaskRule forwardPermutation() {
 

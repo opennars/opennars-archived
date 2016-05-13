@@ -290,6 +290,7 @@ public class DerivationRules extends FastList<TaskRule> {
 
                 if(rNorm!=null && !s.contains("task(") && !s.contains("after(") && !s.contains("measure_time(") && !s.contains("Structural") && !s.contains("Identity") && !s.contains("Negation")) {
                     final TaskRule rNorm2 = rNorm.forwardPermutation();
+                    rNorm2.swapped = true;
                     if(rNorm2 != null) {
                         AcceptRule(ur, s, rNorm2);
                     }
