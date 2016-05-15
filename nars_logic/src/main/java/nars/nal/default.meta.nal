@@ -429,8 +429,8 @@
     B, (A ==> C), substitute_if_unifies("$",A,B), shift_occurrence_forward(unused,"==>") |- C, (Truth:Deduction, Order:ForAllSame)
     B, (C ==> A), substitute_if_unifies("$",A,B), shift_occurrence_backward(unused,"==>") |- C, (Truth:Abduction, Order:ForAllSame)
 
-    B, (A <=> C), substitute_if_unifies("$",A,B), shift_occurrence_backward(unused,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
-    B, (C <=> A), substitute_if_unifies("$",A,B), shift_occurrence_forward(unused,"<=>") |- C, (Truth:Deduction, Order:ForAllSame)
+    B, (A <=> C), substitute_if_unifies("$",A,B), shift_occurrence_backward(unused,"<=>") |- C, (Truth:Analogy, Order:ForAllSame)
+    B, (C <=> A), substitute_if_unifies("$",A,B), shift_occurrence_forward(unused,"<=>") |- C, (Truth:Analogy, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination (termlink level2 growth needed in order for these rules to work)
