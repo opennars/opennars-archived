@@ -634,16 +634,16 @@ public class Concept extends Item<Term> {
             memory.event.emit(ConceptQuestionAdd.class, this, task);
         }
 
-        Sentence ques = task.sentence;
+        Sentence ques = quesTask.sentence;
         final Task newAnswerT = (ques.isQuestion())
-                ? selectCandidate(task, beliefs, false)
-                : selectCandidate(task, desires, false);
+                ? selectCandidate(quesTask, beliefs, false)
+                : selectCandidate(quesTask, desires, false);
 
         if (newAnswerT != null) {
             trySolution(newAnswerT.sentence, task, nal, true);
         } 
         else
-        if(task.isInput() && !task.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
+        if(task.isInput() && !quesTask.getTerm().hasVarQuery() && quesTask.getBestSolution() != null) { //show previously found solution anyway in case of input
             memory.emit(Events.Answer.class, quesTask, quesTask.getBestSolution()); 
         }
     }

@@ -604,8 +604,17 @@ public class Memory implements Serializable {
             }*/
             
             //also attempt direct
-            for(int i =0 ;i<Math.min(this.sequenceTasks.size(), Parameters.SEQUENCE_BAG_ATTEMPTS);i++) {
+            HashSet<Task> already_attempted = new HashSet<Task>();
+            for(int i =0 ;i<Parameters.SEQUENCE_BAG_ATTEMPTS;i++) {
                 Task takeout = this.sequenceTasks.takeNext();
+                if(takeout == null) {
+                    break; //there were no elements in the bag to try
+                }
+                if(already_attempted.contains(takeout)) {
+                    this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
+                    continue;
+                }
+                already_attempted.add(takeout);
                 proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
                 this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
             }
@@ -659,7 +668,7 @@ public class Memory implements Serializable {
         while(removal != null);
         //ok now add the new one:
         //making sure we do not mess with budget of the task:
-        Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty,0.1f,0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+        Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty/(float)newEvent.sentence.term.getComplexity(),1.0f/(float)newEvent.sentence.term.getComplexity(),0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
         //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
         this.sequenceTasks.putIn(t2);
 
