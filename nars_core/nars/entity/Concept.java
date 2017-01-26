@@ -388,12 +388,11 @@ public class Concept extends Item<Term> {
     
     public static void successfulOperationHandler(Memory memory) {
         //multiple versions are necessary, but we do not allow duplicates
-        Task removal = null;
         for(Task s : memory.sequenceTasks) {
             
             if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
                 if(!s.getTerm().equals(memory.lastDecision.getTerm())) {
-                    s.setPriority(removal.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
+                    s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
                     continue; //depriorized already, we can look at the next now
                 }
             }
@@ -402,7 +401,7 @@ public class Concept extends Item<Term> {
                 if(seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                     for(Term w : seq.term) {
                         if((w instanceof Operation) && !w.equals(memory.lastDecision.getTerm())) {
-                            s.setPriority(removal.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
+                            s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
                             break; //break because just penalty once, not for each term ^^
                         }
                     }
