@@ -7,6 +7,7 @@ import nars.operator.Operator;
 import nars.operator.mental.Anticipate;
 import nars.plugin.mental.FullInternalExperience;
 import nars.plugin.mental.InternalExperience;
+import nars.plugin.meta.MetaPlugin;
 import nars.plugin.misc.RuntimeNARSettings;
 import nars.plugin.mental.Emotions;
 import nars.plugin.misc.Counting;
@@ -31,7 +32,8 @@ public class Plugins {
         n.addPlugin(new DefaultTextPerception());
         n.addPlugin(new RuntimeNARSettings());
         n.addPlugin(new Emotions());
-        n.addPlugin(new Anticipate());      // expect an event  
+        n.addPlugin(new Anticipate());      // expect an event
+        n.addPlugin(new MetaPlugin());
         
         boolean full_interval_experience = false;
         if(!full_interval_experience) {

@@ -1,21 +1,55 @@
 package nars.plugin.meta;
 
+import nars.NAR;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
 import nars.entity.Sentence;
 import nars.entity.Task;
-import nars.inference.TemporalRules;
-import nars.io.Symbols;
 import nars.language.Term;
 import nars.storage.Bag;
 import nars.storage.Memory;
+import nars.util.EventEmitter;
+import nars.util.Events;
+import nars.util.Plugin;
 
 import java.util.HashSet;
 
-import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
-import static nars.storage.Memory.isInputOrOperation;
+public class MetaPlugin implements Plugin {
+    InduceSucceedingEvent2Observer induceSucceedingEvent2Observer;
+    CodeRefactoringImmigrants immigrants = new CodeRefactoringImmigrants();
 
-public class MetaPlugin {
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        final Memory memory = n.memory;
+        immigrants.memory = memory;
+
+        if( induceSucceedingEvent2Observer==null ) {
+            induceSucceedingEvent2Observer = new InduceSucceedingEvent2Observer();
+        }
+
+        memory.event.set(induceSucceedingEvent2Observer, enabled, Events.InduceSucceedingEvent2.class);
+
+        return true;
+    }
+}
+
+class InduceSucceedingEvent2Observer implements EventEmitter.EventObserver {
+    CodeRefactoringImmigrants immigrants;
+
+    @Override
+    public void event(Class event, Object[] args) {
+        // check should be not neccesary
+        // TODO< terrorize team and make this NOP go away >
+        if (event != Events.InduceSucceedingEvent2.class) {
+            return;
+        }
+
+        int debug0 = 0;
+
+        Task newEvent = (Task)args[0];
+        DerivationContext nal = (DerivationContext)args[1];
+        immigrants.eventInference_NotifedBy_InduceSucceedingEvent2(newEvent, nal, immigrants.memory.sequenceTasks);
+    }
 }
 
 class CodeRefactoringImmigrants {
