@@ -90,6 +90,10 @@ public class Events {
     public static class UnexecutableOperation {   }
     public static class NewTaskExecution {    }
     public static class InduceSucceedingEvent {    }
+
+    // normally used by the Meta control logic
+    // is like InduceSucceedingEvent but it has succeeded other additional tests
+    public static class InduceSucceedingEvent2 {    }
     
 
     public static class TermLinkAdd { }

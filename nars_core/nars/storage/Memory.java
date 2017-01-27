@@ -115,6 +115,7 @@ public class Memory implements Serializable {
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
     
     /* Input event tasks that were either input events or derived sequences*/
+    // deprecated
     public Bag<Task<Term>,Sentence<Term>> sequenceTasks;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
@@ -589,6 +590,8 @@ public class Memory implements Serializable {
         if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
             return false;
        }
+
+        nal.emit(Events.InduceSucceedingEvent2.class, newEvent, nal);
 
         if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
             /*for (Task stmLast : stm) {
