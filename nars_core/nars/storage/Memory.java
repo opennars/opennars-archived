@@ -91,6 +91,7 @@ public class Memory implements Serializable {
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     
+    public long decisionBlock = 0;
     public Task lastDecision = null;
     public boolean allowExecution = true;
     private long timeRealStart;
@@ -157,9 +158,11 @@ public class Memory implements Serializable {
     
     public void reset() {
         event.emit(ResetStart.class);
+        decisionBlock = 0;
         concepts.reset();
         novelTasks.clear();
         newTasks.clear();    
+        sequenceTasks.clear();
         cycle = 0;
         timeRealStart = timeRealNow = System.currentTimeMillis();
         timePreviousCycle = time();
@@ -292,7 +295,7 @@ public class Memory implements Serializable {
         return false;
     }
     
-    public void inputTask(final Item t) {
+    public void inputTask(final Item t, boolean emitIn) {
         if(!checked) {
             checked=true;
             isjUnit=isJUnitTest();
@@ -303,7 +306,9 @@ public class Memory implements Serializable {
             if (s.getCreationTime()==-1)
                 s.setCreationTime(time(), param.duration.get());
 
-            emit(IN.class, task);
+            if(emitIn) {
+                emit(IN.class, task);
+            }
 
             if (task.budget.aboveThreshold()) {
                 
@@ -346,6 +351,10 @@ public class Memory implements Serializable {
         else {
             emit(IN.class, "Unrecognized Input Task: " + t);
         }
+    }
+    
+    public void inputTask(final Item t) {
+        inputTask(t, true);
     }
 
 
@@ -552,6 +561,34 @@ public class Memory implements Serializable {
         return newEvent.isInput() || (newEvent.sentence.term instanceof Operation);
     }
 
+    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
+        
+        if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
+            return false;
+        }
+        if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
+            return false;
+        }
+        /*if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
+            return false;
+        }*/
+        
+        if(newEvent.punctuation!=Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
+            return false; //temporal inductions for judgements only
+        
+        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
+        nal.setCurrentTask(controllerTask);
+
+        Sentence previousBelief = stmLast;
+        nal.setCurrentBelief(previousBelief);
+
+        Sentence currentBelief = newEvent;
+
+        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+        TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction);
+        return false;
+    }
+
     public boolean eventInference(final Task newEvent, DerivationContext nal) {
 
         if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
@@ -565,7 +602,6 @@ public class Memory implements Serializable {
        }
 
         nal.emit(Events.InduceSucceedingEvent2.class, newEvent, nal);
-
 
         return true;
     }
@@ -627,36 +663,4 @@ public class Memory implements Serializable {
     public final float cycles(AtomicDouble durations) {
         return param.duration.floatValue() * durations.floatValue();
     }
-
-
-
-
-    public boolean proceedWithTemporalInduction(final Sentence newEvent, final Sentence stmLast, Task controllerTask, DerivationContext nal, boolean SucceedingEventsInduction) {
-
-        if(SucceedingEventsInduction && !controllerTask.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
-            return false;
-        }
-        if (newEvent.isEternal() || !isInputOrOperation(controllerTask)) {
-            return false;
-        }
-        if (equalSubTermsInRespectToImageAndProduct(newEvent.term, stmLast.term)) {
-            return false;
-        }
-
-        if(newEvent.punctuation!= Symbols.JUDGMENT_MARK || stmLast.punctuation!=Symbols.JUDGMENT_MARK)
-            return false; //temporal inductions for judgements only
-
-        nal.setTheNewStamp(newEvent.stamp, stmLast.stamp, time());
-        nal.setCurrentTask(controllerTask);
-
-        Sentence previousBelief = stmLast;
-        nal.setCurrentBelief(previousBelief);
-
-        Sentence currentBelief = newEvent;
-
-        //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        TemporalRules.temporalInduction(currentBelief, previousBelief, nal, SucceedingEventsInduction);
-        return false;
-    }
-   
 }

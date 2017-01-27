@@ -89,8 +89,8 @@ public class RuleTables {
         Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
         
         nal.setCurrentBelief( belief );
-        
-        if (belief != null) {               
+
+        if (belief != null) {
             beliefTerm = belief.term; //because interval handling that differs on conceptual level
             
           /*Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
@@ -111,9 +111,13 @@ public class RuleTables {
             }*/
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
-            /*if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
-                return;
-            }*/
+            if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
+                nal.evidentalOverlap = true;
+                if(!task.sentence.isEternal() || !belief.isEternal()) {
+                    return; //only allow for eternal reasoning for now to prevent derived event floods
+                }
+                //return; //preparisons are made now to support this nicely
+            }
             //comment out for recursive examples, this is for the future, it generates a lot of potentially useless tasks
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
@@ -148,7 +152,9 @@ public class RuleTables {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
                         } //else {
-                            goalFromQuestion(task, taskTerm, nal);
+                        try {
+                            goalFromQuestion(task, taskTerm, nal); 
+                        }catch(Exception ex) {} //todo fix
                         //}
                         break;
                     case TermLink.COMPOUND_STATEMENT:
@@ -159,13 +165,13 @@ public class RuleTables {
                     case TermLink.COMPONENT_CONDITION:
                         if ((belief != null) && (taskTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd((Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
+                            SyllogisticRules.conditionalDedInd(task.sentence,(Implication) taskTerm, bIndex, beliefTerm, tIndex, nal);
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:
                         if ((belief != null) && (taskTerm instanceof Implication) && (beliefTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
-                            SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
+                            SyllogisticRules.conditionalDedInd(belief,(Implication) beliefTerm, bIndex, taskTerm, tIndex, nal);
                         }
                         break;
                 }
@@ -187,7 +193,7 @@ public class RuleTables {
                                     Sentence newTaskSentence = taskSentence.clone(u[1]);
                                     detachmentWithVar(newBelief, newTaskSentence, bIndex, nal);
                                 } else {
-                                    SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, nal);
+                                    SyllogisticRules.conditionalDedInd(belief, (Implication) beliefTerm, bIndex, taskTerm, -1, nal);
                                 }                                
                                 
                             } else if (beliefTerm instanceof Equivalence) {
@@ -219,7 +225,7 @@ public class RuleTables {
                             bIndex = bLink.getIndex(1);
                             if ((taskTerm instanceof Statement) && (beliefTerm instanceof Implication)) {
                                 
-                                    conditionalDedIndWithVar((Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
+                                    conditionalDedIndWithVar(belief, (Implication) beliefTerm, bIndex, (Statement) taskTerm, tIndex, nal);
                             }
                         }
                         break;
@@ -245,7 +251,7 @@ public class RuleTables {
                                     componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, nal);
                                     }
                                     } else {
-                                    conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
+                                    conditionalDedIndWithVar(task.sentence, (Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, nal);
                                     }
                                 }
                                 break;
@@ -678,7 +684,7 @@ public class RuleTables {
      * @param side The location of the shared term in the statement
      * @param nal Reference to the memory
      */
-    private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, DerivationContext nal) {
+    private static void conditionalDedIndWithVar(Sentence conditionalSentence, Implication conditional, short index, Statement statement, short side, DerivationContext nal) {
         
         if (!(conditional.getSubject() instanceof CompoundTerm))
             return;
@@ -703,7 +709,7 @@ public class RuleTables {
             if (unifiable) {
                 conditional = (Implication) u[0];
                 statement = (Statement) u[1];
-                SyllogisticRules.conditionalDedInd(conditional, index, statement, side, nal);
+                SyllogisticRules.conditionalDedInd(conditionalSentence, conditional, index, statement, side, nal);
             }
         }
     }

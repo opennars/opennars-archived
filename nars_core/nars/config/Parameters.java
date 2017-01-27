@@ -136,7 +136,7 @@ public class Parameters {
     public static final int NOVEL_TASK_BAG_SIZE = 100;
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
     /*  Size of sequence/input event bag */
-    public static final int SEQUENCE_BAG_SIZE = 100;
+    public static int SEQUENCE_BAG_SIZE = 30;
     public static final int SEQUENCE_BAG_LEVELS = 10;
     
     /* ---------- avoiding repeated reasoning ---------- */
@@ -229,7 +229,7 @@ public class Parameters {
     
     
    // public static int STM_SIZE = 1;
-    public static int SEQUENCE_BAG_ATTEMPTS = 20; //5
+    public static int SEQUENCE_BAG_ATTEMPTS = 20; //5 //20
     
     public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=false; //this should be true to restore 1.6.1 strategy
                                                                          // disabled because else we would do anticipation with the >1.6.1 strategy and the installed anticipation meta-control operations
@@ -247,7 +247,7 @@ public class Parameters {
     public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
     public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
     public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
-    public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=false;
+    public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
     
     public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
     public static float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
@@ -266,13 +266,15 @@ public class Parameters {
     
     public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 0.1f;
     
+    public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 2100;
+    
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
     public static float COMPLEXITY_UNIT=1.0f; //1.0 - oo
     
     public static boolean COMPOUND_OPERATIONS=true;
     
-    public static int TASKLINK_PER_CONTENT = 2; //eternal/event are also seen extra
+    public static int TASKLINK_PER_CONTENT = 4; //eternal/event are also seen extra
     
     /** Default priority of exection feedback */
     public static float DEFAULT_FEEDBACK_PRIORITY = (float) 0.9;

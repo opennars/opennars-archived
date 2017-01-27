@@ -22,6 +22,7 @@ package nars.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import nars.inference.TruthFunctions;
@@ -46,6 +47,7 @@ import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
+import nars.inference.SyllogisticRules;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
 import nars.io.Symbols;
@@ -68,6 +70,9 @@ import static nars.inference.UtilityFunctions.or;
 import nars.language.Variables;
 import nars.operator.mental.Anticipate;
 import nars.util.Events;
+import static nars.inference.UtilityFunctions.or;
+import nars.io.Output;
+import nars.language.Statement;
 
 public class Concept extends Item<Term> {
 
@@ -207,6 +212,8 @@ public class Concept extends Item<Term> {
             default:
                 return false;
         }
+        
+        maintainDisappointedAnticipations();
 
         if (task.aboveThreshold()) {    // still need to be processed
             //memory.logic.LINK_TO_TASK.commit();
@@ -225,6 +232,17 @@ public class Concept extends Item<Term> {
      */
     protected void processJudgment(final DerivationContext nal, final Task task) {
         final Sentence judg = task.sentence;
+        
+        //check whether it satisfies anticipation:
+        if(task.isInput() && !task.sentence.isEternal() && this.negConfirmation != null && task.sentence.getOccurenceTime() > this.negConfirm_abort_mintime) {
+            if(task.sentence.truth.getExpectation() > Parameters.DEFAULT_CONFIRMATION_EXPECTATION) {
+                if(((Statement) this.negConfirmation.sentence.term).getPredicate().equals(task.sentence.getTerm())) {
+                    nal.memory.emit(Output.CONFIRM.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+                    this.negConfirmation = null; //confirmed
+                }
+            }
+        }
+        
         final Task oldBeliefT = selectCandidate(task, beliefs, true);   // only revise with the strongest -- how about projection?
         Sentence oldBelief = null;
         if (oldBeliefT != null) {
@@ -358,7 +376,6 @@ public class Concept extends Item<Term> {
      * Returns true if the Task has a Term which can be executed
      */
     public boolean executeDecision(final Task t) {
-
         //if (isDesired()) 
         if(memory.allowExecution)
         {
@@ -374,7 +391,6 @@ public class Concept extends Item<Term> {
                 if(!oper.call(op, memory)) {
                     return false;
                 }
-                
                 this.memory.lastDecision = t;
                 //depriorize everything related to the previous decisions:
                 successfulOperationHandler(this.memory);
@@ -388,6 +404,10 @@ public class Concept extends Item<Term> {
     
     public static void successfulOperationHandler(Memory memory) {
         //multiple versions are necessary, but we do not allow duplicates
+        if(Parameters.CONSIDER_NEW_OPERATION_BIAS == 1.0f) {
+            return;
+        }
+
         for(Task s : memory.sequenceTasks) {
             
             if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
@@ -491,7 +511,10 @@ public class Concept extends Item<Term> {
                 Operation bestop = null;
                 float bestop_truthexp = 0.0f;
                 TruthValue bestop_truth = null;
+                Task executable_precond = null;
                 //long distance = -1;
+                long mintime = -1;
+                long maxtime = -1;
                 for(Task t: this.executable_preconditions) {
                     Term[] prec = ((Conjunction) ((Implication) t.getTerm()).getSubject()).term;
                     Term[] newprec = new Term[prec.length-3];
@@ -500,6 +523,9 @@ public class Concept extends Item<Term> {
                     }
                     
                     //distance = Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude, nal.memory.param.duration);
+                    mintime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude-1, nal.memory.param.duration);
+                    maxtime = nal.memory.time() + Interval.magnitudeToTime(((Interval)prec[prec.length-1]).magnitude+2, nal.memory.param.duration);
+                    
                     Operation op = (Operation) prec[prec.length-2];
                     Term precondition = Conjunction.make(newprec,TemporalRules.ORDER_FORWARD);
 
@@ -544,18 +570,26 @@ public class Concept extends Item<Term> {
                             bestop = op;
                             bestop_truthexp = expecdesire;
                             bestop_truth = opdesire;
+                            executable_precond = t;
                         }
                     }
                 }
 
                 if(bestop != null && bestop_truthexp > memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
                     Task t = new Task(new Sentence(bestop,Symbols.JUDGMENT_MARK,bestop_truth, projectedGoal.stamp), new BudgetValue(1.0f,1.0f,1.0f));
-                    System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
-                    if(!executeDecision(t)) { //this task is just used as dummy
-                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    //System.out.println("used " +t.getTerm().toString() + String.valueOf(memory.randomNumber.nextInt()));
+                    if(!task.sentence.stamp.evidenceIsCyclic()) {
+                        if(!executeDecision(t)) { //this task is just used as dummy
+                            memory.emit(UnexecutableGoal.class, task, this, nal);
+                        } else {
+                            memory.decisionBlock = memory.time() + Parameters.AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES;
+                            SyllogisticRules.generatePotentialNegConfirmation(nal, executable_precond.sentence, executable_precond.budget, mintime, maxtime, 2);
+                        }
                     }
                 }
-                }catch(Exception ex){}
+                }catch(Exception ex) {
+                    System.out.println("Failure in operation choice rule, analyze!");
+                }
                 
                 questionFromGoal(task, nal);
                 
@@ -563,7 +597,7 @@ public class Concept extends Item<Term> {
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
-                if(!executeDecision(task)) {
+                if(nal.memory.time() >= memory.decisionBlock && !executeDecision(task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                     return true; //it was made true by itself
                 }
@@ -765,6 +799,11 @@ public class Concept extends Item<Term> {
         return candidate;
     }
 
+    public float negConfirmationPriority = 0.0f;
+    public Task negConfirmation = null;
+    public long negConfirm_abort_mintime = 0;
+    public long negConfirm_abort_maxtime = 0;
+    
     /* ---------- insert Links for indirect processing ---------- */
     /**
      * Insert a TaskLink into the TaskLink bag
@@ -1111,6 +1150,18 @@ public class Concept extends Item<Term> {
         return buffer.toString();
     }
 
+    public void maintainDisappointedAnticipations() {
+        //here we can check the expiration of the feedback:
+        if(this.negConfirmation != null && this.memory.time() > this.negConfirm_abort_maxtime) {
+            memory.inputTask(this.negConfirmation, false); //disappointed
+            //if(this.negConfirmationPriority >= 2) {
+            //    System.out.println(this.negConfirmation.sentence.term);
+            //}
+            memory.emit(Output.DISAPPOINT.class,((Statement) this.negConfirmation.sentence.term).getPredicate());
+            this.negConfirmation = null;
+        }
+    }
+    
     /**
      * Replace default to prevent repeated inference, by checking TaskLink
      *
@@ -1120,7 +1171,7 @@ public class Concept extends Item<Term> {
      */
     public TermLink selectTermLink(final TaskLink taskLink, final long time) {
         
-        
+        maintainDisappointedAnticipations();
         int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             
