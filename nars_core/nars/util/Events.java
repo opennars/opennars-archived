@@ -94,7 +94,11 @@ public class Events {
     // normally used by the Meta control logic
     // is like InduceSucceedingEvent but it has succeeded other additional tests
     public static class InduceSucceedingEvent2 {    }
-    
+
+    // normally used by meta control logic
+    // is sent exclusivly by maintainDisappointedAnticipations
+    // and used to trigger certain conditions in meta control
+    public static class MetaMaintainDisappointedAnticipations {}
 
     public static class TermLinkAdd { }
     public static class TermLinkRemove { }

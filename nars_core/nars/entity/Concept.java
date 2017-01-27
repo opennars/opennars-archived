@@ -213,7 +213,7 @@ public class Concept extends Item<Term> {
                 return false;
         }
         
-        maintainDisappointedAnticipations();
+        maintainDisappointedAnticipations(nal);
 
         if (task.aboveThreshold()) {    // still need to be processed
             //memory.logic.LINK_TO_TASK.commit();
@@ -1150,7 +1150,12 @@ public class Concept extends Item<Term> {
         return buffer.toString();
     }
 
-    public void maintainDisappointedAnticipations() {
+    public void maintainDisappointedAnticipations(final DerivationContext nal) {
+        nal.emit(Events.MetaMaintainDisappointedAnticipations.class);
+    }
+
+    // should only be called by the meta plugin
+    public void maintainDisappointedAnticipationsIndirected() {
         //here we can check the expiration of the feedback:
         if(this.negConfirmation != null && this.memory.time() > this.negConfirm_abort_maxtime) {
             memory.inputTask(this.negConfirmation, false); //disappointed
@@ -1169,9 +1174,9 @@ public class Concept extends Item<Term> {
      * @param time The current time
      * @return The selected TermLink
      */
-    public TermLink selectTermLink(final TaskLink taskLink, final long time) {
+    public TermLink selectTermLink(final DerivationContext nal, final TaskLink taskLink, final long time) {
         
-        maintainDisappointedAnticipations();
+        maintainDisappointedAnticipations(nal);
         int toMatch = Parameters.TERM_LINK_MAX_MATCHED; //Math.min(memory.param.termLinkMaxMatched.get(), termLinks.size());
         for (int i = 0; (i < toMatch) && (termLinks.size() > 0); i++) {
             

@@ -15,7 +15,6 @@ import nars.inference.RuleTables;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 abstract public class FireConcept extends DerivationContext {
-    
     public FireConcept(Memory mem, Concept concept, int numTaskLinks) {
         this(mem, concept, numTaskLinks, Parameters.TERMLINK_MAX_REASONED);
     }
@@ -57,7 +56,7 @@ abstract public class FireConcept extends DerivationContext {
                     return;
 
                 if (currentTaskLink.budget.aboveThreshold()) {
-                    fireTaskLink(termLinkCount);                    
+                    fireTaskLink(termLinkCount);
                 }
 
                 returnTaskLink(currentTaskLink);
@@ -87,7 +86,7 @@ abstract public class FireConcept extends DerivationContext {
             
         } else {            
             while (termLinks > 0) {
-                final TermLink termLink = currentConcept.selectTermLink(currentTaskLink, memory.time());
+                final TermLink termLink = currentConcept.selectTermLink(this, currentTaskLink, memory.time());
                 
                 if (termLink == null) {
                     break;
