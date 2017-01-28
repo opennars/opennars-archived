@@ -40,7 +40,7 @@ public class MetaPlugin implements Plugin {
         interpreter.memory = memory;
 
         if( induceSucceedingEvent2Observer==null ) {
-            induceSucceedingEvent2Observer = new InduceSucceedingEvent2Observer();
+            induceSucceedingEvent2Observer = new InduceSucceedingEvent2Observer(immigrants);
         }
 
         if( metaMaintainDisappointedAnticipationsObserver == null ) {
@@ -81,6 +81,10 @@ public class MetaPlugin implements Plugin {
 }
 
 class InduceSucceedingEvent2Observer implements EventEmitter.EventObserver {
+    InduceSucceedingEvent2Observer(CodeRefactoringImmigrants immigrants) {
+        this.immigrants = immigrants;
+    }
+
     CodeRefactoringImmigrants immigrants;
 
     @Override
