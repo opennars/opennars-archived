@@ -122,11 +122,20 @@ public class NARConsole {
                 log("NARSBatch.run():"
                         + " step " + nar.time()
                         + " " + nar.inputChannels.size());
-            
-            nar.step(1);
+
+            if( nar.isRunning() ) {
+                nar.step(1);
+            }
+
             try {
                 if(sleep > -1) {
                     Thread.sleep(sleep);
+                }
+
+                if( !nar.isRunning() ) {
+                    // we have to sleep because we don't want to burn CPU cycles if it's stopped
+                    // latency of 100ms should be fine
+                    Thread.sleep(100);
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(NARConsole.class.getName()).log(Level.SEVERE, null, ex);

@@ -54,7 +54,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         if (enabled) {
-            this.nar = nar;
+            this.nar = n;
             this.memory = n.memory;
             this.narsese = new Narsese(memory);
             //this.englisch = new Englisch();
