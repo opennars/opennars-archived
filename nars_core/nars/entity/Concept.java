@@ -1151,7 +1151,7 @@ public class Concept extends Item<Term> {
     }
 
     public void maintainDisappointedAnticipations(final DerivationContext nal) {
-        nal.emit(Events.MetaMaintainDisappointedAnticipations.class);
+        nal.emit(Events.MetaMaintainDisappointedAnticipations.class, this);
     }
 
     // should only be called by the meta plugin
