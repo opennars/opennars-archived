@@ -87,10 +87,6 @@ public class NARConsole {
             if(line!=null)
                 nar.addInput(line);
           }catch(Exception ex){}
-          try
-          {
-            Thread.sleep(1);
-          }catch(Exception ex){}
         }
       }
     }
