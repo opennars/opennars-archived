@@ -6,6 +6,9 @@ import socket
 import sys
 import time
 import itertools
+import re
+
+
 
 knowledge=""""""
 
@@ -63,6 +66,10 @@ def receive_thread(a):
               proc.stdin.write(knowledge)
               print("Knowledge put in")
 
+def narInput(text):
+    print("NAR input: "+TEXT)
+    proc.stdin.write(TEXT+"\n")
+
 thread.start_new_thread(receive_thread,(1,))
 
 while True:
@@ -90,15 +97,21 @@ while True:
                     proc.stdin.write(knowledge)
                     print("Knowledge put in")
                 elif TEXT[0] == "<" or TEXT[0] == "(":
-                    print("NAR input: "+TEXT)
                     try:
-                        proc.stdin.write(TEXT+"\n")
+                        narInput(TEXT)
                     except:
                         None
-                elif TEXT[0] == "+":
-                    proc.stdin.write("+"+TEXT+"\n")
-                elif TEXT[:] == "*pause":
-                    proc.stdin.write("+"+TEXT+"\n")
+                elif TEXT[:6] == "*start":
+                    proc.stdin.write("*start\n") # transmit special token
+                elif TEXT[:5] == "*stop":
+                    proc.stdin.write("*stop\n") # transmit special token
+
+
+                # if it is a number it means the user want to wait n cycles so we pass it to NARS
+                m = re.search("(\d+)", TEXT)
+                if m:
+                    narInput(TEXT)
+
 
     except:
         print("exception")

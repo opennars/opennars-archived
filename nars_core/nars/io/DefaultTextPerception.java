@@ -49,9 +49,12 @@ public class DefaultTextPerception implements Plugin, EventObserver {
     private boolean enableTwenglish = false; //the events should be introduced event-wise
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal inference
 
+    private NAR nar;
+
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         if (enabled) {
+            this.nar = nar;
             this.memory = n.memory;
             this.narsese = new Narsese(memory);
             //this.englisch = new Englisch();
@@ -135,7 +138,29 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                 return null;
             }
         });
-        
+
+        // start
+        // we do this directly, else we have a snake-tail-biting problem :/
+        parsers.add(new TextReaction() {
+            @Override public Object react(String input) {
+                if (input.startsWith("*start") ) {
+                    nar.start(nar.getMinCyclePeriodMS());
+                    return null;
+                }
+                return null;
+            }
+        });
+        // stop
+        // we do this directly, else we have a snake-tail-biting problem :/
+        parsers.add(new TextReaction() {
+            @Override public Object react(String input) {
+                if (input.startsWith("*stop") ) {
+                    nar.stop();
+                    return null;
+                }
+                return null;
+            }
+        });
         //reset
         parsers.add(new TextReaction() {
             @Override public Object react(String input) {                
