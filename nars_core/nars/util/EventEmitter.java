@@ -135,7 +135,7 @@ public class EventEmitter {
                 EventObserver m = observers.get(i);
                 m.event(eventClass, params);
             } catch (Exception ex) {
-                if (Parameters.DEBUG) {
+                if (Parameters.DEBUG_EVENTEXCEPTIONS) {
                     // if we are in DEBUG mode we just rethrow the exception
                     throw ex;
                 }

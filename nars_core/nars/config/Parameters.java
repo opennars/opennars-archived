@@ -41,6 +41,9 @@ public class Parameters {
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
 
+    // are exceptions rethrown in the event handling code
+    public static boolean DEBUG_EVENTEXCEPTIONS = true;
+
     /** for thorough bag debugging (slow) */
     public static boolean DEBUG_BAG = false;
     public static boolean DEBUG_INVALID_SENTENCES = true;
