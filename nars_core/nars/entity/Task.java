@@ -43,7 +43,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     /* The sentence of the Task*/
     public final Sentence<T> sentence;
     /* Task from which the Task is derived, or null if input*/
-    final WeakReference<Task> parentTask;
+    public WeakReference<Task> parentTask;
     /* Belief from which the Task is derived, or null if derived from a theorem*/
     public final  WeakReference<Sentence> parentBelief;
     /* For Question and Goal: best solution found so far*/

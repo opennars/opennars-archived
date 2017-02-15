@@ -229,10 +229,8 @@ public class Parameters {
     
     
    // public static int STM_SIZE = 1;
-    public static int SEQUENCE_BAG_ATTEMPTS = 20; //5 //20
+    public static int SEQUENCE_BAG_ATTEMPTS = 1; //5 //20
     
-    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
-
     public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
     
     public static float DERIVATION_PRIORITY_LEAK = 0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs

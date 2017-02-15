@@ -598,45 +598,6 @@ public class Memory implements Serializable {
         if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !isInputOrOperation(newEvent)) {
             return false;
        }
-
-        if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
-            /*for (Task stmLast : stm) {
-                Concept OldConc = this.concept(stmLast.getTerm());
-                if(OldConc != null)
-                {
-                    TermLink template = new TermLink(newEvent.getTerm(), TermLink.TEMPORAL);
-                    if(OldConc.termLinkTemplates == null)
-                        OldConc.termLinkTemplates = new ArrayList<>();
-                    OldConc.termLinkTemplates.add(template);
-                    OldConc.buildTermLinks(newEvent.getBudget()); //will be built bidirectionally anyway
-                }
-            }*/
-            
-            //also attempt direct
-            HashSet<Task> already_attempted = new HashSet<Task>();
-            for(int i =0 ;i<Parameters.SEQUENCE_BAG_ATTEMPTS;i++) {
-                Task takeout = this.sequenceTasks.takeNext();
-                if(takeout == null) {
-                    break; //there were no elements in the bag to try
-                }
-                if(already_attempted.contains(takeout)) {
-                    this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
-                    continue;
-                }
-                already_attempted.add(takeout);
-                try {
-                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
-                } catch (Exception ex) {
-                    if(Parameters.DEBUG) {
-                        System.out.println("issue in temporal induction");
-                    }
-                }
-                this.sequenceTasks.putBack(takeout, cycles(this.param.sequenceForgetDurations), this);
-            }
-            //for (Task stmLast : stm) {
-               // proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
-            //}
-        }
         
         addToSequenceTasks(newEvent);
         
@@ -684,6 +645,8 @@ public class Memory implements Serializable {
         //ok now add the new one:
         //making sure we do not mess with budget of the task:
         Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty/(float)newEvent.sentence.term.getComplexity(),1.0f/(float)newEvent.sentence.term.getComplexity(),0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+        if(newEvent.isInput())
+            t2.parentTask = null;
         //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
         this.sequenceTasks.putIn(t2);
 

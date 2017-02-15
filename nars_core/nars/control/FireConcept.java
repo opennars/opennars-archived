@@ -4,6 +4,7 @@
  */
 package nars.control;
 
+import java.util.HashSet;
 import nars.config.Parameters;
 import nars.util.Events;
 import nars.storage.Memory;
@@ -36,9 +37,43 @@ abstract public class FireConcept extends DerivationContext {
     @Override
     public void run() {     
         fire();        
-        onFinished();                
+        onFinished();      
+        eventInference();
     }
     
+    protected void eventInference() {
+         //also attempt direct
+            HashSet<Task> already_attempted = new HashSet<Task>();
+            for(int i = 0 ;i<Parameters.SEQUENCE_BAG_ATTEMPTS;i++) {
+                Task takeout = this.memory.sequenceTasks.takeNext();
+                if(takeout == null) {
+                    break; //there were no elements in the bag to try
+                }
+                takeout.setElemOfSequenceBuffer(true);
+                if(already_attempted.contains(takeout)) {
+                    this.memory.sequenceTasks.putBack(takeout, memory.cycles(memory.param.sequenceForgetDurations), memory);
+                    continue;
+                }
+                already_attempted.add(takeout);
+                
+                Task takeout2 = this.memory.sequenceTasks.takeNext();
+                if(takeout2 == null) {
+                    this.memory.sequenceTasks.putBack(takeout, memory.cycles(memory.param.sequenceForgetDurations), memory);
+                    break; //there were no elements in the bag to try
+                }
+                takeout2.setElemOfSequenceBuffer(true);
+                
+                try {
+                    memory.proceedWithTemporalInduction(takeout2.sentence, takeout.sentence, takeout2, this, true);
+                } catch (Exception ex) {
+                    if(Parameters.DEBUG) {
+                        System.out.println("issue in temporal induction");
+                    }
+                }
+                this.memory.sequenceTasks.putBack(takeout, memory.cycles(memory.param.sequenceForgetDurations), memory);
+                this.memory.sequenceTasks.putBack(takeout2, memory.cycles(memory.param.sequenceForgetDurations), memory);
+            }
+    }
     
     protected void fire() {
 
