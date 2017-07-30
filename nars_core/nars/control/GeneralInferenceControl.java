@@ -11,6 +11,7 @@ import nars.entity.Task;
 import nars.entity.TermLink;
 import nars.inference.RuleTables;
 import nars.storage.Memory;
+import java.util.HashSet;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
@@ -34,6 +35,7 @@ public class GeneralInferenceControl {
         DerivationContext cont = new DerivationContext(mem);
         cont.setCurrentConcept(currentConcept);
         fireConcept(cont, 1);
+        TemporalInferenceControl.eventInference(cont);
     }
     
     public static void fireConcept(DerivationContext nal, int numTaskLinks) {     
@@ -55,7 +57,7 @@ public class GeneralInferenceControl {
         float forgetCycles = nal.memory.cycles(nal.memory.param.conceptForgetDurations);
         nal.memory.concepts.putBack(nal.currentConcept, forgetCycles, nal.memory);
     }
-    
+
     protected static void fireTaskLink(DerivationContext nal, int termLinks) {
         final Task task = nal.currentTaskLink.getTarget();
         nal.setCurrentTerm(nal.currentConcept.term);

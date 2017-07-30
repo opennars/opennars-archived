@@ -291,11 +291,14 @@ public class SimNAR extends Frame {
             {
                 for(int i=0;i<viewField.length;i++) {
                     if(viewField[i]>0.1f) {
-                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|:"; // %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
+                        if(k%4==0) {
+                        String s = "<{\""+String.valueOf(i)+"\"} --> [on]>. :|: %"+String.valueOf(0.5f+0.5f*viewField[i])+"%";
                         if(!lastInput.equals(s)) {
                             nar.addInput(s);
+                            lastInput = s;
                         }
-                        lastInput = s;
+          
+                        }
                         //System.out.println("perceive "+s);
                     }
                 }

@@ -395,14 +395,13 @@ public class Memory implements Serializable, Iterable<Concept> {
         cont.setCurrentTerm(task.getTerm());
         cont.setCurrentConcept(conceptualize(task.budget, cont.getCurrentTerm()));
         if (cont.getCurrentConcept() != null) {
+            if(task.isElemOfSequenceBuffer()) {
+                TemporalInferenceControl.addToSequenceTasks(cont, task);
+            }
             boolean processed = cont.getCurrentConcept().directProcess(cont, task);
             if (processed) {
                 event.emit(Events.ConceptDirectProcessedTask.class, task);
             }
-        }
-        
-        if (!task.sentence.isEternal()) {
-            TemporalInferenceControl.eventInference(task, cont);
         }
         
         //memory.logic.TASK_IMMEDIATE_PROCESS.commit();

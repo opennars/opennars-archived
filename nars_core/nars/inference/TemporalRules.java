@@ -161,7 +161,7 @@ public class TemporalRules {
             Conjunction conj = (Conjunction) t;
             for(Term comp: conj.term) {
                 if(!(comp instanceof Interval))
-                    value = BudgetFunctions.and(value, ConjunctionPriority(nal, comp, value));
+                    value = BudgetFunctions.aveAri(value, ConjunctionPriority(nal, comp, value));
             }
         } else {
             Concept c = nal.memory.concept(t);
@@ -330,6 +330,7 @@ public class TemporalRules {
         
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         /*if(!SucceedingEventsInduction)*/ 
+        if(false)
         { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
             int tt1=(int) s1.getOccurenceTime();
@@ -338,8 +339,8 @@ public class TemporalRules {
             if(d!=0) {
                 double mul=1.0/((double)d);
                 
-                mul *= ConjunctionPriority(nal, t1);
-                mul *= ConjunctionPriority(nal, t2);
+               // mul *= ConjunctionPriority(nal, t1);
+                //mul *= ConjunctionPriority(nal, t2);
                 
                 budget1.setPriority((float) (budget1.getPriority()*mul));
                 budget2.setPriority((float) (budget2.getPriority()*mul));

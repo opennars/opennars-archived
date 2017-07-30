@@ -186,6 +186,13 @@ public class Conjunction extends CompoundTerm {
             if(newArgList.length == 1) {
                 return newArgList[0];
             }
+            for(int i=0; i<newArgList.length-1; i++) {
+                Term cur = newArgList[i];
+                Term next = newArgList[i+1];
+                if((cur instanceof Interval) && (next instanceof Interval)) {
+                    return null;
+                }
+            }
             return new Conjunction(newArgList, temporalOrder, false);
             
         } else {

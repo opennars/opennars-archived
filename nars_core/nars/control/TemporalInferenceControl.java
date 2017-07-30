@@ -13,6 +13,8 @@ import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
+import nars.language.Equivalence;
+import nars.language.Implication;
 import nars.operator.Operation;
 import nars.util.Events;
 
@@ -49,65 +51,50 @@ public class TemporalInferenceControl {
         return false;
     }
 
-    public static boolean eventInference(final Task newEvent, DerivationContext nal) {
+    public static void eventInference(DerivationContext nal) {
+         //also attempt direct
+        double SEQUENCE_BAG_PRIORITY_TRESHOLD = 0.0; //no need to keep them for now for easier visualization
+        HashSet<Task> already_attempted = new HashSet<Task>();
+        for(int i = 0 ;i<Parameters.SEQUENCE_BAG_ATTEMPTS;i++) {
+            Task takeout = nal.memory.sequenceTasks.takeNext();
+            if(takeout == null) {
+                break; //there were no elements in the bag to try
+            }
+            takeout.setElemOfSequenceBuffer(true);
+            if(already_attempted.contains(takeout)) {
+                nal.memory.sequenceTasks.putBack(takeout, nal.memory.cycles(nal.memory.param.sequenceForgetDurations), nal.memory);
+                continue;
+            }
+            already_attempted.add(takeout);
 
-        if(newEvent.getTerm() == null || newEvent.budget==null || !newEvent.isElemOfSequenceBuffer()) { //todo refine, add directbool in task
-            return false;
-       }
+            Task takeout2 = nal.memory.sequenceTasks.takeNext();
+            if(takeout2 == null) {
+                nal.memory.sequenceTasks.putBack(takeout, nal.memory.cycles(nal.memory.param.sequenceForgetDurations), nal.memory);
+                break; //there were no elements in the bag to try
+            }
+            takeout2.setElemOfSequenceBuffer(true);
 
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
-
-        if (!newEvent.sentence.isJudgment() || newEvent.sentence.isEternal() || !newEvent.isInputOrOperation()) {
-            return false;
-       }
-
-        if(Parameters.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS) {
-            /*for (Task stmLast : stm) {
-                Concept OldConc = this.concept(stmLast.getTerm());
-                if(OldConc != null)
-                {
-                    TermLink template = new TermLink(newEvent.getTerm(), TermLink.TEMPORAL);
-                    if(OldConc.termLinkTemplates == null)
-                        OldConc.termLinkTemplates = new ArrayList<>();
-                    OldConc.termLinkTemplates.add(template);
-                    OldConc.buildTermLinks(newEvent.getBudget()); //will be built bidirectionally anyway
+            try {
+                proceedWithTemporalInduction(takeout2.sentence, takeout.sentence, takeout2, nal, true);
+            } catch (Exception ex) {
+                if(Parameters.DEBUG) {
+                    System.out.println("issue in temporal induction");
                 }
-            }*/
-            
-            //also attempt direct
-            HashSet<Task> already_attempted = new HashSet<Task>();
-            for(int i =0 ;i<Parameters.SEQUENCE_BAG_ATTEMPTS;i++) {
-                Task takeout = nal.memory.sequenceTasks.takeNext();
-                if(takeout == null) {
-                    break; //there were no elements in the bag to try
-                }
-                if(already_attempted.contains(takeout)) {
-                    nal.memory.sequenceTasks.putBack(takeout, nal.memory.cycles(nal.memory.param.sequenceForgetDurations), nal.memory);
-                    continue;
-                }
-                already_attempted.add(takeout);
-                try {
-                proceedWithTemporalInduction(newEvent.sentence, takeout.sentence, newEvent, nal, true);
-                } catch (Exception ex) {
-                    if(Parameters.DEBUG) {
-                        System.out.println("issue in temporal induction");
-                    }
-                }
+            }
+            if(takeout.getPriority() > SEQUENCE_BAG_PRIORITY_TRESHOLD) {
                 nal.memory.sequenceTasks.putBack(takeout, nal.memory.cycles(nal.memory.param.sequenceForgetDurations), nal.memory);
             }
-            //for (Task stmLast : stm) {
-               // proceedWithTemporalInduction(newEvent.sentence, stmLast.sentence, newEvent, nal, true);
-            //}
+            if(takeout2.getPriority() > SEQUENCE_BAG_PRIORITY_TRESHOLD) {
+                nal.memory.sequenceTasks.putBack(takeout2, nal.memory.cycles(nal.memory.param.sequenceForgetDurations), nal.memory);
+            }
         }
-        
-        addToSequenceTasks(nal, newEvent);
-        for (int i = 0; i < 10; ++i) System.out.println();
+
+        /*for (int i = 0; i < 10; ++i) System.out.println();
         System.out.println("----------");
         for(Task t : nal.memory.sequenceTasks) {
             System.out.println(t.sentence.getTerm().toString()+ " " +String.valueOf(t.getPriority()));
         }
-        System.out.println("^^^^^^^^^");
-        return true;
+        System.out.println("^^^^^^^^^");*/
     }
     
     public static void addToSequenceTasks(DerivationContext nal, final Task newEvent) {
@@ -121,6 +108,10 @@ public class TemporalInferenceControl {
             if(term.term[0] instanceof Operation) { //also try to start with a condition
                 periority_penalty *= Parameters.OPERATION_SEQUENCE_START_PENALTY;
             }
+        }
+        if(newEvent.getTerm() instanceof Implication  ||
+                newEvent.getTerm() instanceof Equivalence) { //allow everything except this in event bag
+            return;
         }
 
         //multiple versions are necessary, but we do not allow duplicates
@@ -145,8 +136,11 @@ public class TemporalInferenceControl {
         while(removal != null);
         //ok now add the new one:
         //making sure we do not mess with budget of the task:
-        Task t2 = new Task(newEvent.sentence, new BudgetValue(0.9f*periority_penalty/(float)newEvent.sentence.term.getComplexity(),1.0f/(float)newEvent.sentence.term.getComplexity(),0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
+        Task t2 = new Task(newEvent.sentence, new BudgetValue(1.0f*periority_penalty,1.0f/(float)newEvent.sentence.term.getComplexity(),0.1f), newEvent.getParentTask(), newEvent.getParentBelief(), newEvent.getBestSolution());
         //we use a event default budget here so the time it appeared and whether it was selected is key criteria currently divided by complexity
+        if(newEvent.isInput()) {
+            t2.parentTask = null;
+        }
         nal.memory.sequenceTasks.putIn(t2);
 
         //debug:
