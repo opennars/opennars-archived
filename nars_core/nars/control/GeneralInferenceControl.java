@@ -10,25 +10,28 @@ import nars.util.Events;
 import nars.entity.Task;
 import nars.entity.TermLink;
 import nars.inference.RuleTables;
+import nars.language.Term;
 import nars.storage.Memory;
 
 /** Concept reasoning context - a concept is "fired" or activated by applying the reasoner */
 public class GeneralInferenceControl {
     
     public static void selectConceptForInference(Memory mem) {
-        Concept currentConcept = mem.concepts.takeNext();
+        Concept currentConcept = mem.concepts.get(Term.EVENT); //.takeNext();
         if (currentConcept==null)
             return;
         
-        if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
-            mem.concepts.take(currentConcept.getTerm());
-            mem.conceptRemoved(currentConcept);
-            return;
-        }
-        if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
-            mem.concepts.take(currentConcept.getTerm());
-            mem.conceptRemoved(currentConcept);
-            return;
+        if(currentConcept.getTerm() != Term.EVENT) {
+            if(currentConcept.taskLinks.size() == 0) { //remove concepts without tasklinks and without termlinks
+                mem.concepts.take(currentConcept.getTerm());
+                mem.conceptRemoved(currentConcept);
+                return;
+            }
+            if(currentConcept.termLinks.size() == 0) {  //remove concepts without tasklinks and without termlinks
+                mem.concepts.take(currentConcept.getTerm());
+                mem.conceptRemoved(currentConcept);
+                return;
+            }
         }
         
         DerivationContext cont = new DerivationContext(mem);
@@ -40,11 +43,11 @@ public class GeneralInferenceControl {
         for (int i = 0; i < numTaskLinks; i++) {
 
             if (nal.currentConcept.taskLinks.size() == 0) 
-                return;
+                continue;
 
             nal.currentTaskLink = nal.currentConcept.taskLinks.takeNext();                    
             if (nal.currentTaskLink == null)
-                return;
+                continue;
 
             if (nal.currentTaskLink.budget.aboveThreshold()) {
                 fireTaskLink(nal, Parameters.TERMLINK_MAX_REASONED);                    

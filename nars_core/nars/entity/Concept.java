@@ -158,7 +158,9 @@ public class Concept extends Item<Term> {
                 
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
-        } else {
+        } 
+        else
+        {
             this.termLinkTemplates = null;
         }
 
@@ -194,6 +196,23 @@ public class Concept extends Item<Term> {
         if(task.isInput()) {
             observable = true;
         }
+        
+        //-- TODO do at appropriate place TODO see where this really happens!!
+        //TODO SEQUENCE TESTCASE TO ISOLATE WHEN ORDER IS MIXED UP!!!
+        if(task.sentence.term instanceof Conjunction) {
+            Conjunction conj = (Conjunction) task.sentence.term;
+            if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                boolean lastWasInterval = false;
+                for(int i=0; i<conj.size(); i++) {
+                    boolean isInterval = (conj.term[i] instanceof Interval);
+                    if(lastWasInterval && (conj.term[i] instanceof Interval)) {
+                        return false;
+                    }
+                    lastWasInterval = isInterval;
+                }
+            }
+        }
+        
         char type = task.sentence.punctuation;
         switch (type) {
             case Symbols.JUDGMENT_MARK:
@@ -217,7 +236,14 @@ public class Concept extends Item<Term> {
 
         if (task.aboveThreshold()) {    // still need to be processed
             //memory.logic.LINK_TO_TASK.commit();
+            
+            if(task.isElemOfSequenceBuffer()) //probably also allow derivations in future
+            {
+                this.termLinkTemplates.add(new TermLink(TermLink.COMPONENT, Term.EVENT, 0));
+            }
             linkToTask(task,nal);
+            
+            
         }
 
         return true;
@@ -391,42 +417,11 @@ public class Concept extends Item<Term> {
                 if(!oper.call(op, memory)) {
                     return false;
                 }
-                this.memory.lastDecision = t;
-                //depriorize everything related to the previous decisions:
-                successfulOperationHandler(this.memory);
                 
-                //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;
             }
         }
         return false;
-    }
-    
-    public static void successfulOperationHandler(Memory memory) {
-        //multiple versions are necessary, but we do not allow duplicates
-        if(Parameters.CONSIDER_NEW_OPERATION_BIAS == 1.0f) {
-            return;
-        }
-        for(Task s : memory.sequenceTasks) {
-            
-            if(memory.lastDecision != null && (s.getTerm() instanceof Operation)) {
-                if(!s.getTerm().equals(memory.lastDecision.getTerm())) {
-                    s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
-                    continue; //depriorized already, we can look at the next now
-                }
-            }
-            if(memory.lastDecision != null && (s.getTerm() instanceof Conjunction)) {
-                Conjunction seq = (Conjunction) s.getTerm();
-                if(seq.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                    for(Term w : seq.term) {
-                        if((w instanceof Operation) && !w.equals(memory.lastDecision.getTerm())) {
-                            s.setPriority(s.getPriority()*Parameters.CONSIDER_NEW_OPERATION_BIAS);
-                            break; //break because just penalty once, not for each term ^^
-                        }
-                    }
-                }
-            }
-        }
     }
     
     /**
@@ -534,7 +529,8 @@ public class Concept extends Item<Term> {
                     if(preconc != null) { //ok we can look now how much it is fullfilled
                         
                         //check recent events in event bag
-                        for(Task p : this.memory.sequenceTasks) {
+                        for(TaskLink pl : this.memory.concepts.get(Term.EVENT).taskLinks) {
+                            Task p = pl.targetTask;
                             if(p.sentence.term.equals(preconc.term) && p.sentence.isJudgment() && !p.sentence.isEternal() && p.sentence.getOccurenceTime() > newesttime  && p.sentence.getOccurenceTime() <= memory.time()) {
                                 newesttime = p.sentence.getOccurenceTime();
                                 bestsofar = p; //we use the newest for now
@@ -708,8 +704,14 @@ public class Concept extends Item<Term> {
 
             for (int t = 0; t < termLinkTemplates.size(); t++) {
                 TermLink termLink = termLinkTemplates.get(t);
-
-               if(termLink.type == TermLink.TEMPORAL)
+                
+                if(task.sentence.isEternal() && termLink.getTerm().equals(Term.EVENT)) {
+                    continue;
+                }
+                if(!task.isElemOfSequenceBuffer()) { //-- probably also for derivations in the future!
+                    continue;
+                }
+               if(termLink.type == TermLink.TEMPORAL) //-- check for removal
                     continue;
 //              if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
                 Term componentTerm = termLink.target;
@@ -1087,7 +1089,7 @@ public class Concept extends Item<Term> {
         long distance = Long.MAX_VALUE;
 
         for (final Task beliefT : beliefs) {  
-            if(!beliefT.sentence.isEternal()) {
+            if(beliefT.isElemOfSequenceBuffer()) { //-- probably also for derivations in the future!
                 long distance_new = Math.abs(task.sentence.getOccurenceTime() - beliefT.sentence.getOccurenceTime());
                 if(distance_new < distance) {
                     distance = distance_new;

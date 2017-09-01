@@ -23,7 +23,6 @@ import java.util.List;
 import nars.storage.Memory;
 import nars.config.Parameters;
 import nars.control.DerivationContext;
-import nars.control.TemporalInferenceControl;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -487,7 +486,7 @@ public class TemporalRules {
                             t.sentence.term instanceof Conjunction && 
                             ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_NONE &&
                             ((Conjunction) t.sentence.term).getTemporalOrder() != TemporalRules.ORDER_INVALID) {
-                        TemporalInferenceControl.addToSequenceTasks(nal, t);
+                        t.setElemOfSequenceBuffer(true);
                     }
 
                     success.add(t);

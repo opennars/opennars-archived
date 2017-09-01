@@ -39,11 +39,9 @@ import nars.util.Events.ResetStart;
 import nars.util.Events.TaskRemove;
 import nars.control.DerivationContext;
 import nars.control.GeneralInferenceControl;
-import nars.control.TemporalInferenceControl;
 import nars.plugin.mental.Emotions;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import static nars.entity.Concept.successfulOperationHandler;
 import nars.entity.Item;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
@@ -86,7 +84,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     public final Emotions emotion = new Emotions();   
     
     public long decisionBlock = 0;
-    public Task lastDecision = null;
     public boolean allowExecution = true;
 
     public static long randomSeed = 1;
@@ -150,6 +147,7 @@ public class Memory implements Serializable, Iterable<Concept> {
         inputPausedUntil = 0;
         emotion.set(0.5f, 0.5f);
         resetStatic();
+        this.concepts.addItem(new Concept(new BudgetValue(1,1,1), Term.EVENT, this));
         event.emit(ResetEnd.class);
     }
 
@@ -278,12 +276,6 @@ public class Memory implements Serializable, Iterable<Concept> {
                 
                 addNewTask(task, "Perceived");
                 
-                if(task.sentence.isJudgment() && !task.sentence.isEternal() && task.sentence.term instanceof Operation) {
-                    this.lastDecision = task;
-                    //depriorize everything related to the previous decisions:
-                    successfulOperationHandler(this);
-                }
-                
             } else {
                 removeTask(task, "Neglected");
             }
@@ -399,10 +391,6 @@ public class Memory implements Serializable, Iterable<Concept> {
             if (processed) {
                 event.emit(Events.ConceptDirectProcessedTask.class, task);
             }
-        }
-        
-        if (!task.sentence.isEternal()) {
-            TemporalInferenceControl.eventInference(task, cont);
         }
         
         //memory.logic.TASK_IMMEDIATE_PROCESS.commit();
