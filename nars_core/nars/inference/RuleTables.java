@@ -93,8 +93,9 @@ public class RuleTables {
         if (belief != null) {   
             beliefTerm = belief.term; //because interval handling that differs on conceptual level
             
-          /*Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
-            if(belief_event != null) {
+          //Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
+          Sentence belief_event = belief;
+            if(belief_event != null && belief_event.isJudgment() && !belief_event.isEternal()) {
                 boolean found_overlap = false;
                 if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief_event.stamp.evidentialBase)) {
                     found_overlap = true;
@@ -108,7 +109,7 @@ public class RuleTables {
                     nal.setCurrentBelief(inference_belief);
                     nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
                 }
-            }*/
+            }
             
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
             if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {

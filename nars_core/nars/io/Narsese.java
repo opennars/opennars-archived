@@ -52,6 +52,7 @@ import static nars.language.Statement.make;
 import static nars.language.Statement.make;
 import static java.lang.String.valueOf;
 import static nars.io.Symbols.getOperator;
+import nars.language.Inheritance;
 import static nars.language.Variables.containVar;
 import static nars.language.Statement.make;
 
@@ -180,6 +181,10 @@ public class Narsese {
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
             
+        if(stamp.getOccurrenceTime() != Stamp.ETERNAL) {
+            content = Inheritance.make(content, Term.EVENT);
+        }
+        
         Sentence sentence = new Sentence(content, punc, truth, stamp);
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);

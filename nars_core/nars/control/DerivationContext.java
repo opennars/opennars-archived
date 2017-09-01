@@ -23,6 +23,7 @@ import nars.inference.TruthFunctions;
 import nars.language.CompoundTerm;
 import nars.language.Interval;
 import nars.language.Term;
+import nars.language.Inheritance;
 import nars.language.Variable;
 import nars.operator.Operation;
 
@@ -214,7 +215,7 @@ public class DerivationContext {
      * @param temporalInduction
      * @param overlapAllowed // https://groups.google.com/forum/#!topic/open-nars/FVbbKq5En-M
      */
-    public List<Task> doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
+    public List<Task> doublePremiseTask(Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
                 
         List<Task> ret = new ArrayList<Task>();
         if(newContent == null) {
@@ -256,6 +257,15 @@ public class DerivationContext {
                 TruthValue truthEt=TruthFunctions.eternalize(newTruth);               
                 Stamp st=getTheNewStamp().clone();
                 st.setEternal();
+                
+                if(newContent instanceof Inheritance)
+                {
+                    Inheritance inh = ((Inheritance) newContent);
+                    if(inh.getPredicate().equals(Term.EVENT)) {
+                        newContent = inh.getSubject();
+                    } //EVENT only for events
+                }
+                
                 final Sentence newSentence = new Sentence(newContent, getCurrentTask().sentence.punctuation, truthEt, st);
                 newSentence.producedByTemporalInduction=temporalInduction;
                 final Task newTask = Task.make(newSentence, newBudget, getCurrentTask(), getCurrentBelief());
