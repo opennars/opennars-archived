@@ -136,8 +136,7 @@ public class Parameters {
     public static final int NOVEL_TASK_BAG_SIZE = 100;
     public static final int NOVEL_TASK_BAG_LEVELS = 10;
     /*  Size of sequence/input event bag */
-    public static int SEQUENCE_BAG_SIZE = 30;
-    public static final int SEQUENCE_BAG_LEVELS = 10;
+    public static final int EVENT_CONCEPT_BAG_SIZE_MUL = 10;
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
@@ -256,8 +255,6 @@ public class Parameters {
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
     
     public static float ANTICIPATION_CONFIDENCE = 0.90f;
-    
-    public static float CONSIDER_NEW_OPERATION_BIAS = 0.05f; //depriorizes older operation-related events in temporal inference
     
     public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 0.1f;
     

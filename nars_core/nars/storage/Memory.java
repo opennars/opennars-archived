@@ -101,9 +101,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     /* New tasks with novel composed terms, for delayed and selective processing*/
     public final Bag<Task<Term>,Sentence<Term>> novelTasks;
-    
-    /* Input event tasks that were either input events or derived sequences*/
-    public Bag<Task<Term>,Sentence<Term>> sequenceTasks;
 
     /* List of new tasks accumulated in one cycle, to be processed in the next cycle */
     public final Deque<Task> newTasks;
@@ -123,15 +120,13 @@ public class Memory implements Serializable, Iterable<Concept> {
      *
      * @param initialOperators - initial set of available operators; more may be added during runtime
      */
-    public Memory(RuntimeParameters param, Bag<Concept,Term> concepts, Bag<Task<Term>,Sentence<Term>> novelTasks,
-            Bag<Task<Term>,Sentence<Term>> sequenceTasks) {                
+    public Memory(RuntimeParameters param, Bag<Concept,Term> concepts, Bag<Task<Term>,Sentence<Term>> novelTasks) {                
 
         this.param = param;
         this.event = new EventEmitter();
         this.concepts = concepts;
         this.novelTasks = novelTasks;                
         this.newTasks = new ArrayDeque<>();
-        this.sequenceTasks = sequenceTasks;
         this.operators = new HashMap<>();
         reset();
     }
@@ -142,7 +137,6 @@ public class Memory implements Serializable, Iterable<Concept> {
         concepts.clear();
         novelTasks.clear();
         newTasks.clear();    
-        sequenceTasks.clear();
         cycle = 0;
         inputPausedUntil = 0;
         emotion.set(0.5f, 0.5f);

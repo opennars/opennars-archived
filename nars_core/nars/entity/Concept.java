@@ -72,6 +72,7 @@ import nars.operator.mental.Anticipate;
 import nars.util.Events;
 import static nars.inference.UtilityFunctions.or;
 import nars.io.Output;
+import nars.language.Inheritance;
 import nars.language.Statement;
 
 public class Concept extends Item<Term> {
@@ -153,9 +154,16 @@ public class Concept extends Item<Term> {
         this.quests = new ArrayList<>();
         this.desires = new ArrayList<>();
 
-        this.taskLinks = new LevelBag<>(Parameters.TASK_LINK_BAG_LEVELS, Parameters.TASK_LINK_BAG_SIZE);
-        this.termLinks = new LevelBag<>(Parameters.TERM_LINK_BAG_LEVELS, Parameters.TERM_LINK_BAG_SIZE);
-                
+        
+        if(tm.equals(Term.EVENT)) {
+            this.taskLinks = new LevelBag<>(Parameters.TASK_LINK_BAG_LEVELS*Parameters.EVENT_CONCEPT_BAG_SIZE_MUL, Parameters.TASK_LINK_BAG_SIZE*Parameters.EVENT_CONCEPT_BAG_SIZE_MUL);
+            this.termLinks = new LevelBag<>(Parameters.TERM_LINK_BAG_LEVELS*Parameters.EVENT_CONCEPT_BAG_SIZE_MUL, Parameters.TERM_LINK_BAG_SIZE*Parameters.EVENT_CONCEPT_BAG_SIZE_MUL);
+        }
+        else {
+            this.taskLinks = new LevelBag<>(Parameters.TASK_LINK_BAG_LEVELS, Parameters.TASK_LINK_BAG_SIZE);
+            this.termLinks = new LevelBag<>(Parameters.TERM_LINK_BAG_LEVELS, Parameters.TERM_LINK_BAG_SIZE);
+        }
+        
         if (tm instanceof CompoundTerm) {
             this.termLinkTemplates = ((CompoundTerm) tm).prepareComponentLinks();
         } 
@@ -1079,24 +1087,58 @@ public class Concept extends Item<Term> {
         return null;
     }
     
-    public Sentence getBeliefForTemporalInference(final Task task) {
+    public Sentence getEventForTemporalInference(final Task task) {
         
         if(task.sentence.isEternal()) { //this is for event-event inference only
             return null;
         }
         
+        TaskLink bestLink = null;
         Sentence bestSoFar = null;
-        long distance = Long.MAX_VALUE;
+        float distance = Float.MAX_VALUE;
 
-        for (final Task beliefT : beliefs) {  
+        /*boolean precond_op = false;
+        if(task.sentence.term instanceof Conjunction) {
+            Conjunction conj = (Conjunction) task.sentence.getTerm();
+            if(conj.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                if(conj.term[conj.term.length-1] instanceof Operation) {
+                    precond_op = true;
+                }
+            }
+        }*/
+        
+        for (final TaskLink beliefTl : taskLinks) { //iterating through EVENT virtual concept
+            Task beliefT = beliefTl.targetTask;
             if(beliefT.isElemOfSequenceBuffer()) { //-- probably also for derivations in the future!
-                long distance_new = Math.abs(task.sentence.getOccurenceTime() - beliefT.sentence.getOccurenceTime());
-                if(distance_new < distance) {
+                Concept topdown_priority_concept = memory.concepts.get(beliefT.getTerm());
+                if(topdown_priority_concept == null) {
+                    continue;
+                }
+                /*if(precond_op && !(beliefT.getTerm() instanceof Inheritance)) { //use postcondition
+                    continue;
+                }
+                if(!precond_op && !(beliefT.getTerm() instanceof Operation)) { //search for operation
+                    continue; 
+                }*/
+                
+                long ocTask = task.sentence.getOccurenceTime();
+                long ocBelief = beliefT.sentence.getOccurenceTime();
+                float distance_new = (1.0f - beliefTl.getPriority()) * 
+                                     (1.0f - topdown_priority_concept.getPriority())
+                        * Math.abs(ocTask - ocBelief);
+                if(distance_new < distance || 
+                        (distance_new == distance &&
+                        memory.randomNumber.nextDouble() > 0.5)) {
                     distance = distance_new;
                     bestSoFar = beliefT.sentence;
+                    bestLink = beliefTl;
                 }
             }
         }
+        if(bestSoFar != null) {
+            bestLink.setPriority(bestLink.getPriority()*bestLink.getDurability());
+        }
+       
         return bestSoFar;
     }
 

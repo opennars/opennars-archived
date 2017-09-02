@@ -356,7 +356,7 @@ public class Task<T extends Term> extends Item<Sentence<T>>  {
     }
 
     public boolean isElemOfSequenceBuffer() {
-        return !this.sentence.isEternal() && (this.isInput() || partOfSequenceBuffer);
+        return this.sentence.isJudgment() && !this.sentence.isEternal() && (this.isInput() || partOfSequenceBuffer);
     }
     
     public void setObservablePrediction(boolean b) {
