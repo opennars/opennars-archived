@@ -1060,7 +1060,7 @@ public class Concept extends Item<Term> {
      * @param task The selected task
      * @return The selected isBelief
      */
-    public Sentence getBelief(final DerivationContext nal, final Task task) {
+    public Sentence getBelief(final DerivationContext nal, final Task task, boolean project) {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
 
@@ -1068,6 +1068,10 @@ public class Concept extends Item<Term> {
             Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
+            
+            if(!project) {
+                return belief;
+            }
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());
             /*if (projectedBelief.getOccurenceTime() != belief.getOccurenceTime()) {
@@ -1077,27 +1081,6 @@ public class Concept extends Item<Term> {
             return projectedBelief;     // return the first satisfying belief
         }
         return null;
-    }
-    
-    public Sentence getBeliefForTemporalInference(final Task task) {
-        
-        if(task.sentence.isEternal()) { //this is for event-event inference only
-            return null;
-        }
-        
-        Sentence bestSoFar = null;
-        long distance = Long.MAX_VALUE;
-
-        for (final Task beliefT : beliefs) {  
-            if(beliefT.isElemOfSequenceBuffer()) { //-- probably also for derivations in the future!
-                long distance_new = Math.abs(task.sentence.getOccurenceTime() - beliefT.sentence.getOccurenceTime());
-                if(distance_new < distance) {
-                    distance = distance_new;
-                    bestSoFar = beliefT.sentence;
-                }
-            }
-        }
-        return bestSoFar;
     }
 
     /**
@@ -1233,57 +1216,6 @@ public class Concept extends Item<Term> {
                 t.sentence.discountConfidence();
             }
         }
-    }
-
-    /** get a random belief, weighted by their sentences confidences */
-    public Sentence getBeliefRandomByConfidence() {        
-        if (beliefs.isEmpty()) return null;
-        
-        float totalConfidence = getBeliefConfidenceSum();
-        float r = Memory.randomNumber.nextFloat() * totalConfidence;
-                
-        Sentence s = null;
-        for (int i = 0; i < beliefs.size(); i++) {
-            s = beliefs.get(i).sentence;            
-            r -= s.truth.getConfidence();
-            if (r < 0)
-                return s;
-        }
-        
-        return s;
-    }
-    
-    public float getBeliefConfidenceSum() {
-        float t = 0;
-        for (final Task ts : beliefs)
-            t += ts.sentence.truth.getConfidence();
-        return t;
-    }
-    public float getBeliefFrequencyMean() {
-        if (beliefs.isEmpty()) return 0.5f;
-        
-        float t = 0;
-        for (final Task s : beliefs)
-            t += s.sentence.truth.getFrequency();
-        return t / beliefs.size();        
-    }
-
-    
-    public CharSequence getBeliefsSummary() {
-        if (beliefs.isEmpty())
-            return "0 beliefs";        
-        StringBuilder sb = new StringBuilder();
-        for (Task ts : beliefs)
-            sb.append(ts.toString()).append('\n');       
-        return sb;
-    }
-    public CharSequence getDesiresSummary() {
-        if (desires.isEmpty())
-            return "0 desires";        
-        StringBuilder sb = new StringBuilder();
-        for (Task ts : desires)
-            sb.append(ts.sentence.toString()).append('\n');       
-        return sb;
     }
 
     public NativeOperator operator() {

@@ -17,7 +17,7 @@ import nars.storage.Memory;
 public class GeneralInferenceControl {
     
     public static void selectConceptForInference(Memory mem) {
-        Concept currentConcept = mem.concepts.get(Term.EVENT); //.takeNext();
+        Concept currentConcept = mem.concepts.takeNext();
         if (currentConcept==null)
             return;
         

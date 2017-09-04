@@ -86,32 +86,13 @@ public class RuleTables {
         
         final Concept beliefConcept = memory.concept(beliefTerm);
         
-        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task) : null;
+        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task, beliefConcept.getTerm().equals(Term.EVENT)) : null;
         
         nal.setCurrentBelief( belief );
         
         if (belief != null) {   
             beliefTerm = belief.term; //because interval handling that differs on conceptual level
             
-            if(nal.getCurrentConcept().term.equals(Term.EVENT)) {
-                Sentence belief_event = beliefConcept.getBeliefForTemporalInference(task);
-                  if(belief_event != null) {
-                      boolean found_overlap = false;
-                      if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief_event.stamp.evidentialBase)) {
-                          found_overlap = true;
-                      }
-                      if(!found_overlap) { //temporal rules are inductive so no chance to succeed if there is an overlap
-                                           //and since the temporal rule is relatively expensive the check here was good.
-                          Sentence inference_belief = belief;
-                          nal.setCurrentBelief(belief_event);
-                          nal.setTheNewStamp(task.sentence.stamp, belief_event.stamp, nal.memory.time());
-                          TemporalRules.temporalInduction(task.sentence, belief_event, nal, true);
-                          nal.setCurrentBelief(inference_belief);
-                          nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
-                      }
-                      return;
-                  }
-            }
             //too restrictive, its checked for non-deductive inference rules in derivedTask (also for single prem)
             if(Stamp.baseOverlap(task.sentence.stamp.evidentialBase, belief.stamp.evidentialBase)) {
                 nal.evidentalOverlap = true;
@@ -121,6 +102,17 @@ public class RuleTables {
                 //return; //preparisons are made now to support this nicely
             }
             //comment out for recursive examples, this is for the future, it generates a lot of potentially useless tasks
+            
+            if(nal.getCurrentConcept().term.equals(Term.EVENT) &&
+                    belief.isJudgment() && !belief.isEternal()) {
+                Sentence belief_event = belief;
+                Sentence inference_belief = belief;
+                nal.setCurrentBelief(belief_event);
+                nal.setTheNewStamp(task.sentence.stamp, belief_event.stamp, nal.memory.time());
+                TemporalRules.temporalInduction(task.sentence, belief_event, nal, true);
+                nal.setCurrentBelief(inference_belief);
+                nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
+            }
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);
             
