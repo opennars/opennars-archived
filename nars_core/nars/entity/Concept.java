@@ -1060,7 +1060,7 @@ public class Concept extends Item<Term> {
      * @param task The selected task
      * @return The selected isBelief
      */
-    public Sentence getBelief(final DerivationContext nal, final Task task, boolean project) {
+    public Sentence getBelief(final DerivationContext nal, final Task task, boolean event) {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
 
@@ -1069,8 +1069,13 @@ public class Concept extends Item<Term> {
             nal.emit(BeliefSelect.class, belief);
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
             
-            if(!project) {
-                return belief;
+            if(event) {
+                if(belief.isEternal()) {
+                    continue;
+                }
+                else {
+                    return belief;
+                }
             }
             
             Sentence projectedBelief = belief.projection(taskStamp.getOccurrenceTime(), memory.time());

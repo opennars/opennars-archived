@@ -86,7 +86,7 @@ public class RuleTables {
         
         final Concept beliefConcept = memory.concept(beliefTerm);
         
-        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task, beliefConcept.getTerm().equals(Term.EVENT)) : null;
+        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(nal, task, nal.getCurrentConcept().term.equals(Term.EVENT)) : null;
         
         nal.setCurrentBelief( belief );
         
@@ -110,8 +110,7 @@ public class RuleTables {
                 nal.setCurrentBelief(belief_event);
                 nal.setTheNewStamp(task.sentence.stamp, belief_event.stamp, nal.memory.time());
                 TemporalRules.temporalInduction(task.sentence, belief_event, nal, true);
-                nal.setCurrentBelief(inference_belief);
-                nal.setTheNewStamp(task.sentence.stamp, belief.stamp, nal.memory.time());
+                return; //return as we do not want non-event inference to happen as belief is not projected!
             }
             
             nal.emit(Events.BeliefReason.class, belief, beliefTerm, taskTerm, nal);

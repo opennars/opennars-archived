@@ -304,7 +304,7 @@ public final class CompositionalRules {
                 if (contentConcept == null) {
                     return;
                 }
-                Sentence contentBelief = contentConcept.getBelief(nal, task, true);
+                Sentence contentBelief = contentConcept.getBelief(nal, task, false);
                 if (contentBelief == null) {
                     return;
                 }
