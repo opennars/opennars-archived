@@ -140,7 +140,7 @@ public class ConceptProcessing {
                     Concept goalC = nal.memory.concept(goal.getTerm());
                     if(goalC != null && !goalC.desires.isEmpty()) {
                         Task highest_desire = goalC.desires.get(0);
-                        bestReactionForGoal(goalC, nal, highest_desire.sentence.projection(nal.memory.time(), nal.memory.time()), highest_desire);
+                        bestReactionForGoal(goalC, nal, highest_desire.sentence.projection(nal.memory.time(), nal.memory.time()), highest_desire, false);
                     }
                     concept.target_goals.putBack(goal, nng, nal.memory);
                 }
@@ -297,7 +297,7 @@ public class ConceptProcessing {
 
             if (projectedGoal != null && task.aboveThreshold() && !fullfilled) {
 
-                bestReactionForGoal(concept, nal, projectedGoal, task);
+                bestReactionForGoal(concept, nal, projectedGoal, task, true);
 
                 questionFromGoal(task, nal);
 
@@ -405,8 +405,11 @@ public class ConceptProcessing {
     * that is applicable to the current context (recent events) in case that it exists.
     * This is a special case of the choice rule and allows certain behaviors to be automated.
     */
-    protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task) {
+    protected static void bestReactionForGoal(Concept concept, final DerivationContext nal, Sentence projectedGoal, final Task task, boolean goalTriggered) {
         try{
+            if(task.getPriority() < nal.memory.param.reactionPriorityThreshold.get()) {
+                return;
+            }
             Operation bestop = null;
             float bestop_truthexp = 0.0f;
             TruthValue bestop_truth = null;
@@ -446,6 +449,16 @@ public class ConceptProcessing {
                     TruthValue A = projectedGoal.getTruth();
                     //and the truth of the hypothesis:
                     TruthValue Hyp = t.sentence.truth;
+                    //overlap will almost never happen, but to make sure
+                    if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
+                        continue; //base overlap
+                    }
+                    if(Stamp.baseOverlap(bestsofar.sentence.stamp.evidentialBase, t.sentence.stamp.evidentialBase)) {
+                        continue; //base overlap
+                    }
+                    if(Stamp.baseOverlap(projectedGoal.stamp.evidentialBase, bestsofar.sentence.stamp.evidentialBase)) {
+                        continue; //base overlap
+                    }
                     //and the truth of the precondition:
                     Sentence projectedPrecon = bestsofar.sentence.projection(concept.memory.time() /*- distance*/, concept.memory.time());
 
@@ -478,7 +491,7 @@ public class ConceptProcessing {
                 
                 //insert this task as a viable target goal in this concept
                 //this way fullfilled preconditions can also attempt to trigger a proper goal processing
-                if(best_precond != null) {
+                if(goalTriggered && best_precond != null) {
                     if(best_precond.target_goals == null) {
                         best_precond.target_goals = new LevelBag<>(Parameters.TARGET_GOAL_BAG_LEVELS, Parameters.TARGET_GOAL_BAG_SIZE);
                     }
