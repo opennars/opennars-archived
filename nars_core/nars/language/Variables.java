@@ -32,6 +32,11 @@ public class Variables {
                 return true;
             }
         }
+        if(uniType == Symbols.VAR_DEPENDENT) { //the now allowed case
+            if(type == Symbols.VAR_QUERY) {
+                return true;
+            }
+        }
         return false;
     }
     
@@ -45,7 +50,14 @@ public class Variables {
     }
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, boolean allowPartial) {
 
-        final boolean term1HasVar = term1.hasVar(type);
+        boolean term1HasVar = term1.hasVar(type);
+        if(type == Symbols.VAR_INDEPENDENT) {
+            term1HasVar |= term1.hasVarDep();
+            term1HasVar |= term1.hasVarQuery();
+        }
+        if(type == Symbols.VAR_DEPENDENT) {
+            term1HasVar |= term1.hasVarQuery();
+        }
         final boolean term2HasVar = term2.hasVar(type);
         
         
