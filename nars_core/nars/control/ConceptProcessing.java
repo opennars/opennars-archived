@@ -19,6 +19,7 @@ import static nars.inference.LocalRules.revisible;
 import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.operator.Operator;
+import nars.operator.FunctionOperator;
 import nars.storage.LevelBag;
 
 public class ConceptProcessing {
@@ -532,12 +533,23 @@ public class ConceptProcessing {
             
             Term content = t.getTerm();
 
-            if(content instanceof Operation && !content.hasVarDep() && !content.hasVarIndep()) {
+            if(content instanceof Operation) {
 
                 Operation op=(Operation)content;
                 Operator oper = op.getOperator();
                 Product prod = (Product) op.getSubject();
                 Term arg = prod.term[0];
+                if(oper instanceof FunctionOperator) {
+                    for(int i=0;i<prod.term.length-1;i++) { //except last one, the output arg
+                        if(prod.term[i].hasVarDep() || prod.term[i].hasVarIndep()) {
+                            return false;
+                        }
+                    }
+                } else {
+                    if(content.hasVarDep() || content.hasVarIndep()) {
+                        return false;
+                    }
+                }
                 if(!arg.equals(Term.SELF)) { //will be deprecated in the future
                     return false;
                 }

@@ -674,7 +674,7 @@ public class RuleTables {
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u)) { //happens through syllogisms
                 mainSentence = mainSentence.clone(u[0]);
                 subSentence = subSentence.clone(u[1]);
-                SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
+                SyllogisticRules.detachment(mainSentence, subSentence, index, false, nal);
             } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
                 if ((content instanceof Statement) && (s2.getSubject().equals(((Statement) content).getSubject()))) {

@@ -448,14 +448,14 @@ public class SimNAR extends Frame {
                 if(action==2)
                 {
                     oi.a+=0.5f;
-                    //oi.v=5.0f;
+                    oi.v=5.0f;
                     //mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
                 if(action==1)
                 {
                     oi.a-=0.5f;
-                    //oi.v=5.0f;
+                    oi.v=5.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
