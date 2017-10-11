@@ -133,19 +133,6 @@ public class ConceptProcessing {
             }
 
             concept.addToTable(task, false, concept.beliefs, Parameters.CONCEPT_BELIEFS_MAX, Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class);
-
-            //now try to trigger a reaction:
-            if(concept.target_goals != null && !wasRevised) {
-                Task goal = concept.target_goals.takeNext();
-                if(goal != null) {
-                    Concept goalC = nal.memory.concept(goal.getTerm());
-                    if(goalC != null && !goalC.desires.isEmpty()) {
-                        Task highest_desire = goalC.desires.get(0);
-                        bestReactionForGoal(goalC, nal, highest_desire.sentence.projection(nal.memory.time(), nal.memory.time()), highest_desire, false);
-                    }
-                    concept.target_goals.putBack(goal, nng, nal.memory);
-                }
-            }
             
             //if taskLink predicts this concept then add to predictive
             Task target = task;
@@ -490,18 +477,9 @@ public class ConceptProcessing {
 
             if(bestop != null && bestop_truthexp > concept.memory.param.decisionThreshold.get() /*&& Math.random() < bestop_truthexp */) {
                 
-                //insert this task as a viable target goal in this concept
-                //this way fullfilled preconditions can also attempt to trigger a proper goal processing
-                if(goalTriggered && best_precond != null) {
-                    if(best_precond.target_goals == null) {
-                        best_precond.target_goals = new LevelBag<>(Parameters.TARGET_GOAL_BAG_LEVELS, Parameters.TARGET_GOAL_BAG_SIZE);
-                    }
-                    best_precond.target_goals.putIn(task);
-                }
-                
                 Sentence createdSentence = new Sentence(
                         bestop,
-                        Symbols.JUDGMENT_MARK,
+                        Symbols.GOAL_MARK,
                         bestop_truth,
                         projectedGoal.stamp);
 
@@ -558,7 +536,6 @@ public class ConceptProcessing {
                 if(!oper.call(op, nal.memory)) {
                     return false;
                 }
-                TemporalInferenceControl.NewOperationFrame(nal.memory, t);
                 
                 //this.memory.sequenceTasks = new LevelBag<>(Parameters.SEQUENCE_BAG_LEVELS, Parameters.SEQUENCE_BAG_SIZE);
                 return true;

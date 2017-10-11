@@ -304,8 +304,9 @@ public class SimNAR extends Frame {
                if(k%2==0) {
                    if(k%4 == 0) { //les priority than eating ^^
                         nar.addInput("<{SELF} --> [healthy]>! :|:");
+                   } else {
+                        nar.addInput("<{SELF} --> [replete]>! :|:");
                    }
-                   nar.addInput("<{SELF} --> [replete]>! :|:");
                    //System.out.println("food urge input");
                 }
                 if(reward > 0) {
@@ -448,14 +449,14 @@ public class SimNAR extends Frame {
                 if(action==2)
                 {
                     oi.a+=0.5f;
-                    oi.v=5.0f;
+                    oi.v=0.0f;
                     //mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else
                 if(action==1)
                 {
                     oi.a-=0.5f;
-                    oi.v=5.0f;
+                    oi.v=0.0f;
                     // mem.ProcessingInteract(oi.x,oi.y,1.0,10.0);
                 }
                 else

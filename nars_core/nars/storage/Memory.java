@@ -82,10 +82,11 @@ import nars.language.Interval;
  */
 public class Memory implements Serializable, Iterable<Concept> {
     
+    public long decisionBlock = 0;
+        
     //emotion meter keeping track of global emotion
     public final Emotions emotion = new Emotions();   
     
-    public long decisionBlock = 0;
     public Task lastDecision = null;
     public boolean allowExecution = true;
 
@@ -144,7 +145,6 @@ public class Memory implements Serializable, Iterable<Concept> {
     
     public void reset() {
         event.emit(ResetStart.class);
-        decisionBlock = 0;
         concepts.clear();
         novelTasks.clear();
         newTasks.clear();    
@@ -401,7 +401,7 @@ public class Memory implements Serializable, Iterable<Concept> {
             }
         }
         
-        if (!task.sentence.isEternal()) {
+        if (!task.sentence.isEternal() && !(task.sentence.term instanceof Operation)) {
             TemporalInferenceControl.eventInference(task, cont);
         }
         

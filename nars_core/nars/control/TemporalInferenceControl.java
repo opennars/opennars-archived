@@ -16,6 +16,7 @@ import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
+import nars.language.Term;
 import nars.operator.Operation;
 import nars.storage.Bag;
 import nars.storage.LevelBag;
@@ -152,7 +153,9 @@ public class TemporalInferenceControl {
             }
         }
         
-        addToSequenceTasks(nal, newEvent);
+        if(!(newEvent.sentence.getTerm() instanceof Operation)) {
+            addToSequenceTasks(nal, newEvent);
+        }
         return true;
     }
     
@@ -167,6 +170,19 @@ public class TemporalInferenceControl {
                 //&& newEvent.sentence.getOccurenceTime()>s.sentence.getOccurenceTime() ) { 
                 removals.add(s);
                 break;
+            }
+            if(s.getTerm() instanceof Conjunction) {
+                boolean removed = false;
+                for(Term comp : ((Conjunction)s.getTerm()).term) {
+                    if(comp.equals(newEvent.getTerm())) { //its a component, needs re-priorization
+                        removals.add(s);    //so better remove for now
+                        removed = true;
+                        break;
+                    }
+                }
+                if(removed) {
+                    break;
+                }
             }
         }
         for(Task removal : removals) {
@@ -186,7 +202,7 @@ public class TemporalInferenceControl {
         }
     }
     
-    public static void NewOperationFrame(Memory mem, Task task) {
+     public static void NewOperationFrame(Memory mem, Task task) {
         List<Task> toRemove = new LinkedList<Task>(); //can there be more than one? I don't think so..
         for(Task t : mem.recent_operations) {   //when made sure, make single element and add break
             if(t.getTerm().equals(task.getTerm())) {
@@ -208,5 +224,5 @@ public class TemporalInferenceControl {
             }
         }
         mem.seq_current.clear();
-    }
+}
 }

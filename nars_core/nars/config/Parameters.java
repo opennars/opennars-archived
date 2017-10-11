@@ -140,12 +140,9 @@ public class Parameters {
     public static int SEQUENCE_BAG_SIZE = 30;
     public static final int SEQUENCE_BAG_LEVELS = 10;
     /*  Size of remembered last operation tasks */
-    public static int OPERATION_BAG_SIZE = 10;
-    public static final int OPERATION_BAG_LEVELS = 10;
-    public static int OPERATION_SAMPLES = 2; //should be at least 2 to not only consider last decision
-    public static int TARGET_GOAL_BAG_SIZE = 10;
-    public static final int TARGET_GOAL_BAG_LEVELS = 10;
-    public static int TARGET_GOAL_SAMPLES = 2;
+    public static int OPERATION_BAG_SIZE = 5;
+    public static final int OPERATION_BAG_LEVELS = 5;
+    public static int OPERATION_SAMPLES = 1; //should be at least 2 to not only consider last decision
     
     /** How fast events decay in confidence **/
     public static final AtomicDouble projectionDecay = new AtomicDouble(0.1);
@@ -269,7 +266,7 @@ public class Parameters {
     
     public static float TEMPORAL_INDUCTION_PRIORITY_PENALTY = 1.0f; //was 0.1
     
-    public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 2100;
+    public static int AUTOMATIC_DECISION_USUAL_DECISION_BLOCK_CYCLES = 100;
     
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
